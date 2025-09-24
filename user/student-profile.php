@@ -98,12 +98,12 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                             <th>Civil Status</th>
                             <td><?php echo htmlentities($row->CivilStatus); ?></td>
                           </tr>
-                        </table>
-                        <table class="table profile-table">
                           <tr>
                             <th>Religion</th>
                             <td><?php echo htmlentities($row->Religion); ?></td>
                           </tr>
+                        </table>
+                        <table class="table profile-table">
                           <tr>
                             <th>Height (cm)</th>
                             <td><?php echo htmlentities($row->Height); ?></td>
@@ -127,6 +127,10 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                           <tr>
                             <th>Contact Number</th>
                             <td><?php echo htmlentities($row->ContactNumber); ?></td>
+                          </tr>
+                          <tr>
+                            <th>Email Address</th>
+                            <td><?php echo htmlentities($row->EmailAddress); ?></td>
                           </tr>
                           <tr>
                             <th>Building/House Number</th>
