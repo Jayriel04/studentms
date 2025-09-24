@@ -141,6 +141,85 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     }
   }
 
+  // Handle adding achievements (skills tags + proof upload)
+  if (isset($_POST['add_achievement'])) {
+    $skills_raw = isset($_POST['skills']) ? trim($_POST['skills']) : '';
+    $ach_category = isset($_POST['ach_category']) ? $_POST['ach_category'] : 'Non-Academic';
+    $ach_level = isset($_POST['ach_level']) ? $_POST['ach_level'] : 'School';
+
+    // Points mapping - adjust values as desired
+    $points_map = array(
+      'International' => 100,
+      'National' => 75,
+      'Regional' => 50,
+      'Provincial' => 40,
+      'City' => 30,
+      'School' => 10,
+    );
+    $points = isset($points_map[$ach_level]) ? $points_map[$ach_level] : 0;
+
+    // Handle proof image upload
+    $proof_name = '';
+    if (!empty($_FILES['proof']['name'])) {
+      $proof_tmp = $_FILES['proof']['tmp_name'];
+      $dest_dir = __DIR__ . '/../admin/images/achievements/';
+      if (!is_dir($dest_dir)) {
+        mkdir($dest_dir, 0755, true);
+      }
+      $proof_name = time() . '_' . basename($_FILES['proof']['name']);
+      $proof_path = $dest_dir . $proof_name;
+      if (!move_uploaded_file($proof_tmp, $proof_path)) {
+        echo "<script>alert('Proof image upload failed. Please try again');</script>";
+        $proof_name = '';
+      }
+    }
+
+    try {
+      // Insert achievement
+      $ins = "INSERT INTO student_achievements (StuID, level, category, proof_image, status, points, created_at) VALUES (:sid, :level, :category, :proof, 'pending', :points, NOW())";
+      $stmt = $dbh->prepare($ins);
+      $stmt->bindParam(':sid', $sid, PDO::PARAM_STR);
+      $stmt->bindParam(':level', $ach_level, PDO::PARAM_STR);
+      $stmt->bindParam(':category', $ach_category, PDO::PARAM_STR);
+      $stmt->bindParam(':proof', $proof_name, PDO::PARAM_STR);
+      $stmt->bindParam(':points', $points, PDO::PARAM_INT);
+      $stmt->execute();
+      $achievement_id = $dbh->lastInsertId();
+
+      // Process skills (custom tags). Expect comma-separated names.
+      if ($skills_raw !== '') {
+        $skills = array_filter(array_map('trim', explode(',', $skills_raw)));
+        $skills = array_unique($skills);
+        foreach ($skills as $skill_name) {
+          if ($skill_name === '') continue;
+          // check if exists
+          $s = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
+          $s->bindParam(':name', $skill_name, PDO::PARAM_STR);
+          $s->execute();
+          $skill = $s->fetch(PDO::FETCH_OBJ);
+          if ($skill && isset($skill->id)) {
+            $skill_id = $skill->id;
+          } else {
+            $insk = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
+            $insk->bindParam(':name', $skill_name, PDO::PARAM_STR);
+            $insk->bindParam(':category', $ach_category, PDO::PARAM_STR);
+            $insk->execute();
+            $skill_id = $dbh->lastInsertId();
+          }
+          // link
+          $link = $dbh->prepare("INSERT INTO student_achievement_skills (achievement_id, skill_id) VALUES (:aid, :sid)");
+          $link->bindParam(':aid', $achievement_id, PDO::PARAM_INT);
+          $link->bindParam(':sid', $skill_id, PDO::PARAM_INT);
+          $link->execute();
+        }
+      }
+
+      $ach_success = true;
+    } catch (Exception $e) {
+      echo "<script>alert('Error saving achievement: " . addslashes($e->getMessage()) . "');</script>";
+    }
+  }
+
   // Fetch profile data
   $sql = "SELECT * FROM tblstudent WHERE StuID = :sid";
   $query = $dbh->prepare($sql);
@@ -377,12 +456,15 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                       </div>
                       <button type="submit" name="update" class="btn btn-primary">Update Profile</button>
                       <a href="student-profile.php" class="btn btn-light">Back</a>
+                      <!-- Link to Add Achievement page -->
+                      <a href="add-achievement.php" class="btn btn-info">Add Achievement / Skill</a>
                     </form>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <!-- Achievement is now a separate page: user/add-achievement.php -->
           <?php include_once('includes/footer.php'); ?>
         </div>
       </div>
@@ -406,6 +488,116 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
         toggleOtherGenderInput();
       });
     </script>
+    <script>
+      // Tag input management
+      (function () {
+        var skills = [];
+        var input = document.getElementById('skillInput');
+        var container = document.getElementById('skillsContainer');
+        var hidden = document.getElementById('skillsHidden');
+
+        function render() {
+          container.innerHTML = '';
+          skills.forEach(function (s, idx) {
+            var span = document.createElement('span');
+            span.className = 'badge badge-info';
+            span.style.marginRight = '6px';
+            span.style.padding = '6px';
+            span.textContent = s;
+            var rm = document.createElement('a');
+            rm.href = '#';
+            rm.style.marginLeft = '6px';
+            rm.style.color = '#fff';
+            rm.innerHTML = '&times;';
+            rm.onclick = function (e) {
+              e.preventDefault();
+              skills.splice(idx, 1);
+              render();
+            };
+            span.appendChild(rm);
+            container.appendChild(span);
+          });
+          hidden.value = skills.join(',');
+        }
+
+        function addFromInput(val) {
+          if (!val) return;
+          val.split(',').forEach(function (part) {
+            var t = part.trim();
+            if (t && skills.indexOf(t) === -1) skills.push(t);
+          });
+          render();
+        }
+
+        if (input) {
+          input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              addFromInput(input.value);
+              input.value = '';
+            }
+            if (e.key === ',') {
+              e.preventDefault();
+              addFromInput(input.value);
+              input.value = '';
+            }
+          });
+          input.addEventListener('blur', function () {
+            addFromInput(input.value);
+            input.value = '';
+          });
+          input.addEventListener('paste', function (e) {
+            var pasted = (e.clipboardData || window.clipboardData).getData('text');
+            addFromInput(pasted);
+            e.preventDefault();
+          });
+        }
+
+        window.prepareSkills = function () {
+          // ensure hidden is up-to-date before form submit
+          hidden.value = skills.join(',');
+          return true;
+        };
+      })();
+    </script>
+      <script>
+        // Fallback: ensure modal opens when button clicked (for projects using older jQuery/bootstrap bindings)
+        (function () {
+          var btn = document.getElementById('openAchModalBtn');
+          if (btn && window.jQuery) {
+            btn.addEventListener('click', function (e) {
+              e.preventDefault();
+              jQuery('#achModal').modal('show');
+            });
+          }
+        })();
+      </script>
+      <script>
+        // Ensure achievement modal form submits reliably
+        (function () {
+          var form = document.getElementById('achForm');
+          var submit = document.getElementById('achSubmitBtn');
+          if (form && submit) {
+            submit.addEventListener('click', function (e) {
+              // call prepareSkills to populate hidden input
+              try { window.prepareSkills(); } catch (ex) { /* ignore */ }
+              // force submit to bypass any interfering handlers
+              // allow default for normal submission, but if default prevented, submit programmatically
+              setTimeout(function () {
+                if (document.activeElement && document.activeElement === submit) {
+                  // nothing
+                }
+                try {
+                  form.submit();
+                } catch (err) {
+                  // fallback: trigger native click on submit
+                  submit.click();
+                }
+              }, 10);
+            }, false);
+          }
+        })();
+      </script>
   </body>
 
   </html>

@@ -140,6 +140,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                                         class="btn btn-warning btn-xs">
                                                                         <?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?>
                                                                     </a>
+                                                                    <a href="validate-achievements.php?stu=<?php echo urlencode($row->StuID); ?>" class="btn btn-primary btn-xs">Validate Achievements</a>
                                                                 </td>
                                                             </tr>
                                                             <?php $cnt++;
