@@ -5,24 +5,40 @@ include('includes/dbconnection.php');
 
 if (isset($_POST['login'])) {
   $stuid = $_POST['stuid'];
-  $password = md5($_POST['password']);
+  $password = $_POST['password'];
 
-  // Query to check login credentials using only Student ID
-  $sql = "SELECT StuID, ID FROM tblstudent WHERE StuID=:stuid AND Password=:password";
+  // Fetch stored password for this student
+  $sql = "SELECT StuID, ID, Password FROM tblstudent WHERE StuID=:stuid";
   $query = $dbh->prepare($sql);
   $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-  $query->bindParam(':password', $password, PDO::PARAM_STR);
   $query->execute();
-  $results = $query->fetchAll(PDO::FETCH_OBJ);
+  $result = $query->fetch(PDO::FETCH_OBJ);
 
-  if ($query->rowCount() > 0) {
-    foreach ($results as $result) {
-      $_SESSION['sturecmsstuid'] = $result->StuID;
-      $_SESSION['sturecmsuid'] = $result->ID;
+  $authenticated = false;
+  if ($result) {
+    $stored = $result->Password;
+    // Prefer password_verify for modern hashes
+    if (password_verify($password, $stored)) {
+      $authenticated = true;
+    } else {
+      // Fallback for legacy md5 hashes
+      if (md5($password) === $stored) {
+        $authenticated = true;
+        // Upgrade to stronger hash
+        $newHash = password_hash($password, PASSWORD_DEFAULT);
+        $upd = $dbh->prepare("UPDATE tblstudent SET Password=:p WHERE StuID=:stuid");
+        $upd->bindParam(':p', $newHash, PDO::PARAM_STR);
+        $upd->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+        $upd->execute();
+      }
     }
+  }
+
+  if ($authenticated) {
+    $_SESSION['sturecmsstuid'] = $result->StuID;
+    $_SESSION['sturecmsuid'] = $result->ID;
 
     if (!empty($_POST["remember"])) {
-      // Set cookies for Student ID and password
       setcookie("user_login", $_POST["stuid"], time() + (10 * 365 * 24 * 60 * 60));
       setcookie("userpassword", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
     } else {

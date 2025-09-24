@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 23, 2025 at 10:30 AM
+-- Generation Time: Sep 24, 2025 at 04:38 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -20,126 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `studentmsdb`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tbladmin`
---
-
-CREATE TABLE `tbladmin` (
-  `ID` int(10) NOT NULL,
-  `AdminName` varchar(120) DEFAULT NULL,
-  `UserName` varchar(120) DEFAULT NULL,
-  `Email` varchar(200) DEFAULT NULL,
-  `Password` varchar(200) DEFAULT NULL,
-  `AdminRegdate` timestamp NULL DEFAULT current_timestamp(),
-  `reset_code` varchar(255) DEFAULT NULL,
-  `reset_code_expires` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `tbladmin`
---
-
-INSERT INTO `tbladmin` (`ID`, `AdminName`, `UserName`, `Email`, `Password`, `AdminRegdate`, `reset_code`, `reset_code_expires`) VALUES
-(1, 'Admin', 'admin', 'senilla.jayriel.mcc@gmail.com', '0192023a7bbd73250516f069df18b500', '2025-01-01 04:36:52', NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tblnotice`
---
-
-CREATE TABLE `tblnotice` (
-  `ID` int(5) NOT NULL,
-  `NoticeTitle` mediumtext DEFAULT NULL,
-  `ClassId` int(10) DEFAULT NULL,
-  `NoticeMsg` mediumtext DEFAULT NULL,
-  `CreationDate` timestamp NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `tblnotice`
---
-
-INSERT INTO `tblnotice` (`ID`, `NoticeTitle`, `ClassId`, `NoticeMsg`, `CreationDate`) VALUES
-(7, 'Test Notice', 1, 'This is the test notice. This is the test notice. This is the test notice. This is the test notice. This is the test notice.', '2025-01-01 06:03:25'),
-(8, 'Winter Vacnation', 1, 'Winter vacation till 15 Jan 2025', '2025-01-04 04:12:07'),
-(9, 'Sample01', 8, 'This is sample post!!', '2025-07-28 05:37:25'),
-(10, 'Sample03', NULL, 'this sample 03', '2025-08-26 05:26:30'),
-(11, 'Sample04', NULL, 'This is sample 04', '2025-08-26 05:27:00'),
-(12, 'Sample05', NULL, 'This is sample 06', '2025-08-26 05:29:03');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tblpage`
---
-
-CREATE TABLE `tblpage` (
-  `ID` int(10) NOT NULL,
-  `PageType` varchar(200) DEFAULT NULL,
-  `PageTitle` mediumtext DEFAULT NULL,
-  `PageDescription` mediumtext DEFAULT NULL,
-  `Email` varchar(200) DEFAULT NULL,
-  `MobileNumber` bigint(10) DEFAULT NULL,
-  `UpdationDate` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `tblpage`
---
-
-INSERT INTO `tblpage` (`ID`, `PageType`, `PageTitle`, `PageDescription`, `Email`, `MobileNumber`, `UpdationDate`) VALUES
-(1, 'aboutus', 'About Us', '<div style=\"text-align: start;\"><font color=\"#7b8898\" face=\"Mercury SSm A, Mercury SSm B, Georgia, Times, Times New Roman, Microsoft YaHei New, Microsoft Yahei, ????, ??, SimSun, STXihei, ????, serif\"><span style=\"font-size: 26px;\">Student Management System Developed for MCC.</span></font><br></div>', NULL, NULL, NULL),
-(2, 'contactus', 'Contact Us', '<span style=\"color: rgb(8, 8, 9); font-family: &quot;Segoe UI Historic&quot;, &quot;Segoe UI&quot;, Helvetica, Arial, sans-serif; font-size: 15px;\">Mandaue City Cultural and Sports Complex, A. Soriano Ave, Mandaue City, Philippines</span>', 'mcc@mandauecitycollege.com', 322395989, NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tblpublicnotice`
---
-
-CREATE TABLE `tblpublicnotice` (
-  `ID` int(5) NOT NULL,
-  `NoticeTitle` varchar(200) DEFAULT NULL,
-  `NoticeMessage` mediumtext DEFAULT NULL,
-  `CreationDate` timestamp NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `tblpublicnotice`
---
-
-INSERT INTO `tblpublicnotice` (`ID`, `NoticeTitle`, `NoticeMessage`, `CreationDate`) VALUES
-(3, 'Winter vaction', 'Vacation til 15 Jan', '2025-01-04 04:14:32'),
-(4, 'Sample02', 'this is sample 2', '2025-08-26 05:12:01');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tblstaff`
---
-
-CREATE TABLE `tblstaff` (
-  `ID` int(11) NOT NULL,
-  `StaffName` varchar(100) NOT NULL,
-  `UserName` varchar(50) NOT NULL,
-  `Email` varchar(100) NOT NULL,
-  `Password` varchar(255) NOT NULL,
-  `StaffRegdate` datetime DEFAULT current_timestamp(),
-  `Status` tinyint(1) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tblstaff`
---
-
-INSERT INTO `tblstaff` (`ID`, `StaffName`, `UserName`, `Email`, `Password`, `StaffRegdate`, `Status`) VALUES
-(1, 'Shiela daniot', 'shiela', 'shiela@gmail.com', 'b3b2cc4114d1d4ec9fecf51fe4852112', '2025-09-09 06:56:58', 1),
-(3, 'gabi katol', 'gabi', 'gabi@test.com', 'd1aa72f9cae9ff4a4377fc58a5ae2fe9', '2025-09-12 14:20:55', 1),
-(4, 'saging hinog', 'saging', 'saging@test.com', '71eb4a6c476caef18ca1c2b5342f357a', '2025-09-12 14:21:16', 1);
 
 -- --------------------------------------------------------
 
@@ -182,6 +62,8 @@ CREATE TABLE `tblstudent` (
   `YearLevel` enum('1','2','3','4') NOT NULL,
   `Password` varchar(255) NOT NULL,
   `Image` varchar(255) DEFAULT NULL,
+  `Academic` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `NonAcademic` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `Status` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -189,51 +71,19 @@ CREATE TABLE `tblstudent` (
 -- Dumping data for table `tblstudent`
 --
 
-INSERT INTO `tblstudent` (`ID`, `StuID`, `FamilyName`, `FirstName`, `MiddleName`, `Program`, `Major`, `LearnersReferenceNo`, `DOB`, `PlaceOfBirth`, `Gender`, `CivilStatus`, `Religion`, `Height`, `Weight`, `Citizenship`, `FathersName`, `MothersMaidenName`, `BuildingHouseNumber`, `StreetName`, `Barangay`, `CityMunicipality`, `Province`, `PostalCode`, `ContactNumber`, `EmailAddress`, `EmergencyContactPerson`, `EmergencyRelationship`, `EmergencyContactNumber`, `EmergencyAddress`, `Category`, `YearLevel`, `Password`, `Image`, `Status`) VALUES
-(1, '222- 08412', 'Senilla', 'Jayriel', 'Longakit', 'BSIT', 'InfoTech', '119323090042', '2004-04-09', 'idk', 'Male', 'single', 'Roman Catholic', '164.00', '57.00', 'Filipino', 'Arnulfo Senilla', 'Jennifer Longakit', NULL, NULL, NULL, NULL, NULL, NULL, '09319106644', 'jayriel@test.com', 'jaynard senilla', 'brother', '09238263741', 'idk', 'New Freshman', '4', 'ad6a280417a0f533d8b670c61667e1a0', 'pfpjm.jfif', 1),
-(2, '222- 08410', 'Ypil', 'John Mar', 'Hortilana', 'BSIT', 'InfoTech', '119323090040', '2002-12-22', 'idk', 'Gay', 'single', 'Roman Catholic', '164cm', '57cm', 'Filipino', 'idk', 'idk', 'idk', 'idk', 'idk', 'idk', 'idk', '6004', '09319106644', 'jm@test.com', 'Denise', 'wife', '09238263740', 'idk', 'Regular', '4', 'ad6a280417a0f533d8b670c61667e1a0', 'pfpjm.jfif', 1),
-(3, '222- 08411', 'Canonio', 'Jezrah Faith', 'Conde', 'BSIT', 'InfoTech', '119323090041', '2004-05-13', 'idk', 'Female', 'Single', 'Roman Catholic', '164cm', '49kg', 'Filipino', 'EdilJr Canonio', 'Nimfa Conde', 'idk', 'idk', 'idk', 'idk', 'idk', '6004', '09319106639', 'jezrah@test.com', 'Marissa Canonio', 'Step Mother', '09238263740', 'idk', 'Regular', '4', '', NULL, 1),
-(9, '2025-001', 'Garcia', 'Juan', 'Santos', 'BSIT', 'Software Engineering', 'LRN12345', '2003-05-12', 'Manila', 'Male', 'Single', 'Catholic', '170', '65', 'Filipino', 'Pedro Garcia', 'Maria Santos', '123', 'Mabini St', 'Barangay 1', 'Quezon City', 'Metro Manila', '1100', '09171234567', 'juan.garcia@example.com', 'Ana Garcia', 'Sister', '09181234567', '123 Mabini St, QC', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, 1),
-(10, '2025-002', 'Reyes', 'Maria', 'Lopez', 'BSBA', 'Marketing', 'LRN67890', '2002-11-23', 'Cebu', 'Female', 'Single', 'Catholic', '160', '50', 'Filipino', 'Jose Reyes', 'Elena Lopez', '456', 'Rizal Ave', 'Barangay 5', 'Cebu City', 'Cebu', '6000', '09991234567', 'maria.reyes@example.com', 'Jose Reyes', 'Father', '09981234567', '456 Rizal Ave, Cebu', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, 1),
-(11, '2025-003', 'Cruz', 'Mark', 'Antonio', 'BSCE', 'Structural Engineering', 'LRN54321', '2001-07-19', 'Davao', 'Male', 'Married', 'Christian', '175', '70', 'Filipino', 'Andres Cruz', 'Luz Antonio', '789', 'Bonifacio St', 'Barangay 10', 'Davao City', 'Davao del Sur', '8000', '09221234567', 'mark.cruz@example.com', 'Anna Cruz', 'Wife', '09281234567', '789 Bonifacio St, Davao', 'Irregular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, 1),
-(12, '2025-004', 'Torres', 'Angela', 'Dela Cruz', 'BSN', 'Nursing', 'LRN98765', '2004-01-05', 'Baguio', 'Female', 'Single', 'Catholic', '158', '48', 'Filipino', 'Mario Torres', 'Cristina Dela Cruz', '321', 'Session Rd', 'Barangay 3', 'Baguio City', 'Benguet', '2600', '09331234567', 'angela.torres@example.com', 'Cristina Dela Cruz', 'Mother', '09381234567', '321 Session Rd, Baguio', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, 1),
-(13, '2025-005', 'Villanueva', 'Jose', 'Martinez', 'BSA', 'Accounting', 'LRN19283', '2003-09-30', 'Iloilo', 'Male', 'Single', 'Catholic', '172', '68', 'Filipino', 'Ramon Villanueva', 'Teresa Martinez', '654', 'Lopez Jaena St', 'Barangay 8', 'Iloilo City', 'Iloilo', '5000', '09451234567', 'jose.villanueva@example.com', 'Teresa Martinez', 'Mother', '09481234567', '654 Lopez Jaena St, Iloilo', 'Regular', '4', 'ad6a280417a0f533d8b670c61667e1a0', NULL, 1);
+INSERT INTO `tblstudent` (`ID`, `StuID`, `FamilyName`, `FirstName`, `MiddleName`, `Program`, `Major`, `LearnersReferenceNo`, `DOB`, `PlaceOfBirth`, `Gender`, `CivilStatus`, `Religion`, `Height`, `Weight`, `Citizenship`, `FathersName`, `MothersMaidenName`, `BuildingHouseNumber`, `StreetName`, `Barangay`, `CityMunicipality`, `Province`, `PostalCode`, `ContactNumber`, `EmailAddress`, `EmergencyContactPerson`, `EmergencyRelationship`, `EmergencyContactNumber`, `EmergencyAddress`, `Category`, `YearLevel`, `Password`, `Image`, `Academic`, `NonAcademic`, `Status`) VALUES
+(1, '222- 08412', 'Senilla', 'Jayriel', 'Longakit', 'BSIT', 'InfoTech', '119323090042', '2004-04-09', 'idk', 'Mechanic', 'single', 'Roman Catholic', '164cm', '57kg', 'Filipino', 'Arnulfo Senilla', 'Jennifer Longakit', '587-A', 'Carnation street', 'Casili', 'Consolacion', 'Cebu', '6014', '09319106644', 'jayriel@test.com', 'jaynard senilla', 'brother', '09238263741', 'idk', 'Regular', '4', 'ad6a280417a0f533d8b670c61667e1a0', 'pfpjm.jfif', NULL, 'Sipak Takraw', 1),
+(2, '222- 08410', 'Ypil', 'John Mar', 'Hortilana', 'BSIT', 'InfoTech', '119323090040', '2002-12-22', 'idk', 'Gay', 'single', 'Roman Catholic', '164cm', '57cm', 'Filipino', 'idk', 'idk', 'idk', 'idk', 'idk', 'idk', 'idk', '6004', '09319106644', 'ypil.johnmar.mcc@gmail.com', 'Denise', 'wife', '09238263740', 'idk', 'Regular', '4', '$2y$10$sBdrj5NJOVA1uMg8x1Mleee4cGXEvOscqq9oQpPz8zEvWU1nzH6Fe', 'pfpjm.jfif', NULL, 'Badminton, Basketball', 1),
+(3, '222- 08411', 'Canonio', 'Jezrah Faith', 'Conde', 'BSIT', 'InfoTech', '119323090041', '2004-05-13', 'idk', 'Female', 'Single', 'Roman Catholic', '164cm', '49kg', 'Filipino', 'EdilJr Canonio', 'Nimfa Conde', 'idk', 'idk', 'idk', 'idk', 'idk', '6004', '09319106639', 'jezrah@test.com', 'Marissa Canonio', 'Step Mother', '09238263740', 'idk', 'Regular', '4', '', NULL, NULL, NULL, 1),
+(9, '2025-001', 'Garcia', 'Juan', 'Santos', 'BSIT', 'Software Engineering', 'LRN12345', '2003-05-12', 'Manila', 'Male', 'Single', 'Catholic', '170', '65', 'Filipino', 'Pedro Garcia', 'Maria Santos', '123', 'Mabini St', 'Barangay 1', 'Quezon City', 'Metro Manila', '1100', '09171234567', 'juan.garcia@example.com', 'Ana Garcia', 'Sister', '09181234567', '123 Mabini St, QC', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
+(10, '2025-002', 'Reyes', 'Maria', 'Lopez', 'BSBA', 'Marketing', 'LRN67890', '2002-11-23', 'Cebu', 'Female', 'Single', 'Catholic', '160', '50', 'Filipino', 'Jose Reyes', 'Elena Lopez', '456', 'Rizal Ave', 'Barangay 5', 'Cebu City', 'Cebu', '6000', '09991234567', 'maria.reyes@example.com', 'Jose Reyes', 'Father', '09981234567', '456 Rizal Ave, Cebu', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
+(11, '2025-003', 'Cruz', 'Mark', 'Antonio', 'BSCE', 'Structural Engineering', 'LRN54321', '2001-07-19', 'Davao', 'Male', 'Married', 'Christian', '175', '70', 'Filipino', 'Andres Cruz', 'Luz Antonio', '789', 'Bonifacio St', 'Barangay 10', 'Davao City', 'Davao del Sur', '8000', '09221234567', 'mark.cruz@example.com', 'Anna Cruz', 'Wife', '09281234567', '789 Bonifacio St, Davao', 'Irregular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
+(12, '2025-004', 'Torres', 'Angela', 'Dela Cruz', 'BSN', 'Nursing', 'LRN98765', '2004-01-05', 'Baguio', 'Female', 'Single', 'Catholic', '158', '48', 'Filipino', 'Mario Torres', 'Cristina Dela Cruz', '321', 'Session Rd', 'Barangay 3', 'Baguio City', 'Benguet', '2600', '09331234567', 'angela.torres@example.com', 'Cristina Dela Cruz', 'Mother', '09381234567', '321 Session Rd, Baguio', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
+(13, '2025-005', 'Villanueva', 'Jose', 'Martinez', 'BSA', 'Accounting', 'LRN19283', '2003-09-30', 'Iloilo', 'Male', 'Single', 'Catholic', '172', '68', 'Filipino', 'Ramon Villanueva', 'Teresa Martinez', '654', 'Lopez Jaena St', 'Barangay 8', 'Iloilo City', 'Iloilo', '5000', '09451234567', 'jose.villanueva@example.com', 'Teresa Martinez', 'Mother', '09481234567', '654 Lopez Jaena St, Iloilo', 'Regular', '4', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1);
 
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `tbladmin`
---
-ALTER TABLE `tbladmin`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Indexes for table `tblnotice`
---
-ALTER TABLE `tblnotice`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Indexes for table `tblpage`
---
-ALTER TABLE `tblpage`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Indexes for table `tblpublicnotice`
---
-ALTER TABLE `tblpublicnotice`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Indexes for table `tblstaff`
---
-ALTER TABLE `tblstaff`
-  ADD PRIMARY KEY (`ID`),
-  ADD UNIQUE KEY `UserName` (`UserName`),
-  ADD UNIQUE KEY `Email` (`Email`);
 
 --
 -- Indexes for table `tblstudent`
@@ -244,36 +94,6 @@ ALTER TABLE `tblstudent`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `tbladmin`
---
-ALTER TABLE `tbladmin`
-  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `tblnotice`
---
-ALTER TABLE `tblnotice`
-  MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT for table `tblpage`
---
-ALTER TABLE `tblpage`
-  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `tblpublicnotice`
---
-ALTER TABLE `tblpublicnotice`
-  MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `tblstaff`
---
-ALTER TABLE `tblstaff`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tblstudent`

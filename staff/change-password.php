@@ -5,27 +5,54 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is checked
   header('location:logout.php');
 } else {
-  if (isset($_POST['submit'])) {
+  function sendOtp($email, $code) {
+    $subject = "Your Password Change OTP";
+    $message = "Your OTP for password change is: $code";
+    @mail($email, $subject, $message);
+  }
+
+  if (isset($_POST['request_otp'])) {
     $staffid = $_SESSION['sturecmsstaffid'];
     $cpassword = md5($_POST['currentpassword']);
-    $newpassword = md5($_POST['newpassword']);
-    $sql = "SELECT ID FROM tblstaff WHERE ID=:staffid and Password=:cpassword";
+    $newpassword_plain = $_POST['newpassword'];
+    $newpassword_hashed = md5($newpassword_plain);
+
+    $sql = "SELECT ID, Email FROM tblstaff WHERE ID=:staffid and Password=:cpassword";
     $query = $dbh->prepare($sql);
     $query->bindParam(':staffid', $staffid, PDO::PARAM_STR);
     $query->bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
     $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
 
     if ($query->rowCount() > 0) {
-      $con = "UPDATE tblstaff SET Password=:newpassword WHERE ID=:staffid";
-      $chngpwd1 = $dbh->prepare($con);
-      $chngpwd1->bindParam(':staffid', $staffid, PDO::PARAM_STR);
-      $chngpwd1->bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
-      $chngpwd1->execute();
-
-      echo '<script>alert("Your password has been successfully changed.")</script>';
+      $row = $query->fetch(PDO::FETCH_ASSOC);
+      $email = $row['Email'];
+      $code = rand(100000, 999999);
+      sendOtp($email, $code);
+      $_SESSION['change_otp'] = $code;
+      $_SESSION['change_otp_expires'] = time() + 600;
+      $_SESSION['change_pending_password'] = $newpassword_hashed;
+      $_SESSION['change_user_id'] = $staffid;
+      $_SESSION['change_user_email'] = $email;
+      echo '<script>alert("An OTP has been sent to your registered email.")</script>';
     } else {
       echo '<script>alert("Your current password is incorrect.")</script>';
+    }
+  }
+
+  if (isset($_POST['verify_otp'])) {
+    $input_code = trim($_POST['input_code']);
+    if (!empty($_SESSION['change_otp']) && $_SESSION['change_otp_expires'] >= time() && $input_code == $_SESSION['change_otp']) {
+      $userid = $_SESSION['change_user_id'];
+      $newpassword = $_SESSION['change_pending_password'];
+      $con = "UPDATE tblstaff SET Password=:newpassword WHERE ID=:staffid";
+      $chngpwd1 = $dbh->prepare($con);
+      $chngpwd1->bindParam(':staffid', $userid, PDO::PARAM_STR);
+      $chngpwd1->bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
+      $chngpwd1->execute();
+      echo '<script>alert("Your password has been successfully changed.")</script>';
+      unset($_SESSION['change_otp'], $_SESSION['change_otp_expires'], $_SESSION['change_pending_password'], $_SESSION['change_user_id'], $_SESSION['change_user_email']);
+    } else {
+      echo '<script>alert("Invalid or expired OTP")</script>';
     }
   }
 ?>
@@ -84,6 +111,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title" style="text-align: center;">Change Password</h4>
+                  <?php if (!isset($_SESSION['change_otp'])): ?>
                   <form class="forms-sample" name="changepassword" method="post" onsubmit="return checkpass();">
                     <div class="form-group">
                       <label for="currentpassword">Current Password</label>
@@ -97,8 +125,17 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
                       <label for="confirmpassword">Confirm Password</label>
                       <input type="password" name="confirmpassword" id="confirmpassword" class="form-control" required="true">
                     </div>
-                    <button type="submit" class="btn btn-primary mr-2" name="submit">Change</button>
+                    <button type="submit" class="btn btn-primary mr-2" name="request_otp">Request OTP</button>
                   </form>
+                  <?php else: ?>
+                  <form class="forms-sample" name="verifyotp" method="post">
+                    <div class="form-group">
+                      <label for="input_code">Enter OTP</label>
+                      <input type="text" name="input_code" class="form-control" required="true">
+                    </div>
+                    <button type="submit" class="btn btn-primary mr-2" name="verify_otp">Verify & Change</button>
+                  </form>
+                  <?php endif; ?>
                 </div>
               </div>
             </div>
