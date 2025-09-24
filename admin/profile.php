@@ -8,13 +8,11 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   if (isset($_POST['submit'])) {
     $adminid = $_SESSION['sturecmsaid'];
     $AName = $_POST['adminname'];
-    $mobno = $_POST['mobilenumber'];
     $email = $_POST['email'];
-    $sql = "update tbladmin set AdminName=:adminname,MobileNumber=:mobilenumber,Email=:email where ID=:aid";
+    $sql = "update tbladmin set AdminName=:adminname,Email=:email where ID=:aid";
     $query = $dbh->prepare($sql);
     $query->bindParam(':adminname', $AName, PDO::PARAM_STR);
     $query->bindParam(':email', $email, PDO::PARAM_STR);
-    $query->bindParam(':mobilenumber', $mobno, PDO::PARAM_STR);
     $query->bindParam(':aid', $adminid, PDO::PARAM_STR);
     $query->execute();
 
@@ -91,11 +89,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             <label for="exampleInputEmail3">User Name</label>
                             <input type="text" name="username" value="<?php echo $row->UserName; ?>" class="form-control"
                               readonly="">
-                          </div>
-                          <div class="form-group">
-                            <label for="exampleInputPassword4">Contact Number</label>
-                            <input type="text" name="mobilenumber" value="<?php echo $row->MobileNumber; ?>"
-                              class="form-control" maxlength='10' required='true' pattern="[0-9]+">
                           </div>
                           <div class="form-group">
                             <label for="exampleInputCity1">Email</label>

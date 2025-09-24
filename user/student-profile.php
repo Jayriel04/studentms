@@ -40,7 +40,7 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                 <div class="profile-card-grid">
                   <?php
                   $sid = $_SESSION['sturecmsstuid'];
-                  $sql = "SELECT StuID, FamilyName, FirstName, MiddleName, Program, Major, LearnersReferenceNo, DOB, PlaceOfBirth, Gender, CivilStatus, Religion, Height, Weight, Citizenship, FathersName, MothersMaidenName, BuildingHouseNumber, StreetName, Barangay, CityMunicipality, Province, PostalCode, ContactNumber, EmailAddress, EmergencyContactPerson, EmergencyRelationship, EmergencyContactNumber, EmergencyAddress, Category, YearLevel, Image FROM tblstudent WHERE StuID=:sid";
+                  $sql = "SELECT StuID, FamilyName, FirstName, MiddleName, Program, Major, LearnersReferenceNo, DOB, PlaceOfBirth, Gender, CivilStatus, Religion, Height, Weight, Citizenship, FathersName, MothersMaidenName, BuildingHouseNumber, StreetName, Barangay, CityMunicipality, Province, PostalCode, ContactNumber, EmailAddress, EmergencyContactPerson, EmergencyRelationship, EmergencyContactNumber, EmergencyAddress, Category, YearLevel, Image, Academic, NonAcademic FROM tblstudent WHERE StuID=:sid";
                   $query = $dbh->prepare($sql);
                   $query->bindParam(':sid', $sid, PDO::PARAM_STR);
                   $query->execute();
@@ -82,8 +82,6 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                             <th>Learner's Reference No.</th>
                             <td><?php echo htmlentities($row->LearnersReferenceNo); ?></td>
                           </tr>
-                        </table>
-                        <table class="table profile-table">
                           <tr>
                             <th>Date of Birth</th>
                             <td><?php echo htmlentities($row->DOB); ?></td>
@@ -100,6 +98,8 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                             <th>Civil Status</th>
                             <td><?php echo htmlentities($row->CivilStatus); ?></td>
                           </tr>
+                        </table>
+                        <table class="table profile-table">
                           <tr>
                             <th>Religion</th>
                             <td><?php echo htmlentities($row->Religion); ?></td>
@@ -112,8 +112,6 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                             <th>Weight (kg)</th>
                             <td><?php echo htmlentities($row->Weight); ?></td>
                           </tr>
-                        </table>
-                        <table class="table profile-table">
                           <tr>
                             <th>Citizenship</th>
                             <td><?php echo htmlentities($row->Citizenship); ?></td>
@@ -141,6 +139,14 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                           <tr>
                             <th>Barangay</th>
                             <td><?php echo htmlentities($row->Barangay); ?></td>
+                          </tr>
+                          <tr>
+                            <th>Academic</th>
+                            <td><?php echo htmlentities($row->Academic); ?></td>
+                          </tr>
+                          <tr>
+                            <th>Non-Academic</th>
+                            <td><?php echo htmlentities($row->NonAcademic); ?></td>
                           </tr>
                         </table>
                         <a href="update-profile.php" class="btn btn-primary profile-btn">Update Profile</a>

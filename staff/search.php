@@ -151,7 +151,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Ensure staff session is chec
                       <div>
                         <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="btn btn-info btn-xs">Edit</a>
                         <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-warning btn-xs"><?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?></a>
-                        <a href="validate-achievements.php?stu=<?php echo urlencode($row->StuID); ?>" class="btn btn-primary btn-xs">Validate Achievements</a>
+                        <!-- Validate Achievements moved to sidebar -->
                       </div>
                     </td>
                   </tr>
@@ -208,7 +208,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Ensure staff session is chec
                       <div>
                         <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="btn btn-info btn-xs">Edit</a>
                         <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-warning btn-xs"><?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?></a>
-                        <a href="validate-achievements.php?stu=<?php echo urlencode($row->StuID); ?>" class="btn btn-primary btn-xs">Validate Achievements</a>
+                        <!-- Validate Achievements moved to sidebar -->
                       </div>
                     </td>
                   </tr>

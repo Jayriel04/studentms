@@ -134,6 +134,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                     class="btn btn-xs" style="background-color: #007BFF; color: white;">
                                     <?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?>
                                   </a>
+                                  <!-- Validate Achievements moved to sidebar -->
                                 </td>
                               </tr>
                               <?php $cnt++;

@@ -41,6 +41,7 @@
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"> <a class="nav-link" href="add-students.php">Add Students</a></li>
           <li class="nav-item"> <a class="nav-link" href="manage-students.php">Manage Students</a></li>
+          <li class="nav-item"> <a class="nav-link" href="validate-achievements.php">Validate Achievements</a></li>
         </ul>
       </div>
     </li>

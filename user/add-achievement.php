@@ -60,27 +60,30 @@ if (isset($_POST['add_achievement'])) {
       $achievement_id = $dbh->lastInsertId();
 
       if ($skills_raw !== '') {
-        $skills = array_filter(array_map('trim', explode(',', $skills_raw)));
-        $skills = array_unique($skills);
-        foreach ($skills as $skill_name) {
-          if ($skill_name === '') continue;
-          $s = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
-          $s->bindParam(':name', $skill_name, PDO::PARAM_STR);
-          $s->execute();
-          $skill = $s->fetch(PDO::FETCH_OBJ);
-          if ($skill && isset($skill->id)) {
-            $skill_id = $skill->id;
-          } else {
-            $insk = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
-            $insk->bindParam(':name', $skill_name, PDO::PARAM_STR);
-            $insk->bindParam(':category', $ach_category, PDO::PARAM_STR);
-            $insk->execute();
-            $skill_id = $dbh->lastInsertId();
+        // Only allow one skill per submission — take the first non-empty tag
+        $parts = array_map('trim', explode(',', $skills_raw));
+        $parts = array_filter($parts);
+        if (count($parts) > 0) {
+          $skill_name = reset($parts);
+          if ($skill_name !== '') {
+            $s = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
+            $s->bindParam(':name', $skill_name, PDO::PARAM_STR);
+            $s->execute();
+            $skill = $s->fetch(PDO::FETCH_OBJ);
+            if ($skill && isset($skill->id)) {
+              $skill_id = $skill->id;
+            } else {
+              $insk = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
+              $insk->bindParam(':name', $skill_name, PDO::PARAM_STR);
+              $insk->bindParam(':category', $ach_category, PDO::PARAM_STR);
+              $insk->execute();
+              $skill_id = $dbh->lastInsertId();
+            }
+            $link = $dbh->prepare("INSERT INTO student_achievement_skills (achievement_id, skill_id) VALUES (:aid, :sid)");
+            $link->bindParam(':aid', $achievement_id, PDO::PARAM_INT);
+            $link->bindParam(':sid', $skill_id, PDO::PARAM_INT);
+            $link->execute();
           }
-          $link = $dbh->prepare("INSERT INTO student_achievement_skills (achievement_id, skill_id) VALUES (:aid, :sid)");
-          $link->bindParam(':aid', $achievement_id, PDO::PARAM_INT);
-          $link->bindParam(':sid', $skill_id, PDO::PARAM_INT);
-          $link->execute();
         }
       }
 
@@ -134,12 +137,12 @@ if (isset($_POST['add_achievement'])) {
 
                   <form id="addAchievementForm" method="post" enctype="multipart/form-data">
                     <div class="form-group">
-                      <label>Skills / Tags</label>
-                      <p class="card-description">Click a tag to select or remove it. Add a custom tag if not listed.</p>
+                      <label>Skill / Tag</label>
+                      <p class="card-description">Select one tag. Click a suggestion to choose it or add a custom tag.</p>
                       <div id="skillSuggestions" style="margin-bottom:8px;">
                         <?php if (!empty($skillSuggestions)): ?>
                           <?php foreach ($skillSuggestions as $sugg): ?>
-                            <button type="button" class="btn btn-sm btn-outline-secondary skill-sugg" data-name="<?php echo htmlentities($sugg); ?>"><?php echo htmlentities($sugg); ?></button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary skill-sugg" style="color: black;" data-name="<?php echo htmlentities($sugg); ?>"><?php echo htmlentities($sugg); ?></button>
                           <?php endforeach; ?>
                         <?php else: ?>
                           <small class="text-muted">No suggestions available.</small>
@@ -190,35 +193,37 @@ if (isset($_POST['add_achievement'])) {
   <script src="./js/off-canvas.js"></script>
   <script src="./js/misc.js"></script>
   <script>
-    // Click-to-toggle skills tags
+    // Single-select skill tag UI
     (function () {
-      var skills = [];
+      var selectedSkill = null;
       var container = document.getElementById('skillsContainer');
       var hidden = document.getElementById('skillsHidden');
 
       function render() {
         container.innerHTML = '';
-        skills.forEach(function (s, idx) {
+        if (selectedSkill) {
           var btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'btn btn-sm btn-info skill-chip';
           btn.style.marginRight = '6px';
           btn.style.padding = '6px';
-          btn.textContent = s + ' \u00A0\u2715';
-          btn.onclick = function () { skills.splice(idx, 1); render(); };
+          btn.textContent = selectedSkill + ' \u00A0\u2715';
+          btn.onclick = function () { selectedSkill = null; render(); };
           container.appendChild(btn);
-        });
-        hidden.value = skills.join(',');
+        }
+        hidden.value = selectedSkill ? selectedSkill : '';
       }
 
-      function toggleTag(name) {
-        var i = skills.indexOf(name);
-        if (i === -1) skills.push(name);
-        else skills.splice(i, 1);
+      function selectTag(name) {
+        if (!name) return;
+        if (selectedSkill === name) {
+          selectedSkill = null;
+        } else {
+          selectedSkill = name;
+        }
         render();
       }
 
-      // Attach handlers to suggestion buttons
       var suggWrap = document.getElementById('skillSuggestions');
       if (suggWrap) {
         suggWrap.addEventListener('click', function (e) {
@@ -226,16 +231,19 @@ if (isset($_POST['add_achievement'])) {
           if (!btn || !btn.classList) return;
           if (btn.classList.contains('skill-sugg')) {
             var name = btn.getAttribute('data-name');
-            if (name) toggleTag(name);
+            if (name) selectTag(name);
           } else if (btn.id === 'addCustomTag') {
             var custom = prompt('Enter custom tag:');
-            if (custom) toggleTag(custom.trim());
+            if (custom) selectTag(custom.trim());
           }
         });
       }
 
       // expose for form submit
-      window.prepareSkills = function () { hidden.value = skills.join(','); return true; };
+      window.prepareSkills = function () { hidden.value = selectedSkill ? selectedSkill : ''; return true; };
+
+      // initial render
+      render();
     })();
   </script>
 </body>

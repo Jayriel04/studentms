@@ -1,24 +1,24 @@
 <?php
 session_start();
 include_once('includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsstaffid']) == 0) {
+if (strlen($_SESSION['sturecmsaid']) == 0) {
   header('location:login.php');
   exit;
 }
-$staffId = $_SESSION['sturecmsstaffid'];
+$adminId = $_SESSION['sturecmsaid'];
 
 // CSRF token
-if (empty($_SESSION['csrf_token'])) {
-  $_SESSION['csrf_token'] = bin2hex(random_bytes(16));
+if (empty($_SESSION['csrf_token_admin'])) {
+  $_SESSION['csrf_token_admin'] = bin2hex(random_bytes(16));
 }
 
-// Handle actions
+// Handle actions (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_POST['id'])) {
   $id = intval($_POST['id']);
   $action = $_POST['action'];
   // CSRF check
-  if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-    $_SESSION['ach_msg'] = 'Invalid CSRF token.';
+  if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token_admin']) {
+    $_SESSION['ach_msg_admin'] = 'Invalid CSRF token.';
     header('Location: validate-achievements.php');
     exit;
   }
@@ -34,8 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
   }
 
   try {
-    $logFile = __DIR__ . '/achieve_actions.log';
-    $log = [];
     // helper to fetch status
     $fetchStatus = function($aid) use ($dbh) {
       try {
@@ -50,116 +48,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
     };
 
     if ($action === 'approve') {
-      $log['pre_status'] = $fetchStatus($id);
+      $pre = $fetchStatus($id);
       if ($hasApprovedBy) {
         $u = $dbh->prepare("UPDATE student_achievements SET status='approved', approved_by=:staff, approved_at=NOW() WHERE id=:id");
-        $u->bindParam(':staff', $staffId);
+        $u->bindParam(':staff', $adminId);
       } else {
         $u = $dbh->prepare("UPDATE student_achievements SET status='approved' WHERE id=:id");
       }
       $u->bindParam(':id', $id, PDO::PARAM_INT);
       $u->execute();
       $affected = $u->rowCount();
-      $log['affected'] = $affected;
-      $log['errorInfo'] = $u->errorInfo();
-      $log['post_status'] = $fetchStatus($id);
       if ($affected > 0) {
-        $_SESSION['ach_msg'] = 'Achievement approved.';
-        // try to insert into achievement_approvals table if it exists
+        // insert into achievement_approvals if exists
         try {
           $chkApp = $dbh->prepare("SHOW TABLES LIKE 'achievement_approvals'");
           $chkApp->execute();
           if ($chkApp->rowCount() > 0) {
-            $notes = null;
-            $ins = $dbh->prepare("INSERT INTO achievement_approvals (achievement_id, approved_by, approved_at, notes) VALUES (:aid, :staff, NOW(), :notes)");
+            $ins = $dbh->prepare("INSERT INTO achievement_approvals (achievement_id, approved_by, approved_at, notes) VALUES (:aid, :staff, NOW(), NULL)");
             $ins->bindParam(':aid', $id, PDO::PARAM_INT);
-            $ins->bindParam(':staff', $staffId);
-            $ins->bindParam(':notes', $notes);
+            $ins->bindParam(':staff', $adminId);
             $ins->execute();
-            $log['approval_inserted'] = $ins->rowCount();
           }
-        } catch (Exception $e) {
-          $log['approval_insert_error'] = $e->getMessage();
-        }
-        // Now append approved skills to tblstudent Academic/NonAcademic column
-        try {
-          // Fetch achievement category and student id
-          $aStmt = $dbh->prepare("SELECT StuID, category FROM student_achievements WHERE id=:id LIMIT 1");
-          $aStmt->bindParam(':id', $id, PDO::PARAM_INT);
-          $aStmt->execute();
-          $ach = $aStmt->fetch(PDO::FETCH_OBJ);
-          if ($ach) {
-            $stu = $ach->StuID;
-            $category = isset($ach->category) ? trim($ach->category) : '';
-
-            // load skill names for this achievement
-            $skStmt = $dbh->prepare("SELECT sk.name FROM student_achievement_skills ssk JOIN skills sk ON ssk.skill_id = sk.id WHERE ssk.achievement_id = :id");
-            $skStmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $skStmt->execute();
-            $skillRows = $skStmt->fetchAll(PDO::FETCH_COLUMN);
-            if ($skillRows && count($skillRows) > 0) {
-              // determine target column
-              $col = (strtolower($category) === 'academic') ? 'Academic' : 'NonAcademic';
-
-              // ensure column exists on tblstudent (add if missing)
-              $colChk = $dbh->prepare("SHOW COLUMNS FROM tblstudent LIKE :col");
-              $colChk->bindValue(':col', $col, PDO::PARAM_STR);
-              $colChk->execute();
-              if ($colChk->rowCount() === 0) {
-                // add column as TEXT
-                $dbh->exec("ALTER TABLE tblstudent ADD COLUMN `" . $col . "` TEXT NULL");
-              }
-
-              // fetch existing value
-              $curStmt = $dbh->prepare("SELECT `$col` FROM tblstudent WHERE StuID = :stu LIMIT 1");
-              $curStmt->bindParam(':stu', $stu, PDO::PARAM_STR);
-              $curStmt->execute();
-              $curVal = $curStmt->fetchColumn();
-              $existing = [];
-              if ($curVal !== false && $curVal !== null && trim($curVal) !== '') {
-                $existing = array_map('trim', explode(',', $curVal));
-              }
-
-              // merge unique
-              $merged = array_unique(array_filter(array_map('trim', array_merge($existing, $skillRows))));
-              $newVal = implode(', ', $merged);
-
-              $up = $dbh->prepare("UPDATE tblstudent SET `$col` = :val WHERE StuID = :stu");
-              $up->bindParam(':val', $newVal, PDO::PARAM_STR);
-              $up->bindParam(':stu', $stu, PDO::PARAM_STR);
-              $up->execute();
-              $log['student_col_updated'] = [$col => $up->rowCount()];
-            }
-          }
-        } catch (Exception $e) {
-          $log['student_col_update_error'] = $e->getMessage();
-        }
+        } catch (Exception $e) {}
+        $_SESSION['ach_msg_admin'] = 'Achievement approved.';
       } else {
-        $_SESSION['ach_msg'] = 'No rows updated when approving (id=' . $id . ').';
-        if (!empty($log['errorInfo'][2])) $_SESSION['ach_msg'] .= ' DB error: ' . $log['errorInfo'][2];
+        $_SESSION['ach_msg_admin'] = 'No rows updated when approving.';
       }
-  $log['action'] = 'approve';
-  $log['id'] = $id;
-  $log['staff'] = $staffId;
-  @file_put_contents($logFile, date('c') . ' ' . json_encode($log) . PHP_EOL, FILE_APPEND);
-  $_SESSION['ach_debug'] = $log;
     } elseif ($action === 'reject') {
-      $log['pre_status'] = $fetchStatus($id);
+      $pre = $fetchStatus($id);
       if ($hasApprovedBy) {
         $u = $dbh->prepare("UPDATE student_achievements SET status='rejected', approved_by=:staff, approved_at=NOW() WHERE id=:id");
-        $u->bindParam(':staff', $staffId);
+        $u->bindParam(':staff', $adminId);
       } else {
         $u = $dbh->prepare("UPDATE student_achievements SET status='rejected' WHERE id=:id");
       }
       $u->bindParam(':id', $id, PDO::PARAM_INT);
       $u->execute();
       $affected = $u->rowCount();
-      $log['affected'] = $affected;
-      $log['errorInfo'] = $u->errorInfo();
-      $log['post_status'] = $fetchStatus($id);
       if ($affected > 0) {
-        $_SESSION['ach_msg'] = 'Achievement rejected.';
-        // try to insert into achievement_approvals table if it exists
         try {
           $chkApp = $dbh->prepare("SHOW TABLES LIKE 'achievement_approvals'");
           $chkApp->execute();
@@ -167,52 +93,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
             $notes = 'rejected';
             $ins = $dbh->prepare("INSERT INTO achievement_approvals (achievement_id, approved_by, approved_at, notes) VALUES (:aid, :staff, NOW(), :notes)");
             $ins->bindParam(':aid', $id, PDO::PARAM_INT);
-            $ins->bindParam(':staff', $staffId);
+            $ins->bindParam(':staff', $adminId);
             $ins->bindParam(':notes', $notes);
             $ins->execute();
-            $log['approval_inserted'] = $ins->rowCount();
           }
-        } catch (Exception $e) {
-          $log['approval_insert_error'] = $e->getMessage();
-        }
+        } catch (Exception $e) {}
+        $_SESSION['ach_msg_admin'] = 'Achievement rejected.';
       } else {
-        $_SESSION['ach_msg'] = 'No rows updated when rejecting (id=' . $id . ').';
-        if (!empty($log['errorInfo'][2])) $_SESSION['ach_msg'] .= ' DB error: ' . $log['errorInfo'][2];
+        $_SESSION['ach_msg_admin'] = 'No rows updated when rejecting.';
       }
-  $log['action'] = 'reject';
-  $log['id'] = $id;
-  $log['staff'] = $staffId;
-  @file_put_contents($logFile, date('c') . ' ' . json_encode($log) . PHP_EOL, FILE_APPEND);
-  $_SESSION['ach_debug'] = $log;
     }
   } catch (Exception $e) {
-    $_SESSION['ach_msg'] = 'Action error: ' . $e->getMessage();
+    $_SESSION['ach_msg_admin'] = 'Action error: ' . $e->getMessage();
   }
 
-  header('Location: validate-achievements.php');
+    // After processing, if action was approve, append skills to student record similarly to staff
+    try {
+      if (isset($action) && $action === 'approve' && isset($id) && $id > 0) {
+        $aStmt = $dbh->prepare("SELECT StuID, category FROM student_achievements WHERE id=:id LIMIT 1");
+        $aStmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $aStmt->execute();
+        $ach = $aStmt->fetch(PDO::FETCH_OBJ);
+        if ($ach) {
+          $stu = $ach->StuID;
+          $category = isset($ach->category) ? trim($ach->category) : '';
+
+          $skStmt = $dbh->prepare("SELECT sk.name FROM student_achievement_skills ssk JOIN skills sk ON ssk.skill_id = sk.id WHERE ssk.achievement_id = :id");
+          $skStmt->bindParam(':id', $id, PDO::PARAM_INT);
+          $skStmt->execute();
+          $skillRows = $skStmt->fetchAll(PDO::FETCH_COLUMN);
+          if ($skillRows && count($skillRows) > 0) {
+            $col = (strtolower($category) === 'academic') ? 'Academic' : 'NonAcademic';
+            $colChk = $dbh->prepare("SHOW COLUMNS FROM tblstudent LIKE :col");
+            $colChk->bindValue(':col', $col, PDO::PARAM_STR);
+            $colChk->execute();
+            if ($colChk->rowCount() === 0) {
+              $dbh->exec("ALTER TABLE tblstudent ADD COLUMN `" . $col . "` TEXT NULL");
+            }
+
+            $curStmt = $dbh->prepare("SELECT `$col` FROM tblstudent WHERE StuID = :stu LIMIT 1");
+            $curStmt->bindParam(':stu', $stu, PDO::PARAM_STR);
+            $curStmt->execute();
+            $curVal = $curStmt->fetchColumn();
+            $existing = [];
+            if ($curVal !== false && $curVal !== null && trim($curVal) !== '') {
+              $existing = array_map('trim', explode(',', $curVal));
+            }
+            $merged = array_unique(array_filter(array_map('trim', array_merge($existing, $skillRows))));
+            $newVal = implode(', ', $merged);
+            $up = $dbh->prepare("UPDATE tblstudent SET `$col` = :val WHERE StuID = :stu");
+            $up->bindParam(':val', $newVal, PDO::PARAM_STR);
+            $up->bindParam(':stu', $stu, PDO::PARAM_STR);
+            $up->execute();
+          }
+        }
+      }
+    } catch (Exception $e) {
+      // ignore errors but could log
+    }
+
+  header('Location: validate-achievements.php' . (isset($_POST['stu']) ? '?stu=' . urlencode($_POST['stu']) : ''));
   exit;
 }
 
-// Fetch pending achievements with skills and student name
-$sql = "SELECT a.id, a.StuID, CONCAT(s.FamilyName, ' ', s.FirstName) AS StudentName, a.category, a.level, a.points, a.proof_image, a.created_at, a.approved_by, a.approved_at, st.StaffName AS ApproverName, GROUP_CONCAT(sk.name SEPARATOR ', ') AS skills
+// Fetch pending achievements, optional filter by student
+$stuFilter = null;
+if (isset($_GET['stu'])) $stuFilter = $_GET['stu'];
+
+$sql = "SELECT a.id, a.StuID, CONCAT(s.FamilyName, ' ', s.FirstName) AS StudentName, a.category, a.level, a.points, a.proof_image, a.created_at, a.approved_by, a.approved_at, st.AdminName AS ApproverName, GROUP_CONCAT(sk.name SEPARATOR ', ') AS skills
 FROM student_achievements a
 LEFT JOIN student_achievement_skills sas ON a.id = sas.achievement_id
 LEFT JOIN skills sk ON sas.skill_id = sk.id
 JOIN tblstudent s ON a.StuID = s.StuID
-LEFT JOIN tblstaff st ON a.approved_by = st.ID
-WHERE a.status = 'pending'
-GROUP BY a.id
-ORDER BY a.created_at DESC";
+LEFT JOIN tbladmin st ON a.approved_by = st.ID
+WHERE a.status = 'pending'";
+if ($stuFilter) {
+  $sql .= " AND a.StuID = :stu";
+}
+$sql .= " GROUP BY a.id ORDER BY a.created_at DESC";
 $stmt = $dbh->prepare($sql);
+if ($stuFilter) $stmt->bindParam(':stu', $stuFilter);
 $stmt->execute();
 $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Validate Achievements</title>
+  <title>Admin - Validate Achievements</title>
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -240,8 +208,8 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
             <div class="col-md-12">
               <div class="card">
                 <div class="card-body">
-                  <?php if (isset($_SESSION['ach_msg'])): ?>
-                    <div class="alert alert-info"><?php echo htmlentities($_SESSION['ach_msg']); unset($_SESSION['ach_msg']); ?></div>
+                  <?php if (isset($_SESSION['ach_msg_admin'])): ?>
+                    <div class="alert alert-info"><?php echo htmlentities($_SESSION['ach_msg_admin']); unset($_SESSION['ach_msg_admin']); ?></div>
                   <?php endif; ?>
 
                   <?php if (empty($rows)): ?>
@@ -285,13 +253,15 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                                 <form method="post" style="display:inline-block;">
                                   <input type="hidden" name="id" value="<?php echo $r->id; ?>">
                                   <input type="hidden" name="action" value="approve">
-                                  <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                  <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token_admin']; ?>">
+                                  <?php if ($stuFilter) { ?><input type="hidden" name="stu" value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
                                   <button type="submit" class="btn btn-success btn-sm">Approve</button>
                                 </form>
                                 <form method="post" style="display:inline-block;margin-left:6px;">
                                   <input type="hidden" name="id" value="<?php echo $r->id; ?>">
                                   <input type="hidden" name="action" value="reject">
-                                  <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                  <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token_admin']; ?>">
+                                  <?php if ($stuFilter) { ?><input type="hidden" name="stu" value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
                                   <button type="submit" class="btn btn-danger btn-sm">Reject</button>
                                 </form>
                               </td>

@@ -68,6 +68,22 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                           <i class="icon-doc"></i>
                         </div>
                       </div>
+                      <div class="col-md-6 col-xl report-inner-card">
+                        <div class="inner-card-text">
+                          <?php
+                          $sqlPending = "SELECT COUNT(*) FROM student_achievements WHERE status = 'pending'";
+                          $qPending = $dbh->prepare($sqlPending);
+                          $qPending->execute();
+                          $pendingCount = (int)$qPending->fetchColumn();
+                          ?>
+                          <span class="report-title">Pending Validations</span>
+                          <h4><?php echo htmlentities($pendingCount); ?></h4>
+                          <a href="validate-achievements.php"><span class="report-count"> Review Pending</span></a>
+                        </div>
+                        <div class="inner-card-icon bg-warning">
+                          <i class="icon-check"></i>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
