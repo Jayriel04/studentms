@@ -16,8 +16,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $query->bindParam(':aid', $adminid, PDO::PARAM_STR);
     $query->execute();
 
-    echo '<script>alert("Your profile has been updated")</script>';
-    echo "<script>window.location.href ='profile.php'</script>";
+  echo '<script>if(window.showToast) showToast("Your profile has been updated","success");</script>';
+  echo "<script>window.location.href ='profile.php'</script>";
 
   }
   ?>

@@ -29,12 +29,12 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
       $LastInsertId = $dbh->lastInsertId();
       if ($LastInsertId > 0) {
         $success_message = "Staff has been added.";
-        // Do not echo alert or redirect here, use toast in HTML below.
+        // do not echo alert here; success toast is shown by HTML below
       } else {
-        echo '<script>alert("Something Went Wrong. Please try again")</script>';
+        echo "<script>if(window.showToast) showToast('Something Went Wrong. Please try again','danger'); else alert('Something Went Wrong. Please try again');</script>";
       }
     } else {
-      echo "<script>alert('Username already exists. Please try again');</script>";
+      echo "<script>if(window.showToast) showToast('Username already exists. Please try again','warning'); else alert('Username already exists. Please try again');</script>";
     }
   }
 ?>

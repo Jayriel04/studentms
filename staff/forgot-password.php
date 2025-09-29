@@ -17,9 +17,9 @@ if (isset($_POST['submit'])) {
     $chngpwd1->bindParam(':email', $email, PDO::PARAM_STR);
     $chngpwd1->bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
     $chngpwd1->execute();
-    echo "<script>alert('Your Password has been successfully changed');</script>";
+  echo "<script>if(window.showToast) showToast('Your Password has been successfully changed','success');</script>";
   } else {
-    echo "<script>alert('Email ID is invalid');</script>";
+  echo "<script>if(window.showToast) showToast('Email ID is invalid','warning');</script>";
   }
 }
 ?>
@@ -43,9 +43,9 @@ if (isset($_POST['submit'])) {
   <script type="text/javascript">
     function valid() {
       if (document.chngpwd.newpassword.value != document.chngpwd.confirmpassword.value) {
-        alert("New Password and Confirm Password fields do not match!");
-        document.chngpwd.confirmpassword.focus();
-        return false;
+  if(window.showToast) showToast('New Password and Confirm Password fields do not match!','warning'); else alert('New Password and Confirm Password fields do not match!');
+  document.chngpwd.confirmpassword.focus();
+  return false;
       }
       return true;
     }

@@ -33,9 +33,9 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
       $_SESSION['change_pending_password'] = $newpassword_hashed;
       $_SESSION['change_user_id'] = $staffid;
       $_SESSION['change_user_email'] = $email;
-      echo '<script>alert("An OTP has been sent to your registered email.")</script>';
+  echo "<script>if(window.showToast) showToast('An OTP has been sent to your registered email.','info'); else alert('An OTP has been sent to your registered email.');</script>";
     } else {
-      echo '<script>alert("Your current password is incorrect.")</script>';
+  echo "<script>if(window.showToast) showToast('Your current password is incorrect.','warning'); else alert('Your current password is incorrect.');</script>";
     }
   }
 
@@ -49,10 +49,10 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
       $chngpwd1->bindParam(':staffid', $userid, PDO::PARAM_STR);
       $chngpwd1->bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
       $chngpwd1->execute();
-      echo '<script>alert("Your password has been successfully changed.")</script>';
+  echo "<script>if(window.showToast) showToast('Your password has been successfully changed.','success'); else alert('Your password has been successfully changed.');</script>";
       unset($_SESSION['change_otp'], $_SESSION['change_otp_expires'], $_SESSION['change_pending_password'], $_SESSION['change_user_id'], $_SESSION['change_user_email']);
     } else {
-      echo '<script>alert("Invalid or expired OTP")</script>';
+  echo "<script>if(window.showToast) showToast('Invalid or expired OTP','danger'); else alert('Invalid or expired OTP');</script>";
     }
   }
 ?>
@@ -77,9 +77,9 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
   <script type="text/javascript">
     function checkpass() {
       if (document.changepassword.newpassword.value != document.changepassword.confirmpassword.value) {
-        alert('New Password and Confirm Password fields do not match.');
-        document.changepassword.confirmpassword.focus();
-        return false;
+  if(window.showToast) showToast('New Password and Confirm Password fields do not match.','warning'); else alert('New Password and Confirm Password fields do not match.');
+  document.changepassword.confirmpassword.focus();
+  return false;
       }
       return true;
     }

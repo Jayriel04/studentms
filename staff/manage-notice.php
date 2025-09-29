@@ -15,7 +15,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
         $query = $dbh->prepare($sql);
         $query->bindParam(':rid', $rid, PDO::PARAM_INT);
         $query->execute();
-        echo "<script>alert('Notice deleted successfully.');</script>";
+    echo "<script>if(window.showToast) showToast('Notice deleted successfully.','success');</script>";
         echo "<script>window.location.href = 'manage-notice.php'</script>";
     }
 

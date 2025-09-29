@@ -15,7 +15,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
     $query->bindParam(':phone', $phone, PDO::PARAM_STR);
     $query->bindParam(':address', $address, PDO::PARAM_STR);
     $query->execute();
-    echo '<script>alert("Contact Us has been updated successfully.")</script>';
+  echo '<script>if(window.showToast) showToast("Contact Us has been updated successfully.","success");</script>';
   }
 ?>
 <!DOCTYPE html>

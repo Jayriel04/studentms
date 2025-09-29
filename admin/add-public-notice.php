@@ -17,12 +17,11 @@ $query->bindParam(':notmsg',$notmsg,PDO::PARAM_STR);
  $query->execute();
    $LastInsertId=$dbh->lastInsertId();
    if ($LastInsertId>0) {
-    echo '<script>alert("Notice has been added.")</script>';
-echo "<script>window.location.href ='add-public-notice.php'</script>";
+    echo "<script>if(window.showToast) showToast('Notice has been added.','success'); else alert('Notice has been added.'); window.location.href ='add-public-notice.php';</script>";
   }
   else
     {
-         echo '<script>alert("Something Went Wrong. Please try again")</script>';
+         echo "<script>if(window.showToast) showToast('Something Went Wrong. Please try again','danger'); else alert('Something Went Wrong. Please try again');</script>";
     }
 }
   ?>

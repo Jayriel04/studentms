@@ -12,7 +12,8 @@ $ach_error = '';
 // Fetch recent skill suggestions to present as clickable tags
 $skillSuggestions = array();
 try {
-  $srg = $dbh->prepare("SELECT id, name, category FROM skills ORDER BY created_at DESC LIMIT 50");
+  // Use tblskills as the primary suggestions source (this file/DB contains the larger list)
+  $srg = $dbh->prepare("SELECT id, name, category FROM tblskills ORDER BY created_at DESC LIMIT 50");
   $srg->execute();
   $rows = $srg->fetchAll(PDO::FETCH_ASSOC);
   // Normalize categories to only 'Academic' or 'Non-Academic'
@@ -38,21 +39,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['add_tag_ajax'])) {
   // Normalize category to Academic / Non-Academic
   $category = ($category === 'Academic') ? 'Academic' : 'Non-Academic';
   try {
-  $chk = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
+    // Ensure the tag exists in the canonical `skills` table (used by foreign key)
+    $chk = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
     $chk->bindParam(':name', $name, PDO::PARAM_STR);
     $chk->execute();
     if ($chk->rowCount() > 0) {
       $row = $chk->fetch(PDO::FETCH_ASSOC);
-      $resp = ['success' => true, 'id' => $row['id'], 'name' => $name, 'category' => $category, 'msg' => 'Tag exists'];
-      echo json_encode($resp);
-      exit;
+      $skillId = $row['id'];
+    } else {
+      $ins = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
+      $ins->bindParam(':name', $name, PDO::PARAM_STR);
+      $ins->bindParam(':category', $category, PDO::PARAM_STR);
+      $ins->execute();
+      $skillId = $dbh->lastInsertId();
     }
-  $ins = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
-    $ins->bindParam(':name', $name, PDO::PARAM_STR);
-    $ins->bindParam(':category', $category, PDO::PARAM_STR);
-    $ins->execute();
-    $id = $dbh->lastInsertId();
-    $resp = ['success' => true, 'id' => $id, 'name' => $name, 'category' => $category];
+
+    // Also mirror into tblskills (so suggestions use the larger tblskills table)
+    $chk2 = $dbh->prepare("SELECT id FROM tblskills WHERE name = :name LIMIT 1");
+    $chk2->bindParam(':name', $name, PDO::PARAM_STR);
+    $chk2->execute();
+    if ($chk2->rowCount() === 0) {
+      $ins2 = $dbh->prepare("INSERT INTO tblskills (name, category, created_at) VALUES (:name, :category, NOW())");
+      $ins2->bindParam(':name', $name, PDO::PARAM_STR);
+      $ins2->bindParam(':category', $category, PDO::PARAM_STR);
+      $ins2->execute();
+      $tblSkillId = $dbh->lastInsertId();
+    } else {
+      $r2 = $chk2->fetch(PDO::FETCH_ASSOC);
+      $tblSkillId = $r2['id'];
+    }
+
+    $resp = ['success' => true, 'skill_id' => $skillId, 'tblskill_id' => $tblSkillId, 'name' => $name, 'category' => $category];
   } catch (Exception $e) {
     $resp = ['success' => false, 'msg' => 'DB error: ' . $e->getMessage()];
   }
@@ -91,49 +108,85 @@ if (isset($_POST['add_achievement'])) {
   }
 
   if (empty($ach_error)) {
-    try {
-      $ins = "INSERT INTO student_achievements (StuID, level, category, proof_image, status, points, created_at) VALUES (:sid, :level, :category, :proof, 'pending', :points, NOW())";
-      $stmt = $dbh->prepare($ins);
-      $stmt->bindParam(':sid', $sid, PDO::PARAM_STR);
-      $stmt->bindParam(':level', $ach_level, PDO::PARAM_STR);
-      $stmt->bindParam(':category', $ach_category, PDO::PARAM_STR);
-      $stmt->bindParam(':proof', $proof_name, PDO::PARAM_STR);
-      $stmt->bindParam(':points', $points, PDO::PARAM_INT);
-      $stmt->execute();
-      $achievement_id = $dbh->lastInsertId();
+      try {
+        // Start transaction to ensure FK integrity
+        $dbh->beginTransaction();
+        $ins = "INSERT INTO student_achievements (StuID, level, category, proof_image, status, points, created_at) VALUES (:sid, :level, :category, :proof, 'pending', :points, NOW())";
+        $stmt = $dbh->prepare($ins);
+        $stmt->bindParam(':sid', $sid, PDO::PARAM_STR);
+        $stmt->bindParam(':level', $ach_level, PDO::PARAM_STR);
+        $stmt->bindParam(':category', $ach_category, PDO::PARAM_STR);
+        $stmt->bindParam(':proof', $proof_name, PDO::PARAM_STR);
+        $stmt->bindParam(':points', $points, PDO::PARAM_INT);
+        $stmt->execute();
+        $achievement_id = $dbh->lastInsertId();
 
-      if ($skills_raw !== '') {
-        // Only allow one skill per submission — take the first non-empty tag
-        $parts = array_map('trim', explode(',', $skills_raw));
-        $parts = array_filter($parts);
-        if (count($parts) > 0) {
-          $skill_name = reset($parts);
-          if ($skill_name !== '') {
+        // If a suggestion id was passed from the UI, prefer it (it's from tblskills)
+        $skill_id = null;
+        $skills_tbl_id = isset($_POST['skills_id']) ? trim($_POST['skills_id']) : '';
+        if ($skills_tbl_id !== '') {
+          // Map tblskills id -> skills table id. If skills doesn't have it, insert into skills first.
+          $chk = $dbh->prepare("SELECT name, category FROM tblskills WHERE id = :id LIMIT 1");
+          $chk->bindParam(':id', $skills_tbl_id, PDO::PARAM_INT);
+          $chk->execute();
+          $row = $chk->fetch(PDO::FETCH_ASSOC);
+          if ($row) {
+            $skill_name = $row['name'];
+            $skill_cat = ($row['category'] === 'Academic') ? 'Academic' : 'Non-Academic';
+            // ensure in skills
             $s = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
             $s->bindParam(':name', $skill_name, PDO::PARAM_STR);
             $s->execute();
-            $skill = $s->fetch(PDO::FETCH_OBJ);
-            if ($skill && isset($skill->id)) {
-              $skill_id = $skill->id;
+            $skill = $s->fetch(PDO::FETCH_ASSOC);
+            if ($skill && isset($skill['id'])) {
+              $skill_id = $skill['id'];
             } else {
               $insk = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
               $insk->bindParam(':name', $skill_name, PDO::PARAM_STR);
-              $insk->bindParam(':category', $ach_category, PDO::PARAM_STR);
+              $insk->bindParam(':category', $skill_cat, PDO::PARAM_STR);
               $insk->execute();
               $skill_id = $dbh->lastInsertId();
             }
-            $link = $dbh->prepare("INSERT INTO student_achievement_skills (achievement_id, skill_id) VALUES (:aid, :sid)");
-            $link->bindParam(':aid', $achievement_id, PDO::PARAM_INT);
-            $link->bindParam(':sid', $skill_id, PDO::PARAM_INT);
-            $link->execute();
           }
         }
-      }
 
-      $ach_success = true;
-    } catch (Exception $e) {
-      $ach_error = 'Error saving achievement: ' . $e->getMessage();
-    }
+        if ($skill_id === null && $skills_raw !== '') {
+          // Fallback: use free-text skill name
+          $parts = array_map('trim', explode(',', $skills_raw));
+          $parts = array_filter($parts);
+          if (count($parts) > 0) {
+            $skill_name = reset($parts);
+            if ($skill_name !== '') {
+              $s = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
+              $s->bindParam(':name', $skill_name, PDO::PARAM_STR);
+              $s->execute();
+              $skill = $s->fetch(PDO::FETCH_OBJ);
+              if ($skill && isset($skill->id)) {
+                $skill_id = $skill->id;
+              } else {
+                $insk = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
+                $insk->bindParam(':name', $skill_name, PDO::PARAM_STR);
+                $insk->bindParam(':category', $ach_category, PDO::PARAM_STR);
+                $insk->execute();
+                $skill_id = $dbh->lastInsertId();
+              }
+            }
+          }
+        }
+
+        if ($skill_id !== null) {
+          $link = $dbh->prepare("INSERT INTO student_achievement_skills (achievement_id, skill_id) VALUES (:aid, :sid)");
+          $link->bindParam(':aid', $achievement_id, PDO::PARAM_INT);
+          $link->bindParam(':sid', $skill_id, PDO::PARAM_INT);
+          $link->execute();
+        }
+
+        $dbh->commit();
+        $ach_success = true;
+      } catch (Exception $e) {
+        if ($dbh->inTransaction()) $dbh->rollBack();
+        $ach_error = 'Error saving achievement: ' . $e->getMessage();
+      }
   }
 }
 ?>
@@ -216,6 +269,7 @@ if (isset($_POST['add_achievement'])) {
                       </div>
                       <div id="skillsContainer" style="margin-top:8px;"></div>
                       <input type="hidden" name="skills" id="skillsHidden">
+                      <input type="hidden" name="skills_id" id="skillsIdHidden">
                     </div>
                     <div class="form-group">
                       <label>Category</label>
@@ -340,15 +394,21 @@ if (isset($_POST['add_achievement'])) {
     $('#loadMoreTags').on('click', function(){ currentPage++; renderSuggestions(false); });
 
     $('#skillSuggestionsList').on('click', '.skill-sugg', function(){
-      var name = $(this).closest('.skill-item').data('name');
-      selectTag(name);
+      var $item = $(this).closest('.skill-item');
+      var name = $item.data('name');
+      var id = $item.data('id');
+      selectTag(name, id);
     });
 
-    function selectTag(name){
+    function selectTag(name, id){
       $('#skillsContainer').empty();
-  var $chip = $('<span class="badge badge-pill badge-success mr-2">'+escapeHtml(name)+' <a href="#" class="text-white ml-1 remove-skill" style="text-decoration:none;">&times;</a></span>');
+      var $chip = $(
+        '<span class="badge badge-pill badge-success mr-2">'+escapeHtml(name)+
+        ' <a href="#" class="text-white ml-1 remove-skill" style="text-decoration:none;">&times;</a></span>'
+      );
       $('#skillsContainer').append($chip);
       $('#skillsHidden').val(name);
+      if (typeof id !== 'undefined') $('#skillsIdHidden').val(id); else $('#skillsIdHidden').val('');
     }
 
     $('#skillsContainer').on('click', '.remove-skill', function(e){ e.preventDefault(); $('#skillsContainer').empty(); $('#skillsHidden').val(''); });
@@ -356,26 +416,41 @@ if (isset($_POST['add_achievement'])) {
     function prepareSkills(){ /* hidden input already set by selectTag */ }
     window.prepareSkills = prepareSkills;
 
+    // Make sure the Add Tag button triggers the modal even if data-toggle isn't available
+    $('#addCustomTag').on('click', function(){
+      // Try Bootstrap modal (v4/v3) first
+      if (typeof $().modal === 'function') {
+        $('#addTagModal').modal('show');
+      } else {
+        // fallback: show by changing display
+        $('#addTagModal').show();
+      }
+    });
+
     // Add tag via AJAX
     $('#saveTagBtn').on('click', function(e){
       e.preventDefault();
+      var $btn = $(this);
       var name = $('#tagName').val().trim();
       var category = $('#tagCategory').val();
       if (!name) { alert('Please enter a tag name'); return; }
-      $('#saveTagBtn').prop('disabled', true);
+      $btn.prop('disabled', true);
       $.post(window.location.href, { add_tag_ajax:1, tag_name: name, tag_category: category }, function(res){
-        $('#saveTagBtn').prop('disabled', false);
+        $btn.prop('disabled', false);
         if (res && res.success){
-          allSuggestions.unshift({ id: res.id, name: res.name, category: res.category });
-          $('#addTagModal').modal('hide');
+          // Add to front of suggestions and re-render
+          // push suggestion using tblskills id so paging/search works with server-side data
+          allSuggestions.unshift({ id: res.tblskill_id || res.skill_id || res.id, name: res.name, category: res.category });
+          // Hide modal properly
+          if (typeof $().modal === 'function') $('#addTagModal').modal('hide'); else $('#addTagModal').hide();
           $('#tagName').val('');
           $('#tagCategory').val('Non-Academic');
           renderSuggestions(true);
-          selectTag(res.name);
+          selectTag(res.name, res.tblskill_id || res.skill_id || res.id);
         } else {
           alert((res && res.msg) ? res.msg : 'Error adding tag');
         }
-      }, 'json').fail(function(){ $('#saveTagBtn').prop('disabled', false); alert('Request failed'); });
+      }, 'json').fail(function(){ $btn.prop('disabled', false); alert('Request failed'); });
     });
 
     // Initial render

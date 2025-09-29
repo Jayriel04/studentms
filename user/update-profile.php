@@ -118,7 +118,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
         $sql_parts[] = "Image=:image";
         $params[':image'] = $profilepic;
       } else {
-        echo "<script>alert('Profile picture upload failed. Please try again');</script>";
+  echo "<script>if(window.showToast) showToast('Profile picture upload failed. Please try again','danger');</script>";
       }
     }
 
@@ -137,7 +137,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     if ($query->execute($params)) {
       $success = true;
     } else {
-      echo "<script>alert('Something went wrong. Please try again');</script>";
+  echo "<script>if(window.showToast) showToast('Something went wrong. Please try again','danger');</script>";
     }
   }
 
@@ -169,7 +169,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
       $proof_name = time() . '_' . basename($_FILES['proof']['name']);
       $proof_path = $dest_dir . $proof_name;
       if (!move_uploaded_file($proof_tmp, $proof_path)) {
-        echo "<script>alert('Proof image upload failed. Please try again');</script>";
+  echo "<script>if(window.showToast) showToast('Proof image upload failed. Please try again','danger');</script>";
         $proof_name = '';
       }
     }
@@ -216,7 +216,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
 
       $ach_success = true;
     } catch (Exception $e) {
-      echo "<script>alert('Error saving achievement: " . addslashes($e->getMessage()) . "');</script>";
+  echo "<script>if(window.showToast) showToast('Error saving achievement: " . addslashes($e->getMessage()) . "','danger');</script>";
     }
   }
 

@@ -6,29 +6,35 @@ include('includes/dbconnection.php');
 if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = md5($_POST['password']);
-    $sql = "SELECT ID FROM tblstaff WHERE UserName=:username and Password=:password";
+    // include Status to ensure inactive users cannot login
+    $sql = "SELECT ID, Status FROM tblstaff WHERE UserName=:username and Password=:password";
     $query = $dbh->prepare($sql);
     $query->bindParam(':username', $username, PDO::PARAM_STR);
     $query->bindParam(':password', $password, PDO::PARAM_STR);
     $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
-    if ($query->rowCount() > 0) {
-        foreach ($results as $result) {
+    $result = $query->fetch(PDO::FETCH_OBJ);
+    if ($result) {
+        // if Status is present and is active (1) allow login, otherwise block
+        $status = isset($result->Status) ? intval($result->Status) : 1;
+        if ($status === 1) {
             $_SESSION['sturecmsstaffid'] = $result->ID;
-        }
-        if (!empty($_POST["remember"])) {
-            setcookie("user_login_staff", $_POST["username"], time() + (10 * 365 * 24 * 60 * 60));
-            setcookie("userpassword_staff", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
-        } else {
-            if (isset($_COOKIE["user_login_staff"])) {
-                setcookie("user_login_staff", "");
-                if (isset($_COOKIE["userpassword_staff"])) {
-                    setcookie("userpassword_staff", "");
+            if (!empty($_POST["remember"])) {
+                setcookie("user_login_staff", $_POST["username"], time() + (10 * 365 * 24 * 60 * 60));
+                setcookie("userpassword_staff", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
+            } else {
+                if (isset($_COOKIE["user_login_staff"])) {
+                    setcookie("user_login_staff", "");
+                    if (isset($_COOKIE["userpassword_staff"])) {
+                        setcookie("userpassword_staff", "");
+                    }
                 }
             }
+            $_SESSION['login_staff'] = $_POST['username'];
+            echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+        } else {
+            // account found but inactive
+            $login_error = 'Your account is inactive. Please contact the administrator.';
         }
-        $_SESSION['login_staff'] = $_POST['username'];
-        echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
     } else {
         $login_error = 'Invalid Details';
     }
@@ -43,6 +49,36 @@ if (isset($_POST['login'])) {
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style(v2).css"> <!-- Updated CSS file -->
+        <script>
+            // Minimal showToast fallback for pages that don't include header.php
+            if (!window.showToast) {
+                window.showToast = function(message, type) {
+                    type = type || 'info';
+                    try {
+                        var container = document.getElementById('appToastContainer');
+                        if (!container) {
+                            container = document.createElement('div');
+                            container.id = 'appToastContainer';
+                            container.setAttribute('aria-live', 'polite');
+                            container.setAttribute('aria-atomic', 'true');
+                            document.body.appendChild(container);
+                            var s = document.createElement('style');
+                            s.innerHTML = '#appToastContainer{position:fixed;top:1rem;right:1rem;z-index:1080} .app-toast{background:#fff;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,0.08);padding:12px 16px;margin-bottom:8px;min-width:220px;display:flex;gap:8px;align-items:center}.app-toast.success{border-left:4px solid #28a745}.app-toast.info{border-left:4px solid #17a2b8}.app-toast.warning{border-left:4px solid #ffc107}.app-toast.danger{border-left:4px solid #dc3545}.app-toast .app-toast-close{margin-left:auto;cursor:pointer;color:#666}';
+                            document.head.appendChild(s);
+                        }
+                        var toast = document.createElement('div');
+                        toast.className = 'app-toast ' + (['info','success','warning','danger'].indexOf(type) === -1 ? 'info' : type);
+                        toast.innerHTML = '<div class="app-toast-body">' + (message || '') + '</div>' +
+                                                            '<div class="app-toast-close" role="button" aria-label="close">&times;</div>';
+                        container.appendChild(toast);
+                        toast.querySelector('.app-toast-close').addEventListener('click', function(){ if (toast.parentNode) toast.parentNode.removeChild(toast); });
+                        setTimeout(function(){ if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3500);
+                    } catch (e) {
+                        console && console.error && console.error(e);
+                    }
+                };
+            }
+        </script>
 </head>
 <body>
     <div class="container-scroller">

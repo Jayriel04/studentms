@@ -32,3 +32,37 @@
     }
   });
 </script>
+
+<!-- Global toast container and helper (available to all pages that include header.php) -->
+<style>
+  /* Minimal toast styles to avoid dependency issues */
+  #appToastContainer { position: fixed; top: 1rem; right: 1rem; z-index: 1080; }
+  .app-toast { background: #fff; border-radius: 6px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); padding: 12px 16px; margin-bottom: 8px; min-width: 220px; display:flex; gap:8px; align-items:center; }
+  .app-toast.info { border-left: 4px solid #17a2b8; }
+  .app-toast.success { border-left: 4px solid #28a745; }
+  .app-toast.warning { border-left: 4px solid #ffc107; }
+  .app-toast.danger { border-left: 4px solid #dc3545; }
+  .app-toast .app-toast-close { margin-left: auto; cursor:pointer; color:#666; }
+</style>
+
+<div id="appToastContainer" aria-live="polite" aria-atomic="true"></div>
+<script>
+  window.showToast = function(message, type) {
+    type = type || 'info';
+    try {
+      var container = document.getElementById('appToastContainer');
+      if (!container) return;
+      var toast = document.createElement('div');
+      toast.className = 'app-toast ' + (['info','success','warning','danger'].indexOf(type) === -1 ? 'info' : type);
+      toast.innerHTML = '<div class="app-toast-body">' + (message || '') + '</div>' +
+                        '<div class="app-toast-close" role="button" aria-label="close">&times;</div>';
+      container.appendChild(toast);
+      // close handler
+      toast.querySelector('.app-toast-close').addEventListener('click', function(){ container.removeChild(toast); });
+      // auto remove
+      setTimeout(function(){ if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3500);
+    } catch (e) {
+      console && console.error && console.error(e);
+    }
+  };
+</script>

@@ -26,9 +26,9 @@ $chngpwd1-> bindParam(':sid', $sid, PDO::PARAM_STR);
 $chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
 $chngpwd1->execute();
 
-echo '<script>alert("Your password successully changed")</script>';
+echo "<script>if(window.showToast) showToast('Your password successfully changed','success'); else alert('Your password successfully changed');</script>";
 } else {
-echo '<script>alert("Your current password is wrong")</script>';
+echo "<script>if(window.showToast) showToast('Your current password is wrong','warning'); else alert('Your current password is wrong');</script>";
 
 }
 }
@@ -56,7 +56,7 @@ function checkpass()
 {
 if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
 {
-alert('New Password and Confirm Password field does not match');
+if(window.showToast) showToast('New Password and Confirm Password field does not match','warning'); else alert('New Password and Confirm Password field does not match');
 document.changepassword.confirmpassword.focus();
 return false;
 }

@@ -24,7 +24,7 @@ if (isset($_POST['signup'])) {
     $query->execute();
 
     if ($query->rowCount() > 0) {
-        echo "<script>alert('Account already exists with this Student ID or Email');</script>";
+        echo "<script>if(window.showToast) showToast('Account already exists with this Student ID or Email','warning');</script>";
     } else {
         // Move uploaded file
         if ($profilepic && move_uploaded_file($profilepic_tmp, $profilepic_folder)) {
@@ -40,12 +40,12 @@ if (isset($_POST['signup'])) {
             $query->bindParam(':image', $profilepic, PDO::PARAM_STR);
 
             if ($query->execute()) {
-                echo "<script>alert('Account created successfully!'); document.location ='login.php';</script>";
+                echo "<script>if(window.showToast) showToast('Account created successfully!','success'); document.location ='login.php';</script>";
             } else {
-                echo "<script>alert('Something went wrong. Please try again');</script>";
+                echo "<script>if(window.showToast) showToast('Something went wrong. Please try again','danger');</script>";
             }
         } else {
-            echo "<script>alert('Profile picture upload failed. Please try again');</script>";
+            echo "<script>if(window.showToast) showToast('Profile picture upload failed. Please try again','danger');</script>";
         }
     }
 }

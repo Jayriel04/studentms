@@ -12,8 +12,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     $query = $dbh->prepare($sql);
     $query->bindParam(':rid', $rid, PDO::PARAM_STR);
     $query->execute();
-    echo "<script>alert('Public notice deleted successfully.');</script>";
-    echo "<script>window.location.href = 'manage-public-notice.php'</script>";
+  echo "<script>if(window.showToast) showToast('Public notice deleted successfully.','success'); else alert('Public notice deleted successfully.'); window.location.href = 'manage-public-notice.php';</script>";
   }
 
   // Search functionality

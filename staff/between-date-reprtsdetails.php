@@ -12,8 +12,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
     $query = $dbh->prepare($sql);
     $query->bindParam(':rid', $rid, PDO::PARAM_STR);
     $query->execute();
-    echo "<script>alert('Data deleted');</script>";
-    echo "<script>window.location.href = 'manage-students.php'</script>";
+  echo "<script>if(window.showToast) showToast('Data deleted','success'); else alert('Data deleted'); window.location.href = 'manage-students.php';</script>";
 
 
   }

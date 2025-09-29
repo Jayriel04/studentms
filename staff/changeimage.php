@@ -11,7 +11,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
     $extension = substr($image, strlen($image) - 4, strlen($image));
     $allowed_extensions = array(".jpg", "jpeg", ".png", ".gif");
     if (!in_array($extension, $allowed_extensions)) {
-      echo "<script>alert('Image has an invalid format. Only jpg / jpeg / png / gif formats are allowed');</script>";
+  echo "<script>if(window.showToast) showToast('Image has an invalid format. Only jpg / jpeg / png / gif formats are allowed','warning');</script>";
     } else {
       $image = md5($image) . time() . $extension;
       move_uploaded_file($_FILES["image"]["tmp_name"], "images/" . $image);
@@ -21,8 +21,8 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
       $query->bindParam(':image', $image, PDO::PARAM_STR);
       $query->bindParam(':eid', $eid, PDO::PARAM_STR);
       $query->execute();
-      echo '<script>alert("Staff image has been updated successfully.")</script>';
-      echo "<script>window.location.href ='manage-staff.php'</script>";
+  echo '<script>if(window.showToast) showToast("Staff image has been updated successfully.","success");</script>';
+  echo "<script>window.location.href ='manage-staff.php'</script>";
     }
   }
 ?>

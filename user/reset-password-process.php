@@ -51,12 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
       var n = document.getElementById('newpassword').value;
       var c = document.getElementById('confirmpassword').value;
       if (n !== c) {
-        alert('New Password and Confirm Password Field do not match !!');
+        if (window.showToast) showToast('New Password and Confirm Password Field do not match !!','warning');
         document.getElementById('confirmpassword').focus();
         return false;
       }
       if (n.length < 6) {
-        alert('Password must be at least 6 characters.');
+        if (window.showToast) showToast('Password must be at least 6 characters.','warning');
         document.getElementById('newpassword').focus();
         return false;
       }

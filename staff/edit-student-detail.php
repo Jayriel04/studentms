@@ -51,7 +51,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
     $isDuplicate = $checkQuery->fetchColumn();
 
     if ($isDuplicate > 0) {
-      echo '<script>alert("This Student ID already exists. Please choose a different one.")</script>';
+  echo '<script>if(window.showToast) showToast("This Student ID already exists. Please choose a different one.","warning");</script>';
     } else {
       $sql = "UPDATE tblstudent SET 
                 StuID=:stuid, 
@@ -123,7 +123,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
       $query->bindParam(':eid', $eid, PDO::PARAM_STR);
       $query->execute();
 
-      echo '<script>alert("Student details updated successfully.")</script>';
+  echo '<script>if(window.showToast) showToast("Student details updated successfully.","success");</script>';
     }
   }
   ?>

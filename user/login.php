@@ -7,8 +7,8 @@ if (isset($_POST['login'])) {
   $stuid = $_POST['stuid'];
   $password = $_POST['password'];
 
-  // Fetch stored password for this student
-  $sql = "SELECT StuID, ID, Password FROM tblstudent WHERE StuID=:stuid";
+  // Fetch stored password and status for this student
+  $sql = "SELECT StuID, ID, Password, Status FROM tblstudent WHERE StuID=:stuid";
   $query = $dbh->prepare($sql);
   $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
   $query->execute();
@@ -35,25 +35,32 @@ if (isset($_POST['login'])) {
   }
 
   if ($authenticated) {
-    $_SESSION['sturecmsstuid'] = $result->StuID;
-    $_SESSION['sturecmsuid'] = $result->ID;
-
-    if (!empty($_POST["remember"])) {
-      setcookie("user_login", $_POST["stuid"], time() + (10 * 365 * 24 * 60 * 60));
-      setcookie("userpassword", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
+    // Check account status: 1 => active, 0 => inactive
+    if (isset($result->Status) && intval($result->Status) !== 1) {
+      // Don't log in; show inactive-account toast
+      $error = 'Your account is inactive. Please contact the administrator.';
     } else {
-      if (isset($_COOKIE["user_login"])) {
-        setcookie("user_login", "");
-      }
-      if (isset($_COOKIE["userpassword"])) {
-        setcookie("userpassword", "");
-      }
-    }
+      $_SESSION['sturecmsstuid'] = $result->StuID;
+      $_SESSION['sturecmsuid'] = $result->ID;
 
-    $_SESSION['login'] = $_POST['stuid'];
-    echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+      if (!empty($_POST["remember"])) {
+        setcookie("user_login", $_POST["stuid"], time() + (10 * 365 * 24 * 60 * 60));
+        setcookie("userpassword", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
+      } else {
+        if (isset($_COOKIE["user_login"])) {
+          setcookie("user_login", "");
+        }
+        if (isset($_COOKIE["userpassword"])) {
+          setcookie("userpassword", "");
+        }
+      }
+
+      $_SESSION['login'] = $_POST['stuid'];
+      echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+    }
   } else {
-    echo "<script>alert('Invalid Student ID or Password');</script>";
+    // Use a non-blocking toast message instead of alert()
+    $error = 'Invalid Student ID or Password';
   }
 }
 ?>
@@ -68,6 +75,40 @@ if (isset($_POST['login'])) {
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <!-- Layout styles -->
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Simple toast styles */
+    .toast-box {
+      position: fixed;
+      right: 20px;
+      top: 20px;
+      background: rgba(0,0,0,0.85);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 320px;
+      font-family: sans-serif;
+    }
+    .toast-box button {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .toast-show {
+      animation: toast-in 0.2s ease-out;
+    }
+    @keyframes toast-in {
+      from { transform: translateY(-8px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
 </head>
 
 <body>
@@ -124,6 +165,23 @@ if (isset($_POST['login'])) {
   <!-- inject:js -->
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
+  <?php if (isset($error) && !empty($error)) { ?>
+    <div id="login-toast" class="toast-box toast-show">
+      <div class="toast-message"><?= htmlspecialchars($error) ?></div>
+      <button id="login-toast-close" aria-label="Close">&times;</button>
+    </div>
+    <script>
+      (function(){
+        var toast = document.getElementById('login-toast');
+        var close = document.getElementById('login-toast-close');
+        function hide() { if(!toast) return; toast.style.transition = 'opacity 0.25s ease'; toast.style.opacity = '0'; setTimeout(function(){ if(toast && toast.parentNode) toast.parentNode.removeChild(toast); }, 300); }
+        // Auto-hide after 4 seconds
+        setTimeout(hide, 4000);
+        // Close on click
+        close && close.addEventListener('click', hide);
+      })();
+    </script>
+  <?php } ?>
 </body>
 
 </html>

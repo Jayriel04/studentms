@@ -16,8 +16,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
     $query->bindParam(':staffid', $staffid, PDO::PARAM_STR);
     $query->execute();
 
-    echo '<script>alert("Your profile has been updated")</script>';
-    echo "<script>window.location.href ='profile.php'</script>";
+  echo "<script>if(window.showToast) showToast('Your profile has been updated','success'); else alert('Your profile has been updated'); window.location.href ='profile.php';</script>";
   }
 ?>
 <!DOCTYPE html>

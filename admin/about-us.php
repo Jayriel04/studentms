@@ -15,7 +15,7 @@ $query->bindParam(':pagetitle',$pagetitle,PDO::PARAM_STR);
 $query->bindParam(':pagedes',$pagedes,PDO::PARAM_STR);
 
 $query->execute();
-echo '<script>alert("About us has been updated")</script>';
+echo '<script>if(window.showToast) showToast("About us has been updated","success");</script>';
 
 
   }

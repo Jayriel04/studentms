@@ -13,7 +13,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Changed session variable for
     $query->bindParam(':pagetitle', $pagetitle, PDO::PARAM_STR);
     $query->bindParam(':pagedes', $pagedes, PDO::PARAM_STR);
     $query->execute();
-    echo '<script>alert("About Us has been updated")</script>';
+  echo "<script>if(window.showToast) showToast('About Us has been updated','success'); else alert('About Us has been updated');</script>";
   }
 ?>
 <!DOCTYPE html>
