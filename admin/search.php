@@ -6,6 +6,27 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
   header('location:logout.php');
 } else {
   $q = isset($_GET['q']) ? trim($_GET['q']) : '';
+
+  // AJAX suggestions endpoint: returns JSON list of students matching term
+  if (isset($_GET['suggest'])) {
+    header('Content-Type: application/json');
+    $term = isset($_GET['term']) ? trim($_GET['term']) : '';
+    try {
+      if ($term === '') {
+        $stmt = $dbh->prepare("SELECT StuID, FamilyName, FirstName FROM tblstudent ORDER BY ID DESC LIMIT 10");
+      } else {
+        $stmt = $dbh->prepare("SELECT StuID, FamilyName, FirstName FROM tblstudent WHERE StuID LIKE :t OR FamilyName LIKE :t OR FirstName LIKE :t ORDER BY ID DESC LIMIT 10");
+        $like = $term . '%';
+        $stmt->bindValue(':t', $like, PDO::PARAM_STR);
+      }
+      $stmt->execute();
+      $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      echo json_encode($rows);
+    } catch (Exception $e) {
+      echo json_encode([]);
+    }
+    exit;
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,10 +69,11 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
             <div class="col-md-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <form method="get">
+                  <form method="get" id="searchForm">
                     <div class="form-group">
                       <label><strong>Search</strong></label>
-                      <input id="searchdata" type="text" name="searchdata" class="form-control" placeholder="Search by Student ID, Family Name, or First Name" value="<?php echo isset($_GET['searchdata'])?htmlentities($_GET['searchdata']):''; ?>">
+                      <input id="searchdata" type="text" name="searchdata" class="form-control" autocomplete="off" placeholder="Search by Student ID, Family Name, or First Name" value="<?php echo isset($_GET['searchdata'])?htmlentities($_GET['searchdata']):''; ?>">
+                      <div id="suggestions" class="list-group" style="position:relative; z-index:1000;"></div>
                     </div>
                     <button type="submit" class="btn btn-primary" id="submit">Search</button>
                   </form>
@@ -89,7 +111,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                           <th class="font-weight-bold">Email Address</th>
                           <th class="font-weight-bold">Status</th>
                           <?php if (isset($isSkillSearch) && $isSkillSearch) { ?>
-                            <th class="font-weight-bold">Total Points</th>
+                            <th class="font-weight-bold">Skill</th>
                           <?php } ?>
                           <th class="font-weight-bold">Action</th>
                         </tr>
@@ -140,7 +162,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                     <td><?php echo htmlentities($row->ContactNumber); ?></td>
                     <td><?php echo htmlentities($row->EmailAddress); ?></td>
                     <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                    <td><?php echo isset($row->totalPoints) ? htmlentities($row->totalPoints) : '0'; ?></td>
+                    <td><?php echo isset($skill->name) ? htmlentities($skill->name) : ''; ?></td>
                     <td>
                       <div>
                         <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="btn btn-info btn-xs">Edit</a>
@@ -261,6 +283,41 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
   <!-- Custom js for this page -->
   <script src="./js/dashboard.js"></script>
   <!-- End custom js for this page -->
+  <script>
+    (function(){
+      function debounce(fn, delay){ var t; return function(){ var ctx=this,args=arguments; clearTimeout(t); t=setTimeout(function(){ fn.apply(ctx,args); }, delay); }; }
+      var $input = document.getElementById('searchdata');
+      var $suggest = document.getElementById('suggestions');
+
+      function render(rows){
+        $suggest.innerHTML = '';
+        if (!rows || rows.length === 0) return;
+        rows.forEach(function(r){
+          var item = document.createElement('a');
+          item.href = '#';
+          item.className = 'list-group-item list-group-item-action';
+          item.textContent = r.StuID + ' — ' + r.FamilyName + ', ' + r.FirstName;
+          item.dataset.stuid = r.StuID;
+          item.addEventListener('click', function(e){ e.preventDefault(); $input.value = this.dataset.stuid; document.getElementById('searchForm').submit(); });
+          $suggest.appendChild(item);
+        });
+      }
+
+      var fetchSuggestions = debounce(function(){
+        var q = $input.value.trim();
+        var url = window.location.pathname + '?suggest=1&term=' + encodeURIComponent(q);
+        fetch(url, { credentials: 'same-origin' }).then(function(res){ return res.json(); }).then(function(json){ render(json); }).catch(function(){ render([]); });
+      }, 200);
+
+      $input.addEventListener('input', function(){ fetchSuggestions(); });
+
+      // On focus show default list
+      $input.addEventListener('focus', function(){ fetchSuggestions(); });
+
+      // Hide suggestions when clicking outside
+      document.addEventListener('click', function(e){ if (!document.getElementById('suggestions').contains(e.target) && e.target !== $input) { $suggest.innerHTML = ''; } });
+    })();
+  </script>
 </body>
 
 </html>

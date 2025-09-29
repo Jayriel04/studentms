@@ -6,54 +6,40 @@ error_reporting(0);
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
 } else {
-  function sendOtp($email, $code) {
-    $subject = "Your Password Change OTP";
-    $message = "Your OTP for password change is: $code";
-    @mail($email, $subject, $message);
-  }
-
-  if (isset($_POST['request_otp'])) {
+  // Simple password change: verify current password and update directly
+  if (isset($_POST['change_password'])) {
     $adminid = $_SESSION['sturecmsaid'];
-    $cpassword = md5($_POST['currentpassword']);
-    $newpassword_plain = $_POST['newpassword'];
-    $newpassword_hashed = md5($newpassword_plain);
+    $current = isset($_POST['currentpassword']) ? trim($_POST['currentpassword']) : '';
+    $new = isset($_POST['newpassword']) ? trim($_POST['newpassword']) : '';
+    $confirm = isset($_POST['confirmpassword']) ? trim($_POST['confirmpassword']) : '';
 
-    $sql = "SELECT ID, Email FROM tbladmin WHERE ID=:adminid and Password=:cpassword";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':adminid', $adminid, PDO::PARAM_STR);
-    $query->bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
-    $query->execute();
-
-    if ($query->rowCount() > 0) {
-      $row = $query->fetch(PDO::FETCH_ASSOC);
-      $email = $row['Email'];
-      $code = rand(100000, 999999);
-      sendOtp($email, $code);
-      $_SESSION['change_otp'] = $code;
-      $_SESSION['change_otp_expires'] = time() + 600;
-      $_SESSION['change_pending_password'] = $newpassword_hashed;
-      $_SESSION['change_user_id'] = $adminid;
-      $_SESSION['change_user_email'] = $email;
-      echo '<script>alert("An OTP has been sent to your registered email.")</script>';
+    if ($new === '' || $confirm === '') {
+      $toast_msg = 'New password cannot be empty';
+      $toast_type = 'error';
+    } elseif ($new !== $confirm) {
+      $toast_msg = 'New Password and Confirm Password do not match';
+      $toast_type = 'error';
     } else {
-      echo '<script>alert("Your current password is wrong")</script>';
-    }
-  }
+      $cpassword = md5($current);
+      $sql = "SELECT ID FROM tbladmin WHERE ID=:adminid and Password=:cpassword";
+      $query = $dbh->prepare($sql);
+      $query->bindParam(':adminid', $adminid, PDO::PARAM_STR);
+      $query->bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
+      $query->execute();
 
-  if (isset($_POST['verify_otp'])) {
-    $input_code = trim($_POST['input_code']);
-    if (!empty($_SESSION['change_otp']) && $_SESSION['change_otp_expires'] >= time() && $input_code == $_SESSION['change_otp']) {
-      $userid = $_SESSION['change_user_id'];
-      $newpassword = $_SESSION['change_pending_password'];
-      $con = "update tbladmin set Password=:newpassword where ID=:adminid";
-      $chngpwd1 = $dbh->prepare($con);
-      $chngpwd1->bindParam(':adminid', $userid, PDO::PARAM_STR);
-      $chngpwd1->bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
-      $chngpwd1->execute();
-      echo '<script>alert("Your password successully changed")</script>';
-      unset($_SESSION['change_otp'], $_SESSION['change_otp_expires'], $_SESSION['change_pending_password'], $_SESSION['change_user_id'], $_SESSION['change_user_email']);
-    } else {
-      echo '<script>alert("Invalid or expired OTP")</script>';
+      if ($query->rowCount() > 0) {
+        $new_hashed = md5($new);
+        $con = "UPDATE tbladmin SET Password=:newpassword WHERE ID=:adminid";
+        $chngpwd1 = $dbh->prepare($con);
+        $chngpwd1->bindParam(':adminid', $adminid, PDO::PARAM_STR);
+        $chngpwd1->bindParam(':newpassword', $new_hashed, PDO::PARAM_STR);
+        $chngpwd1->execute();
+        $toast_msg = 'Your password successfully changed';
+        $toast_type = 'success';
+      } else {
+        $toast_msg = 'Your current password is wrong';
+        $toast_type = 'error';
+      }
     }
   }
   ?>
@@ -79,7 +65,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script type="text/javascript">
       function checkpass() {
         if (document.changepassword.newpassword.value != document.changepassword.confirmpassword.value) {
-          alert('New Password and Confirm Password field does not match');
+          showToast('New Password and Confirm Password field does not match', 'error');
           document.changepassword.confirmpassword.focus();
           return false;
         }
@@ -87,9 +73,14 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
       }
 
     </script>
+    <style>
+      /* Toast container positioned top-right */
+      #appToast { position: fixed; top: 1rem; right: 1rem; z-index: 2000; }
+    </style>
   </head>
 
   <body>
+    <div id="appToast"></div>
     <div class="container-scroller">
       <!-- partial:partials/_navbar.html -->
       <?php include_once('includes/header.php'); ?>
@@ -116,7 +107,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Change Password</h4>
 
-                    <?php if (!isset($_SESSION['change_otp'])): ?>
                     <form class="forms-sample" name="changepassword" method="post" onsubmit="return checkpass();">
 
                       <div class="form-group">
@@ -134,18 +124,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                           required="true">
                       </div>
 
-                      <button type="submit" class="btn btn-primary mr-2" name="request_otp">Request OTP</button>
-
+                      <button type="submit" class="btn btn-primary mr-2" name="change_password">Change Password</button>
+                      <a href="dashboard.php" class="btn btn-light">Back</a>
                     </form>
-                    <?php else: ?>
-                    <form class="forms-sample" name="verifyotp" method="post">
-                      <div class="form-group">
-                        <label for="input_code">Enter OTP</label>
-                        <input type="text" name="input_code" class="form-control" required="true">
-                      </div>
-                      <button type="submit" class="btn btn-primary mr-2" name="verify_otp">Verify & Change</button>
-                    </form>
-                    <?php endif; ?>
                   </div>
                 </div>
               </div>
@@ -176,6 +157,25 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
     <!-- End custom js for this page -->
+    <script>
+      function showToast(message, type) {
+        type = type || 'info';
+        var toast = document.createElement('div');
+        toast.className = 'toast show';
+        toast.setAttribute('role','alert');
+        toast.innerHTML = '<div class="toast-header"><strong class="mr-auto">' + (type === 'success' ? 'Success' : 'Notice') + '</strong><button type="button" class="ml-2 mb-1 close" data-dismiss="toast">&times;</button></div><div class="toast-body">' + message + '</div>';
+        var container = document.getElementById('appToast');
+        container.appendChild(toast);
+        // Auto remove after 3s
+        setTimeout(function(){ try{ $(toast).toast('hide'); }catch(e){ toast.remove(); } }, 3000);
+      }
+      // Delegate close buttons
+      document.addEventListener('click', function(e){ if (e.target && e.target.getAttribute && e.target.getAttribute('data-dismiss') === 'toast') { var t = e.target.closest('.toast'); if (t) t.remove(); } });
+    </script>
+
+    <?php if (isset($toast_msg) && $toast_msg): ?>
+    <script>document.addEventListener('DOMContentLoaded', function(){ showToast(<?php echo json_encode($toast_msg); ?>, <?php echo json_encode(isset($toast_type) ? $toast_type : 'info'); ?>); });</script>
+    <?php endif; ?>
   </body>
 
   </html><?php } ?>

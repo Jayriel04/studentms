@@ -12,13 +12,55 @@ $ach_error = '';
 // Fetch recent skill suggestions to present as clickable tags
 $skillSuggestions = array();
 try {
-  $srg = $dbh->prepare("SELECT name FROM skills ORDER BY created_at DESC LIMIT 50");
+  $srg = $dbh->prepare("SELECT id, name, category FROM skills ORDER BY created_at DESC LIMIT 50");
   $srg->execute();
-  $skillSuggestions = $srg->fetchAll(PDO::FETCH_COLUMN);
+  $rows = $srg->fetchAll(PDO::FETCH_ASSOC);
+  // Normalize categories to only 'Academic' or 'Non-Academic'
+  foreach ($rows as $r) {
+    $cat = (isset($r['category']) && trim($r['category']) === 'Academic') ? 'Academic' : 'Non-Academic';
+    $skillSuggestions[] = ['id' => $r['id'], 'name' => $r['name'], 'category' => $cat];
+  }
 } catch (Exception $ex) {
   // ignore errors - suggestions are optional
 }
 
+// AJAX endpoint to add a new tag into tblskills
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['add_tag_ajax'])) {
+  header('Content-Type: application/json');
+  $resp = ['success' => false, 'msg' => 'Invalid request'];
+  $name = isset($_POST['tag_name']) ? trim($_POST['tag_name']) : '';
+  $category = isset($_POST['tag_category']) ? trim($_POST['tag_category']) : '';
+  if ($name === '') {
+    $resp['msg'] = 'Tag name required';
+    echo json_encode($resp);
+    exit;
+  }
+  // Normalize category to Academic / Non-Academic
+  $category = ($category === 'Academic') ? 'Academic' : 'Non-Academic';
+  try {
+  $chk = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
+    $chk->bindParam(':name', $name, PDO::PARAM_STR);
+    $chk->execute();
+    if ($chk->rowCount() > 0) {
+      $row = $chk->fetch(PDO::FETCH_ASSOC);
+      $resp = ['success' => true, 'id' => $row['id'], 'name' => $name, 'category' => $category, 'msg' => 'Tag exists'];
+      echo json_encode($resp);
+      exit;
+    }
+  $ins = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
+    $ins->bindParam(':name', $name, PDO::PARAM_STR);
+    $ins->bindParam(':category', $category, PDO::PARAM_STR);
+    $ins->execute();
+    $id = $dbh->lastInsertId();
+    $resp = ['success' => true, 'id' => $id, 'name' => $name, 'category' => $category];
+  } catch (Exception $e) {
+    $resp = ['success' => false, 'msg' => 'DB error: ' . $e->getMessage()];
+  }
+  echo json_encode($resp);
+  exit;
+}
+
+// Handle achievement submission
 if (isset($_POST['add_achievement'])) {
   $skills_raw = isset($_POST['skills']) ? trim($_POST['skills']) : '';
   $ach_category = isset($_POST['ach_category']) ? $_POST['ach_category'] : 'Non-Academic';
@@ -34,6 +76,7 @@ if (isset($_POST['add_achievement'])) {
   );
   $points = isset($points_map[$ach_level]) ? $points_map[$ach_level] : 0;
 
+  // File upload handling
   $proof_name = '';
   if (!empty($_FILES['proof']['name'])) {
     $proof_tmp = $_FILES['proof']['tmp_name'];
@@ -104,6 +147,13 @@ if (isset($_POST['add_achievement'])) {
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/style(v2).css">
+  <style>
+    /* Make suggestion buttons and selected tag text black */
+    .skill-sugg { color: #000 !important; }
+    .skill-sugg small { color: #333 !important; }
+    .badge-success { color: #000 !important; }
+    .badge-success .remove-skill { color: #000 !important; }
+  </style>
 </head>
 <body>
   <div class="container-scroller">
@@ -139,15 +189,30 @@ if (isset($_POST['add_achievement'])) {
                     <div class="form-group">
                       <label>Skill / Tag</label>
                       <p class="card-description">Select one tag. Click a suggestion to choose it or add a custom tag.</p>
-                      <div id="skillSuggestions" style="margin-bottom:8px;">
-                        <?php if (!empty($skillSuggestions)): ?>
-                          <?php foreach ($skillSuggestions as $sugg): ?>
-                            <button type="button" class="btn btn-sm btn-outline-secondary skill-sugg" style="color: black;" data-name="<?php echo htmlentities($sugg); ?>"><?php echo htmlentities($sugg); ?></button>
-                          <?php endforeach; ?>
-                        <?php else: ?>
-                          <small class="text-muted">No suggestions available.</small>
-                        <?php endif; ?>
-                        <button type="button" id="addCustomTag" class="btn btn-sm btn-outline-primary">Add Tag</button>
+                      <div style="margin-bottom:8px;">
+                        <div class="input-group mb-2">
+                          <input id="skillSearch" type="search" class="form-control form-control-sm" placeholder="Search tags (type to filter)">
+                          <div class="input-group-append">
+                            <button type="button" id="clearSkillSearch" class="btn btn-sm btn-outline-secondary">Clear</button>
+                          </div>
+                        </div>
+                        <div id="skillSuggestionsList" class="d-flex flex-wrap" style="gap:6px;min-height:40px;">
+                          <?php if (!empty($skillSuggestions)): ?>
+                            <?php foreach ($skillSuggestions as $sugg): ?>
+                              <div class="skill-item" data-name="<?php echo htmlentities($sugg['name']); ?>" data-id="<?php echo htmlentities($sugg['id']); ?>" data-category="<?php echo htmlentities($sugg['category']); ?>">
+                                <button type="button" class="btn btn-sm btn-outline-success skill-sugg">
+                                  <?php echo htmlentities($sugg['name']); ?> <small class="text-muted">(<?php echo htmlentities($sugg['category']); ?>)</small>
+                                </button>
+                              </div>
+                            <?php endforeach; ?>
+                          <?php else: ?>
+                            <div class="text-muted">No suggestions available.</div>
+                          <?php endif; ?>
+                        </div>
+                        <div class="mt-2">
+                          <button type="button" id="loadMoreTags" class="btn btn-sm btn-outline-info">Load more</button>
+                          <button type="button" id="addCustomTag" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#addTagModal">Add Tag</button>
+                        </div>
                       </div>
                       <div id="skillsContainer" style="margin-top:8px;"></div>
                       <input type="hidden" name="skills" id="skillsHidden">
@@ -180,71 +245,142 @@ if (isset($_POST['add_achievement'])) {
                       <a href="update-profile.php" class="btn btn-light">Back</a>
                     </div>
                   </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <?php include_once('includes/footer.php'); ?>
-      </div>
-    </div>
-  </div>
-  <script src="vendors/js/vendor.bundle.base.js"></script>
-  <script src="./js/off-canvas.js"></script>
-  <script src="./js/misc.js"></script>
+
+                  <!-- Add Tag Modal -->
+                  <div class="modal fade" id="addTagModal" tabindex="-1" role="dialog" aria-labelledby="addTagModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <form id="addTagForm">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="addTagModalLabel">Add Tag</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="form-group">
+                              <label for="tagName">Tag Name</label>
+                              <input type="text" id="tagName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                              <label for="tagCategory">Category</label>
+                              <select id="tagCategory" class="form-control">
+                                <option>Non-Academic</option>
+                                <option>Academic</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" id="saveTagBtn" class="btn btn-primary">Add Tag</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                </div> <!-- card-body -->
+              </div> <!-- card -->
+            </div> <!-- col -->
+          </div> <!-- row -->
+        </div> <!-- content-wrapper -->
+      </div> <!-- main-panel -->
+    </div> <!-- page-body-wrapper -->
+  </div> <!-- container-scroller -->
+
+  <?php include_once('includes/footer.php'); ?>
+
+  <script src="../js/jquery-1.11.0.min.js"></script>
+  <script src="../js/bootstrap.js"></script>
   <script>
-    // Single-select skill tag UI
-    (function () {
-      var selectedSkill = null;
-      var container = document.getElementById('skillsContainer');
-      var hidden = document.getElementById('skillsHidden');
+  (function($){
+    function debounce(fn, wait){ var t; return function(){ var ctx=this, args=arguments; clearTimeout(t); t=setTimeout(function(){ fn.apply(ctx,args); }, wait); }; }
+    function escapeHtml(text){ return $('<div>').text(text).html(); }
 
-      function render() {
-        container.innerHTML = '';
-        if (selectedSkill) {
-          var btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'btn btn-sm btn-info skill-chip';
-          btn.style.marginRight = '6px';
-          btn.style.padding = '6px';
-          btn.textContent = selectedSkill + ' \u00A0\u2715';
-          btn.onclick = function () { selectedSkill = null; render(); };
-          container.appendChild(btn);
-        }
-        hidden.value = selectedSkill ? selectedSkill : '';
+    var allSuggestions = [];
+    $('#skillSuggestionsList .skill-item').each(function(){
+      allSuggestions.push({
+        id: $(this).data('id'),
+        name: $(this).data('name'),
+        category: $(this).data('category')
+      });
+    });
+
+    var pageSize = 10, currentPage = 1, currentQuery = '';
+
+    function renderSuggestions(resetPage){
+      if (resetPage) currentPage = 1;
+      var filtered = allSuggestions.filter(function(s){
+        if (!currentQuery) return true;
+        return s.name.toLowerCase().indexOf(currentQuery) !== -1;
+      });
+      var start = (currentPage - 1) * pageSize;
+      var page = filtered.slice(start, start + pageSize);
+      var $list = $('#skillSuggestionsList').empty();
+      if (page.length === 0) {
+        $list.append('<div class="text-muted">No suggestions.</div>');
+      } else {
+        page.forEach(function(s){
+            var $item = $('<div class="skill-item" data-name="'+escapeHtml(s.name)+'" data-id="'+s.id+'" data-category="'+escapeHtml(s.category)+'"></div>');
+            var $btn = $('<button type="button" class="btn btn-sm btn-outline-success skill-sugg">'+escapeHtml(s.name)+' <small class="text-muted">('+escapeHtml(s.category)+')</small></button>');
+            $item.append($btn);
+            $list.append($item);
+          });
       }
+      $('#loadMoreTags').toggle(filtered.length > start + pageSize);
+    }
 
-      function selectTag(name) {
-        if (!name) return;
-        if (selectedSkill === name) {
-          selectedSkill = null;
+    $('#skillSearch').on('input', debounce(function(){
+      currentQuery = $(this).val().toLowerCase().trim();
+      renderSuggestions(true);
+    }, 250));
+
+    $('#clearSkillSearch').on('click', function(){ $('#skillSearch').val(''); currentQuery=''; renderSuggestions(true); });
+
+    $('#loadMoreTags').on('click', function(){ currentPage++; renderSuggestions(false); });
+
+    $('#skillSuggestionsList').on('click', '.skill-sugg', function(){
+      var name = $(this).closest('.skill-item').data('name');
+      selectTag(name);
+    });
+
+    function selectTag(name){
+      $('#skillsContainer').empty();
+  var $chip = $('<span class="badge badge-pill badge-success mr-2">'+escapeHtml(name)+' <a href="#" class="text-white ml-1 remove-skill" style="text-decoration:none;">&times;</a></span>');
+      $('#skillsContainer').append($chip);
+      $('#skillsHidden').val(name);
+    }
+
+    $('#skillsContainer').on('click', '.remove-skill', function(e){ e.preventDefault(); $('#skillsContainer').empty(); $('#skillsHidden').val(''); });
+
+    function prepareSkills(){ /* hidden input already set by selectTag */ }
+    window.prepareSkills = prepareSkills;
+
+    // Add tag via AJAX
+    $('#saveTagBtn').on('click', function(e){
+      e.preventDefault();
+      var name = $('#tagName').val().trim();
+      var category = $('#tagCategory').val();
+      if (!name) { alert('Please enter a tag name'); return; }
+      $('#saveTagBtn').prop('disabled', true);
+      $.post(window.location.href, { add_tag_ajax:1, tag_name: name, tag_category: category }, function(res){
+        $('#saveTagBtn').prop('disabled', false);
+        if (res && res.success){
+          allSuggestions.unshift({ id: res.id, name: res.name, category: res.category });
+          $('#addTagModal').modal('hide');
+          $('#tagName').val('');
+          $('#tagCategory').val('Non-Academic');
+          renderSuggestions(true);
+          selectTag(res.name);
         } else {
-          selectedSkill = name;
+          alert((res && res.msg) ? res.msg : 'Error adding tag');
         }
-        render();
-      }
+      }, 'json').fail(function(){ $('#saveTagBtn').prop('disabled', false); alert('Request failed'); });
+    });
 
-      var suggWrap = document.getElementById('skillSuggestions');
-      if (suggWrap) {
-        suggWrap.addEventListener('click', function (e) {
-          var btn = e.target;
-          if (!btn || !btn.classList) return;
-          if (btn.classList.contains('skill-sugg')) {
-            var name = btn.getAttribute('data-name');
-            if (name) selectTag(name);
-          } else if (btn.id === 'addCustomTag') {
-            var custom = prompt('Enter custom tag:');
-            if (custom) selectTag(custom.trim());
-          }
-        });
-      }
-
-      // expose for form submit
-      window.prepareSkills = function () { hidden.value = selectedSkill ? selectedSkill : ''; return true; };
-
-      // initial render
-      render();
-    })();
+    // Initial render
+    renderSuggestions(true);
+  })(jQuery);
   </script>
-</body>
-</html>
+ </body>
+ </html>
