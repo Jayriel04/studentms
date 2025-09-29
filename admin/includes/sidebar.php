@@ -8,7 +8,7 @@
         </div>
         <div class="text-wrapper">
           <?php
-          $aid = $_SESSION['sturecmsaid'];
+          $aid = isset($_SESSION['sturecmsaid']) ? $_SESSION['sturecmsaid'] : null;
           $sql = "SELECT * from tbladmin where ID=:aid";
 
           $query = $dbh->prepare($sql);

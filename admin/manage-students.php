@@ -19,15 +19,20 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     echo "<script>var statusMessage = '$statusMessage';</script>";
   }
 
-  // Search and filter functionality
+  // Search and filter functionality (support GET or POST so pagination links work)
   $searchdata = '';
   $filter = 'all';
-  if (isset($_POST['search'])) {
-    $searchdata = $_POST['searchdata'];
+  if (isset($_REQUEST['searchdata'])) {
+    $searchdata = trim($_REQUEST['searchdata']);
   }
-  if (isset($_POST['filter'])) {
-    $filter = $_POST['filter'];
+  if (isset($_REQUEST['filter'])) {
+    $filter = $_REQUEST['filter'];
   }
+
+  // Pagination setup
+  $limit = 10; // rows per page
+  $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+  $offset = ($page - 1) * $limit;
   ?>
   <!DOCTYPE html>
   <html lang="en">
@@ -98,20 +103,37 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         </thead>
                         <tbody>
                           <?php
-                          $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, ContactNumber, EmailAddress, Status FROM tblstudent WHERE 1=1";
+                          // Build WHERE clause and parameters
+                          $where = " WHERE 1=1";
+                          $params = [];
                           if (!empty($searchdata)) {
-                            $sql .= " AND (StuID LIKE :searchdata OR FamilyName LIKE :searchdata OR FirstName LIKE :searchdata OR EmailAddress LIKE :searchdata)";
+                            $where .= " AND (StuID LIKE :searchdata OR FamilyName LIKE :searchdata OR FirstName LIKE :searchdata OR EmailAddress LIKE :searchdata)";
+                            $params[':searchdata'] = '%' . $searchdata . '%';
                           }
                           if ($filter == 'active') {
-                            $sql .= " AND Status=1";
+                            $where .= " AND Status=1";
                           } elseif ($filter == 'inactive') {
-                            $sql .= " AND Status=0";
+                            $where .= " AND Status=0";
                           }
-                          $sql .= " ORDER BY ID DESC LIMIT 10"; // Default limit for pagination
+
+                          // Get total rows for pagination
+                          $countSql = "SELECT COUNT(*) FROM tblstudent" . $where;
+                          $countQuery = $dbh->prepare($countSql);
+                          foreach ($params as $k => $v) {
+                            $countQuery->bindValue($k, $v, PDO::PARAM_STR);
+                          }
+                          $countQuery->execute();
+                          $totalRows = (int) $countQuery->fetchColumn();
+                          $totalPages = $totalRows > 0 ? ceil($totalRows / $limit) : 1;
+
+                          // Fetch page rows with limit/offset
+                          $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, ContactNumber, EmailAddress, Status FROM tblstudent" . $where . " ORDER BY ID DESC LIMIT :limit OFFSET :offset";
                           $query = $dbh->prepare($sql);
-                          if (!empty($searchdata)) {
-                            $query->bindValue(':searchdata', '%' . $searchdata . '%', PDO::PARAM_STR);
+                          foreach ($params as $k => $v) {
+                            $query->bindValue($k, $v, PDO::PARAM_STR);
                           }
+                          $query->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+                          $query->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
                           $query->execute();
                           $results = $query->fetchAll(PDO::FETCH_OBJ);
                           $cnt = 1;
@@ -147,6 +169,38 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         </tbody>
                       </table>
                     </div>
+                      <!-- Pagination controls -->
+                      <nav aria-label="Page navigation" class="mt-3">
+                        <ul class="pagination">
+                          <?php
+                          // Build base URL with preserved params
+                          $baseParams = [];
+                          if (!empty($searchdata)) $baseParams['searchdata'] = $searchdata;
+                          if (!empty($filter) && $filter !== 'all') $baseParams['filter'] = $filter;
+
+                          $buildUrl = function ($p) use ($baseParams) {
+                            $params = $baseParams;
+                            $params['page'] = $p;
+                            return 'manage-students.php?' . http_build_query($params);
+                          };
+
+                          // First
+                          $firstDisabled = $page <= 1 ? ' disabled' : '';
+                          echo '<li class="page-item' . $firstDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl(1)) . '">First</a></li>';
+                          // Prev
+                          $prevPage = max(1, $page - 1);
+                          $prevDisabled = $page <= 1 ? ' disabled' : '';
+                          echo '<li class="page-item' . $prevDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl($prevPage)) . '">Prev</a></li>';
+                          // Next
+                          $nextPage = min($totalPages, $page + 1);
+                          $nextDisabled = $page >= $totalPages ? ' disabled' : '';
+                          echo '<li class="page-item' . $nextDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($nextPage)) . '">Next</a></li>';
+                          // Last
+                          $lastDisabled = $page >= $totalPages ? ' disabled' : '';
+                          echo '<li class="page-item' . $lastDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($totalPages)) . '">Last</a></li>';
+                          ?>
+                        </ul>
+                      </nav>
                   </div>
                 </div>
               </div>

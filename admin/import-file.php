@@ -3,34 +3,60 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-error_reporting(0);
-include_once('includes/dbconnection.php');
+// Show errors while debugging this page (remove or reduce in production)
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
-// Include PhpSpreadsheet autoload file
-require '../vendor/autoload.php';
+include_once(__DIR__ . '/includes/dbconnection.php');
+
+// Include PhpSpreadsheet autoload file (use absolute path so includes work from admin/)
+require_once __DIR__ . '/../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use PhpOffice\PhpSpreadsheet\Reader\Xls;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
 
 if (isset($_POST['import'])) {
-    $allowed_file_types = ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
-    $file_type = $_FILES['import_file']['type'];
-
-    if (!in_array($file_type, $allowed_file_types)) {
-        $_SESSION['import_status_error'] = "Invalid file type. Please upload a CSV or Excel file.";
+    // Basic upload validation
+    if (!isset($_FILES['import_file'])) {
+        $_SESSION['import_status_error'] = "No file uploaded.";
         header("Location: import-file.php");
         exit();
     }
 
-    $fileName = $_FILES['import_file']['tmp_name'];
+    if ($_FILES['import_file']['error'] !== UPLOAD_ERR_OK) {
+        $_SESSION['import_status_error'] = "File upload error (code: " . $_FILES['import_file']['error'] . ").";
+        header("Location: import-file.php");
+        exit();
+    }
+
+    $uploadedTmp = $_FILES['import_file']['tmp_name'];
+    $originalName = $_FILES['import_file']['name'];
+    $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
 
     try {
-        $spreadsheet = IOFactory::load($fileName);
+        // Choose reader based on extension (more robust than relying on mime-type)
+        if (in_array($ext, ['xlsx'])) {
+            $reader = new Xlsx();
+        } elseif (in_array($ext, ['xls'])) {
+            $reader = new Xls();
+        } elseif (in_array($ext, ['csv'])) {
+            $reader = new Csv();
+        } else {
+            $_SESSION['import_status_error'] = "Invalid file extension. Please upload .csv, .xls or .xlsx.";
+            header("Location: import-file.php");
+            exit();
+        }
+
+        $spreadsheet = $reader->load($uploadedTmp);
         $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
 
         $successful_imports = 0;
         $failed_imports = 0;
         $skipped_duplicates = 0;
-        $defaultPassword = "student123";
-        $hashedPassword = md5($defaultPassword);
+    $defaultPassword = "student123";
+    // Use password_hash instead of md5 for secure password storage
+    $hashedPassword = password_hash($defaultPassword, PASSWORD_DEFAULT);
 
         // Remove header row
         $header = array_shift($sheetData);
@@ -139,9 +165,11 @@ if (isset($_POST['import'])) {
         header("Location: import-file.php");
         exit();
 
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
+        // Log error for debugging and show friendly message
+        error_log("Import file error: " . $e->getMessage());
         $_SESSION['import_status_error'] = "Error processing file: " . $e->getMessage();
-        header("Location: " . $_SERVER['PHP_SELF']);
+        header("Location: import-file.php");
         exit();
     }
 }
