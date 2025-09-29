@@ -100,7 +100,7 @@ if (isset($_POST['login'])) {
                     <label class="form-check-label text-muted">
                       <input type="checkbox" id="remember" class="form-check-input" name="remember" <?php if (isset($_COOKIE["user_login"])) { ?> checked <?php } ?> /> Keep me signed in </label>
                   </div>
-                  <a href="forgot-password.php" class="auth-link text-black">Forgot password?</a>
+                  <a href="forgot-process.php" class="auth-link text-black">Forgot password?</a>
                 </div>
                 <div class="my-2 d-flex justify-content-between align-items-center">
                   <a href="signup.php" class="auth-link text-black">Don't have an account? Sign Up</a>
