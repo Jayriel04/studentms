@@ -20,7 +20,7 @@
               <div class="dot-indicator bg-success"></div>
         </div>
         <div class="text-wrapper">
-          <p class="profile-name"><?php echo htmlentities($row->FirstName . " " . $row->FamilyName); ?></p>
+          <p class="profile-name" style="color: #fff;"><?php echo htmlentities($row->FirstName . " " . $row->FamilyName); ?></p>
           <p class="designation"><?php echo htmlentities($row->EmailAddress); ?></p>
         </div>
           <?php

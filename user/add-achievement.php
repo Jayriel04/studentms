@@ -98,7 +98,8 @@ if (isset($_POST['add_achievement'])) {
   if (!empty($_FILES['proof']['name'])) {
     $proof_tmp = $_FILES['proof']['tmp_name'];
     $dest_dir = __DIR__ . '/../admin/images/achievements/';
-    if (!is_dir($dest_dir)) mkdir($dest_dir, 0755, true);
+    if (!is_dir($dest_dir))
+      mkdir($dest_dir, 0755, true);
     $proof_name = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES['proof']['name']));
     $proof_path = $dest_dir . $proof_name;
     if (!move_uploaded_file($proof_tmp, $proof_path)) {
@@ -108,90 +109,92 @@ if (isset($_POST['add_achievement'])) {
   }
 
   if (empty($ach_error)) {
-      try {
-        // Start transaction to ensure FK integrity
-        $dbh->beginTransaction();
-        $ins = "INSERT INTO student_achievements (StuID, level, category, proof_image, status, points, created_at) VALUES (:sid, :level, :category, :proof, 'pending', :points, NOW())";
-        $stmt = $dbh->prepare($ins);
-        $stmt->bindParam(':sid', $sid, PDO::PARAM_STR);
-        $stmt->bindParam(':level', $ach_level, PDO::PARAM_STR);
-        $stmt->bindParam(':category', $ach_category, PDO::PARAM_STR);
-        $stmt->bindParam(':proof', $proof_name, PDO::PARAM_STR);
-        $stmt->bindParam(':points', $points, PDO::PARAM_INT);
-        $stmt->execute();
-        $achievement_id = $dbh->lastInsertId();
+    try {
+      // Start transaction to ensure FK integrity
+      $dbh->beginTransaction();
+      $ins = "INSERT INTO student_achievements (StuID, level, category, proof_image, status, points, created_at) VALUES (:sid, :level, :category, :proof, 'pending', :points, NOW())";
+      $stmt = $dbh->prepare($ins);
+      $stmt->bindParam(':sid', $sid, PDO::PARAM_STR);
+      $stmt->bindParam(':level', $ach_level, PDO::PARAM_STR);
+      $stmt->bindParam(':category', $ach_category, PDO::PARAM_STR);
+      $stmt->bindParam(':proof', $proof_name, PDO::PARAM_STR);
+      $stmt->bindParam(':points', $points, PDO::PARAM_INT);
+      $stmt->execute();
+      $achievement_id = $dbh->lastInsertId();
 
-        // If a suggestion id was passed from the UI, prefer it (it's from tblskills)
-        $skill_id = null;
-        $skills_tbl_id = isset($_POST['skills_id']) ? trim($_POST['skills_id']) : '';
-        if ($skills_tbl_id !== '') {
-          // Map tblskills id -> skills table id. If skills doesn't have it, insert into skills first.
-          $chk = $dbh->prepare("SELECT name, category FROM tblskills WHERE id = :id LIMIT 1");
-          $chk->bindParam(':id', $skills_tbl_id, PDO::PARAM_INT);
-          $chk->execute();
-          $row = $chk->fetch(PDO::FETCH_ASSOC);
-          if ($row) {
-            $skill_name = $row['name'];
-            $skill_cat = ($row['category'] === 'Academic') ? 'Academic' : 'Non-Academic';
-            // ensure in skills
+      // If a suggestion id was passed from the UI, prefer it (it's from tblskills)
+      $skill_id = null;
+      $skills_tbl_id = isset($_POST['skills_id']) ? trim($_POST['skills_id']) : '';
+      if ($skills_tbl_id !== '') {
+        // Map tblskills id -> skills table id. If skills doesn't have it, insert into skills first.
+        $chk = $dbh->prepare("SELECT name, category FROM tblskills WHERE id = :id LIMIT 1");
+        $chk->bindParam(':id', $skills_tbl_id, PDO::PARAM_INT);
+        $chk->execute();
+        $row = $chk->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+          $skill_name = $row['name'];
+          $skill_cat = ($row['category'] === 'Academic') ? 'Academic' : 'Non-Academic';
+          // ensure in skills
+          $s = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
+          $s->bindParam(':name', $skill_name, PDO::PARAM_STR);
+          $s->execute();
+          $skill = $s->fetch(PDO::FETCH_ASSOC);
+          if ($skill && isset($skill['id'])) {
+            $skill_id = $skill['id'];
+          } else {
+            $insk = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
+            $insk->bindParam(':name', $skill_name, PDO::PARAM_STR);
+            $insk->bindParam(':category', $skill_cat, PDO::PARAM_STR);
+            $insk->execute();
+            $skill_id = $dbh->lastInsertId();
+          }
+        }
+      }
+
+      if ($skill_id === null && $skills_raw !== '') {
+        // Fallback: use free-text skill name
+        $parts = array_map('trim', explode(',', $skills_raw));
+        $parts = array_filter($parts);
+        if (count($parts) > 0) {
+          $skill_name = reset($parts);
+          if ($skill_name !== '') {
             $s = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
             $s->bindParam(':name', $skill_name, PDO::PARAM_STR);
             $s->execute();
-            $skill = $s->fetch(PDO::FETCH_ASSOC);
-            if ($skill && isset($skill['id'])) {
-              $skill_id = $skill['id'];
+            $skill = $s->fetch(PDO::FETCH_OBJ);
+            if ($skill && isset($skill->id)) {
+              $skill_id = $skill->id;
             } else {
               $insk = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
               $insk->bindParam(':name', $skill_name, PDO::PARAM_STR);
-              $insk->bindParam(':category', $skill_cat, PDO::PARAM_STR);
+              $insk->bindParam(':category', $ach_category, PDO::PARAM_STR);
               $insk->execute();
               $skill_id = $dbh->lastInsertId();
             }
           }
         }
-
-        if ($skill_id === null && $skills_raw !== '') {
-          // Fallback: use free-text skill name
-          $parts = array_map('trim', explode(',', $skills_raw));
-          $parts = array_filter($parts);
-          if (count($parts) > 0) {
-            $skill_name = reset($parts);
-            if ($skill_name !== '') {
-              $s = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
-              $s->bindParam(':name', $skill_name, PDO::PARAM_STR);
-              $s->execute();
-              $skill = $s->fetch(PDO::FETCH_OBJ);
-              if ($skill && isset($skill->id)) {
-                $skill_id = $skill->id;
-              } else {
-                $insk = $dbh->prepare("INSERT INTO skills (name, category, created_at) VALUES (:name, :category, NOW())");
-                $insk->bindParam(':name', $skill_name, PDO::PARAM_STR);
-                $insk->bindParam(':category', $ach_category, PDO::PARAM_STR);
-                $insk->execute();
-                $skill_id = $dbh->lastInsertId();
-              }
-            }
-          }
-        }
-
-        if ($skill_id !== null) {
-          $link = $dbh->prepare("INSERT INTO student_achievement_skills (achievement_id, skill_id) VALUES (:aid, :sid)");
-          $link->bindParam(':aid', $achievement_id, PDO::PARAM_INT);
-          $link->bindParam(':sid', $skill_id, PDO::PARAM_INT);
-          $link->execute();
-        }
-
-        $dbh->commit();
-        $ach_success = true;
-      } catch (Exception $e) {
-        if ($dbh->inTransaction()) $dbh->rollBack();
-        $ach_error = 'Error saving achievement: ' . $e->getMessage();
       }
+
+      if ($skill_id !== null) {
+        $link = $dbh->prepare("INSERT INTO student_achievement_skills (achievement_id, skill_id) VALUES (:aid, :sid)");
+        $link->bindParam(':aid', $achievement_id, PDO::PARAM_INT);
+        $link->bindParam(':sid', $skill_id, PDO::PARAM_INT);
+        $link->execute();
+      }
+
+      $dbh->commit();
+      $ach_success = true;
+    } catch (Exception $e) {
+      if ($dbh->inTransaction())
+        $dbh->rollBack();
+      $ach_error = 'Error saving achievement: ' . $e->getMessage();
+    }
   }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Add Achievement</title>
@@ -202,12 +205,24 @@ if (isset($_POST['add_achievement'])) {
   <link rel="stylesheet" href="./css/style(v2).css">
   <style>
     /* Make suggestion buttons and selected tag text black */
-    .skill-sugg { color: #000 !important; }
-    .skill-sugg small { color: #333 !important; }
-    .badge-success { color: #000 !important; }
-    .badge-success .remove-skill { color: #000 !important; }
+    .skill-sugg {
+      color: #000 !important;
+    }
+
+    .skill-sugg small {
+      color: #333 !important;
+    }
+
+    .badge-success {
+      color: #000 !important;
+    }
+
+    .badge-success .remove-skill {
+      color: #000 !important;
+    }
   </style>
 </head>
+
 <body>
   <div class="container-scroller">
     <?php include_once('includes/header.php'); ?>
@@ -241,20 +256,26 @@ if (isset($_POST['add_achievement'])) {
                   <form id="addAchievementForm" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                       <label>Skill / Tag</label>
-                      <p class="card-description">Select one tag. Click a suggestion to choose it or add a custom tag.</p>
+                      <p class="card-description">Select one tag. Click a suggestion to choose it or add a custom tag.
+                      </p>
                       <div style="margin-bottom:8px;">
                         <div class="input-group mb-2">
-                          <input id="skillSearch" type="search" class="form-control form-control-sm" placeholder="Search tags (type to filter)">
+                          <input id="skillSearch" type="search" class="form-control form-control-sm"
+                            placeholder="Search tags (type to filter)">
                           <div class="input-group-append">
-                            <button type="button" id="clearSkillSearch" class="btn btn-sm btn-outline-secondary">Clear</button>
+                            <button type="button" id="clearSkillSearch"
+                              class="btn btn-sm btn-outline-secondary">Clear</button>
                           </div>
                         </div>
                         <div id="skillSuggestionsList" class="d-flex flex-wrap" style="gap:6px;min-height:40px;">
                           <?php if (!empty($skillSuggestions)): ?>
                             <?php foreach ($skillSuggestions as $sugg): ?>
-                              <div class="skill-item" data-name="<?php echo htmlentities($sugg['name']); ?>" data-id="<?php echo htmlentities($sugg['id']); ?>" data-category="<?php echo htmlentities($sugg['category']); ?>">
+                              <div class="skill-item" data-name="<?php echo htmlentities($sugg['name']); ?>"
+                                data-id="<?php echo htmlentities($sugg['id']); ?>"
+                                data-category="<?php echo htmlentities($sugg['category']); ?>">
                                 <button type="button" class="btn btn-sm btn-outline-success skill-sugg">
-                                  <?php echo htmlentities($sugg['name']); ?> <small class="text-muted">(<?php echo htmlentities($sugg['category']); ?>)</small>
+                                  <?php echo htmlentities($sugg['name']); ?> <small
+                                    class="text-muted">(<?php echo htmlentities($sugg['category']); ?>)</small>
                                 </button>
                               </div>
                             <?php endforeach; ?>
@@ -264,7 +285,8 @@ if (isset($_POST['add_achievement'])) {
                         </div>
                         <div class="mt-2">
                           <button type="button" id="loadMoreTags" class="btn btn-sm btn-outline-info">Load more</button>
-                          <button type="button" id="addCustomTag" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#addTagModal">Add Tag</button>
+                          <button type="button" id="addCustomTag" class="btn btn-sm btn-outline-primary"
+                            data-toggle="modal" data-target="#addTagModal">Add Tag</button>
                         </div>
                       </div>
                       <div id="skillsContainer" style="margin-top:8px;"></div>
@@ -292,16 +314,19 @@ if (isset($_POST['add_achievement'])) {
                     <div class="form-group">
                       <label>Proof Image (optional)</label>
                       <input type="file" name="proof" class="form-control">
-                      <small class="form-text text-muted">Upload an image as proof (jpg/png). Staff/Admin will validate.</small>
+                      <small class="form-text text-muted">Upload an image as proof (jpg/png). Staff/Admin will
+                        validate.</small>
                     </div>
                     <div class="mt-3">
-                      <button type="submit" name="add_achievement" class="btn btn-success" onclick="prepareSkills()">Submit Achievement</button>
+                      <button type="submit" name="add_achievement" class="btn btn-success"
+                        onclick="prepareSkills()">Submit Achievement</button>
                       <a href="update-profile.php" class="btn btn-light">Back</a>
                     </div>
                   </form>
 
                   <!-- Add Tag Modal -->
-                  <div class="modal fade" id="addTagModal" tabindex="-1" role="dialog" aria-labelledby="addTagModalLabel" aria-hidden="true">
+                  <div class="modal fade" id="addTagModal" tabindex="-1" role="dialog"
+                    aria-labelledby="addTagModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                       <div class="modal-content">
                         <form id="addTagForm">
@@ -338,124 +363,126 @@ if (isset($_POST['add_achievement'])) {
             </div> <!-- col -->
           </div> <!-- row -->
         </div> <!-- content-wrapper -->
+        <?php include_once('includes/footer.php'); ?>
+
       </div> <!-- main-panel -->
     </div> <!-- page-body-wrapper -->
   </div> <!-- container-scroller -->
 
-  <?php include_once('includes/footer.php'); ?>
 
   <script src="../js/jquery-1.11.0.min.js"></script>
   <script src="../js/bootstrap.js"></script>
   <script>
-  (function($){
-    function debounce(fn, wait){ var t; return function(){ var ctx=this, args=arguments; clearTimeout(t); t=setTimeout(function(){ fn.apply(ctx,args); }, wait); }; }
-    function escapeHtml(text){ return $('<div>').text(text).html(); }
+    (function ($) {
+      function debounce(fn, wait) { var t; return function () { var ctx = this, args = arguments; clearTimeout(t); t = setTimeout(function () { fn.apply(ctx, args); }, wait); }; }
+      function escapeHtml(text) { return $('<div>').text(text).html(); }
 
-    var allSuggestions = [];
-    $('#skillSuggestionsList .skill-item').each(function(){
-      allSuggestions.push({
-        id: $(this).data('id'),
-        name: $(this).data('name'),
-        category: $(this).data('category')
+      var allSuggestions = [];
+      $('#skillSuggestionsList .skill-item').each(function () {
+        allSuggestions.push({
+          id: $(this).data('id'),
+          name: $(this).data('name'),
+          category: $(this).data('category')
+        });
       });
-    });
 
-    var pageSize = 10, currentPage = 1, currentQuery = '';
+      var pageSize = 10, currentPage = 1, currentQuery = '';
 
-    function renderSuggestions(resetPage){
-      if (resetPage) currentPage = 1;
-      var filtered = allSuggestions.filter(function(s){
-        if (!currentQuery) return true;
-        return s.name.toLowerCase().indexOf(currentQuery) !== -1;
-      });
-      var start = (currentPage - 1) * pageSize;
-      var page = filtered.slice(start, start + pageSize);
-      var $list = $('#skillSuggestionsList').empty();
-      if (page.length === 0) {
-        $list.append('<div class="text-muted">No suggestions.</div>');
-      } else {
-        page.forEach(function(s){
-            var $item = $('<div class="skill-item" data-name="'+escapeHtml(s.name)+'" data-id="'+s.id+'" data-category="'+escapeHtml(s.category)+'"></div>');
-            var $btn = $('<button type="button" class="btn btn-sm btn-outline-success skill-sugg">'+escapeHtml(s.name)+' <small class="text-muted">('+escapeHtml(s.category)+')</small></button>');
+      function renderSuggestions(resetPage) {
+        if (resetPage) currentPage = 1;
+        var filtered = allSuggestions.filter(function (s) {
+          if (!currentQuery) return true;
+          return s.name.toLowerCase().indexOf(currentQuery) !== -1;
+        });
+        var start = (currentPage - 1) * pageSize;
+        var page = filtered.slice(start, start + pageSize);
+        var $list = $('#skillSuggestionsList').empty();
+        if (page.length === 0) {
+          $list.append('<div class="text-muted">No suggestions.</div>');
+        } else {
+          page.forEach(function (s) {
+            var $item = $('<div class="skill-item" data-name="' + escapeHtml(s.name) + '" data-id="' + s.id + '" data-category="' + escapeHtml(s.category) + '"></div>');
+            var $btn = $('<button type="button" class="btn btn-sm btn-outline-success skill-sugg">' + escapeHtml(s.name) + ' <small class="text-muted">(' + escapeHtml(s.category) + ')</small></button>');
             $item.append($btn);
             $list.append($item);
           });
-      }
-      $('#loadMoreTags').toggle(filtered.length > start + pageSize);
-    }
-
-    $('#skillSearch').on('input', debounce(function(){
-      currentQuery = $(this).val().toLowerCase().trim();
-      renderSuggestions(true);
-    }, 250));
-
-    $('#clearSkillSearch').on('click', function(){ $('#skillSearch').val(''); currentQuery=''; renderSuggestions(true); });
-
-    $('#loadMoreTags').on('click', function(){ currentPage++; renderSuggestions(false); });
-
-    $('#skillSuggestionsList').on('click', '.skill-sugg', function(){
-      var $item = $(this).closest('.skill-item');
-      var name = $item.data('name');
-      var id = $item.data('id');
-      selectTag(name, id);
-    });
-
-    function selectTag(name, id){
-      $('#skillsContainer').empty();
-      var $chip = $(
-        '<span class="badge badge-pill badge-success mr-2">'+escapeHtml(name)+
-        ' <a href="#" class="text-white ml-1 remove-skill" style="text-decoration:none;">&times;</a></span>'
-      );
-      $('#skillsContainer').append($chip);
-      $('#skillsHidden').val(name);
-      if (typeof id !== 'undefined') $('#skillsIdHidden').val(id); else $('#skillsIdHidden').val('');
-    }
-
-    $('#skillsContainer').on('click', '.remove-skill', function(e){ e.preventDefault(); $('#skillsContainer').empty(); $('#skillsHidden').val(''); });
-
-    function prepareSkills(){ /* hidden input already set by selectTag */ }
-    window.prepareSkills = prepareSkills;
-
-    // Make sure the Add Tag button triggers the modal even if data-toggle isn't available
-    $('#addCustomTag').on('click', function(){
-      // Try Bootstrap modal (v4/v3) first
-      if (typeof $().modal === 'function') {
-        $('#addTagModal').modal('show');
-      } else {
-        // fallback: show by changing display
-        $('#addTagModal').show();
-      }
-    });
-
-    // Add tag via AJAX
-    $('#saveTagBtn').on('click', function(e){
-      e.preventDefault();
-      var $btn = $(this);
-      var name = $('#tagName').val().trim();
-      var category = $('#tagCategory').val();
-      if (!name) { alert('Please enter a tag name'); return; }
-      $btn.prop('disabled', true);
-      $.post(window.location.href, { add_tag_ajax:1, tag_name: name, tag_category: category }, function(res){
-        $btn.prop('disabled', false);
-        if (res && res.success){
-          // Add to front of suggestions and re-render
-          // push suggestion using tblskills id so paging/search works with server-side data
-          allSuggestions.unshift({ id: res.tblskill_id || res.skill_id || res.id, name: res.name, category: res.category });
-          // Hide modal properly
-          if (typeof $().modal === 'function') $('#addTagModal').modal('hide'); else $('#addTagModal').hide();
-          $('#tagName').val('');
-          $('#tagCategory').val('Non-Academic');
-          renderSuggestions(true);
-          selectTag(res.name, res.tblskill_id || res.skill_id || res.id);
-        } else {
-          alert((res && res.msg) ? res.msg : 'Error adding tag');
         }
-      }, 'json').fail(function(){ $btn.prop('disabled', false); alert('Request failed'); });
-    });
+        $('#loadMoreTags').toggle(filtered.length > start + pageSize);
+      }
 
-    // Initial render
-    renderSuggestions(true);
-  })(jQuery);
+      $('#skillSearch').on('input', debounce(function () {
+        currentQuery = $(this).val().toLowerCase().trim();
+        renderSuggestions(true);
+      }, 250));
+
+      $('#clearSkillSearch').on('click', function () { $('#skillSearch').val(''); currentQuery = ''; renderSuggestions(true); });
+
+      $('#loadMoreTags').on('click', function () { currentPage++; renderSuggestions(false); });
+
+      $('#skillSuggestionsList').on('click', '.skill-sugg', function () {
+        var $item = $(this).closest('.skill-item');
+        var name = $item.data('name');
+        var id = $item.data('id');
+        selectTag(name, id);
+      });
+
+      function selectTag(name, id) {
+        $('#skillsContainer').empty();
+        var $chip = $(
+          '<span class="badge badge-pill badge-success mr-2">' + escapeHtml(name) +
+          ' <a href="#" class="text-white ml-1 remove-skill" style="text-decoration:none;">&times;</a></span>'
+        );
+        $('#skillsContainer').append($chip);
+        $('#skillsHidden').val(name);
+        if (typeof id !== 'undefined') $('#skillsIdHidden').val(id); else $('#skillsIdHidden').val('');
+      }
+
+      $('#skillsContainer').on('click', '.remove-skill', function (e) { e.preventDefault(); $('#skillsContainer').empty(); $('#skillsHidden').val(''); });
+
+      function prepareSkills() { /* hidden input already set by selectTag */ }
+      window.prepareSkills = prepareSkills;
+
+      // Make sure the Add Tag button triggers the modal even if data-toggle isn't available
+      $('#addCustomTag').on('click', function () {
+        // Try Bootstrap modal (v4/v3) first
+        if (typeof $().modal === 'function') {
+          $('#addTagModal').modal('show');
+        } else {
+          // fallback: show by changing display
+          $('#addTagModal').show();
+        }
+      });
+
+      // Add tag via AJAX
+      $('#saveTagBtn').on('click', function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var name = $('#tagName').val().trim();
+        var category = $('#tagCategory').val();
+        if (!name) { alert('Please enter a tag name'); return; }
+        $btn.prop('disabled', true);
+        $.post(window.location.href, { add_tag_ajax: 1, tag_name: name, tag_category: category }, function (res) {
+          $btn.prop('disabled', false);
+          if (res && res.success) {
+            // Add to front of suggestions and re-render
+            // push suggestion using tblskills id so paging/search works with server-side data
+            allSuggestions.unshift({ id: res.tblskill_id || res.skill_id || res.id, name: res.name, category: res.category });
+            // Hide modal properly
+            if (typeof $().modal === 'function') $('#addTagModal').modal('hide'); else $('#addTagModal').hide();
+            $('#tagName').val('');
+            $('#tagCategory').val('Non-Academic');
+            renderSuggestions(true);
+            selectTag(res.name, res.tblskill_id || res.skill_id || res.id);
+          } else {
+            alert((res && res.msg) ? res.msg : 'Error adding tag');
+          }
+        }, 'json').fail(function () { $btn.prop('disabled', false); alert('Request failed'); });
+      });
+
+      // Initial render
+      renderSuggestions(true);
+    })(jQuery);
   </script>
- </body>
- </html>
+</body>
+
+</html>
