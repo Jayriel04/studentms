@@ -41,7 +41,7 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Student Management System || Add Staff</title>
+    <title>Student Profiling System || Add Staff</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">

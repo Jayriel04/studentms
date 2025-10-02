@@ -28,7 +28,7 @@ if (isset($_POST['submit'])) {
 
 <head>
 
-  <title>Staff Management System | Forgot Password</title>
+  <title>Staff Profiling System || Forgot Password</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">

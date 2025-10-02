@@ -26,7 +26,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
 <html lang="en">
 
 <head>
-  <title>Student Management System || Manage Public Notice</title>
+  <title>Student Profiling System || Manage Public Notice</title>
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">

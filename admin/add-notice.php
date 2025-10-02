@@ -28,7 +28,7 @@ $query->bindParam(':notmsg',$notmsg,PDO::PARAM_STR);
 <html lang="en">
   <head>
    
-    <title>Student  Management System|| Add Notice</title>
+    <title>Student Profiling System|| Add Notice</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">

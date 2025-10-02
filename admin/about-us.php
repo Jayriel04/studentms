@@ -24,7 +24,7 @@ echo '<script>if(window.showToast) showToast("About us has been updated","succes
 <html lang="en">
   <head>
    
-    <title>Student  Management System|| Update About Us</title>
+    <title>Student  Profiling System|| Update About Us</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">

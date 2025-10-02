@@ -43,7 +43,7 @@ if (isset($_POST['login'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Student Management System | Staff Login</title>
+    <title>Student Profiling System | Staff Login</title>
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -87,7 +87,7 @@ if (isset($_POST['login'])) {
                 <div class="row flex-grow">
                     <div class="col-lg-4 mx-auto">
                         <div class="auth-form-light text-left p-5">
-                            <div class="brand-logo" align="center">Student Management System - Staff</div>
+                            <div class="brand-logo" align="center">Student Profiling System - Staff</div>
                             <h6 class="font-weight-light">Sign in to continue as Staff.</h6>
                             <?php if(isset($login_error)): ?>
                                 <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 50px;">

@@ -180,7 +180,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Admin - Validate Achievements</title>
+  <title>Student Profiling System || Validate Achievements</title>
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">

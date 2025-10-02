@@ -22,7 +22,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
 <html lang="en">
 
 <head>
-  <title>Staff Management System | Update Contact Us</title>
+  <title>Staff Profiling System || Update Contact Us</title>
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">

@@ -32,7 +32,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
 <html lang="en">
 
 <head>
-  <title>Admin Management System | Search Students</title>
+  <title>Student Profiling System | Search Students</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">

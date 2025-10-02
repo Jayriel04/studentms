@@ -30,7 +30,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
 <html lang="en">
 
 <head>
-  <title>Staff Management System | Update Staff Image</title>
+  <title>Staff Profiling System || Update Staff Image</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">

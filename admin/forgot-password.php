@@ -49,7 +49,7 @@ if (isset($_POST['reset_password'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Student Management System | Forgot Password</title>
+    <title>Student Profiling System | Forgot Password</title>
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
