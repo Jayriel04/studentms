@@ -34,14 +34,58 @@ include('includes/dbconnection.php');
   <script type="text/javascript" src="js/easing.js"></script>
   <!--script-->
   <script type="text/javascript">
-    jQuery(document).ready(function ($) {
-      $(".scroll").click(function (event) {
-        event.preventDefault();
-        $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 900);
+    jQuery(function ($) {
+      // Smooth scroll for links that have a hash target (works if href="#someID")
+      $(document).on('click', '.scroll', function (event) {
+        var targetHash = this.hash || $(this).attr('href');
+        if (!targetHash || targetHash === '#' ) return;
+        var $target = $(targetHash);
+        if ($target.length) {
+          event.preventDefault();
+          $('html, body').animate({ scrollTop: $target.offset().top }, 700);
+        }
+      });
+
+      // Back-to-top button: show after scrolling down, animate to top on click
+      var $backBtn = $('<a/>', {
+        id: 'back-to-top',
+        href: '#top',
+        title: 'Back to top',
+        'aria-label': 'Back to top',
+        class: 'modern-back-to-top',
+        html: '&#8679;',
+        css: {
+          display: 'none',
+          position: 'fixed',
+          right: '18px',
+          bottom: '18px',
+          width: '42px',
+          height: '42px',
+          'line-height': '42px',
+          'text-align': 'center',
+          'background-color': '#0b61d6',
+          color: '#fff',
+          'border-radius': '6px',
+          'z-index': 9999,
+          cursor: 'pointer',
+          'box-shadow': '0 6px 18px rgba(11,97,214,0.12)'
+        }
+      }).appendTo('body');
+
+      $(window).on('scroll.backToTop', function () {
+        if ($(this).scrollTop() > 200) {
+          $backBtn.fadeIn(200);
+        } else {
+          $backBtn.fadeOut(200);
+        }
+      });
+
+      $backBtn.on('click', function (e) {
+        e.preventDefault();
+        $('html, body').animate({ scrollTop: 0 }, 600);
       });
     });
   </script>
-  <!--/script-->
 
   <!-- Improved Notice Modal styles -->
   <style>
