@@ -8,7 +8,7 @@ include('includes/dbconnection.php');
 
 <head>
 	<title>Student Management System || Contact Us Page</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all">
 	<link href="css/style.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="css/default.css" />
