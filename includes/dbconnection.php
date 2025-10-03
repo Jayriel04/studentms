@@ -1,29 +1,13 @@
 <?php
 // DB credentials.
-
-// Read from environment variables, with local fallbacks for XAMPP.
-$dbHost = getenv('DB_HOST') ?: 'localhost';
-$dbName = getenv('DB_NAME') ?: 'studentmsdb';
-$dbUser = getenv('DB_USER') ?: 'root';
-$dbPass = getenv('DB_PASS') ?: '';
-
-// For Render/Fly.io etc., the connection string might be provided as a single URL.
-$dbUrl = getenv('DATABASE_URL');
-if ($dbUrl) {
-    $dbConfig = parse_url($dbUrl);
-    $dbHost = $dbConfig['host'];
-    $dbName = ltrim($dbConfig['path'], '/');
-    $dbUser = $dbConfig['user'];
-    $dbPass = $dbConfig['pass'];
-}
-
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'studentmsdb');
 // Establish database connection.
 try {
-    $dbh = new PDO("mysql:host=" . $dbHost . ";dbname=" . $dbName, $dbUser, $dbPass, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
-    // Set PDO to throw exceptions on error, which is good practice.
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
 } catch (PDOException $e) {
-    // In production, you might want to log this error instead of showing it to the user.
-    exit("Database connection failed: " . $e->getMessage());
+    exit("Error: " . $e->getMessage());
 }
 ?>
