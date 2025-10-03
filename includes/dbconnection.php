@@ -1,29 +1,13 @@
 <?php
-// Local defaults
-$db_host = '127.0.0.1';
-$db_name = 'studentms';
-$db_user = 'root';
-$db_pass = '';
-
-// If running on Heroku with JAWSDB or CLEARDB, parse URL
-$cleardbUrl = getenv('CLEARDB_DATABASE_URL') ?: getenv('JAWSDB_URL') ?: getenv('DATABASE_URL');
-if ($cleardbUrl) {
-    $parts = parse_url($cleardbUrl);
-    if ($parts) {
-        $db_host = $parts['host'] ?? $db_host;
-        $db_user = $parts['user'] ?? $db_user;
-        $db_pass = $parts['pass'] ?? $db_pass;
-        // path may start with '/', remove it
-        $db_name = isset($parts['path']) ? ltrim($parts['path'], '/') : $db_name;
-    }
-}
-
+// DB credentials.
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'studentmsdb');
+// Establish database connection.
 try {
-    $dbh = new PDO("mysql:host={$db_host};dbname={$db_name};charset=utf8mb4", $db_user, $db_pass);
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $dbh = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
 } catch (PDOException $e) {
-    // don't expose details in production; log or show friendly message
-    error_log('DB connect error: ' . $e->getMessage());
-    die('Database connection error.');
+    exit("Error: " . $e->getMessage());
 }
 ?>
