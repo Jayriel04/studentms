@@ -149,6 +149,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Ensure staff session is chec
                     <td><?php echo isset($row->totalPoints) ? htmlentities($row->totalPoints) : '0'; ?></td>
                     <td>
                       <div>
+                        <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>" class="btn btn-success btn-xs">View</a>
                         <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="btn btn-info btn-xs">Edit</a>
                         <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-warning btn-xs"><?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?></a>
                         <!-- Validate Achievements moved to sidebar -->
@@ -206,6 +207,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Ensure staff session is chec
                     <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                     <td>
                       <div>
+                        <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>" class="btn btn-success btn-xs">View</a>
                         <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="btn btn-info btn-xs">Edit</a>
                         <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-warning btn-xs"><?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?></a>
                         <!-- Validate Achievements moved to sidebar -->

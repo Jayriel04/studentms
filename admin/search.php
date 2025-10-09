@@ -164,10 +164,12 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                     <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                     <td><?php echo isset($skill->name) ? htmlentities($skill->name) : ''; ?></td>
                     <td>
-                      <div>
-                        <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="btn btn-info btn-xs">Edit</a>
-                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-warning btn-xs"><?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?></a>
-                        <!-- Validate Achievements moved to sidebar -->
+                      <div class="btn-group" role="group" aria-label="Actions">
+                        <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>" class="btn btn-info btn-xs">View</a>
+                        <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->ID ?? $row->sid); ?>" class="btn btn-primary btn-xs">Edit</a>
+                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->ID ?? $row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-warning btn-xs">
+                          <?php echo (isset($row->Status) && $row->Status == 1) ? 'Deactivate' : 'Activate'; ?>
+                        </a>
                       </div>
                     </td>
                   </tr>
@@ -218,10 +220,12 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                     <td><?php echo htmlentities($row->EmailAddress); ?></td>
                     <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                     <td>
-                      <div>
-                        <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="btn btn-info btn-xs">Edit</a>
-                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-warning btn-xs"><?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?></a>
-                        <!-- Validate Achievements moved to sidebar -->
+                      <div class="btn-group" role="group" aria-label="Actions">
+                        <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>" class="btn btn-info btn-xs">View</a>
+                        <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->ID ?? $row->sid); ?>" class="btn btn-primary btn-xs">Edit</a>
+                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->ID ?? $row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-warning btn-xs">
+                          <?php echo (isset($row->Status) && $row->Status == 1) ? 'Deactivate' : 'Activate'; ?>
+                        </a>
                       </div>
                     </td>
                   </tr>
