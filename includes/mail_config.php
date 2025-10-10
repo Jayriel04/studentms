@@ -4,11 +4,11 @@
 // defaults below are used. Replace defaults with real SMTP credentials.
 
 $MAIL_HOST = getenv('MAIL_HOST') ?: 'smtp.gmail.com';
-$MAIL_USERNAME = getenv('MAIL_USERNAME') ?: 'senilla.jayriel.mcc@gmail.com';
-$MAIL_PASSWORD = getenv('MAIL_PASSWORD') ?: 'wlnq kfuh fpbn cnpr';
+$MAIL_USERNAME = getenv('MAIL_USERNAME') ?: 'jayriel460@gmail.com';
+$MAIL_PASSWORD = getenv('MAIL_PASSWORD') ?: 'zroi yjzu acsu mept';
 $MAIL_PORT = getenv('MAIL_PORT') ?: 587;
 $MAIL_ENCRYPTION = getenv('MAIL_ENCRYPTION') ?: 'tls'; // 'ssl' or 'tls' or ''
-$MAIL_FROM = getenv('MAIL_FROM') ?: 'senilla.jayriel.mcc@gmail.com';
+$MAIL_FROM = getenv('MAIL_FROM') ?: 'jayriel460@gmail.com';
 $MAIL_FROM_NAME = getenv('MAIL_FROM_NAME') ?: 'StudentVue';
 
 /*
