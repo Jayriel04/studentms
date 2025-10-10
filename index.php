@@ -189,7 +189,7 @@ include('includes/dbconnection.php');
       <div class="modern-card modern-notice-card">
         <h3 class="modern-section-title">Public Notices</h3>
         <div class="modern-notices-list-wrapper">
-          <div class="modern-notices-list" style="height: 200px; width: 80vh;">
+          <div class="modern-notices-list">
             <?php
             $sql = "SELECT * from tblpublicnotice";
             $query = $dbh->prepare($sql);
