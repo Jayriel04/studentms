@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 29, 2025 at 08:32 AM
+-- Generation Time: Oct 10, 2025 at 02:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -57,7 +57,10 @@ INSERT INTO `achievement_approvals` (`id`, `achievement_id`, `approved_by`, `app
 (16, 15, '1', '2025-09-24 13:32:04', NULL),
 (17, 16, '1', '2025-09-24 17:29:10', NULL),
 (18, 17, '1', '2025-09-29 13:28:01', 'rejected'),
-(19, 18, '1', '2025-09-29 13:28:06', NULL);
+(19, 18, '1', '2025-09-29 13:28:06', NULL),
+(20, 19, '1', '2025-09-29 14:41:10', 'rejected'),
+(21, 20, '1', '2025-09-29 14:41:12', 'rejected'),
+(22, 21, '1', '2025-09-29 14:51:59', NULL);
 
 -- --------------------------------------------------------
 
@@ -82,7 +85,8 @@ INSERT INTO `skills` (`id`, `name`, `category`, `created_at`) VALUES
 (3, 'Volley Ball', 'Academic', '2025-09-24 12:19:10'),
 (4, 'Badminton', 'Non-Academic', '2025-09-24 13:30:53'),
 (5, 'Sipak Takraw', 'Non-Academic', '2025-09-24 17:28:37'),
-(6, 'Best in Art', 'Academic', '2025-09-29 13:27:40');
+(6, 'Best in Art', 'Academic', '2025-09-29 13:27:40'),
+(7, 'Best in Quiz Bee', 'Academic', '2025-09-29 14:51:50');
 
 -- --------------------------------------------------------
 
@@ -125,7 +129,10 @@ INSERT INTO `student_achievements` (`id`, `StuID`, `level`, `category`, `proof_i
 (15, '222- 08410', 'City', 'Non-Academic', '1758691918_Screenshot__5_.png', 'approved', 1, '2025-09-24 13:32:04', 30, '2025-09-24 13:31:58'),
 (16, '222- 08412', 'School', 'Non-Academic', '1758706117_Screenshot__225_.png', 'approved', 1, '2025-09-24 17:29:10', 10, '2025-09-24 17:28:37'),
 (17, '222- 08410', 'Provincial', 'Academic', '1759123598_image.png', 'rejected', 1, '2025-09-29 13:28:01', 40, '2025-09-29 13:26:38'),
-(18, '222- 08410', 'Provincial', 'Academic', '1759123660_image.png', 'approved', 1, '2025-09-29 13:28:06', 40, '2025-09-29 13:27:40');
+(18, '222- 08410', 'Provincial', 'Academic', '1759123660_image.png', 'approved', 1, '2025-09-29 13:28:06', 40, '2025-09-29 13:27:40'),
+(19, '222- 08410', 'City', 'Academic', '1759127979_image.png', 'rejected', 1, '2025-09-29 14:41:10', 30, '2025-09-29 14:39:39'),
+(20, '222- 08410', 'City', 'Academic', '1759128032_image.png', 'rejected', 1, '2025-09-29 14:41:12', 30, '2025-09-29 14:40:32'),
+(21, '222- 08410', 'School', 'Academic', '1759128710_image.png', 'approved', 1, '2025-09-29 14:51:59', 10, '2025-09-29 14:51:50');
 
 -- --------------------------------------------------------
 
@@ -160,7 +167,8 @@ INSERT INTO `student_achievement_skills` (`id`, `achievement_id`, `skill_id`) VA
 (14, 14, 4),
 (15, 15, 2),
 (16, 16, 5),
-(18, 18, 6);
+(18, 18, 6),
+(21, 21, 7);
 
 -- --------------------------------------------------------
 
@@ -175,6 +183,7 @@ CREATE TABLE `tbladmin` (
   `Email` varchar(200) DEFAULT NULL,
   `Password` varchar(200) DEFAULT NULL,
   `AdminRegdate` timestamp NULL DEFAULT current_timestamp(),
+  `Image` varchar(255) DEFAULT NULL,
   `reset_code` varchar(255) DEFAULT NULL,
   `reset_code_expires` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -183,8 +192,8 @@ CREATE TABLE `tbladmin` (
 -- Dumping data for table `tbladmin`
 --
 
-INSERT INTO `tbladmin` (`ID`, `AdminName`, `UserName`, `Email`, `Password`, `AdminRegdate`, `reset_code`, `reset_code_expires`) VALUES
-(1, 'Admin', 'admin', 'admin@email.com', 'e6e061838856bf47e1de730719fb2609', '2025-01-01 04:36:52', NULL, NULL);
+INSERT INTO `tbladmin` (`ID`, `AdminName`, `UserName`, `Email`, `Password`, `AdminRegdate`, `Image`, `reset_code`, `reset_code_expires`) VALUES
+(1, 'Admin', 'admin', 'senilla.jayriel.mcc@gmail.com', '$2y$10$ylyAYSRUYLW.5kgPVWmzxel4AwzmNMfwSyeZ/jLtMyDeBBg6C0yV.', '2025-01-01 04:36:52', '8638d1ae134381f221ea43f7ff99be0b1760096606.png', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -210,7 +219,9 @@ INSERT INTO `tblnotice` (`ID`, `NoticeTitle`, `ClassId`, `NoticeMsg`, `CreationD
 (9, 'Sample01', 8, 'This is sample post!!', '2025-07-28 05:37:25'),
 (10, 'Sample03', NULL, 'this sample 03', '2025-08-26 05:26:30'),
 (11, 'Sample04', NULL, 'This is sample 04', '2025-08-26 05:27:00'),
-(12, 'Sample05', NULL, 'This is sample 06', '2025-08-26 05:29:03');
+(12, 'Sample05', NULL, 'This is sample 06', '2025-08-26 05:29:03'),
+(13, 'Sample04', NULL, 'This is sample notice number 4', '2025-09-29 07:06:13'),
+(14, 'Sample06', NULL, 'Idk ngano ni red na', '2025-10-02 09:54:16');
 
 -- --------------------------------------------------------
 
@@ -233,7 +244,7 @@ CREATE TABLE `tblpage` (
 --
 
 INSERT INTO `tblpage` (`ID`, `PageType`, `PageTitle`, `PageDescription`, `Email`, `MobileNumber`, `UpdationDate`) VALUES
-(1, 'aboutus', 'About Us', '<div style=\"text-align: start;\"><font color=\"#7b8898\" face=\"Mercury SSm A, Mercury SSm B, Georgia, Times, Times New Roman, Microsoft YaHei New, Microsoft Yahei, ????, ??, SimSun, STXihei, ????, serif\"><span style=\"font-size: 26px;\">Student Management System Developed for MCC.</span></font><br></div>', NULL, NULL, NULL),
+(1, 'aboutus', 'About Us', '<div style=\"text-align: start;\"><font color=\"#7b8898\" face=\"Mercury SSm A, Mercury SSm B, Georgia, Times, Times New Roman, Microsoft YaHei New, Microsoft Yahei, ????, ??, SimSun, STXihei, ????, serif\"><span style=\"font-size: 26px;\">Student Profiling System Developed for MCC.</span></font><br></div>', NULL, NULL, NULL),
 (2, 'contactus', 'Contact Us', '<span style=\"color: rgb(8, 8, 9); font-family: &quot;Segoe UI Historic&quot;, &quot;Segoe UI&quot;, Helvetica, Arial, sans-serif; font-size: 15px;\">Mandaue City Cultural and Sports Complex, A. Soriano Ave, Mandaue City, Philippines</span>', 'mcc@mandauecitycollege.com', 322395989, NULL);
 
 -- --------------------------------------------------------
@@ -339,7 +350,7 @@ CREATE TABLE `tblstaff` (
 --
 
 INSERT INTO `tblstaff` (`ID`, `StaffName`, `UserName`, `Email`, `Password`, `StaffRegdate`, `Status`) VALUES
-(1, 'Shiela daniot', 'shiela', 'shiela@gmail.com', 'b3b2cc4114d1d4ec9fecf51fe4852112', '2025-09-09 06:56:58', 1),
+(1, 'Shiela daniot', 'shiela', 'senillajayriel@gmail.com', '$2y$10$D/lNR5FKgn5JF08ZxqhMD.u81dQP/DVQ6Z1uSV63SZG1m7yQHdpJK', '2025-09-09 06:56:58', 1),
 (3, 'gabi katol', 'gabi', 'gabi@test.com', 'd1aa72f9cae9ff4a4377fc58a5ae2fe9', '2025-09-12 14:20:55', 0),
 (4, 'saging hinog', 'saging', 'saging@test.com', '71eb4a6c476caef18ca1c2b5342f357a', '2025-09-12 14:21:16', 0);
 
@@ -395,7 +406,7 @@ CREATE TABLE `tblstudent` (
 
 INSERT INTO `tblstudent` (`ID`, `StuID`, `FamilyName`, `FirstName`, `MiddleName`, `Program`, `Major`, `LearnersReferenceNo`, `DOB`, `PlaceOfBirth`, `Gender`, `CivilStatus`, `Religion`, `Height`, `Weight`, `Citizenship`, `FathersName`, `MothersMaidenName`, `BuildingHouseNumber`, `StreetName`, `Barangay`, `CityMunicipality`, `Province`, `PostalCode`, `ContactNumber`, `EmailAddress`, `EmergencyContactPerson`, `EmergencyRelationship`, `EmergencyContactNumber`, `EmergencyAddress`, `Category`, `YearLevel`, `Password`, `Image`, `Academic`, `NonAcademic`, `Status`) VALUES
 (1, '222- 08412', 'Senilla', 'Jayriel', 'Longakit', 'BSIT', 'InfoTech', '119323090042', '2004-04-09', 'idk', 'Mechanic', 'single', 'Roman Catholic', '164cm', '57kg', 'Filipino', 'Arnulfo Senilla', 'Jennifer Longakit', '587-A', 'Carnation street', 'Casili', 'Consolacion', 'Cebu', '6014', '09319106644', 'jayriel@test.com', 'jaynard senilla', 'brother', '09238263741', 'idk', 'Regular', '4', '$2y$10$m4ESgI.efyRszHdUes2XiOf9d606./wyvvN7nDoKptDxHWypKqik6', 'pfpjm.jfif', NULL, 'Sipak Takraw', 1),
-(2, '222- 08410', 'Ypil', 'John Mar', 'Hortilana', 'BSIT', 'InfoTech', '119323090040', '2002-12-22', 'idk', 'Gay', 'single', 'Roman Catholic', '164cm', '57cm', 'Filipino', 'idk', 'idk', 'idk', 'idk', 'idk', 'idk', 'idk', '6004', '09319106644', 'ypil.johnmar.mcc@gmail.com', 'Denise', 'wife', '09238263740', 'idk', 'Regular', '4', '$2y$10$gXPaa/BfhUaFng15NzR5/O7.AddMJS95HJ1YlQNof8EgKOL5Qcpde', 'pfpjm.jfif', 'Best in Art', 'Badminton, Basketball', 1),
+(2, '222- 08410', 'Ypil', 'John Mar', 'Hortilana', 'BSIT', 'InfoTech', '119323090040', '2002-12-22', 'idk', 'Gay', 'single', 'Roman Catholic', '164cm', '57cm', 'Filipino', 'idk', 'idk', 'idk', 'idk', 'idk', 'idk', 'idk', '6004', '09319106644', 'ypil.johnmar.mcc@gmail.com', 'Denise', 'wife', '09238263740', 'idk', 'Regular', '4', '$2y$10$Lrh2HAy42f6ZFnliY2xwDun0Kw92BaYNE.LXGzvPIGmod0Z8zial6', 'pfpjm.jfif', 'Best in Art, Best in Quiz Bee', 'Badminton, Basketball', 1),
 (3, '222- 08411', 'Canonio', 'Jezrah Faith', 'Conde', 'BSIT', 'InfoTech', '119323090041', '2004-05-13', 'idk', 'Female', 'Single', 'Roman Catholic', '164cm', '49kg', 'Filipino', 'EdilJr Canonio', 'Nimfa Conde', 'idk', 'idk', 'idk', 'idk', 'idk', '6004', '09319106639', 'canonio.jezrahfaith.mcc@gmail.com', 'Marissa Canonio', 'Step Mother', '09238263740', 'idk', 'Regular', '4', '$2y$10$7B0fv2araaGH2rbuhL72x.SrdIKlNwGDbjkhFlXE5ZyECsEV5GqzW', 'pfpjez.jfif', NULL, NULL, 1),
 (9, '2025-001', 'Garcia', 'Juan', 'Santos', 'BSIT', 'Software Engineering', 'LRN12345', '2003-05-12', 'Manila', 'Male', 'Single', 'Catholic', '170', '65', 'Filipino', 'Pedro Garcia', 'Maria Santos', '123', 'Mabini St', 'Barangay 1', 'Quezon City', 'Metro Manila', '1100', '09171234567', 'juan.garcia@example.com', 'Ana Garcia', 'Sister', '09181234567', '123 Mabini St, QC', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
 (10, '2025-002', 'Reyes', 'Maria', 'Lopez', 'BSBA', 'Marketing', 'LRN67890', '2002-11-23', 'Cebu', 'Female', 'Single', 'Catholic', '160', '50', 'Filipino', 'Jose Reyes', 'Elena Lopez', '456', 'Rizal Ave', 'Barangay 5', 'Cebu City', 'Cebu', '6000', '09991234567', 'maria.reyes@example.com', 'Jose Reyes', 'Father', '09981234567', '456 Rizal Ave, Cebu', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
@@ -496,25 +507,25 @@ ALTER TABLE `tblstudent`
 -- AUTO_INCREMENT for table `achievement_approvals`
 --
 ALTER TABLE `achievement_approvals`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `skills`
 --
 ALTER TABLE `skills`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `student_achievements`
 --
 ALTER TABLE `student_achievements`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `student_achievement_skills`
 --
 ALTER TABLE `student_achievement_skills`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `tbladmin`
@@ -526,7 +537,7 @@ ALTER TABLE `tbladmin`
 -- AUTO_INCREMENT for table `tblnotice`
 --
 ALTER TABLE `tblnotice`
-  MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `tblpage`
