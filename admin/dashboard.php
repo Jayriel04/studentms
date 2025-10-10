@@ -13,6 +13,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   <head>
 
     <title>Student Profiling System || Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -118,7 +119,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                           $sqlPending = "SELECT COUNT(*) FROM student_achievements WHERE status = 'pending'";
                           $qPending = $dbh->prepare($sqlPending);
                           $qPending->execute();
-                          $pendingCount = (int)$qPending->fetchColumn();
+                          $pendingCount = (int) $qPending->fetchColumn();
                           ?>
                           <span class="report-title">Pending Validations</span>
                           <h4><?php echo htmlentities($pendingCount); ?></h4>
@@ -146,7 +147,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
       </div>
       <!-- page-body-wrapper ends -->
     </div>
-    
+
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="vendors/js/vendor.bundle.base.js"></script>

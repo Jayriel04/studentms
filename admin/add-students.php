@@ -48,7 +48,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_OBJ);
     if ($query->rowCount() > 0) {
-  echo '<script>if(window.showToast) showToast("Student ID already exists. Please try again","warning");</script>';
+      echo '<script>if(window.showToast) showToast("Student ID already exists. Please try again","warning");</script>';
     } else {
       $sql = "INSERT INTO tblstudent(StuID, Password, FamilyName, FirstName, MiddleName, Program, Major, LearnersReferenceNo, DOB, PlaceOfBirth, Gender, CivilStatus, Religion, Height, Weight, Citizenship, FathersName, MothersMaidenName, BuildingHouseNumber, StreetName, Barangay, CityMunicipality, Province, PostalCode, ContactNumber, EmailAddress, EmergencyContactPerson, EmergencyRelationship, EmergencyContactNumber, EmergencyAddress, Category, YearLevel) VALUES(:stuid, :password, :familyname, :firstname, :middlename, :program, :major, :lrn, :dob, :placeofbirth, :gender, :civilstatus, :religion, :height, :weight, :citizenship, :fathersname, :mothersmaidenname, :buildinghouse, :streetname, :barangay, :citymunicipality, :province, :postalcode, :contactnumber, :emailaddress, :emergencycontactperson, :emergencyrelationship, :emergencycontactnumber, :emergencyaddress, :category, :yearlevel)";
       $query = $dbh->prepare($sql);
@@ -87,10 +87,10 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
       $query->execute();
       $LastInsertId = $dbh->lastInsertId();
       if ($LastInsertId > 0) {
-  echo '<script>if(window.showToast) showToast("Student has been added.","success");</script>';
+        echo '<script>if(window.showToast) showToast("Student has been added.","success");</script>';
         echo "<script>window.location.href ='manage-students.php'</script>";
       } else {
-  echo '<script>if(window.showToast) showToast("Something Went Wrong. Please try again","danger");</script>';
+        echo '<script>if(window.showToast) showToast("Something Went Wrong. Please try again","danger");</script>';
       }
     }
   }
@@ -100,6 +100,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
 
   <head>
     <title>Student Profiling System || Add Students</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">

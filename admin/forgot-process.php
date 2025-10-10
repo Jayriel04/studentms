@@ -12,8 +12,10 @@ $phpmailerSrc = __DIR__ . '/../vendor/phpmailer/phpmailer/src/PHPMailer.php';
 $phpmailerException = __DIR__ . '/../vendor/phpmailer/phpmailer/src/Exception.php';
 $phpmailerSMTP = __DIR__ . '/../vendor/phpmailer/phpmailer/src/SMTP.php';
 if (file_exists($phpmailerSrc)) {
-  if (file_exists($phpmailerException)) require_once $phpmailerException;
-  if (file_exists($phpmailerSMTP)) require_once $phpmailerSMTP;
+  if (file_exists($phpmailerException))
+    require_once $phpmailerException;
+  if (file_exists($phpmailerSMTP))
+    require_once $phpmailerSMTP;
   require_once $phpmailerSrc;
   $hasPHPMailer = class_exists('PHPMailer\\PHPMailer\\PHPMailer');
 }
@@ -28,8 +30,10 @@ function send_otp_email($toEmail, $code)
 
   if ($hasPHPMailer) {
     try {
-      if (empty($MAIL_FROM) && !empty($MAIL_USERNAME)) $MAIL_FROM = $MAIL_USERNAME;
-      if (empty($MAIL_FROM_NAME)) $MAIL_FROM_NAME = 'StudentMS';
+      if (empty($MAIL_FROM) && !empty($MAIL_USERNAME))
+        $MAIL_FROM = $MAIL_USERNAME;
+      if (empty($MAIL_FROM_NAME))
+        $MAIL_FROM_NAME = 'StudentMS';
 
       $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
       $mail->isSMTP();
@@ -37,8 +41,9 @@ function send_otp_email($toEmail, $code)
       $mail->SMTPAuth = true;
       $mail->Username = $MAIL_USERNAME;
       $mail->Password = $MAIL_PASSWORD;
-      if (!empty($MAIL_ENCRYPTION)) $mail->SMTPSecure = $MAIL_ENCRYPTION;
-      $mail->Port = (int)$MAIL_PORT;
+      if (!empty($MAIL_ENCRYPTION))
+        $mail->SMTPSecure = $MAIL_ENCRYPTION;
+      $mail->Port = (int) $MAIL_PORT;
 
       $mail->setFrom($MAIL_FROM, $MAIL_FROM_NAME ?: 'No-Reply');
       $mail->addAddress($toEmail);
@@ -81,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['email'])) {
     } else {
       $code = random_int(100000, 999999);
       if (send_otp_email($email, $code)) {
-        $_SESSION['admin_fp_reset_code'] = (string)$code;
+        $_SESSION['admin_fp_reset_code'] = (string) $code;
         $_SESSION['admin_fp_reset_email'] = $email;
         $_SESSION['admin_fp_reset_expires'] = time() + 15 * 60; // 15 minutes
         header('Location: verify-otp-process.php');
@@ -95,29 +100,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['email'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Admin || Forgot Password</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-  <div class="container-scroller"><div class="container-fluid page-body-wrapper full-page-wrapper"><div class="content-wrapper d-flex align-items-center auth">
-    <div class="row flex-grow"><div class="col-lg-4 mx-auto"><div class="auth-form-light text-left p-5">
-      <div class="brand-logo" align="center" style="font-weight:bold">Admin Password Reset</div>
-      <h6 class="font-weight-light">Enter your admin email to receive a 6-digit reset code.</h6>
-      <?php if (!empty($error)): ?><div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
-      <form class="pt-3" method="post">
-        <div class="form-group"><input type="email" class="form-control form-control-lg" name="email" placeholder="Email address" required autofocus></div>
-        <div class="mt-3"><button class="btn btn-success btn-block loginbtn" type="submit">Send OTP</button></div>
-        <div class="my-2 d-flex justify-content-between align-items-center">
-          <a href="login.php" class="auth-link text-black">Sign in</a>
-          <a href="../index.php" class="auth-link text-black">Back Home</a>
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-center auth">
+        <div class="row flex-grow">
+          <div class="col-lg-4 mx-auto">
+            <div class="auth-form-light text-left p-5">
+              <div class="brand-logo" align="center" style="font-weight:bold">Admin Password Reset</div>
+              <h6 class="font-weight-light">Enter your admin email to receive a 6-digit reset code.</h6>
+              <?php if (!empty($error)): ?>
+                <div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
+              <form class="pt-3" method="post">
+                <div class="form-group"><input type="email" class="form-control form-control-lg" name="email"
+                    placeholder="Email address" required autofocus></div>
+                <div class="mt-3"><button class="btn btn-success btn-block loginbtn" type="submit">Send OTP</button>
+                </div>
+                <div class="my-2 d-flex justify-content-between align-items-center">
+                  <a href="login.php" class="auth-link text-black">Sign in</a>
+                  <a href="../index.php" class="auth-link text-black">Back Home</a>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-      </form>
-    </div></div></div>
-  </div></div></div>
+      </div>
+    </div>
+  </div>
   <script src="vendors/js/vendor.bundle.base.js"></script>
 </body>
+
 </html>

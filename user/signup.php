@@ -54,6 +54,7 @@ if (isset($_POST['signup'])) {
 <html lang="en">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Student Management System | Student Signup</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -73,38 +74,45 @@ if (isset($_POST['signup'])) {
                                 <div class="row g-2">
                                     <div class="col-12">
                                         <div class="form-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Student ID" required name="stuid">
+                                            <input type="text" class="form-control" placeholder="Student ID" required
+                                                name="stuid">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Family Name" required name="familyname">
+                                            <input type="text" class="form-control" placeholder="Family Name" required
+                                                name="familyname">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group mb-3">
-                                            <input type="text" class="form-control" placeholder="First Name" required name="firstname">
+                                            <input type="text" class="form-control" placeholder="First Name" required
+                                                name="firstname">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Middle Name" name="middlename">
+                                            <input type="text" class="form-control" placeholder="Middle Name"
+                                                name="middlename">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group mb-3">
-                                            <input type="email" class="form-control" placeholder="Email" required name="email">
+                                            <input type="email" class="form-control" placeholder="Email" required
+                                                name="email">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Password" required name="password">
+                                            <input type="password" class="form-control" placeholder="Password" required
+                                                name="password">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group mb-3">
                                             <label for="profilepic" class="form-label">Profile Picture</label>
-                                            <input type="file" class="form-control" name="profilepic" id="profilepic" accept="image/*" required>
+                                            <input type="file" class="form-control" name="profilepic" id="profilepic"
+                                                accept="image/*" required>
                                         </div>
                                     </div>
                                 </div>

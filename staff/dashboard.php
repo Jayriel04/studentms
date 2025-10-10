@@ -10,6 +10,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
 
   <head>
     <title>Student Profiling System || Staff Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -74,7 +75,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                           $sqlPending = "SELECT COUNT(*) FROM student_achievements WHERE status = 'pending'";
                           $qPending = $dbh->prepare($sqlPending);
                           $qPending->execute();
-                          $pendingCount = (int)$qPending->fetchColumn();
+                          $pendingCount = (int) $qPending->fetchColumn();
                           ?>
                           <span class="report-title">Pending Validations</span>
                           <h4><?php echo htmlentities($pendingCount); ?></h4>

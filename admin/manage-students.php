@@ -39,6 +39,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
 
   <head>
     <title>Student Profiling System || Manage Students</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -171,38 +172,40 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         </tbody>
                       </table>
                     </div>
-                      <!-- Pagination controls -->
-                      <nav aria-label="Page navigation" class="mt-3">
-                        <ul class="pagination">
-                          <?php
-                          // Build base URL with preserved params
-                          $baseParams = [];
-                          if (!empty($searchdata)) $baseParams['searchdata'] = $searchdata;
-                          if (!empty($filter) && $filter !== 'all') $baseParams['filter'] = $filter;
+                    <!-- Pagination controls -->
+                    <nav aria-label="Page navigation" class="mt-3">
+                      <ul class="pagination">
+                        <?php
+                        // Build base URL with preserved params
+                        $baseParams = [];
+                        if (!empty($searchdata))
+                          $baseParams['searchdata'] = $searchdata;
+                        if (!empty($filter) && $filter !== 'all')
+                          $baseParams['filter'] = $filter;
 
-                          $buildUrl = function ($p) use ($baseParams) {
-                            $params = $baseParams;
-                            $params['page'] = $p;
-                            return 'manage-students.php?' . http_build_query($params);
-                          };
+                        $buildUrl = function ($p) use ($baseParams) {
+                          $params = $baseParams;
+                          $params['page'] = $p;
+                          return 'manage-students.php?' . http_build_query($params);
+                        };
 
-                          // First
-                          $firstDisabled = $page <= 1 ? ' disabled' : '';
-                          echo '<li class="page-item' . $firstDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl(1)) . '">First</a></li>';
-                          // Prev
-                          $prevPage = max(1, $page - 1);
-                          $prevDisabled = $page <= 1 ? ' disabled' : '';
-                          echo '<li class="page-item' . $prevDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl($prevPage)) . '">Prev</a></li>';
-                          // Next
-                          $nextPage = min($totalPages, $page + 1);
-                          $nextDisabled = $page >= $totalPages ? ' disabled' : '';
-                          echo '<li class="page-item' . $nextDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($nextPage)) . '">Next</a></li>';
-                          // Last
-                          $lastDisabled = $page >= $totalPages ? ' disabled' : '';
-                          echo '<li class="page-item' . $lastDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($totalPages)) . '">Last</a></li>';
-                          ?>
-                        </ul>
-                      </nav>
+                        // First
+                        $firstDisabled = $page <= 1 ? ' disabled' : '';
+                        echo '<li class="page-item' . $firstDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl(1)) . '">First</a></li>';
+                        // Prev
+                        $prevPage = max(1, $page - 1);
+                        $prevDisabled = $page <= 1 ? ' disabled' : '';
+                        echo '<li class="page-item' . $prevDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl($prevPage)) . '">Prev</a></li>';
+                        // Next
+                        $nextPage = min($totalPages, $page + 1);
+                        $nextDisabled = $page >= $totalPages ? ' disabled' : '';
+                        echo '<li class="page-item' . $nextDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($nextPage)) . '">Next</a></li>';
+                        // Last
+                        $lastDisabled = $page >= $totalPages ? ' disabled' : '';
+                        echo '<li class="page-item' . $lastDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($totalPages)) . '">Last</a></li>';
+                        ?>
+                      </ul>
+                    </nav>
                   </div>
                 </div>
               </div>

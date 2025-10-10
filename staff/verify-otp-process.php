@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp'])) {
     if ($_SESSION['staff_fp_attempts'] > 5) {
       unset($_SESSION['staff_fp_reset_code'], $_SESSION['staff_fp_reset_email'], $_SESSION['staff_fp_reset_expires'], $_SESSION['staff_fp_attempts']);
       $error = 'Too many attempts. Please request a new code.';
-    } else if (isset($_SESSION['staff_fp_reset_code']) && hash_equals((string)$_SESSION['staff_fp_reset_code'], $otp)) {
+    } else if (isset($_SESSION['staff_fp_reset_code']) && hash_equals((string) $_SESSION['staff_fp_reset_code'], $otp)) {
       unset($_SESSION['staff_fp_reset_code'], $_SESSION['staff_fp_reset_expires'], $_SESSION['staff_fp_attempts']);
       $_SESSION['staff_fp_verified'] = true;
       header('Location: reset-password-process.php');
@@ -40,33 +40,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Staff || Verify Reset Code</title>
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-  <div class="container-scroller"><div class="container-fluid page-body-wrapper full-page-wrapper"><div class="content-wrapper d-flex align-items-center auth">
-    <div class="row flex-grow"><div class="col-lg-4 mx-auto"><div class="auth-form-light text-left p-5">
-      <div class="brand-logo" align="center" style="font-weight:bold">Staff - Verify Code</div>
-      <h6 class="font-weight-light">Enter the 6-digit code sent to <strong><?php echo htmlentities($_SESSION['staff_fp_reset_email']); ?></strong></h6>
-      <?php if (!empty($error)): ?><div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
-      <form class="pt-3" method="post">
-        <div class="form-group">
-          <input type="text" class="form-control form-control-lg" name="otp" placeholder="6-digit code" required pattern="\d{6}" maxlength="6" inputmode="numeric" autofocus>
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-center auth">
+        <div class="row flex-grow">
+          <div class="col-lg-4 mx-auto">
+            <div class="auth-form-light text-left p-5">
+              <div class="brand-logo" align="center" style="font-weight:bold">Staff - Verify Code</div>
+              <h6 class="font-weight-light">Enter the 6-digit code sent to
+                <strong><?php echo htmlentities($_SESSION['staff_fp_reset_email']); ?></strong></h6>
+              <?php if (!empty($error)): ?>
+                <div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
+              <form class="pt-3" method="post">
+                <div class="form-group">
+                  <input type="text" class="form-control form-control-lg" name="otp" placeholder="6-digit code" required
+                    pattern="\d{6}" maxlength="6" inputmode="numeric" autofocus>
+                </div>
+                <div class="mt-3">
+                  <button class="btn btn-success btn-block loginbtn" type="submit">Verify Code</button>
+                </div>
+                <div class="my-2 d-flex justify-content-between align-items-center">
+                  <a href="forgot-process.php" class="auth-link text-black">Request new code</a>
+                  <a href="login.php" class="auth-link text-black">Sign in</a>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-        <div class="mt-3">
-          <button class="btn btn-success btn-block loginbtn" type="submit">Verify Code</button>
-        </div>
-        <div class="my-2 d-flex justify-content-between align-items-center">
-          <a href="forgot-process.php" class="auth-link text-black">Request new code</a>
-          <a href="login.php" class="auth-link text-black">Sign in</a>
-        </div>
-      </form>
-    </div></div></div>
-  </div></div></div>
+      </div>
+    </div>
+  </div>
   <script src="vendors/js/vendor.bundle.base.js"></script>
 </body>
+
 </html>

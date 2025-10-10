@@ -37,8 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Staff || Reset Password</title>
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -54,26 +55,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
     }
   </script>
 </head>
+
 <body>
-  <div class="container-scroller"><div class="container-fluid page-body-wrapper full-page-wrapper"><div class="content-wrapper d-flex align-items-center auth">
-    <div class="row flex-grow"><div class="col-lg-4 mx-auto"><div class="auth-form-light text-left p-5">
-      <div class="brand-logo" align="center" style="font-weight:bold">Staff - Reset Password</div>
-      <h6 class="font-weight-light">Set a new password for <strong><?php echo htmlentities($_SESSION['staff_fp_reset_email']); ?></strong></h6>
-      <?php if (!empty($error)): ?><div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
-      <form class="pt-3" method="post" onsubmit="return valid();">
-        <div class="form-group">
-          <input id="newpassword" type="password" class="form-control form-control-lg" name="newpassword" placeholder="New Password" required autofocus>
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-center auth">
+        <div class="row flex-grow">
+          <div class="col-lg-4 mx-auto">
+            <div class="auth-form-light text-left p-5">
+              <div class="brand-logo" align="center" style="font-weight:bold">Staff - Reset Password</div>
+              <h6 class="font-weight-light">Set a new password for
+                <strong><?php echo htmlentities($_SESSION['staff_fp_reset_email']); ?></strong></h6>
+              <?php if (!empty($error)): ?>
+                <div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
+              <form class="pt-3" method="post" onsubmit="return valid();">
+                <div class="form-group">
+                  <input id="newpassword" type="password" class="form-control form-control-lg" name="newpassword"
+                    placeholder="New Password" required autofocus>
+                </div>
+                <div class="form-group">
+                  <input id="confirmpassword" type="password" class="form-control form-control-lg"
+                    name="confirmpassword" placeholder="Confirm Password" required>
+                </div>
+                <div class="mt-3"><button class="btn btn-success btn-block loginbtn" type="submit">Change
+                    Password</button></div>
+                <div class="my-2 d-flex justify-content-between align-items-center"><a href="login.php"
+                    class="auth-link text-black">Sign in</a></div>
+              </form>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <input id="confirmpassword" type="password" class="form-control form-control-lg" name="confirmpassword" placeholder="Confirm Password" required>
-        </div>
-        <div class="mt-3"><button class="btn btn-success btn-block loginbtn" type="submit">Change Password</button></div>
-        <div class="my-2 d-flex justify-content-between align-items-center"><a href="login.php" class="auth-link text-black">Sign in</a></div>
-      </form>
-    </div></div></div>
-  </div></div></div>
+      </div>
+    </div>
+  </div>
   <script src="vendors/js/vendor.bundle.base.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
 </body>
+
 </html>

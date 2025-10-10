@@ -28,7 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
   try {
     $chk = $dbh->prepare("SHOW COLUMNS FROM student_achievements LIKE 'approved_by'");
     $chk->execute();
-    if ($chk->rowCount() > 0) $hasApprovedBy = true;
+    if ($chk->rowCount() > 0)
+      $hasApprovedBy = true;
   } catch (Exception $e) {
     $hasApprovedBy = false;
   }
@@ -37,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
     $logFile = __DIR__ . '/achieve_actions.log';
     $log = [];
     // helper to fetch status
-    $fetchStatus = function($aid) use ($dbh) {
+    $fetchStatus = function ($aid) use ($dbh) {
       try {
         $ps = $dbh->prepare("SELECT status FROM student_achievements WHERE id=:id");
         $ps->bindParam(':id', $aid, PDO::PARAM_INT);
@@ -136,13 +137,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
         }
       } else {
         $_SESSION['ach_msg'] = 'No rows updated when approving (id=' . $id . ').';
-        if (!empty($log['errorInfo'][2])) $_SESSION['ach_msg'] .= ' DB error: ' . $log['errorInfo'][2];
+        if (!empty($log['errorInfo'][2]))
+          $_SESSION['ach_msg'] .= ' DB error: ' . $log['errorInfo'][2];
       }
-  $log['action'] = 'approve';
-  $log['id'] = $id;
-  $log['staff'] = $staffId;
-  @file_put_contents($logFile, date('c') . ' ' . json_encode($log) . PHP_EOL, FILE_APPEND);
-  $_SESSION['ach_debug'] = $log;
+      $log['action'] = 'approve';
+      $log['id'] = $id;
+      $log['staff'] = $staffId;
+      @file_put_contents($logFile, date('c') . ' ' . json_encode($log) . PHP_EOL, FILE_APPEND);
+      $_SESSION['ach_debug'] = $log;
     } elseif ($action === 'reject') {
       $log['pre_status'] = $fetchStatus($id);
       if ($hasApprovedBy) {
@@ -177,13 +179,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
         }
       } else {
         $_SESSION['ach_msg'] = 'No rows updated when rejecting (id=' . $id . ').';
-        if (!empty($log['errorInfo'][2])) $_SESSION['ach_msg'] .= ' DB error: ' . $log['errorInfo'][2];
+        if (!empty($log['errorInfo'][2]))
+          $_SESSION['ach_msg'] .= ' DB error: ' . $log['errorInfo'][2];
       }
-  $log['action'] = 'reject';
-  $log['id'] = $id;
-  $log['staff'] = $staffId;
-  @file_put_contents($logFile, date('c') . ' ' . json_encode($log) . PHP_EOL, FILE_APPEND);
-  $_SESSION['ach_debug'] = $log;
+      $log['action'] = 'reject';
+      $log['id'] = $id;
+      $log['staff'] = $staffId;
+      @file_put_contents($logFile, date('c') . ' ' . json_encode($log) . PHP_EOL, FILE_APPEND);
+      $_SESSION['ach_debug'] = $log;
     }
   } catch (Exception $e) {
     $_SESSION['ach_msg'] = 'Action error: ' . $e->getMessage();
@@ -210,15 +213,18 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Student Profiling System || Validate Achievements</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/style(v2).css">
 </head>
+
 <body>
   <div class="container-scroller">
     <?php include_once('includes/header.php'); ?>
@@ -241,7 +247,9 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
               <div class="card">
                 <div class="card-body">
                   <?php if (isset($_SESSION['ach_msg'])): ?>
-                    <div class="alert alert-info"><?php echo htmlentities($_SESSION['ach_msg']); unset($_SESSION['ach_msg']); ?></div>
+                    <div class="alert alert-info">
+                      <?php echo htmlentities($_SESSION['ach_msg']);
+                      unset($_SESSION['ach_msg']); ?></div>
                   <?php endif; ?>
 
                   <?php if (empty($rows)): ?>
@@ -266,7 +274,8 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                         <tbody>
                           <?php foreach ($rows as $r): ?>
                             <tr>
-                              <td><?php echo htmlentities($r->StudentName); ?> <br><small><?php echo htmlentities($r->StuID); ?></small></td>
+                              <td><?php echo htmlentities($r->StudentName); ?>
+                                <br><small><?php echo htmlentities($r->StuID); ?></small></td>
                               <td><?php echo htmlentities($r->skills); ?></td>
                               <td><?php echo htmlentities($r->category); ?></td>
                               <td><?php echo htmlentities($r->level); ?></td>
@@ -275,7 +284,8 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                               <td><?php echo htmlentities($r->approved_at ?? ''); ?></td>
                               <td>
                                 <?php if (!empty($r->proof_image)): ?>
-                                  <a href="../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>" target="_blank">View</a>
+                                  <a href="../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>"
+                                    target="_blank">View</a>
                                 <?php else: ?>
                                   <span>No proof</span>
                                 <?php endif; ?>
@@ -314,4 +324,5 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
 </body>
+
 </html>

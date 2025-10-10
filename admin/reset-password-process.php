@@ -48,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 <head>
   <meta charset="utf-8">
   <title>Admin || Reset Password</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -58,12 +59,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
       var n = document.getElementById('newpassword').value;
       var c = document.getElementById('confirmpassword').value;
       if (n !== c) {
-        if (window.showToast) showToast('New Password and Confirm Password Field do not match !!','warning');
+        if (window.showToast) showToast('New Password and Confirm Password Field do not match !!', 'warning');
         document.getElementById('confirmpassword').focus();
         return false;
       }
       if (n.length < 6) {
-        if (window.showToast) showToast('Password must be at least 6 characters.','warning');
+        if (window.showToast) showToast('Password must be at least 6 characters.', 'warning');
         document.getElementById('newpassword').focus();
         return false;
       }
@@ -80,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
           <div class="col-lg-4 mx-auto">
             <div class="auth-form-light text-left p-5">
               <div class="brand-logo" align="center" style="font-weight:bold">Admin - Student Management System</div>
-              <h6 class="font-weight-light">Set a new password for <strong><?php echo htmlentities($_SESSION['admin_fp_reset_email']); ?></strong></h6>
+              <h6 class="font-weight-light">Set a new password for
+                <strong><?php echo htmlentities($_SESSION['admin_fp_reset_email']); ?></strong></h6>
 
               <?php if (!empty($error)): ?>
                 <div class="alert alert-danger" role="alert"><?php echo htmlentities($error); ?></div>
@@ -88,10 +90,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 
               <form class="pt-3" method="post" onsubmit="return valid();">
                 <div class="form-group">
-                  <input id="newpassword" type="password" class="form-control form-control-lg" name="newpassword" placeholder="New Password" required autofocus>
+                  <input id="newpassword" type="password" class="form-control form-control-lg" name="newpassword"
+                    placeholder="New Password" required autofocus>
                 </div>
                 <div class="form-group">
-                  <input id="confirmpassword" type="password" class="form-control form-control-lg" name="confirmpassword" placeholder="Confirm Password" required>
+                  <input id="confirmpassword" type="password" class="form-control form-control-lg"
+                    name="confirmpassword" placeholder="Confirm Password" required>
                 </div>
                 <div class="mt-3">
                   <button class="btn btn-success btn-block loginbtn" type="submit">Change Password</button>

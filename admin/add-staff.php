@@ -2,10 +2,10 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsaid']==0)) {
+if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
 } else {
-  if(isset($_POST['submit'])) {
+  if (isset($_POST['submit'])) {
     $staffname = $_POST['staffname'];
     $username = $_POST['username'];
     $email = $_POST['email'];
@@ -17,7 +17,7 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
     $query->bindParam(':username', $username, PDO::PARAM_STR);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_OBJ);
-    if($query->rowCount() == 0) {
+    if ($query->rowCount() == 0) {
       $sql = "INSERT INTO tblstaff (StaffName, UserName, Email, Password, StaffRegdate) VALUES (:staffname, :username, :email, :password, :regdate)";
       $query = $dbh->prepare($sql);
       $query->bindParam(':staffname', $staffname, PDO::PARAM_STR);
@@ -37,10 +37,12 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
       echo "<script>if(window.showToast) showToast('Username already exists. Please try again','warning'); else alert('Username already exists. Please try again');</script>";
     }
   }
-?>
-<!DOCTYPE html>
-<html lang="en">
+  ?>
+  <!DOCTYPE html>
+  <html lang="en">
+
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Student Profiling System || Add Staff</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
@@ -56,14 +58,15 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
     <!-- Layout styles -->
     <link rel="stylesheet" href="css/style.css" />
   </head>
+
   <body>
     <div class="container-scroller">
       <!-- partial:partials/_navbar.html -->
-      <?php include_once('includes/header.php');?>
+      <?php include_once('includes/header.php'); ?>
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:partials/_sidebar.html -->
-        <?php include_once('includes/sidebar.php');?>
+        <?php include_once('includes/sidebar.php'); ?>
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
@@ -82,33 +85,36 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
                   <div class="card-body">
                     <h3 class="card-title" style="text-align: center;">Add Staff</h3>
                     <hr />
-                    <?php if(isset($success_message)): ?>
-                    <!-- Toast for success -->
-                    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 50px;">
-                      <div class="toast" id="successToast" style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;" data-delay="3000" data-autohide="true">
-                        <div class="toast-header bg-success text-white">
-                          <strong class="mr-auto">Success</strong>
-                          <small>Now</small>
-                          <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="toast-body">
-                          <?php echo $success_message; ?>
+                    <?php if (isset($success_message)): ?>
+                      <!-- Toast for success -->
+                      <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 50px;">
+                        <div class="toast" id="successToast"
+                          style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;" data-delay="3000"
+                          data-autohide="true">
+                          <div class="toast-header bg-success text-white">
+                            <strong class="mr-auto">Success</strong>
+                            <small>Now</small>
+                            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast"
+                              aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="toast-body">
+                            <?php echo $success_message; ?>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <script>
-                      window.addEventListener('DOMContentLoaded', function(){
-                        var toastEl = document.getElementById('successToast');
-                        if(toastEl && window.$) {
-                          $(toastEl).toast('show');
-                        } else if (toastEl && typeof bootstrap !== "undefined") {
-                          var toast = new bootstrap.Toast(toastEl);
-                          toast.show();
-                        }
-                      });
-                    </script>
+                      <script>
+                        window.addEventListener('DOMContentLoaded', function () {
+                          var toastEl = document.getElementById('successToast');
+                          if (toastEl && window.$) {
+                            $(toastEl).toast('show');
+                          } else if (toastEl && typeof bootstrap !== "undefined") {
+                            var toast = new bootstrap.Toast(toastEl);
+                            toast.show();
+                          }
+                        });
+                      </script>
                     <?php endif; ?>
                     <form class="forms-sample" method="post">
                       <div class="form-group">
@@ -136,7 +142,7 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
           </div>
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
-          <?php include_once('includes/footer.php');?>
+          <?php include_once('includes/footer.php'); ?>
           <!-- partial -->
         </div>
         <!-- main-panel ends -->
@@ -160,4 +166,5 @@ if (strlen($_SESSION['sturecmsaid']==0)) {
     <script src="js/select2.js"></script>
     <!-- End custom js for this page -->
   </body>
-</html><?php } ?>
+
+  </html><?php } ?>

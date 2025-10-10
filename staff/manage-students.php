@@ -35,6 +35,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
 
     <head>
         <title>Student Profiling System || Manage Students</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
         <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
         <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -82,7 +83,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                         echo 'selected'; ?>>Inactive</option>
                                                 </select>
                                                 <button type="submit" name="search" class="btn btn-primary">Search</button>
-                                                <a href="import-file.php" class="btn" style="background-color: #007BFF; color: white;";">Import</a>
+                                                <a href="import-file.php" class="btn"
+                                                    style="background-color: #007BFF; color: white;" ;">Import</a>
                                             </form>
                                         </div>
                                         <div class="table-responsive border rounded p-1">
@@ -134,9 +136,12 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                                 <td><?php echo htmlentities($row->EmailAddress); ?></td>
                                                                 <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                                                 <td>
-                                                                    <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>" class="btn btn-success btn-xs">View</a>
-                                                                    <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="btn btn-info btn-xs">Edit</a>
-                                                                    <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-warning btn-xs">
+                                                                    <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
+                                                                        class="btn btn-success btn-xs">View</a>
+                                                                    <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
+                                                                        class="btn btn-info btn-xs">Edit</a>
+                                                                    <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
+                                                                        class="btn btn-warning btn-xs">
                                                                         <?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?>
                                                                     </a>
                                                                 </td>

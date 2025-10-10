@@ -54,9 +54,9 @@ if (isset($_POST['import'])) {
         $successful_imports = 0;
         $failed_imports = 0;
         $skipped_duplicates = 0;
-    $defaultPassword = "student123";
-    // Use password_hash instead of md5 for secure password storage
-    $hashedPassword = password_hash($defaultPassword, PASSWORD_DEFAULT);
+        $defaultPassword = "student123";
+        // Use password_hash instead of md5 for secure password storage
+        $hashedPassword = password_hash($defaultPassword, PASSWORD_DEFAULT);
 
         // Remove header row
         $header = array_shift($sheetData);
@@ -180,6 +180,7 @@ if (isset($_POST['import'])) {
 
 <head>
     <title>Student Management System || Import Students</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">

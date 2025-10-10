@@ -69,6 +69,7 @@ if (isset($_POST['login'])) {
 
 <head>
   <title>Student Management System || Student Login Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -81,11 +82,11 @@ if (isset($_POST['login'])) {
       position: fixed;
       right: 20px;
       top: 20px;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0, 0, 0, 0.85);
       color: #fff;
       padding: 12px 16px;
       border-radius: 6px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
       z-index: 9999;
       display: flex;
       align-items: center;
@@ -93,6 +94,7 @@ if (isset($_POST['login'])) {
       max-width: 320px;
       font-family: sans-serif;
     }
+
     .toast-box button {
       background: transparent;
       border: none;
@@ -101,12 +103,21 @@ if (isset($_POST['login'])) {
       line-height: 1;
       cursor: pointer;
     }
+
     .toast-show {
       animation: toast-in 0.2s ease-out;
     }
+
     @keyframes toast-in {
-      from { transform: translateY(-8px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(-8px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -124,14 +135,18 @@ if (isset($_POST['login'])) {
               <h6 class="font-weight-light">Sign in to continue as Student.</h6>
               <form class="pt-3" id="login" method="post" name="login">
                 <div class="form-group">
-                  <input type="text" class="form-control form-control-lg" placeholder="Enter your Student ID" required="true" name="stuid" value="<?php if (isset($_COOKIE["user_login"])) {
-                                                                                                                                                  echo $_COOKIE["user_login"];
-                                                                                                                                                } ?>">
+                  <input type="text" class="form-control form-control-lg" placeholder="Enter your Student ID"
+                    required="true" name="stuid"
+                    value="<?php if (isset($_COOKIE["user_login"])) {
+                      echo $_COOKIE["user_login"];
+                    } ?>">
                 </div>
                 <div class="form-group">
-                  <input type="password" class="form-control form-control-lg" placeholder="Enter your Password" name="password" required="true" value="<?php if (isset($_COOKIE["userpassword"])) {
-                                                                                                                                                      echo $_COOKIE["userpassword"];
-                                                                                                                                                    } ?>">
+                  <input type="password" class="form-control form-control-lg" placeholder="Enter your Password"
+                    name="password" required="true"
+                    value="<?php if (isset($_COOKIE["userpassword"])) {
+                      echo $_COOKIE["userpassword"];
+                    } ?>">
                 </div>
                 <div class="mt-3">
                   <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
@@ -171,10 +186,10 @@ if (isset($_POST['login'])) {
       <button id="login-toast-close" aria-label="Close">&times;</button>
     </div>
     <script>
-      (function(){
+      (function () {
         var toast = document.getElementById('login-toast');
         var close = document.getElementById('login-toast-close');
-        function hide() { if(!toast) return; toast.style.transition = 'opacity 0.25s ease'; toast.style.opacity = '0'; setTimeout(function(){ if(toast && toast.parentNode) toast.parentNode.removeChild(toast); }, 300); }
+        function hide() { if (!toast) return; toast.style.transition = 'opacity 0.25s ease'; toast.style.opacity = '0'; setTimeout(function () { if (toast && toast.parentNode) toast.parentNode.removeChild(toast); }, 300); }
         // Auto-hide after 4 seconds
         setTimeout(hide, 4000);
         // Close on click

@@ -2,11 +2,11 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsstaffid']==0)) {
+if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
   header('location:logout.php');
 } else {
   $success_message = $error_message = '';
-  if(isset($_POST['submit'])) {
+  if (isset($_POST['submit'])) {
     $nottitle = $_POST['nottitle'];
     $notmsg = $_POST['notmsg'];
     $sql = "insert into tblpublicnotice(NoticeTitle,NoticeMessage) values(:nottitle,:notmsg)";
@@ -21,11 +21,13 @@ if (strlen($_SESSION['sturecmsstaffid']==0)) {
       $error_message = "Something Went Wrong. Please try again";
     }
   }
-?>
-<!DOCTYPE html>
-<html lang="en">
+  ?>
+  <!DOCTYPE html>
+  <html lang="en">
+
   <head>
     <title>Student Profiling System || Add Public Notice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -33,11 +35,12 @@ if (strlen($_SESSION['sturecmsstaffid']==0)) {
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
   </head>
+
   <body>
     <div class="container-scroller">
-      <?php include_once('includes/header.php');?>
+      <?php include_once('includes/header.php'); ?>
       <div class="container-fluid page-body-wrapper">
-        <?php include_once('includes/sidebar.php');?>
+        <?php include_once('includes/sidebar.php'); ?>
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
@@ -54,54 +57,60 @@ if (strlen($_SESSION['sturecmsstaffid']==0)) {
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Add Public Notice</h4>
-                    <?php if($success_message): ?>
-                    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 40px;">
-                      <div class="toast" id="successToast" style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;" data-delay="3000" data-autohide="true">
-                        <div class="toast-header bg-success text-white">
-                          <strong class="mr-auto">Success</strong>
-                          <small>Now</small>
-                          <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
+                    <?php if ($success_message): ?>
+                      <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 40px;">
+                        <div class="toast" id="successToast"
+                          style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;" data-delay="3000"
+                          data-autohide="true">
+                          <div class="toast-header bg-success text-white">
+                            <strong class="mr-auto">Success</strong>
+                            <small>Now</small>
+                            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast"
+                              aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="toast-body"><?php echo $success_message; ?></div>
                         </div>
-                        <div class="toast-body"><?php echo $success_message; ?></div>
                       </div>
-                    </div>
-                    <script>
-                      window.addEventListener('DOMContentLoaded', function(){
-                        var toastEl = document.getElementById('successToast');
-                        if(toastEl && window.$) {
-                          $(toastEl).toast('show');
-                        } else if (toastEl && typeof bootstrap !== "undefined") {
-                          var toast = new bootstrap.Toast(toastEl);
-                          toast.show();
-                        }
-                      });
-                    </script>
-                    <?php elseif($error_message): ?>
-                    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 40px;">
-                      <div class="toast" id="errorToast" style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;" data-delay="4000" data-autohide="true">
-                        <div class="toast-header bg-danger text-white">
-                          <strong class="mr-auto">Error</strong>
-                          <small>Now</small>
-                          <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
+                      <script>
+                        window.addEventListener('DOMContentLoaded', function () {
+                          var toastEl = document.getElementById('successToast');
+                          if (toastEl && window.$) {
+                            $(toastEl).toast('show');
+                          } else if (toastEl && typeof bootstrap !== "undefined") {
+                            var toast = new bootstrap.Toast(toastEl);
+                            toast.show();
+                          }
+                        });
+                      </script>
+                    <?php elseif ($error_message): ?>
+                      <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 40px;">
+                        <div class="toast" id="errorToast"
+                          style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;" data-delay="4000"
+                          data-autohide="true">
+                          <div class="toast-header bg-danger text-white">
+                            <strong class="mr-auto">Error</strong>
+                            <small>Now</small>
+                            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast"
+                              aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="toast-body"><?php echo $error_message; ?></div>
                         </div>
-                        <div class="toast-body"><?php echo $error_message; ?></div>
                       </div>
-                    </div>
-                    <script>
-                      window.addEventListener('DOMContentLoaded', function(){
-                        var toastEl = document.getElementById('errorToast');
-                        if(toastEl && window.$) {
-                          $(toastEl).toast('show');
-                        } else if (toastEl && typeof bootstrap !== "undefined") {
-                          var toast = new bootstrap.Toast(toastEl);
-                          toast.show();
-                        }
-                      });
-                    </script>
+                      <script>
+                        window.addEventListener('DOMContentLoaded', function () {
+                          var toastEl = document.getElementById('errorToast');
+                          if (toastEl && window.$) {
+                            $(toastEl).toast('show');
+                          } else if (toastEl && typeof bootstrap !== "undefined") {
+                            var toast = new bootstrap.Toast(toastEl);
+                            toast.show();
+                          }
+                        });
+                      </script>
                     <?php endif; ?>
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <div class="form-group">
@@ -119,7 +128,7 @@ if (strlen($_SESSION['sturecmsstaffid']==0)) {
               </div>
             </div>
           </div>
-          <?php include_once('includes/footer.php');?>
+          <?php include_once('includes/footer.php'); ?>
         </div>
       </div>
     </div>
@@ -131,5 +140,6 @@ if (strlen($_SESSION['sturecmsstaffid']==0)) {
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
   </body>
-</html>
-<?php }  ?>
+
+  </html>
+<?php } ?>

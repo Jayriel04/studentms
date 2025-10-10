@@ -28,14 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
   try {
     $chk = $dbh->prepare("SHOW COLUMNS FROM student_achievements LIKE 'approved_by'");
     $chk->execute();
-    if ($chk->rowCount() > 0) $hasApprovedBy = true;
+    if ($chk->rowCount() > 0)
+      $hasApprovedBy = true;
   } catch (Exception $e) {
     $hasApprovedBy = false;
   }
 
   try {
     // helper to fetch status
-    $fetchStatus = function($aid) use ($dbh) {
+    $fetchStatus = function ($aid) use ($dbh) {
       try {
         $ps = $dbh->prepare("SELECT status FROM student_achievements WHERE id=:id");
         $ps->bindParam(':id', $aid, PDO::PARAM_INT);
@@ -69,7 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
             $ins->bindParam(':staff', $adminId);
             $ins->execute();
           }
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
         $_SESSION['ach_msg_admin'] = 'Achievement approved.';
       } else {
         $_SESSION['ach_msg_admin'] = 'No rows updated when approving.';
@@ -97,7 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
             $ins->bindParam(':notes', $notes);
             $ins->execute();
           }
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
         $_SESSION['ach_msg_admin'] = 'Achievement rejected.';
       } else {
         $_SESSION['ach_msg_admin'] = 'No rows updated when rejecting.';
@@ -107,50 +110,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
     $_SESSION['ach_msg_admin'] = 'Action error: ' . $e->getMessage();
   }
 
-    // After processing, if action was approve, append skills to student record similarly to staff
-    try {
-      if (isset($action) && $action === 'approve' && isset($id) && $id > 0) {
-        $aStmt = $dbh->prepare("SELECT StuID, category FROM student_achievements WHERE id=:id LIMIT 1");
-        $aStmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $aStmt->execute();
-        $ach = $aStmt->fetch(PDO::FETCH_OBJ);
-        if ($ach) {
-          $stu = $ach->StuID;
-          $category = isset($ach->category) ? trim($ach->category) : '';
+  // After processing, if action was approve, append skills to student record similarly to staff
+  try {
+    if (isset($action) && $action === 'approve' && isset($id) && $id > 0) {
+      $aStmt = $dbh->prepare("SELECT StuID, category FROM student_achievements WHERE id=:id LIMIT 1");
+      $aStmt->bindParam(':id', $id, PDO::PARAM_INT);
+      $aStmt->execute();
+      $ach = $aStmt->fetch(PDO::FETCH_OBJ);
+      if ($ach) {
+        $stu = $ach->StuID;
+        $category = isset($ach->category) ? trim($ach->category) : '';
 
-          $skStmt = $dbh->prepare("SELECT sk.name FROM student_achievement_skills ssk JOIN skills sk ON ssk.skill_id = sk.id WHERE ssk.achievement_id = :id");
-          $skStmt->bindParam(':id', $id, PDO::PARAM_INT);
-          $skStmt->execute();
-          $skillRows = $skStmt->fetchAll(PDO::FETCH_COLUMN);
-          if ($skillRows && count($skillRows) > 0) {
-            $col = (strtolower($category) === 'academic') ? 'Academic' : 'NonAcademic';
-            $colChk = $dbh->prepare("SHOW COLUMNS FROM tblstudent LIKE :col");
-            $colChk->bindValue(':col', $col, PDO::PARAM_STR);
-            $colChk->execute();
-            if ($colChk->rowCount() === 0) {
-              $dbh->exec("ALTER TABLE tblstudent ADD COLUMN `" . $col . "` TEXT NULL");
-            }
-
-            $curStmt = $dbh->prepare("SELECT `$col` FROM tblstudent WHERE StuID = :stu LIMIT 1");
-            $curStmt->bindParam(':stu', $stu, PDO::PARAM_STR);
-            $curStmt->execute();
-            $curVal = $curStmt->fetchColumn();
-            $existing = [];
-            if ($curVal !== false && $curVal !== null && trim($curVal) !== '') {
-              $existing = array_map('trim', explode(',', $curVal));
-            }
-            $merged = array_unique(array_filter(array_map('trim', array_merge($existing, $skillRows))));
-            $newVal = implode(', ', $merged);
-            $up = $dbh->prepare("UPDATE tblstudent SET `$col` = :val WHERE StuID = :stu");
-            $up->bindParam(':val', $newVal, PDO::PARAM_STR);
-            $up->bindParam(':stu', $stu, PDO::PARAM_STR);
-            $up->execute();
+        $skStmt = $dbh->prepare("SELECT sk.name FROM student_achievement_skills ssk JOIN skills sk ON ssk.skill_id = sk.id WHERE ssk.achievement_id = :id");
+        $skStmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $skStmt->execute();
+        $skillRows = $skStmt->fetchAll(PDO::FETCH_COLUMN);
+        if ($skillRows && count($skillRows) > 0) {
+          $col = (strtolower($category) === 'academic') ? 'Academic' : 'NonAcademic';
+          $colChk = $dbh->prepare("SHOW COLUMNS FROM tblstudent LIKE :col");
+          $colChk->bindValue(':col', $col, PDO::PARAM_STR);
+          $colChk->execute();
+          if ($colChk->rowCount() === 0) {
+            $dbh->exec("ALTER TABLE tblstudent ADD COLUMN `" . $col . "` TEXT NULL");
           }
+
+          $curStmt = $dbh->prepare("SELECT `$col` FROM tblstudent WHERE StuID = :stu LIMIT 1");
+          $curStmt->bindParam(':stu', $stu, PDO::PARAM_STR);
+          $curStmt->execute();
+          $curVal = $curStmt->fetchColumn();
+          $existing = [];
+          if ($curVal !== false && $curVal !== null && trim($curVal) !== '') {
+            $existing = array_map('trim', explode(',', $curVal));
+          }
+          $merged = array_unique(array_filter(array_map('trim', array_merge($existing, $skillRows))));
+          $newVal = implode(', ', $merged);
+          $up = $dbh->prepare("UPDATE tblstudent SET `$col` = :val WHERE StuID = :stu");
+          $up->bindParam(':val', $newVal, PDO::PARAM_STR);
+          $up->bindParam(':stu', $stu, PDO::PARAM_STR);
+          $up->execute();
         }
       }
-    } catch (Exception $e) {
-      // ignore errors but could log
     }
+  } catch (Exception $e) {
+    // ignore errors but could log
+  }
 
   header('Location: validate-achievements.php' . (isset($_POST['stu']) ? '?stu=' . urlencode($_POST['stu']) : ''));
   exit;
@@ -158,7 +161,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
 
 // Fetch pending achievements, optional filter by student
 $stuFilter = null;
-if (isset($_GET['stu'])) $stuFilter = $_GET['stu'];
+if (isset($_GET['stu']))
+  $stuFilter = $_GET['stu'];
 
 $sql = "SELECT a.id, a.StuID, CONCAT(s.FamilyName, ' ', s.FirstName) AS StudentName, a.category, a.level, a.points, a.proof_image, a.created_at, a.approved_by, a.approved_at, st.AdminName AS ApproverName, GROUP_CONCAT(sk.name SEPARATOR ', ') AS skills
 FROM student_achievements a
@@ -172,21 +176,25 @@ if ($stuFilter) {
 }
 $sql .= " GROUP BY a.id ORDER BY a.created_at DESC";
 $stmt = $dbh->prepare($sql);
-if ($stuFilter) $stmt->bindParam(':stu', $stuFilter);
+if ($stuFilter)
+  $stmt->bindParam(':stu', $stuFilter);
 $stmt->execute();
 $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Student Profiling System || Validate Achievements</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/style(v2).css">
 </head>
+
 <body>
   <div class="container-scroller">
     <?php include_once('includes/header.php'); ?>
@@ -209,7 +217,9 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
               <div class="card">
                 <div class="card-body">
                   <?php if (isset($_SESSION['ach_msg_admin'])): ?>
-                    <div class="alert alert-info"><?php echo htmlentities($_SESSION['ach_msg_admin']); unset($_SESSION['ach_msg_admin']); ?></div>
+                    <div class="alert alert-info">
+                      <?php echo htmlentities($_SESSION['ach_msg_admin']);
+                      unset($_SESSION['ach_msg_admin']); ?></div>
                   <?php endif; ?>
 
                   <?php if (empty($rows)): ?>
@@ -234,7 +244,8 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                         <tbody>
                           <?php foreach ($rows as $r): ?>
                             <tr>
-                              <td><?php echo htmlentities($r->StudentName); ?> <br><small><?php echo htmlentities($r->StuID); ?></small></td>
+                              <td><?php echo htmlentities($r->StudentName); ?>
+                                <br><small><?php echo htmlentities($r->StuID); ?></small></td>
                               <td><?php echo htmlentities($r->skills); ?></td>
                               <td><?php echo htmlentities($r->category); ?></td>
                               <td><?php echo htmlentities($r->level); ?></td>
@@ -243,7 +254,8 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                               <td><?php echo htmlentities($r->approved_at ?? ''); ?></td>
                               <td>
                                 <?php if (!empty($r->proof_image)): ?>
-                                  <a href="../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>" target="_blank">View</a>
+                                  <a href="../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>"
+                                    target="_blank">View</a>
                                 <?php else: ?>
                                   <span>No proof</span>
                                 <?php endif; ?>
@@ -253,15 +265,19 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                                 <form method="post" style="display:inline-block;">
                                   <input type="hidden" name="id" value="<?php echo $r->id; ?>">
                                   <input type="hidden" name="action" value="approve">
-                                  <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token_admin']; ?>">
-                                  <?php if ($stuFilter) { ?><input type="hidden" name="stu" value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
+                                  <input type="hidden" name="csrf_token"
+                                    value="<?php echo $_SESSION['csrf_token_admin']; ?>">
+                                  <?php if ($stuFilter) { ?><input type="hidden" name="stu"
+                                      value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
                                   <button type="submit" class="btn btn-success btn-sm">Approve</button>
                                 </form>
                                 <form method="post" style="display:inline-block;margin-left:6px;">
                                   <input type="hidden" name="id" value="<?php echo $r->id; ?>">
                                   <input type="hidden" name="action" value="reject">
-                                  <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token_admin']; ?>">
-                                  <?php if ($stuFilter) { ?><input type="hidden" name="stu" value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
+                                  <input type="hidden" name="csrf_token"
+                                    value="<?php echo $_SESSION['csrf_token_admin']; ?>">
+                                  <?php if ($stuFilter) { ?><input type="hidden" name="stu"
+                                      value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
                                   <button type="submit" class="btn btn-danger btn-sm">Reject</button>
                                 </form>
                               </td>
@@ -284,4 +300,5 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
 </body>
+
 </html>

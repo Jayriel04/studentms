@@ -43,6 +43,7 @@ if (isset($_POST['login'])) {
 
 <head>
     <title>Student Profiling System | Login Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -61,22 +62,25 @@ if (isset($_POST['login'])) {
                             <h6 class="font-weight-light">Sign in to continue as Admin.</h6>
                             <form class="pt-3" id="login" method="post" name="login">
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-lg" placeholder="Enter your username"
-                                           required="true" name="username" value="<?php if (isset($_COOKIE["user_login"])) {
-                                               echo $_COOKIE["user_login"];
-                                           } ?>">
+                                    <input type="text" class="form-control form-control-lg"
+                                        placeholder="Enter your username" required="true" name="username" value="<?php if (isset($_COOKIE["user_login"])) {
+                                            echo $_COOKIE["user_login"];
+                                        } ?>">
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control form-control-lg" placeholder="Enter your password"
-                                           name="password" required="true" value="">
+                                    <input type="password" class="form-control form-control-lg"
+                                        placeholder="Enter your password" name="password" required="true" value="">
                                 </div>
                                 <div class="mt-3">
-                                    <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
+                                    <button class="btn btn-success btn-block loginbtn" name="login"
+                                        type="submit">Login</button>
                                 </div>
                                 <div class="my-2 d-flex justify-content-between align-items-center">
                                     <div class="form-check">
                                         <label class="form-check-label text-muted">
-                                            <input type="checkbox" id="remember" class="form-check-input" name="remember" <?php if (isset($_COOKIE["user_login"])) { ?> checked <?php } ?> /> Keep me signed in
+                                            <input type="checkbox" id="remember" class="form-check-input"
+                                                name="remember" <?php if (isset($_COOKIE["user_login"])) { ?> checked
+                                                <?php } ?> /> Keep me signed in
                                         </label>
                                     </div>
                                     <a href="forgot-process.php" class="auth-link">Forgot password?</a>

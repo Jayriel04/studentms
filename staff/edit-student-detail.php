@@ -51,7 +51,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
     $isDuplicate = $checkQuery->fetchColumn();
 
     if ($isDuplicate > 0) {
-  echo '<script>if(window.showToast) showToast("This Student ID already exists. Please choose a different one.","warning");</script>';
+      echo '<script>if(window.showToast) showToast("This Student ID already exists. Please choose a different one.","warning");</script>';
     } else {
       $sql = "UPDATE tblstudent SET 
                 StuID=:stuid, 
@@ -123,7 +123,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
       $query->bindParam(':eid', $eid, PDO::PARAM_STR);
       $query->execute();
 
-  echo '<script>if(window.showToast) showToast("Student details updated successfully.","success");</script>';
+      echo '<script>if(window.showToast) showToast("Student details updated successfully.","success");</script>';
     }
   }
   ?>
@@ -132,6 +132,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
 
   <head>
     <title>Student Profiling System || Update Students</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -221,15 +222,22 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
                               </div>
                               <div class="form-group">
                                 <label>Gender</label>
-                                <select name="gender" id="gender" class="form-control" required onchange="toggleOtherGenderInput()">
-                                  <option value="Male" <?php if($row->Gender == 'Male') echo 'selected'; ?>>Male</option>
-                                  <option value="Female" <?php if($row->Gender == 'Female') echo 'selected'; ?>>Female</option>
-                                  <option value="Other" <?php if(!in_array($row->Gender, ['Male', 'Female'])) echo 'selected'; ?>>Other</option>
+                                <select name="gender" id="gender" class="form-control" required
+                                  onchange="toggleOtherGenderInput()">
+                                  <option value="Male" <?php if ($row->Gender == 'Male')
+                                    echo 'selected'; ?>>Male</option>
+                                  <option value="Female" <?php if ($row->Gender == 'Female')
+                                    echo 'selected'; ?>>Female</option>
+                                  <option value="Other" <?php if (!in_array($row->Gender, ['Male', 'Female']))
+                                    echo 'selected'; ?>>Other</option>
                                 </select>
                               </div>
-                              <div class="form-group" id="otherGenderInput" style="display: <?php echo (!in_array($row->Gender, ['Male', 'Female']) && $row->Gender != '') ? 'block' : 'none'; ?>;">
+                              <div class="form-group" id="otherGenderInput"
+                                style="display: <?php echo (!in_array($row->Gender, ['Male', 'Female']) && $row->Gender != '') ? 'block' : 'none'; ?>;">
                                 <label>Please Specify</label>
-                                <input type="text" name="otherGender" id="otherGender" class="form-control" value="<?php if(!in_array($row->Gender, ['Male', 'Female'])) echo htmlentities($row->Gender); ?>">
+                                <input type="text" name="otherGender" id="otherGender" class="form-control"
+                                  value="<?php if (!in_array($row->Gender, ['Male', 'Female']))
+                                    echo htmlentities($row->Gender); ?>">
                               </div>
                               <div class="form-group">
                                 <label>Civil Status</label>
@@ -386,8 +394,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
         }
       }
       // Trigger on page load to set initial state
-      window.addEventListener('DOMContentLoaded', function() {
-          toggleOtherGenderInput();
+      window.addEventListener('DOMContentLoaded', function () {
+        toggleOtherGenderInput();
       });
     </script>
   </body>

@@ -83,7 +83,7 @@
         </ul>
       </div>
     </li>
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="reports">
         <span class="menu-title">Reports</span>
         <i class="icon-doc menu-icon"></i>
@@ -93,7 +93,7 @@
           <li class="nav-item"> <a class="nav-link" href="between-dates-reports.php"> Student Reports </a></li>
         </ul>
       </div>
-    </li>
+    </li> -->
     <li class="nav-item">
       <a class="nav-link" href="search.php">
         <span class="menu-title">Search</span>

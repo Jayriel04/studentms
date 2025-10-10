@@ -16,24 +16,24 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     // Handle image upload
     $image = $_FILES["profilepic"]["name"];
     if ($image != '') {
-        $extension = substr($image, strlen($image) - 4, strlen($image));
-        $allowed_extensions = array(".jpg", "jpeg", ".png", ".gif");
-        if (!in_array($extension, $allowed_extensions)) {
-            echo "<script>alert('Invalid format. Only jpg / jpeg/ png /gif format allowed');</script>";
-        } else {
-            $image = md5($image) . time() . $extension;
-            move_uploaded_file($_FILES["profilepic"]["tmp_name"], "images/" . $image);
-            $sql = "update tbladmin set AdminName=:adminname, Email=:email, Image=:image where ID=:aid";
-        }
+      $extension = substr($image, strlen($image) - 4, strlen($image));
+      $allowed_extensions = array(".jpg", "jpeg", ".png", ".gif");
+      if (!in_array($extension, $allowed_extensions)) {
+        echo "<script>alert('Invalid format. Only jpg / jpeg/ png /gif format allowed');</script>";
+      } else {
+        $image = md5($image) . time() . $extension;
+        move_uploaded_file($_FILES["profilepic"]["tmp_name"], "images/" . $image);
+        $sql = "update tbladmin set AdminName=:adminname, Email=:email, Image=:image where ID=:aid";
+      }
     } else {
-        $sql = "update tbladmin set AdminName=:adminname, Email=:email where ID=:aid";
+      $sql = "update tbladmin set AdminName=:adminname, Email=:email where ID=:aid";
     }
 
     $query = $dbh->prepare($sql);
     $query->bindParam(':adminname', $AName, PDO::PARAM_STR);
     $query->bindParam(':email', $email, PDO::PARAM_STR);
     if ($image != '') {
-        $query->bindParam(':image', $image, PDO::PARAM_STR);
+      $query->bindParam(':image', $image, PDO::PARAM_STR);
     }
     $query->bindParam(':aid', $adminid, PDO::PARAM_STR);
     $query->execute();
@@ -49,6 +49,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   <head>
 
     <title>Student Profiling System || Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -64,7 +65,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="css/style.css" />
     <style>
       /* Toast container positioned top-right */
-      #appToast { position: fixed; top: 1rem; right: 1rem; z-index: 2000; }
+      #appToast {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 2000;
+      }
     </style>
 
   </head>
@@ -131,7 +137,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                           <div class="form-group">
                             <label>Current Profile Image</label>
                             <br>
-                            <img src="images/<?php echo !empty($row->Image) ? $row->Image : 'faces/face8.jpg'; ?>" width="100" height="100">
+                            <img src="images/<?php echo !empty($row->Image) ? $row->Image : 'faces/face8.jpg'; ?>" width="100"
+                              height="100">
                           </div>
                           <div class="form-group">
                             <label>Update Profile Image</label>
@@ -178,18 +185,18 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         type = type || 'info';
         var toast = document.createElement('div');
         toast.className = 'toast show bg-' + (type === 'success' ? 'success' : 'danger') + ' text-white';
-        toast.setAttribute('role','alert');
+        toast.setAttribute('role', 'alert');
         toast.innerHTML = '<div class="toast-header bg-success text-white"><strong class="mr-auto">' + (type === 'success' ? 'Success' : 'Notice') + '</strong><button type="button" class="ml-2 mb-1 close" data-dismiss="toast" style="color: #fff;">&times;</button></div><div class="toast-body">' + message + '</div>';
         var container = document.getElementById('appToast');
         container.appendChild(toast);
         // Auto remove after 3s
-        setTimeout(function(){ try{ $(toast).toast('hide'); }catch(e){ toast.remove(); } }, 3000);
+        setTimeout(function () { try { $(toast).toast('hide'); } catch (e) { toast.remove(); } }, 3000);
       }
       // Delegate close buttons
-      document.addEventListener('click', function(e){ if (e.target && e.target.getAttribute && e.target.getAttribute('data-dismiss') === 'toast') { var t = e.target.closest('.toast'); if (t) t.remove(); } });
+      document.addEventListener('click', function (e) { if (e.target && e.target.getAttribute && e.target.getAttribute('data-dismiss') === 'toast') { var t = e.target.closest('.toast'); if (t) t.remove(); } });
     </script>
     <?php if (isset($toast_msg) && $toast_msg): ?>
-    <script>document.addEventListener('DOMContentLoaded', function(){ showToast(<?php echo json_encode($toast_msg); ?>, 'success'); });</script>
+      <script>document.addEventListener('DOMContentLoaded', function () { showToast(<?php echo json_encode($toast_msg); ?>, 'success'); });</script>
     <?php endif; ?>
     <!-- End custom js for this page -->
   </body>
