@@ -5,27 +5,30 @@ include('includes/dbconnection.php');
 
 if (isset($_POST['login'])) {
     $username = $_POST['username'];
-    $password = md5($_POST['password']);
-    $sql = "SELECT ID FROM tbladmin WHERE UserName=:username and Password=:password";
+    $password = $_POST['password'];
+    $sql = "SELECT ID, Password FROM tbladmin WHERE UserName=:username";
     $query = $dbh->prepare($sql);
     $query->bindParam(':username', $username, PDO::PARAM_STR);
-    $query->bindParam(':password', $password, PDO::PARAM_STR);
     $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
-    if ($query->rowCount() > 0) {
-        foreach ($results as $result) {
-            $_SESSION['sturecmsaid'] = $result->ID;
+    $result = $query->fetch(PDO::FETCH_OBJ);
+
+    if ($result && password_verify($password, $result->Password)) {
+        // Check if the hash needs to be updated to a newer algorithm
+        if (password_needs_rehash($result->Password, PASSWORD_DEFAULT)) {
+            $newHash = password_hash($password, PASSWORD_DEFAULT);
+            $rehashSql = "UPDATE tbladmin SET Password = :new_hash WHERE ID = :id";
+            $rehashQuery = $dbh->prepare($rehashSql);
+            $rehashQuery->bindParam(':new_hash', $newHash, PDO::PARAM_STR);
+            $rehashQuery->bindParam(':id', $result->ID, PDO::PARAM_INT);
+            $rehashQuery->execute();
         }
+        $_SESSION['sturecmsaid'] = $result->ID;
 
         if (!empty($_POST["remember"])) {
             setcookie("user_login", $_POST["username"], time() + (10 * 365 * 24 * 60 * 60));
-            setcookie("userpassword", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
         } else {
             if (isset($_COOKIE["user_login"])) {
                 setcookie("user_login", "");
-                if (isset($_COOKIE["userpassword"])) {
-                    setcookie("userpassword", "");
-                }
             }
         }
         $_SESSION['login'] = $_POST['username'];
@@ -65,9 +68,7 @@ if (isset($_POST['login'])) {
                                 </div>
                                 <div class="form-group">
                                     <input type="password" class="form-control form-control-lg" placeholder="Enter your password"
-                                           name="password" required="true" value="<?php if (isset($_COOKIE["userpassword"])) {
-                                               echo $_COOKIE["userpassword"];
-                                           } ?>">
+                                           name="password" required="true" value="">
                                 </div>
                                 <div class="mt-3">
                                     <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
@@ -78,7 +79,7 @@ if (isset($_POST['login'])) {
                                             <input type="checkbox" id="remember" class="form-check-input" name="remember" <?php if (isset($_COOKIE["user_login"])) { ?> checked <?php } ?> /> Keep me signed in
                                         </label>
                                     </div>
-                                    <a href="forgot-password.php" class="auth-link">Forgot password?</a>
+                                    <a href="forgot-process.php" class="auth-link">Forgot password?</a>
                                 </div>
                                 <div class="mb-2">
                                     <a href="../index.php" class="btn btn-block btn-facebook auth-form-btn">

@@ -1,6 +1,9 @@
 <?php
 session_start();
 error_reporting(0);
+
+$toast_msg = $_SESSION['profile_update_msg'] ?? null;
+unset($_SESSION['profile_update_msg']);
 include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
@@ -9,15 +12,34 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $adminid = $_SESSION['sturecmsaid'];
     $AName = $_POST['adminname'];
     $email = $_POST['email'];
-    $sql = "update tbladmin set AdminName=:adminname,Email=:email where ID=:aid";
+
+    // Handle image upload
+    $image = $_FILES["profilepic"]["name"];
+    if ($image != '') {
+        $extension = substr($image, strlen($image) - 4, strlen($image));
+        $allowed_extensions = array(".jpg", "jpeg", ".png", ".gif");
+        if (!in_array($extension, $allowed_extensions)) {
+            echo "<script>alert('Invalid format. Only jpg / jpeg/ png /gif format allowed');</script>";
+        } else {
+            $image = md5($image) . time() . $extension;
+            move_uploaded_file($_FILES["profilepic"]["tmp_name"], "images/" . $image);
+            $sql = "update tbladmin set AdminName=:adminname, Email=:email, Image=:image where ID=:aid";
+        }
+    } else {
+        $sql = "update tbladmin set AdminName=:adminname, Email=:email where ID=:aid";
+    }
+
     $query = $dbh->prepare($sql);
     $query->bindParam(':adminname', $AName, PDO::PARAM_STR);
     $query->bindParam(':email', $email, PDO::PARAM_STR);
+    if ($image != '') {
+        $query->bindParam(':image', $image, PDO::PARAM_STR);
+    }
     $query->bindParam(':aid', $adminid, PDO::PARAM_STR);
     $query->execute();
 
-  echo '<script>if(window.showToast) showToast("Your profile has been updated","success");</script>';
-  echo "<script>window.location.href ='profile.php'</script>";
+    $_SESSION['profile_update_msg'] = 'Your profile has been updated successfully!';
+    echo "<script>window.location.href ='profile.php'</script>";
 
   }
   ?>
@@ -26,7 +48,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
 
   <head>
 
-    <title>Student Profiling System|| Profile</title>
+    <title>Student Profiling System || Profile</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
@@ -40,10 +62,15 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="css/style.css" />
+    <style>
+      /* Toast container positioned top-right */
+      #appToast { position: fixed; top: 1rem; right: 1rem; z-index: 2000; }
+    </style>
 
   </head>
 
   <body>
+    <div id="appToast"></div>
     <div class="container-scroller">
       <!-- partial:partials/_navbar.html -->
       <?php include_once('includes/header.php'); ?>
@@ -70,11 +97,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Admin Profile</h4>
 
-                    <form class="forms-sample" method="post">
+                    <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
-
-                      $sql = "SELECT * from  tbladmin";
+                      $adminid = $_SESSION['sturecmsaid'];
+                      $sql = "SELECT * from tbladmin where ID=:aid";
                       $query = $dbh->prepare($sql);
+                      $query->bindParam(':aid', $adminid, PDO::PARAM_STR);
                       $query->execute();
                       $results = $query->fetchAll(PDO::FETCH_OBJ);
                       $cnt = 1;
@@ -99,7 +127,17 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             <label for="exampleInputCity1">Admin Registration Date</label>
                             <input type="text" name="" value="<?php echo $row->AdminRegdate; ?>" readonly=""
                               class="form-control">
-                          </div><?php $cnt = $cnt + 1;
+                          </div>
+                          <div class="form-group">
+                            <label>Current Profile Image</label>
+                            <br>
+                            <img src="images/<?php echo !empty($row->Image) ? $row->Image : 'faces/face8.jpg'; ?>" width="100" height="100">
+                          </div>
+                          <div class="form-group">
+                            <label>Update Profile Image</label>
+                            <input type="file" name="profilepic" class="form-control">
+                          </div>
+                          <?php $cnt = $cnt + 1;
                         }
                       } ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
@@ -135,6 +173,24 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <!-- Custom js for this page -->
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
+    <script>
+      function showToast(message, type) {
+        type = type || 'info';
+        var toast = document.createElement('div');
+        toast.className = 'toast show bg-' + (type === 'success' ? 'success' : 'danger') + ' text-white';
+        toast.setAttribute('role','alert');
+        toast.innerHTML = '<div class="toast-header bg-success text-white"><strong class="mr-auto">' + (type === 'success' ? 'Success' : 'Notice') + '</strong><button type="button" class="ml-2 mb-1 close" data-dismiss="toast" style="color: #fff;">&times;</button></div><div class="toast-body">' + message + '</div>';
+        var container = document.getElementById('appToast');
+        container.appendChild(toast);
+        // Auto remove after 3s
+        setTimeout(function(){ try{ $(toast).toast('hide'); }catch(e){ toast.remove(); } }, 3000);
+      }
+      // Delegate close buttons
+      document.addEventListener('click', function(e){ if (e.target && e.target.getAttribute && e.target.getAttribute('data-dismiss') === 'toast') { var t = e.target.closest('.toast'); if (t) t.remove(); } });
+    </script>
+    <?php if (isset($toast_msg) && $toast_msg): ?>
+    <script>document.addEventListener('DOMContentLoaded', function(){ showToast(<?php echo json_encode($toast_msg); ?>, 'success'); });</script>
+    <?php endif; ?>
     <!-- End custom js for this page -->
   </body>
 
