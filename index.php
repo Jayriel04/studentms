@@ -21,9 +21,10 @@ include('includes/dbconnection.php');
   <script src="js/bootstrap.js"></script>
   <!-- /js -->
   <!--fonts-->
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link
-    href='//fonts.googleapis.com/css?family=Open+Sans:300,300italic,400italic,400,600,600italic,700,700italic,800,800italic'
+    href='https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400italic,400,600,600italic,700,700italic,800,800italic'
     rel='stylesheet' type='text/css'>
   <!--/fonts-->
   <!--hover-girds-->
@@ -55,22 +56,23 @@ include('includes/dbconnection.php');
 
         <!-- About Us Card (Left) -->
         <div class="modern-card about-card">
-            <?php
-            $sql = "SELECT * from tblpage where PageType='aboutus'";
-            $query = $dbh->prepare($sql);
-            $query->execute();
-            $results = $query->fetchAll(PDO::FETCH_OBJ);
-            if ($query->rowCount() > 0) {
-              foreach ($results as $row) { ?>
-                <h2 class="modern-section-title" style="text-align: left;"><?php echo htmlentities($row->PageTitle); ?></h2>
-                <div class="modern-section-desc" style="text-align: left;"><?php echo ($row->PageDescription); ?></div>
+          <?php
+          $sql = "SELECT * from tblpage where PageType='aboutus'";
+          $query = $dbh->prepare($sql);
+          $query->execute();
+          $results = $query->fetchAll(PDO::FETCH_OBJ);
+          if ($query->rowCount() > 0) {
+            foreach ($results as $row) { ?>
+              <h2 class="modern-section-title" style="text-align: left;"><?php echo htmlentities($row->PageTitle); ?></h2>
+              <div class="modern-section-desc" style="text-align: left;"><?php echo ($row->PageDescription); ?></div>
             <?php }
-            } ?>
+          } ?>
         </div>
 
         <!-- Image Card (Right) -->
         <div class="modern-card image-card">
-            <img src="images/mcc_logo2.jpg" alt="Campus Life" style="width: 100%; border-radius: 16px; box-shadow: 0 6px 24px rgba(39, 147, 253, 0.2);">
+          <img src="images/mcc_logo2.jpg" alt="Campus Life"
+            style="width: 100%; border-radius: 16px; box-shadow: 0 6px 24px rgba(39, 147, 253, 0.2);">
         </div>
 
       </div>
@@ -92,15 +94,15 @@ include('includes/dbconnection.php');
 
             if ($query->rowCount() > 0) {
               foreach ($results as $row) { ?>
-                <a class="modern-notice-link" href="#" data-id="<?php echo (int)$row->ID; ?>">
+                <a class="modern-notice-link" href="#" data-id="<?php echo (int) $row->ID; ?>">
                   <div class="modern-notice-title"><?php echo htmlentities($row->NoticeTitle); ?></div>
                   <div class="modern-notice-date"><?php echo htmlentities($row->CreationDate); ?></div>
                 </a>
-                <!-- Hidden template for modal content -->
-                <template id="notice-data-<?php echo (int)$row->ID; ?>">
+                <!-- Hidden container for modal content -->
+                <div id="notice-data-<?php echo (int) $row->ID; ?>" style="display:none;">
                   <?php echo $row->NoticeMessage; ?>
-                </template>
-            <?php }
+                </div>
+              <?php }
             } else {
               echo '<p class="text-muted">No public notices at this time.</p>';
             } ?>
@@ -112,30 +114,56 @@ include('includes/dbconnection.php');
 
   <div id="contact" class="modern-section" style="padding-top: 0;">
     <div class="modern-section-container">
-        <!-- Contact Card -->
-        <div class="modern-card" style="align-items: flex-start;">
-          <h3 class="modern-section-title">Contact Information</h3>
-          <?php
-          $sql_contact = "SELECT * from tblpage where PageType='contactus'";
-          $query_contact = $dbh->prepare($sql_contact);
-          $query_contact->execute();
-          $results_contact = $query_contact->fetchAll(PDO::FETCH_OBJ);
-          if ($query_contact->rowCount() > 0) {
-            foreach ($results_contact as $row_contact) { ?>
-              <div style="line-height: 1.8; color: #3d4857;">
-                <div class="modern-footer-contact-detail" style="margin-bottom: 0.5em;"><b><i class="fas fa-map-marker-alt fa-fw" style="color:#2793fd;"></i> Address:</b> <?php echo $row_contact->PageDescription; ?></div>
-                <div class="modern-footer-contact-detail" style="margin-bottom: 0.5em;"><b><i class="fas fa-phone fa-fw" style="color:#2793fd;"></i> Phone:</b> <?php echo htmlentities($row_contact->MobileNumber); ?></div>
-                <div class="modern-footer-contact-detail"><b><i class="fas fa-envelope fa-fw" style="color:#2793fd;"></i> Email:</b> <?php echo htmlentities($row_contact->Email); ?></div>
-              </div>
-          <?php }
-          } ?>
+      <!-- Contact Section Card -->
+      <div class="modern-card" style="max-width: 1200px; padding: 0; overflow: hidden;">
+        <div class="modern-contact-wrapper">
+          <!-- Left side with contact info -->
+          <div class="modern-contact-info">
+            <h3 class="modern-section-title" style="text-align: left; margin-bottom: 1.5em;">Get in Touch</h3>
+            <?php
+            $sql_contact = "SELECT * from tblpage where PageType='contactus'";
+            $query_contact = $dbh->prepare($sql_contact);
+            $query_contact->execute();
+            $results_contact = $query_contact->fetchAll(PDO::FETCH_OBJ);
+            if ($query_contact->rowCount() > 0) {
+              foreach ($results_contact as $row_contact) { ?>
+                <div class="contact-item">
+                  <i class="fas fa-map-marker-alt contact-icon"></i>
+                  <div>
+                    <div class="contact-label">Address</div>
+                    <div class="contact-value"><?php echo $row_contact->PageDescription; ?></div>
+                  </div>
+                </div>
+                <div class="contact-item">
+                  <i class="fas fa-phone contact-icon"></i>
+                  <div>
+                    <div class="contact-label">Phone</div>
+                    <div class="contact-value"><?php echo htmlentities($row_contact->MobileNumber); ?></div>
+                  </div>
+                </div>
+                <div class="contact-item">
+                  <i class="fas fa-envelope contact-icon"></i>
+                  <div>
+                    <div class="contact-label">Email</div>
+                    <div class="contact-value"><?php echo htmlentities($row_contact->Email); ?></div>
+                  </div>
+                </div>
+              <?php }
+            } ?>
+          </div>
+          <!-- Right side with map -->
+          <div class="modern-contact-map">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.223907187851!2d123.9389304750355!3d10.323957889798617!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33a999b1bf111e65%3A0xf045169ca1950d6c!2sMandaue%20City%20College!5e0!3m2!1sen!2sph!4v1760359189831!5m2!1sen!2sph" 
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Notice Modal -->
-  <div class="modal fade" id="noticeModal" tabindex="-1" role="dialog" aria-labelledby="noticeModalLabel" aria-hidden="true">
+  <div class="modal fade" id="noticeModal" tabindex="-1" role="dialog" aria-labelledby="noticeModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document" aria-describedby="noticeModalBody">
       <div class="modal-content">
         <div class="modal-header">

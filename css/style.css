@@ -2227,19 +2227,20 @@ ul.p_n-list li a:hover {
 .modern-notices-section {
 	padding: 2em 0 4em 0;
 	background: #edf4f7;
-	min-height: 600px;
+	min-height: 560px;
 	display: flex;
 }
 
 .modern-notice-card {
 	width: 100%;
-	max-width: 700px;
+	max-width: 850px;
 }
 
 .modern-notices-list-wrapper {
 	max-height: 325px;
 	overflow-y: auto;
 	padding-right: 4px;
+	width: 100%;
 	margin-top: 1.8em;
 }
 
@@ -2333,6 +2334,61 @@ ul.p_n-list li a:hover {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+
+/*-- Modern Contact Section --*/
+.modern-contact-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+}
+
+.modern-contact-info {
+	flex: 1 1 40%;
+	padding: 2.5em;
+	min-width: 320px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.modern-contact-map {
+	flex: 1 1 60%;
+	min-height: 400px;
+	background: #e9ecef;
+}
+
+.contact-item {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 1.8em;
+}
+
+.contact-icon {
+	font-size: 1.5em;
+	color: #2793FD;
+	margin-right: 1em;
+	width: 40px;
+	text-align: center;
+}
+
+.contact-label {
+	font-weight: 600;
+	color: #343a40;
+	font-size: 1.05em;
+	margin-bottom: 0.1em;
+}
+
+.contact-value {
+	color: #6c757d;
+	font-size: 1em;
+	line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+	.modern-contact-info {
+		flex-basis: 100%;
+	}
 }
 
 /*--responsive--*/

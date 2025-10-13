@@ -1,96 +1,98 @@
-jQuery(function ($) {
-  // Smooth scroll for links that have a hash target (works if href="#someID")
-  $(document).on('click', '.scroll', function (event) {
-    var targetHash = this.hash || $(this).attr('href');
-    if (!targetHash || targetHash === '#') return;
-    var $target = $(targetHash);
-    if ($target.length) {
-      event.preventDefault();
-      $('html, body').animate({ scrollTop: $target.offset().top }, 700);
-    }
-  });
+/**
+ * General purpose script for the public-facing site.
+ *
+ * This includes:
+ * 1. Smooth scrolling for anchor links.
+ * 2. A "back to top" button.
+ * 3. Logic for the public notice modal on the homepage.
+ */
 
-  // Back-to-top button: show after scrolling down, animate to top on click
-  var $backBtn = $('<a/>', {
-    id: 'back-to-top',
-    href: '#top',
-    title: 'Back to top',
-    'aria-label': 'Back to top',
-    class: 'modern-back-to-top',
-    html: '&#8679;',
-    css: {
-      display: 'none',
-      position: 'fixed',
-      right: '18px',
-      bottom: '18px',
-      width: '42px',
-      height: '42px',
-      'line-height': '42px',
-      'text-align': 'center',
-      'background-color': '#0b61d6',
-      color: '#fff',
-      'border-radius': '6px',
-      'z-index': 9999,
-      cursor: 'pointer',
-      'box-shadow': '0 6px 18px rgba(11,97,214,0.12)'
-    }
-  }).appendTo('body');
+jQuery(document).ready(function ($) {
+    // Smooth scroll for anchor links
+    $(".scroll").click(function (event) {
+        event.preventDefault();
+        $('html,body').animate({
+            scrollTop: $(this.hash).offset().top
+        }, 900);
+    });
 
-  $(window).on('scroll.backToTop', function () {
-    if ($(this).scrollTop() > 200) {
-      $backBtn.fadeIn(200);
-    } else {
-      $backBtn.fadeOut(200);
-    }
-  });
-
-  $backBtn.on('click', function (e) {
-    e.preventDefault();
-    $('html, body').animate({ scrollTop: 0 }, 600);
-  });
-
-  // Notice Modal Logic
-  $(document).on('click', '.modern-notice-link', function (e) {
-    e.preventDefault();
-    var id = $(this).data('id');
-    if (!id) {
-      console.warn('notice id missing');
-      return;
-    }
-
-    // show loader immediately
-    $('#noticeModalLabel .notice-title-text').text('Loading...');
-    $('#noticeModalBody').html('<div class="text-center p-4"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...</div>');
-    $('#noticeModalDate').text('');
-    $('#noticeModal').modal('show');
-
-    var $data = $('#notice-data-' + id);
-    var content = '<div class="text-muted">No content</div>';
-
-    if ($data.length) {
-      var tplEl = $data.get(0);
-      try {
-        if (tplEl && tplEl.content) {
-          // <template> support
-          content = tplEl.content.innerHTML.trim() || content;
+    // Back to top button
+    var $toTop = $('#toTop');
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 100) {
+            $toTop.fadeIn();
         } else {
-          // fallback (e.g. <div class="d-none">) or browser without template
-          content = $data.html().trim() || content;
+            $toTop.fadeOut();
         }
-      } catch (err) {
-        console.error('error reading template content', err);
-      }
+    });
 
-      // fill title and date from link
-      var title = $('.modern-notice-link[data-id="' + id + '"] .modern-notice-title').text().trim() || 'Notice';
-      var dateText = $('.modern-notice-link[data-id="' + id + '"] .modern-notice-date').text().trim();
-      $('#noticeModalLabel .notice-title-text').text(title);
-      $('#noticeModalBody').html('<div class="notice-content">' + content + '</div>');
-      $('#noticeModalDate').text(dateText ? 'Posted: ' + dateText : '');
-    } else {
-      console.error('notice-data element not found for id', id);
-      $('#noticeModalLabel .notice-title-text').text('Error');
-      $('#noticeModalBody').html('<div class="text-danger">Notice content not found.</div>');
-    }
-  });
+    $toTop.click(function () {
+        $("html, body").animate({
+            scrollTop: 0
+        }, 600);
+        return false;
+    });
+
+    /**
+     * Public Notice Modal Handler
+     *
+     * This part of the script handles opening the public notice modal
+     * and populating it with the correct content from the page.
+     */
+    var $modal = $('#noticeModal');
+    var $modalTitle = $('#noticeModalLabel .notice-title-text');
+    var $modalBody = $('#noticeModalBody');
+    var $modalDate = $('#noticeModalDate');
+
+    // Use event delegation for dynamically added or existing notice links
+    $(document).on('click', '.modern-notice-link', function (e) {
+        e.preventDefault();
+
+        var $link = $(this);
+        var noticeId = $link.data('id');
+
+        if (!noticeId) {
+            console.error("Notice link is missing a 'data-id' attribute.");
+            return;
+        }
+
+        // Get data from the clicked link and its corresponding data container
+        var title = $link.find('.modern-notice-title').text().trim();
+        var date = $link.find('.modern-notice-date').text().trim();
+
+        // The content is stored in a hidden div with a specific ID
+        var contentContainer = $('#notice-data-' + noticeId);
+
+        if (contentContainer.length === 0) {
+            console.error("Could not find notice content for ID: " + noticeId);
+            $modalTitle.text('Error');
+            $modalBody.html('<p class="text-danger">Could not load notice content.</p>');
+            $modalDate.text('');
+            $modal.modal('show');
+            return;
+        }
+
+        // Get the HTML content from the hidden div
+        var content = contentContainer.html();
+
+        // Populate the modal
+        $modalTitle.text(title);
+        $modalBody.html(content); // Use .html() to render any HTML tags in the message
+        $modalDate.text('Posted on: ' + date);
+
+        // Show the modal
+        // This works for both Bootstrap 3 and 4
+        if (typeof $modal.modal === 'function') {
+            $modal.modal('show');
+        } else {
+            console.error("Bootstrap modal function not found.");
+        }
+    });
+
+    // Reset modal content when it's closed to avoid showing stale data
+    $modal.on('hidden.bs.modal', function () {
+        $modalTitle.text('Loading...');
+        $modalBody.html('<div class="text-center">Please wait...</div>');
+        $modalDate.text('');
+    });
 });
