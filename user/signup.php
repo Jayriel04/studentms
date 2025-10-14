@@ -56,12 +56,21 @@ if (isset($_POST['signup'])) {
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Student Management System | Student Signup</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Layout styles -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
     <div class="container-scroller">
         <div class="container-fluid page-body-wrapper full-page-wrapper">
+            <?php if (isset($error) && !empty($error)) { ?>
+                <div id="login-toast" class="toast-box toast-show" style="z-index: 9999; background-color: #f44336;"><?= htmlspecialchars($error) ?></div>
+            <?php } ?>
             <div class="content-wrapper d-flex align-items-center auth">
                 <div class="row flex-grow justify-content-center">
                     <div class="col-12 col-md-8 col-lg-5 mx-auto">
@@ -103,9 +112,11 @@ if (isset($_POST['signup'])) {
                                         </div>
                                     </div>
                                     <div class="col-12">
-                                        <div class="form-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Password" required
+                                        <div class="form-group mb-3" style="position: relative;">
+                                            <input type="password" id="password" class="form-control" placeholder="Password" required
                                                 name="password">
+                                            <i class="icon-eye" id="togglePassword"
+                                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -134,6 +145,12 @@ if (isset($_POST['signup'])) {
         </div>
         <!-- page-body-wrapper ends -->
     </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="vendors/js/vendor.bundle.base.js"></script>
+    <!-- inject:js -->
+    <script src="js/script.js"></script>
+    <!-- endinject -->
 </body>
 
 </html>

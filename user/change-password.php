@@ -8,26 +8,26 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
 } else {
   if (isset($_POST['submit'])) {
     $sid = $_SESSION['sturecmsstuid'];
-    $cpassword = md5($_POST['currentpassword']);
-    $newpassword = md5($_POST['newpassword']);
-    $sql = "SELECT StuID FROM tblstudent WHERE StuID=:sid and Password=:cpassword";
+    $currentpassword = $_POST['currentpassword'];
+    $newpassword = $_POST['newpassword'];
+
+    $sql = "SELECT Password FROM tblstudent WHERE StuID=:sid";
     $query = $dbh->prepare($sql);
     $query->bindParam(':sid', $sid, PDO::PARAM_STR);
-    $query->bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
     $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
+    $result = $query->fetch(PDO::FETCH_OBJ);
 
-    if ($query->rowCount() > 0) {
+    if ($result && (password_verify($currentpassword, $result->Password) || md5($currentpassword) === $result->Password)) {
+      $new_hashed_password = password_hash($newpassword, PASSWORD_DEFAULT);
       $con = "update tblstudent set Password=:newpassword where StuID=:sid";
       $chngpwd1 = $dbh->prepare($con);
       $chngpwd1->bindParam(':sid', $sid, PDO::PARAM_STR);
-      $chngpwd1->bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
+      $chngpwd1->bindParam(':newpassword', $new_hashed_password, PDO::PARAM_STR);
       $chngpwd1->execute();
 
-      echo "<script>if(window.showToast) showToast('Your password successfully changed','success'); else alert('Your password successfully changed');</script>";
+      $_SESSION['toast_message'] = ['type' => 'success', 'message' => 'Your password was successfully changed.'];
     } else {
-      echo "<script>if(window.showToast) showToast('Your current password is wrong','warning'); else alert('Your current password is wrong');</script>";
-
+      $_SESSION['toast_message'] = ['type' => 'warning', 'message' => 'Your current password is wrong.'];
     }
   }
   ?>
@@ -50,10 +50,28 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <!-- endinject -->
     <!-- Layout styles -->
     <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .toast-box { position: fixed; top: 20px; right: 20px; z-index: 1050; width: 300px; background: #fff; border: 1px solid #ddd; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 4px; display: none; }
+      .toast-box .toast-header { padding: 10px 15px; border-bottom: 1px solid #eee; font-weight: 600; }
+      .toast-box .toast-body { padding: 15px; }
+      .toast-box.toast-success .toast-header { background-color: #d4edda; color: #155724; }
+      .toast-box.toast-warning .toast-header { background-color: #fff3cd; color: #856404; }
+      .toast-box.toast-danger .toast-header { background-color: #f8d7da; color: #721c24; }
+      .toast-show { display: block; animation: toast-in 0.3s; }
+      @keyframes toast-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
     <script type="text/javascript">
+      function showToast(message, type) {
+        var toast = document.getElementById('pageToast');
+        if (!toast) return;
+        toast.className = 'toast-box toast-show toast-' + type;
+        toast.querySelector('.toast-body').textContent = message;
+        setTimeout(function() { toast.className = toast.className.replace('toast-show', ''); }, 4000);
+      }
+
       function checkpass() {
         if (document.changepassword.newpassword.value != document.changepassword.confirmpassword.value) {
-          if (window.showToast) showToast('New Password and Confirm Password field does not match', 'warning'); else alert('New Password and Confirm Password field does not match');
+          showToast('New Password and Confirm Password field does not match', 'warning');
           document.changepassword.confirmpassword.focus();
           return false;
         }
@@ -65,6 +83,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
 
   <body>
     <div class="container-scroller">
+      <div id="pageToast" class="toast-box"><div class="toast-header">Notification</div><div class="toast-body"></div></div>
       <!-- partial:partials/_navbar.html -->
       <?php include_once('includes/header.php'); ?>
       <!-- partial -->
@@ -92,19 +111,23 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
 
                     <form class="forms-sample" name="changepassword" method="post" onsubmit="return checkpass();">
 
-                      <div class="form-group">
+                      <div class="form-group" style="position: relative;">
                         <label for="exampleInputName1">Current Password</label>
                         <input type="password" name="currentpassword" id="currentpassword" class="form-control"
                           required="true">
+                        <i class="icon-eye" id="toggleCurrentPassword" style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group" style="position: relative;">
                         <label for="exampleInputEmail3">New Password</label>
-                        <input type="password" name="newpassword" class="form-control" required="true">
+                        <input type="password" name="newpassword" id="newpassword" class="form-control" required="true">
+                        <i class="icon-eye" id="toggleNewPassword" style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group" style="position: relative;">
                         <label for="exampleInputPassword4">Confirm Password</label>
                         <input type="password" name="confirmpassword" id="confirmpassword" value="" class="form-control"
                           required="true">
+                        <i class="icon-eye" id="toggleConfirmPassword"
+                          style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
                       </div>
 
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Change</button>
@@ -135,10 +158,18 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <!-- inject:js -->
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script src="js/script.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page -->
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
+    <?php
+    if (isset($_SESSION['toast_message'])) {
+      $toast = $_SESSION['toast_message'];
+      echo "<script>document.addEventListener('DOMContentLoaded', function() { showToast('" . addslashes($toast['message']) . "', '" . addslashes($toast['type']) . "'); });</script>";
+      unset($_SESSION['toast_message']);
+    }
+    ?>
     <!-- End custom js for this page -->
   </body>
 

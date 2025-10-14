@@ -10,9 +10,9 @@
     </div>
     <div class="modern-footer-section modern-footer-links">
       <div class="modern-footer-links-list">
-        <a href="index.php">Home</a>
-        <a href="about.php">About</a>
-        <a href="contact.php">Contact</a>
+        <a href="index.php#top">Home</a>
+        <a href="index.php#about">About</a>
+        <a href="index.php#contact">Contact</a>
         <a href="admin/login.php">Admin</a>
         <a href="staff/login.php">Staff</a>
         <a href="user/login.php">Student</a>

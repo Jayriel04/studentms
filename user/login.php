@@ -141,12 +141,13 @@ if (isset($_POST['login'])) {
                       echo $_COOKIE["user_login"];
                     } ?>">
                 </div>
-                <div class="form-group">
-                  <input type="password" class="form-control form-control-lg" placeholder="Enter your Password"
-                    name="password" required="true"
+                <div class="form-group" style="position: relative;">
+                  <input type="password" id="password" class="form-control form-control-lg" placeholder="Enter your Password"
+                    name="password" required="true" 
                     value="<?php if (isset($_COOKIE["userpassword"])) {
                       echo $_COOKIE["userpassword"];
                     } ?>">
+                    <i class="icon-eye" id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                 </div>
                 <div class="mt-3">
                   <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
@@ -180,6 +181,7 @@ if (isset($_POST['login'])) {
   <!-- inject:js -->
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
+  <script src="js/script.js"></script>
   <?php if (isset($error) && !empty($error)) { ?>
     <div id="login-toast" class="toast-box toast-show">
       <div class="toast-message"><?= htmlspecialchars($error) ?></div>

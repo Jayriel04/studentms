@@ -2227,7 +2227,7 @@ ul.p_n-list li a:hover {
 .modern-notices-section {
 	padding: 2em 0 4em 0;
 	background: #edf4f7;
-	min-height: 560px;
+	min-height: 700px;
 	display: flex;
 }
 
@@ -3921,4 +3921,28 @@ ul.p_n-list li a:hover {
 @media (max-width: 576px) {
   #noticeModal .modal-dialog { max-width: 95%; margin: 12px; }
   #noticeModal .modal-body { max-height: 50vh; padding: 14px; }
+}
+
+/*-- Custom Hover Effects --*/
+
+/* Transition for smooth hover effects */
+.modern-btn,
+.modern-card,
+.modern-notice-link,
+.modal .btn {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hover effect for buttons */
+.modern-btn:hover,
+.modal .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Hover effect for cards and notice links */
+.modern-card:hover,
+.modern-notice-link:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(39, 147, 253, 0.15);
 }
