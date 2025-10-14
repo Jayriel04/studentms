@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Setup for various pages
-  setupPasswordToggle('#togglePassword', '#password'); // For login.php and signup.php
+  setupPasswordToggle('#togglePassword', '#password'); // For login.php, signup.php, and update-profile.php
   setupPasswordToggle('#toggleNewPassword', '#newpassword'); // For reset-password-process.php
   setupPasswordToggle('#toggleConfirmPassword', '#confirmpassword'); // For reset-password-process.php
   setupPasswordToggle('#toggleConfirmPassword', '#confirmpassword'); // For reset-password-process.php and change-password.php

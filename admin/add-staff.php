@@ -61,13 +61,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
 
   <body>
     <div class="container-scroller">
-      <!-- partial:partials/_navbar.html -->
       <?php include_once('includes/header.php'); ?>
-      <!-- partial -->
       <div class="container-fluid page-body-wrapper">
-        <!-- partial:partials/_sidebar.html -->
         <?php include_once('includes/sidebar.php'); ?>
-        <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
@@ -129,9 +125,11 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         <label for="email">Email</label>
                         <input type="email" name="email" class="form-control" required='true'>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group" style="position: relative;">
                         <label for="password">Password</label>
-                        <input type="Password" name="password" class="form-control" required='true'>
+                        <input type="password" id="password" name="password" class="form-control" required='true'>
+                        <i class="icon-eye" id="togglePassword"
+                          style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
                       </div>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Add</button>
                     </form>
@@ -140,31 +138,18 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
               </div>
             </div>
           </div>
-          <!-- content-wrapper ends -->
-          <!-- partial:partials/_footer.html -->
           <?php include_once('includes/footer.php'); ?>
-          <!-- partial -->
         </div>
-        <!-- main-panel ends -->
       </div>
-      <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
-    <!-- plugins:js -->
     <script src="vendors/js/vendor.bundle.base.js"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
     <script src="vendors/select2/select2.min.js"></script>
     <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <!-- endinject -->
-    <!-- Custom js for this page -->
+    <script src="js/script.js"></script>
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
-    <!-- End custom js for this page -->
   </body>
 
   </html><?php } ?>

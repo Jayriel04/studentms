@@ -54,37 +54,7 @@ if (isset($_POST['login'])) {
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/style(v2).css"> <!-- Updated CSS file -->
-    <script>
-        // Minimal showToast fallback for pages that don't include header.php
-        if (!window.showToast) {
-            window.showToast = function (message, type) {
-                type = type || 'info';
-                try {
-                    var container = document.getElementById('appToastContainer');
-                    if (!container) {
-                        container = document.createElement('div');
-                        container.id = 'appToastContainer';
-                        container.setAttribute('aria-live', 'polite');
-                        container.setAttribute('aria-atomic', 'true');
-                        document.body.appendChild(container);
-                        var s = document.createElement('style');
-                        s.innerHTML = '#appToastContainer{position:fixed;top:1rem;right:1rem;z-index:1080} .app-toast{background:#fff;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,0.08);padding:12px 16px;margin-bottom:8px;min-width:220px;display:flex;gap:8px;align-items:center}.app-toast.success{border-left:4px solid #28a745}.app-toast.info{border-left:4px solid #17a2b8}.app-toast.warning{border-left:4px solid #ffc107}.app-toast.danger{border-left:4px solid #dc3545}.app-toast .app-toast-close{margin-left:auto;cursor:pointer;color:#666}';
-                        document.head.appendChild(s);
-                    }
-                    var toast = document.createElement('div');
-                    toast.className = 'app-toast ' + (['info', 'success', 'warning', 'danger'].indexOf(type) === -1 ? 'info' : type);
-                    toast.innerHTML = '<div class="app-toast-body">' + (message || '') + '</div>' +
-                        '<div class="app-toast-close" role="button" aria-label="close">&times;</div>';
-                    container.appendChild(toast);
-                    toast.querySelector('.app-toast-close').addEventListener('click', function () { if (toast.parentNode) toast.parentNode.removeChild(toast); });
-                    setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 3500);
-                } catch (e) {
-                    console && console.error && console.error(e);
-                }
-            };
-        }
-    </script>
+    <link rel="stylesheet" href="css/style(v2).css">
 </head>
 
 <body>
@@ -114,17 +84,6 @@ if (isset($_POST['login'])) {
                                         </div>
                                     </div>
                                 </div>
-                                <script>
-                                    window.addEventListener('DOMContentLoaded', function () {
-                                        var toastEl = document.getElementById('errorToast');
-                                        if (toastEl && window.$) {
-                                            $(toastEl).toast('show');
-                                        } else if (toastEl && typeof bootstrap !== "undefined") {
-                                            var toast = new bootstrap.Toast(toastEl);
-                                            toast.show();
-                                        }
-                                    });
-                                </script>
                             <?php endif; ?>
                             <form class="pt-3" id="login" method="post" name="login">
                                 <div class="form-group">
@@ -133,9 +92,11 @@ if (isset($_POST['login'])) {
                                             echo $_COOKIE['user_login_staff'];
                                         } ?>">
                                 </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control form-control-lg"
+                                <div class="form-group" style="position: relative;">
+                                    <input type="password" id="password" class="form-control form-control-lg"
                                         placeholder="Enter your password" name="password" required value="">
+                                    <i class="icon-eye" id="togglePassword"
+                                        style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                                 </div>
                                 <div class="mt-3">
                                     <button class="btn btn-success btn-block loginbtn" name="login"
@@ -166,6 +127,7 @@ if (isset($_POST['login'])) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script src="js/script.js"></script>
 </body>
 
 </html>

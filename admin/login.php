@@ -67,9 +67,11 @@ if (isset($_POST['login'])) {
                                             echo $_COOKIE["user_login"];
                                         } ?>">
                                 </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control form-control-lg"
+                                <div class="form-group" style="position: relative;">
+                                    <input type="password" id="password" class="form-control form-control-lg"
                                         placeholder="Enter your password" name="password" required="true" value="">
+                                    <i class="icon-eye" id="togglePassword"
+                                        style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                                 </div>
                                 <div class="mt-3">
                                     <button class="btn btn-success btn-block loginbtn" name="login"
@@ -103,6 +105,7 @@ if (isset($_POST['login'])) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script src="js/script.js"></script>
 </body>
 
 </html>

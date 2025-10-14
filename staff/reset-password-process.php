@@ -45,15 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
-  <script>
-    function valid() {
-      if (document.getElementById('newpassword').value !== document.getElementById('confirmpassword').value) {
-        alert('Passwords do not match!');
-        return false;
-      }
-      return true;
-    }
-  </script>
 </head>
 
 <body>
@@ -69,13 +60,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
               <?php if (!empty($error)): ?>
                 <div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
               <form class="pt-3" method="post" onsubmit="return valid();">
-                <div class="form-group">
+                <div class="form-group" style="position: relative;">
                   <input id="newpassword" type="password" class="form-control form-control-lg" name="newpassword"
                     placeholder="New Password" required autofocus>
+                  <i class="icon-eye" id="toggleNewPassword"
+                    style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="position: relative;">
                   <input id="confirmpassword" type="password" class="form-control form-control-lg"
                     name="confirmpassword" placeholder="Confirm Password" required>
+                  <i class="icon-eye" id="toggleConfirmPassword"
+                    style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                 </div>
                 <div class="mt-3"><button class="btn btn-success btn-block loginbtn" type="submit">Change
                     Password</button></div>
@@ -91,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
   <script src="vendors/js/vendor.bundle.base.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
+  <script src="js/script.js"></script>
 </body>
 
 </html>

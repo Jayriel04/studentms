@@ -449,9 +449,11 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                               <option value="4">4</option>
                             </select>
                           </div>
-                          <div class="form-group">
+                          <div class="form-group" style="position: relative;">
                             <label>New Password</label>
-                            <input type="password" name="password" class="form-control">
+                            <input type="password" name="password" id="password" class="form-control">
+                            <i class="icon-eye" id="togglePassword"
+                              style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
                           </div>
                         </div>
                       </div>
