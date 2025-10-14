@@ -1,27 +1,29 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
     <li class="nav-item nav-profile">
-      <a href="#" class="nav-link">
-        <div class="profile-image">
-          <img class="img-xs rounded-circle" src="images/faces/face8.jpg" alt="profile image">
-          <div class="dot-indicator bg-success"></div>
-        </div>
-        <div class="text-wrapper">
-          <?php
-          $sid = $_SESSION['sturecmsstaffid'];
-          $sql = "SELECT * from tblstaff where ID=:sid";
-          $query = $dbh->prepare($sql);
-          $query->bindParam(':sid', $sid, PDO::PARAM_STR);
-          $query->execute();
-          $results = $query->fetchAll(PDO::FETCH_OBJ);
-          if ($query->rowCount() > 0) {
-            foreach ($results as $row) { ?>
+      <?php
+      $sid = $_SESSION['sturecmsstaffid'];
+      $sql = "SELECT * from tblstaff where ID=:sid";
+      $query = $dbh->prepare($sql);
+      $query->bindParam(':sid', $sid, PDO::PARAM_STR);
+      $query->execute();
+      $results = $query->fetchAll(PDO::FETCH_OBJ);
+      if ($query->rowCount() > 0) {
+        foreach ($results as $row) {
+          $profileImg = !empty($row->Image) ? "../admin/images/" . htmlentities($row->Image) : "images/faces/face8.jpg";
+          ?>
+          <a href="profile.php" class="nav-link">
+            <div class="profile-image">
+              <img class="img-xs rounded-circle" src="<?php echo $profileImg; ?>" alt="profile image">
+              <div class="dot-indicator bg-success"></div>
+            </div>
+            <div class="text-wrapper">
               <p class="profile-name"><?php echo htmlentities($row->StaffName); ?></p>
               <p class="designation"><?php echo htmlentities($row->Email); ?></p>
-            <?php }
-          } ?>
-        </div>
-      </a>
+            </div>
+          </a>
+        <?php }
+      } ?>
     </li>
     <li class="nav-item nav-category">
       <span class="nav-link">Dashboard</span>

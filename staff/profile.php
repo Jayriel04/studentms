@@ -9,14 +9,36 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
     $staffid = $_SESSION['sturecmsstaffid'];
     $SName = $_POST['staffname'];
     $email = $_POST['email'];
-    $sql = "UPDATE tblstaff SET StaffName=:staffname, Email=:email WHERE ID=:staffid";
+
+    // Handle image upload
+    $image = $_FILES["profilepic"]["name"];
+    $image_updated = false;
+    if ($image != '') {
+      $extension = substr($image, strlen($image) - 4, strlen($image));
+      $allowed_extensions = array(".jpg", ".jpeg", ".png", ".gif");
+      if (!in_array($extension, $allowed_extensions)) {
+        echo "<script>if(window.showToast) showToast('Invalid format. Only jpg / jpeg/ png /gif format allowed', 'warning'); else alert('Invalid format. Only jpg / jpeg/ png /gif format allowed');</script>";
+      } else {
+        // Use a consistent image directory
+        $image = md5($image) . time() . $extension;
+        move_uploaded_file($_FILES["profilepic"]["tmp_name"], "../admin/images/" . $image);
+        $sql = "UPDATE tblstaff SET StaffName=:staffname, Email=:email, Image=:image WHERE ID=:staffid";
+        $image_updated = true;
+      }
+    } else {
+      $sql = "UPDATE tblstaff SET StaffName=:staffname, Email=:email WHERE ID=:staffid";
+    }
+
     $query = $dbh->prepare($sql);
     $query->bindParam(':staffname', $SName, PDO::PARAM_STR);
     $query->bindParam(':email', $email, PDO::PARAM_STR);
+    if ($image_updated) {
+      $query->bindParam(':image', $image, PDO::PARAM_STR);
+    }
     $query->bindParam(':staffid', $staffid, PDO::PARAM_STR);
     $query->execute();
 
-    echo "<script>if(window.showToast) showToast('Your profile has been updated','success'); else alert('Your profile has been updated'); window.location.href ='profile.php';</script>";
+    echo "<script>if(window.showToast) { showToast('Your profile has been updated','success'); setTimeout(function(){ window.location.href ='profile.php'; }, 2000); } else { alert('Your profile has been updated'); window.location.href ='profile.php'; }</script>";
   }
   ?>
   <!DOCTYPE html>
@@ -69,7 +91,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Staff Profile</h4>
 
-                    <form class="forms-sample" method="post">
+                    <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
                       $staffid = $_SESSION['sturecmsstaffid'];
                       $sql = "SELECT * FROM tblstaff WHERE ID=:staffid";
@@ -87,7 +109,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
                           <div class="form-group">
                             <label for="exampleInputEmail3">User Name</label>
                             <input type="text" name="username" value="<?php echo htmlentities($row->UserName); ?>"
-                              class="form-control" readonly="">
+                              class="form-control" readonly>
                           </div>
                           <div class="form-group">
                             <label for="exampleInputCity1">Email</label>
@@ -99,10 +121,23 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) { // Ensure staff session is chec
                             <input type="text" name="" value="<?php echo htmlentities($row->StaffRegdate); ?>" readonly=""
                               class="form-control">
                           </div>
+                          <div class="form-group">
+                            <label>Current Profile Image</label>
+                            <br>
+                            <?php if (!empty($row->Image)): ?>
+                              <img src="../admin/images/<?php echo $row->Image; ?>" width="100" height="100">
+                            <?php else: ?>
+                              <p>No image available</p>
+                            <?php endif; ?>
+                          </div>
+                          <div class="form-group">
+                            <label>Update Profile Image</label>
+                            <input type="file" name="profilepic" class="form-control">
+                          </div>
                         <?php }
                       } ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
-
+                      <a href="dashboard.php" class="btn btn-light">Back</a>
                     </form>
                   </div>
                 </div>
