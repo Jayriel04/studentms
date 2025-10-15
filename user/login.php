@@ -70,11 +70,10 @@ if (isset($_POST['login'])) {
 <head>
   <title>Student Management System || Student Login Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <!-- plugins:css -->
+  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-  <!-- Layout styles -->
   <link rel="stylesheet" href="css/style.css">
   <style>
     /* Simple toast styles */
@@ -136,18 +135,17 @@ if (isset($_POST['login'])) {
               <form class="pt-3" id="login" method="post" name="login">
                 <div class="form-group">
                   <input type="text" class="form-control form-control-lg" placeholder="Enter your Student ID"
-                    required="true" name="stuid"
-                    value="<?php if (isset($_COOKIE["user_login"])) {
+                    required="true" name="stuid" value="<?php if (isset($_COOKIE["user_login"])) {
                       echo $_COOKIE["user_login"];
                     } ?>">
                 </div>
                 <div class="form-group" style="position: relative;">
-                  <input type="password" id="password" class="form-control form-control-lg" placeholder="Enter your Password"
-                    name="password" required="true" 
-                    value="<?php if (isset($_COOKIE["userpassword"])) {
+                  <input type="password" id="password" class="form-control form-control-lg"
+                    placeholder="Enter your Password" name="password" required="true" value="<?php if (isset($_COOKIE["userpassword"])) {
                       echo $_COOKIE["userpassword"];
                     } ?>">
-                    <i class="icon-eye" id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                  <i class="icon-eye" id="togglePassword"
+                    style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                 </div>
                 <div class="mt-3">
                   <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
@@ -171,14 +169,9 @@ if (isset($_POST['login'])) {
           </div>
         </div>
       </div>
-      <!-- content-wrapper ends -->
     </div>
-    <!-- page-body-wrapper ends -->
   </div>
-  <!-- container-scroller -->
-  <!-- plugins:js -->
   <script src="vendors/js/vendor.bundle.base.js"></script>
-  <!-- inject:js -->
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
   <script src="js/script.js"></script>

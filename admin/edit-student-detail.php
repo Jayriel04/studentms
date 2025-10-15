@@ -26,8 +26,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $citizenship = $_POST['citizenship'];
     $fathersname = $_POST['fathersname'];
     $mothersmaidenname = $_POST['mothersmaidenname'];
-    $buildinghouse = $_POST['buildinghouse']; // Building/House Number
-    $streetname = $_POST['streetname']; // New field
+    $buildinghouse = $_POST['buildinghouse'];
+    $streetname = $_POST['streetname'];
     $barangay = $_POST['barangay'];
     $citymunicipality = $_POST['citymunicipality'];
     $province = $_POST['province'];
@@ -141,6 +141,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   <head>
     <title>Student Profiling System || Update Students</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">

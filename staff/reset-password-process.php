@@ -40,7 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Staff || Reset Password</title>
+  <title>Student Profiling System || Reset Password</title>
+  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -56,7 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
             <div class="auth-form-light text-left p-5">
               <div class="brand-logo" align="center" style="font-weight:bold">Staff - Reset Password</div>
               <h6 class="font-weight-light">Set a new password for
-                <strong><?php echo htmlentities($_SESSION['staff_fp_reset_email']); ?></strong></h6>
+                <strong><?php echo htmlentities($_SESSION['staff_fp_reset_email']); ?></strong>
+              </h6>
               <?php if (!empty($error)): ?>
                 <div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
               <form class="pt-3" method="post" onsubmit="return valid();">

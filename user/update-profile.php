@@ -80,18 +80,18 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     $params[':fathersname'] = $fathersname;
     $sql_parts[] = "MothersMaidenName=:mothersmaidenname";
     $params[':mothersmaidenname'] = $mothersmaidenname;
-    $sql_parts[] = "BuildingHouseNumber=:buildinghouse"; // Updated
-    $params[':buildinghouse'] = $buildinghouse; // Updated
-    $sql_parts[] = "StreetName=:streetname"; // Updated
-    $params[':streetname'] = $streetname; // Updated
-    $sql_parts[] = "Barangay=:barangay"; // Updated
-    $params[':barangay'] = $barangay; // Updated
-    $sql_parts[] = "CityMunicipality=:citymunicipality"; // Updated
-    $params[':citymunicipality'] = $citymunicipality; // Updated
-    $sql_parts[] = "Province=:province"; // Updated
-    $params[':province'] = $province; // Updated
-    $sql_parts[] = "PostalCode=:postalcode"; // Updated
-    $params[':postalcode'] = $postalcode; // Updated
+    $sql_parts[] = "BuildingHouseNumber=:buildinghouse";
+    $params[':buildinghouse'] = $buildinghouse;
+    $sql_parts[] = "StreetName=:streetname";
+    $params[':streetname'] = $streetname;
+    $sql_parts[] = "Barangay=:barangay";
+    $params[':barangay'] = $barangay;
+    $sql_parts[] = "CityMunicipality=:citymunicipality";
+    $params[':citymunicipality'] = $citymunicipality;
+    $sql_parts[] = "Province=:province";
+    $params[':province'] = $province;
+    $sql_parts[] = "PostalCode=:postalcode";
+    $params[':postalcode'] = $postalcode;
     $sql_parts[] = "ContactNumber=:contactnumber";
     $params[':contactnumber'] = $contactnumber;
     $sql_parts[] = "EmailAddress=:emailaddress";
@@ -118,7 +118,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
         $sql_parts[] = "Image=:image";
         $params[':image'] = $profilepic;
       } else {
-  echo "<script>if(window.showToast) showToast('Profile picture upload failed. Please try again','danger');</script>";
+        echo "<script>if(window.showToast) showToast('Profile picture upload failed. Please try again','danger');</script>";
       }
     }
 
@@ -137,7 +137,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     if ($query->execute($params)) {
       $success = true;
     } else {
-  echo "<script>if(window.showToast) showToast('Something went wrong. Please try again','danger');</script>";
+      echo "<script>if(window.showToast) showToast('Something went wrong. Please try again','danger');</script>";
     }
   }
 
@@ -169,7 +169,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
       $proof_name = time() . '_' . basename($_FILES['proof']['name']);
       $proof_path = $dest_dir . $proof_name;
       if (!move_uploaded_file($proof_tmp, $proof_path)) {
-  echo "<script>if(window.showToast) showToast('Proof image upload failed. Please try again','danger');</script>";
+        echo "<script>if(window.showToast) showToast('Proof image upload failed. Please try again','danger');</script>";
         $proof_name = '';
       }
     }
@@ -191,7 +191,8 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
         $skills = array_filter(array_map('trim', explode(',', $skills_raw)));
         $skills = array_unique($skills);
         foreach ($skills as $skill_name) {
-          if ($skill_name === '') continue;
+          if ($skill_name === '')
+            continue;
           // check if exists
           $s = $dbh->prepare("SELECT id FROM skills WHERE name = :name LIMIT 1");
           $s->bindParam(':name', $skill_name, PDO::PARAM_STR);
@@ -216,7 +217,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
 
       $ach_success = true;
     } catch (Exception $e) {
-  echo "<script>if(window.showToast) showToast('Error saving achievement: " . addslashes($e->getMessage()) . "','danger');</script>";
+      echo "<script>if(window.showToast) showToast('Error saving achievement: " . addslashes($e->getMessage()) . "','danger');</script>";
     }
   }
 
@@ -233,6 +234,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
   <head>
     <title>Student Management System | Update Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -563,44 +565,44 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
         };
       })();
     </script>
-      <script>
-        // Fallback: ensure modal opens when button clicked (for projects using older jQuery/bootstrap bindings)
-        (function () {
-          var btn = document.getElementById('openAchModalBtn');
-          if (btn && window.jQuery) {
-            btn.addEventListener('click', function (e) {
-              e.preventDefault();
-              jQuery('#achModal').modal('show');
-            });
-          }
-        })();
-      </script>
-      <script>
-        // Ensure achievement modal form submits reliably
-        (function () {
-          var form = document.getElementById('achForm');
-          var submit = document.getElementById('achSubmitBtn');
-          if (form && submit) {
-            submit.addEventListener('click', function (e) {
-              // call prepareSkills to populate hidden input
-              try { window.prepareSkills(); } catch (ex) { /* ignore */ }
-              // force submit to bypass any interfering handlers
-              // allow default for normal submission, but if default prevented, submit programmatically
-              setTimeout(function () {
-                if (document.activeElement && document.activeElement === submit) {
-                  // nothing
-                }
-                try {
-                  form.submit();
-                } catch (err) {
-                  // fallback: trigger native click on submit
-                  submit.click();
-                }
-              }, 10);
-            }, false);
-          }
-        })();
-      </script>
+    <script>
+      // Fallback: ensure modal opens when button clicked (for projects using older jQuery/bootstrap bindings)
+      (function () {
+        var btn = document.getElementById('openAchModalBtn');
+        if (btn && window.jQuery) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            jQuery('#achModal').modal('show');
+          });
+        }
+      })();
+    </script>
+    <script>
+      // Ensure achievement modal form submits reliably
+      (function () {
+        var form = document.getElementById('achForm');
+        var submit = document.getElementById('achSubmitBtn');
+        if (form && submit) {
+          submit.addEventListener('click', function (e) {
+            // call prepareSkills to populate hidden input
+            try { window.prepareSkills(); } catch (ex) { /* ignore */ }
+            // force submit to bypass any interfering handlers
+            // allow default for normal submission, but if default prevented, submit programmatically
+            setTimeout(function () {
+              if (document.activeElement && document.activeElement === submit) {
+                // nothing
+              }
+              try {
+                form.submit();
+              } catch (err) {
+                // fallback: trigger native click on submit
+                submit.click();
+              }
+            }, 10);
+          }, false);
+        }
+      })();
+    </script>
   </body>
 
   </html>

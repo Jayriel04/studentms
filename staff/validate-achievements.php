@@ -218,6 +218,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
   <meta charset="utf-8">
   <title>Student Profiling System || Validate Achievements</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -249,7 +250,8 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                   <?php if (isset($_SESSION['ach_msg'])): ?>
                     <div class="alert alert-info">
                       <?php echo htmlentities($_SESSION['ach_msg']);
-                      unset($_SESSION['ach_msg']); ?></div>
+                      unset($_SESSION['ach_msg']); ?>
+                    </div>
                   <?php endif; ?>
 
                   <?php if (empty($rows)): ?>
@@ -275,7 +277,8 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                           <?php foreach ($rows as $r): ?>
                             <tr>
                               <td><?php echo htmlentities($r->StudentName); ?>
-                                <br><small><?php echo htmlentities($r->StuID); ?></small></td>
+                                <br><small><?php echo htmlentities($r->StuID); ?></small>
+                              </td>
                               <td><?php echo htmlentities($r->skills); ?></td>
                               <td><?php echo htmlentities($r->category); ?></td>
                               <td><?php echo htmlentities($r->level); ?></td>

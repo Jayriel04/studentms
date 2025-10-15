@@ -43,7 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp'])) {
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Staff || Verify Reset Code</title>
+  <title>student Profiling System || Verify Reset Code</title>
+  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
@@ -58,7 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp'])) {
             <div class="auth-form-light text-left p-5">
               <div class="brand-logo" align="center" style="font-weight:bold">Staff - Verify Code</div>
               <h6 class="font-weight-light">Enter the 6-digit code sent to
-                <strong><?php echo htmlentities($_SESSION['staff_fp_reset_email']); ?></strong></h6>
+                <strong><?php echo htmlentities($_SESSION['staff_fp_reset_email']); ?></strong>
+              </h6>
               <?php if (!empty($error)): ?>
                 <div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
               <form class="pt-3" method="post">

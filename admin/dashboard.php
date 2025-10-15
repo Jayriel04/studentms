@@ -1,6 +1,5 @@
 <?php
 session_start();
-//error_reporting(0);
 include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
@@ -44,78 +43,61 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         </div>
                       </div>
                     </div>
-                    <div class="row report-inner-cards-wrapper">
+                    <div class="row">
                       <!-- Total Students -->
-                      <div class="col-md-6 col-xl report-inner-card">
-                        <div class="inner-card-text">
+                      <div class="col-md-6 col-xl-3 grid-margin stretch-card">
+                        <div class="card report-card bg-c-danger">
                           <?php
-                          $sql2 = "SELECT * from tblstudent";
-                          $query2 = $dbh->prepare($sql2);
-                          $query2->execute();
-                          $results2 = $query2->fetchAll(PDO::FETCH_OBJ);
-                          $totstu = $query2->rowCount();
+                          $sql_students = "SELECT COUNT(ID) FROM tblstudent";
+                          $q_students = $dbh->query($sql_students);
+                          $totstu = $q_students->fetchColumn();
                           ?>
-                          <span class="report-title">Total Students</span>
-                          <h4><?php echo htmlentities($totstu); ?></h4>
-                          <a href="manage-students.php"><span class="report-count"> View Students</span></a>
-                        </div>
-                        <div class="inner-card-icon bg-danger">
-                          <i class="icon-user"></i>
+                          <p class="card-title">Total Students</p>
+                          <h2 class="card-value"><?php echo htmlentities($totstu); ?></h2>
+                          <a class="card-link" href="manage-students.php">View Students <i class="icon-arrow-right"></i></a>
                         </div>
                       </div>
 
                       <!-- Total Public Notices -->
-                      <div class="col-md-6 col-xl report-inner-card">
-                        <div class="inner-card-text">
+                      <div class="col-md-6 col-xl-3 grid-margin stretch-card">
+                        <div class="card report-card bg-c-primary">
                           <?php
-                          $sql4 = "SELECT * from tblpublicnotice";
-                          $query4 = $dbh->prepare($sql4);
-                          $query4->execute();
-                          $results4 = $query4->fetchAll(PDO::FETCH_OBJ);
-                          $totpublicnotice = $query4->rowCount();
+                          $sql_notices = "SELECT COUNT(ID) FROM tblpublicnotice";
+                          $q_notices = $dbh->query($sql_notices);
+                          $totpublicnotice = $q_notices->fetchColumn();
                           ?>
-                          <span class="report-title">Total Public Notices</span>
-                          <h4><?php echo htmlentities($totpublicnotice); ?></h4>
-                          <a href="manage-public-notice.php"><span class="report-count"> View Public Notices</span></a>
-                        </div>
-                        <div class="inner-card-icon bg-primary">
-                          <i class="icon-doc"></i>
+                          <p class="card-title">Public Notices</p>
+                          <h2 class="card-value"><?php echo htmlentities($totpublicnotice); ?></h2>
+                          <a class="card-link" href="manage-public-notice.php">View Notices <i class="icon-arrow-right"></i></a>
                         </div>
                       </div>
 
                       <!-- Total Staff -->
-                      <div class="col-md-6 col-xl report-inner-card">
-                        <div class="inner-card-text">
+                      <div class="col-md-6 col-xl-3 grid-margin stretch-card">
+                        <div class="card report-card bg-c-success">
                           <?php
-                          $sql3 = "SELECT * from tblstaff";
-                          $query3 = $dbh->prepare($sql3);
-                          $query3->execute();
-                          $results3 = $query3->fetchAll(PDO::FETCH_OBJ);
-                          $totstaff = $query3->rowCount();
+                          $sql_staff = "SELECT COUNT(ID) FROM tblstaff";
+                          $q_staff = $dbh->query($sql_staff);
+                          $totstaff = $q_staff->fetchColumn();
                           ?>
-                          <span class="report-title">Total Staff</span>
-                          <h4><?php echo htmlentities($totstaff); ?></h4>
-                          <a href="manage-staff.php"><span class="report-count"> View Staff</span></a>
-                        </div>
-                        <div class="inner-card-icon bg-success">
-                          <i class="icon-people"></i>
+                          <p class="card-title">Total Staff</p>
+                          <h2 class="card-value"><?php echo htmlentities($totstaff); ?></h2>
+                          <a class="card-link" href="manage-staff.php">View Staff <i class="icon-arrow-right"></i></a>
                         </div>
                       </div>
+
                       <!-- Pending Validations -->
-                      <div class="col-md-6 col-xl report-inner-card">
-                        <div class="inner-card-text">
+                      <div class="col-md-6 col-xl-3 grid-margin stretch-card">
+                        <div class="card report-card bg-c-warning">
                           <?php
                           $sqlPending = "SELECT COUNT(*) FROM student_achievements WHERE status = 'pending'";
                           $qPending = $dbh->prepare($sqlPending);
                           $qPending->execute();
                           $pendingCount = (int) $qPending->fetchColumn();
                           ?>
-                          <span class="report-title">Pending Validations</span>
-                          <h4><?php echo htmlentities($pendingCount); ?></h4>
-                          <a href="validate-achievements.php"><span class="report-count"> Review Pending</span></a>
-                        </div>
-                        <div class="inner-card-icon bg-warning">
-                          <i class="icon-check"></i>
+                          <p class="card-title">Pending Validations</p>
+                          <h2 class="card-value"><?php echo htmlentities($pendingCount); ?></h2>
+                          <a class="card-link" href="validate-achievements.php">Review Pending <i class="icon-arrow-right"></i></a>
                         </div>
                       </div>
                     </div>
@@ -230,13 +212,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     </div>
 
     <script src="vendors/js/vendor.bundle.base.js"></script>
-    <script src="vendors/chart.js/Chart.min.js"></script>
-    <script src="vendors/moment/moment.min.js"></script>
-    <script src="vendors/daterangepicker/daterangepicker.js"></script>
-    <script src="vendors/chartist/chartist.min.js"></script>
+    <!-- endinject -->
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <script src="js/dashboard.js"></script>
     <script>
       function showNoticeDetail(title, date, msg) {
         const modal = document.getElementById('noticeModal');

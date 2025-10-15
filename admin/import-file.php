@@ -1,9 +1,7 @@
 <?php
-// Start session and include database connection
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-// Show errors while debugging this page (remove or reduce in production)
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
@@ -179,8 +177,9 @@ if (isset($_POST['import'])) {
 <html lang="en">
 
 <head>
-    <title>Student Management System || Import Students</title>
+    <title>Student Profiling System || Import Students</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">

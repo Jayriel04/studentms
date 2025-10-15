@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Enable error reporting for development
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 include __DIR__ . '/../includes/dbconnection.php';
@@ -47,8 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 
 <head>
   <meta charset="utf-8">
-  <title>Admin || Reset Password</title>
+  <title>Student Profiling System || Reset Password</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -82,7 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
             <div class="auth-form-light text-left p-5">
               <div class="brand-logo" align="center" style="font-weight:bold">Admin - Student Management System</div>
               <h6 class="font-weight-light">Set a new password for
-                <strong><?php echo htmlentities($_SESSION['admin_fp_reset_email']); ?></strong></h6>
+                <strong><?php echo htmlentities($_SESSION['admin_fp_reset_email']); ?></strong>
+              </h6>
 
               <?php if (!empty($error)): ?>
                 <div class="alert alert-danger" role="alert"><?php echo htmlentities($error); ?></div>

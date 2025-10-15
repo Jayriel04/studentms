@@ -11,7 +11,7 @@ if (empty($_SESSION['fp_reset_code']) || empty($_SESSION['fp_reset_email'])) {
 $display_code = null;
 // Dev-only: show code when environment flag set
 $env = getenv('DEV_SHOW_OTP');
-if ($env && in_array(strtolower($env), ['1','true','yes'], true)) {
+if ($env && in_array(strtolower($env), ['1', 'true', 'yes'], true)) {
   $display_code = $_SESSION['fp_reset_code'];
 }
 
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp'])) {
   if (time() > intval($_SESSION['fp_reset_expires'])) {
     unset($_SESSION['fp_reset_code'], $_SESSION['fp_reset_email'], $_SESSION['fp_reset_expires']);
     $error = 'Code expired. Please request a new one.';
-  } else if ($input === (string)$_SESSION['fp_reset_code']) {
+  } else if ($input === (string) $_SESSION['fp_reset_code']) {
     // Verified
     $_SESSION['fp_verified'] = true;
     header('Location: reset-password-process.php');
@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp'])) {
 <head>
   <title>Student Management System || Verify Reset Code</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -52,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp'])) {
           <div class="col-lg-4 mx-auto">
             <div class="auth-form-light text-left p-5">
               <div class="brand-logo" align="center" style="font-weight:bold">Student Management System</div>
-              <h6 class="font-weight-light">Enter the 6-digit code sent to <strong><?php echo htmlentities($_SESSION['fp_reset_email']); ?></strong></h6>
+              <h6 class="font-weight-light">Enter the 6-digit code sent to
+                <strong><?php echo htmlentities($_SESSION['fp_reset_email']); ?></strong></h6>
 
               <?php if (!empty($error)): ?>
                 <div class="alert alert-danger" role="alert"><?php echo htmlentities($error); ?></div>
@@ -64,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp'])) {
 
               <form class="pt-3" method="post">
                 <div class="form-group">
-                  <input type="text" class="form-control form-control-lg" name="otp" placeholder="6-digit code" pattern="\d{6}" required autofocus>
+                  <input type="text" class="form-control form-control-lg" name="otp" placeholder="6-digit code"
+                    pattern="\d{6}" required autofocus>
                 </div>
                 <div class="mt-3">
                   <button class="btn btn-success btn-block loginbtn" type="submit">Verify Code</button>

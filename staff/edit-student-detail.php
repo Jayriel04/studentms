@@ -2,7 +2,7 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
+if (strlen($_SESSION['sturecmsstaffid']) == 0) {
   header('location:logout.php');
 } else {
   if (isset($_POST['submit'])) {
@@ -26,8 +26,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
     $citizenship = $_POST['citizenship'];
     $fathersname = $_POST['fathersname'];
     $mothersmaidenname = $_POST['mothersmaidenname'];
-    $buildinghouse = $_POST['buildinghouse']; // Building/House Number
-    $streetname = $_POST['streetname']; // New field
+    $buildinghouse = $_POST['buildinghouse'];
+    $streetname = $_POST['streetname'];
     $barangay = $_POST['barangay'];
     $citymunicipality = $_POST['citymunicipality'];
     $province = $_POST['province'];
@@ -133,6 +133,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
   <head>
     <title>Student Profiling System || Update Students</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -235,9 +236,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) { // Fixed condition
                               <div class="form-group" id="otherGenderInput"
                                 style="display: <?php echo (!in_array($row->Gender, ['Male', 'Female']) && $row->Gender != '') ? 'block' : 'none'; ?>;">
                                 <label>Please Specify</label>
-                                <input type="text" name="otherGender" id="otherGender" class="form-control"
-                                  value="<?php if (!in_array($row->Gender, ['Male', 'Female']))
-                                    echo htmlentities($row->Gender); ?>">
+                                <input type="text" name="otherGender" id="otherGender" class="form-control" value="<?php if (!in_array($row->Gender, ['Male', 'Female']))
+                                  echo htmlentities($row->Gender); ?>">
                               </div>
                               <div class="form-group">
                                 <label>Civil Status</label>

@@ -44,11 +44,12 @@ if (isset($_POST['login'])) {
 <head>
     <title>Student Profiling System | Login Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/style(v2).css"> <!-- Your updated CSS file -->
+    <link rel="stylesheet" href="css/style(v2).css"> 
 </head>
 
 <body>
@@ -97,11 +98,8 @@ if (isset($_POST['login'])) {
                     </div>
                 </div>
             </div>
-            <!-- content-wrapper ends -->
         </div>
-        <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>

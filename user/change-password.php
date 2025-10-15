@@ -37,28 +37,68 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Student Management System|| Student Change Password</title>
-    <!-- plugins:css -->
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
     <link rel="stylesheet" href="vendors/select2/select2.min.css">
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
     <link rel="stylesheet" href="css/style.css" />
     <style>
-      .toast-box { position: fixed; top: 20px; right: 20px; z-index: 1050; width: 300px; background: #fff; border: 1px solid #ddd; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 4px; display: none; }
-      .toast-box .toast-header { padding: 10px 15px; border-bottom: 1px solid #eee; font-weight: 600; }
-      .toast-box .toast-body { padding: 15px; }
-      .toast-box.toast-success .toast-header { background-color: #d4edda; color: #155724; }
-      .toast-box.toast-warning .toast-header { background-color: #fff3cd; color: #856404; }
-      .toast-box.toast-danger .toast-header { background-color: #f8d7da; color: #721c24; }
-      .toast-show { display: block; animation: toast-in 0.3s; }
-      @keyframes toast-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+      .toast-box {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+        width: 300px;
+        background: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        display: none;
+      }
+
+      .toast-box .toast-header {
+        padding: 10px 15px;
+        border-bottom: 1px solid #eee;
+        font-weight: 600;
+      }
+
+      .toast-box .toast-body {
+        padding: 15px;
+      }
+
+      .toast-box.toast-success .toast-header {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      .toast-box.toast-warning .toast-header {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+
+      .toast-box.toast-danger .toast-header {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+
+      .toast-show {
+        display: block;
+        animation: toast-in 0.3s;
+      }
+
+      @keyframes toast-in {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
     </style>
     <script type="text/javascript">
       function showToast(message, type) {
@@ -66,7 +106,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
         if (!toast) return;
         toast.className = 'toast-box toast-show toast-' + type;
         toast.querySelector('.toast-body').textContent = message;
-        setTimeout(function() { toast.className = toast.className.replace('toast-show', ''); }, 4000);
+        setTimeout(function () { toast.className = toast.className.replace('toast-show', ''); }, 4000);
       }
 
       function checkpass() {
@@ -83,14 +123,13 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
 
   <body>
     <div class="container-scroller">
-      <div id="pageToast" class="toast-box"><div class="toast-header">Notification</div><div class="toast-body"></div></div>
-      <!-- partial:partials/_navbar.html -->
+      <div id="pageToast" class="toast-box">
+        <div class="toast-header">Notification</div>
+        <div class="toast-body"></div>
+      </div>
       <?php include_once('includes/header.php'); ?>
-      <!-- partial -->
       <div class="container-fluid page-body-wrapper">
-        <!-- partial:partials/_sidebar.html -->
         <?php include_once('includes/sidebar.php'); ?>
-        <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
@@ -115,12 +154,14 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                         <label for="exampleInputName1">Current Password</label>
                         <input type="password" name="currentpassword" id="currentpassword" class="form-control"
                           required="true">
-                        <i class="icon-eye" id="toggleCurrentPassword" style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
+                        <i class="icon-eye" id="toggleCurrentPassword"
+                          style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
                       </div>
                       <div class="form-group" style="position: relative;">
                         <label for="exampleInputEmail3">New Password</label>
                         <input type="password" name="newpassword" id="newpassword" class="form-control" required="true">
-                        <i class="icon-eye" id="toggleNewPassword" style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
+                        <i class="icon-eye" id="toggleNewPassword"
+                          style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
                       </div>
                       <div class="form-group" style="position: relative;">
                         <label for="exampleInputPassword4">Confirm Password</label>
@@ -138,29 +179,16 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
               </div>
             </div>
           </div>
-          <!-- content-wrapper ends -->
-          <!-- partial:partials/_footer.html -->
           <?php include_once('includes/footer.php'); ?>
-          <!-- partial -->
         </div>
-        <!-- main-panel ends -->
       </div>
-      <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
-    <!-- plugins:js -->
     <script src="vendors/js/vendor.bundle.base.js"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
     <script src="vendors/select2/select2.min.js"></script>
     <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/script.js"></script>
-    <!-- endinject -->
-    <!-- Custom js for this page -->
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
     <?php
@@ -170,7 +198,6 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
       unset($_SESSION['toast_message']);
     }
     ?>
-    <!-- End custom js for this page -->
   </body>
 
   </html><?php } ?>

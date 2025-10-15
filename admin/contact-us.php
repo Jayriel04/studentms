@@ -33,9 +33,11 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   ?>
   <!DOCTYPE html>
   <html lang="en">
+
   <head>
-    <title>Student Profiling System|| Update Contact Us</title>
+    <title>Student Profiling System || Update Contact Us</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -45,6 +47,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
     <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
   </head>
+
   <body>
     <div class="container-scroller">
       <?php include_once('includes/header.php'); ?>
@@ -67,7 +70,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Update Contact Us</h4>
                     <form class="forms-sample" method="post">
-                    <?php
+                      <?php
                       // Only fetch the first found contact us page (by id)
                       $sql = "SELECT * FROM tblpage WHERE PageType='contactus' ORDER BY id ASC LIMIT 1";
                       $query = $dbh->prepare($sql);
@@ -76,23 +79,28 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       if ($row) { ?>
                         <div class="form-group">
                           <label for="exampleInputName1">Page Title:</label>
-                          <input type="text" name="pagetitle" value="<?php echo htmlspecialchars($row->PageTitle); ?>" class="form-control" required>
+                          <input type="text" name="pagetitle" value="<?php echo htmlspecialchars($row->PageTitle); ?>"
+                            class="form-control" required>
                         </div>
                         <div class="form-group">
                           <label for="exampleInputName1">Page Description:</label>
-                          <textarea name="pagedes" class="form-control" required><?php echo htmlspecialchars($row->PageDescription); ?></textarea>
+                          <textarea name="pagedes" class="form-control"
+                            required><?php echo htmlspecialchars($row->PageDescription); ?></textarea>
                         </div>
                         <div class="form-group">
                           <label for="exampleInputName1">Email:</label>
-                          <input type="text" name="email" id="email" required value="<?php echo htmlspecialchars($row->Email); ?>" class="form-control">
+                          <input type="text" name="email" id="email" required
+                            value="<?php echo htmlspecialchars($row->Email); ?>" class="form-control">
                         </div>
                         <div class="form-group">
                           <label for="exampleInputName1">Mobile Number:</label>
-                          <input type="text" name="mobnum" id="mobnum" required value="<?php echo htmlspecialchars($row->MobileNumber); ?>" class="form-control" maxlength="10" pattern="[0-9]+">
+                          <input type="text" name="mobnum" id="mobnum" required
+                            value="<?php echo htmlspecialchars($row->MobileNumber); ?>" class="form-control" maxlength="10"
+                            pattern="[0-9]+">
                         </div>
-                    <?php } else { ?>
+                      <?php } else { ?>
                         <div class="alert alert-warning">No Contact Us page found!</div>
-                    <?php } ?>
+                      <?php } ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
                     </form>
                   </div>
@@ -112,4 +120,5 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
   </body>
+
   </html><?php } ?>

@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Enable error reporting for development
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 include __DIR__ . '/../includes/dbconnection.php';
@@ -103,8 +102,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['email'])) {
 
 <head>
   <meta charset="utf-8">
-  <title>Admin || Forgot Password</title>
+  <title>Student Profiling System || Forgot Password</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">

@@ -56,11 +56,11 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   <head>
     <title>Student Profiling System || Manage Students</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="./css/style.css">
-    <!-- Toastr CSS -->
     <link rel="stylesheet" href="./css/toaster.css">
   </head>
 
@@ -104,7 +104,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                     </div>
                     <?php if ($isSkillSearch): ?>
                       <div class="alert alert-info">
-                        Showing results for skill: <strong><?php echo htmlentities($skill_name); ?></strong>. Students are ranked by total points.
+                        Showing results for skill: <strong><?php echo htmlentities($skill_name); ?></strong>. Students are
+                        ranked by total points.
                       </div>
                     <?php endif; ?>
                     <div class="table-responsive border rounded p-1">
@@ -205,7 +206,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             }
                           } else { ?>
                             <tr>
-                              <td colspan="<?php echo $isSkillSearch ? '11' : '10'; ?>" style="text-align: center; color: red;">No Record Found</td>
+                              <td colspan="<?php echo $isSkillSearch ? '11' : '10'; ?>"
+                                style="text-align: center; color: red;">No Record Found</td>
                             </tr>
                           <?php } ?>
                         </tbody>
@@ -259,7 +261,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
       // Display toast notification for status updates

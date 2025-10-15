@@ -197,7 +197,8 @@ if (isset($_POST['add_achievement'])) {
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Add Achievement</title>
+  <title>Student Profiling System || Add Achievement</title>
+  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -358,16 +359,16 @@ if (isset($_POST['add_achievement'])) {
                     </div>
                   </div>
 
-                </div> <!-- card-body -->
-              </div> <!-- card -->
-            </div> <!-- col -->
-          </div> <!-- row -->
-        </div> <!-- content-wrapper -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <?php include_once('includes/footer.php'); ?>
 
-      </div> <!-- main-panel -->
-    </div> <!-- page-body-wrapper -->
-  </div> <!-- container-scroller -->
+      </div>
+    </div>
+  </div>
 
 
   <script src="../js/jquery-1.11.0.min.js"></script>

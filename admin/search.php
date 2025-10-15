@@ -34,20 +34,13 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
   <head>
     <title>Student Profiling System | Search Students</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- plugins:css -->
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
     <link rel="stylesheet" href="./vendors/daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="./vendors/chartist/chartist.min.css">
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
     <link rel="stylesheet" href="./css/style.css">
-    <!-- End layout styles -->
   </head>
 
   <body>
@@ -263,24 +256,20 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                             <li class="<?php if ($pageno <= 1) {
                               echo 'disabled';
                             } ?>">
-                              <a
-                                href="<?php if ($pageno <= 1) {
-                                  echo '#';
-                                } else {
-                                  echo '?pageno=' . ($pageno - 1) . (($sdata !== '') ? '&searchdata=' . urlencode($sdata) : '');
-                                } ?>"><strong
-                                  style="padding-left: 10px">Prev</strong></a>
+                              <a href="<?php if ($pageno <= 1) {
+                                echo '#';
+                              } else {
+                                echo '?pageno=' . ($pageno - 1) . (($sdata !== '') ? '&searchdata=' . urlencode($sdata) : '');
+                              } ?>"><strong style="padding-left: 10px">Prev</strong></a>
                             </li>
                             <li class="<?php if ($pageno >= $total_pages) {
                               echo 'disabled';
                             } ?>">
-                              <a
-                                href="<?php if ($pageno >= $total_pages) {
-                                  echo '#';
-                                } else {
-                                  echo '?pageno=' . ($pageno + 1) . (($sdata !== '') ? '&searchdata=' . urlencode($sdata) : '');
-                                } ?>"><strong
-                                  style="padding-left: 10px">Next</strong></a>
+                              <a href="<?php if ($pageno >= $total_pages) {
+                                echo '#';
+                              } else {
+                                echo '?pageno=' . ($pageno + 1) . (($sdata !== '') ? '&searchdata=' . urlencode($sdata) : '');
+                              } ?>"><strong style="padding-left: 10px">Next</strong></a>
                             </li>
                             <li><a
                                 href="?pageno=<?php echo $total_pages; ?><?php echo ($sdata !== '') ? '&searchdata=' . urlencode($sdata) : ''; ?>"><strong
@@ -294,32 +283,18 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
               </div>
             </div>
           </div>
-          <!-- content-wrapper ends -->
-          <!-- partial:partials/_footer.html -->
           <?php include_once('includes/footer.php'); ?>
-          <!-- partial -->
         </div>
-        <!-- main-panel ends -->
       </div>
-      <!-- page-body-wrapper ends -->
     </div>
-    <!-- container-scroller -->
-    <!-- plugins:js -->
     <script src="vendors/js/vendor.bundle.base.js"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
     <script src="./vendors/chart.js/Chart.min.js"></script>
     <script src="./vendors/moment/moment.min.js"></script>
     <script src="./vendors/daterangepicker/daterangepicker.js"></script>
     <script src="./vendors/chartist/chartist.min.js"></script>
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <!-- endinject -->
-    <!-- Custom js for this page -->
     <script src="./js/dashboard.js"></script>
-    <!-- End custom js for this page -->
     <script>
       (function () {
         function debounce(fn, delay) { var t; return function () { var ctx = this, args = arguments; clearTimeout(t); t = setTimeout(function () { fn.apply(ctx, args); }, delay); }; }

@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Student Management System || Reset Password</title>
+  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -51,12 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
       var n = document.getElementById('newpassword').value;
       var c = document.getElementById('confirmpassword').value;
       if (n !== c) {
-        if (window.showToast) showToast('New Password and Confirm Password Field do not match !!','warning');
+        if (window.showToast) showToast('New Password and Confirm Password Field do not match !!', 'warning');
         document.getElementById('confirmpassword').focus();
         return false;
       }
       if (n.length < 6) {
-        if (window.showToast) showToast('Password must be at least 6 characters.','warning');
+        if (window.showToast) showToast('Password must be at least 6 characters.', 'warning');
         document.getElementById('newpassword').focus();
         return false;
       }
@@ -73,7 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
           <div class="col-lg-4 mx-auto">
             <div class="auth-form-light text-left p-5">
               <div class="brand-logo" align="center" style="font-weight:bold">Student Management System</div>
-              <h6 class="font-weight-light">Set a new password for <strong><?php echo htmlentities($_SESSION['fp_reset_email']); ?></strong></h6>
+              <h6 class="font-weight-light">Set a new password for
+                <strong><?php echo htmlentities($_SESSION['fp_reset_email']); ?></strong></h6>
 
               <?php if (!empty($error)): ?>
                 <div class="alert alert-danger" role="alert"><?php echo htmlentities($error); ?></div>
@@ -81,11 +83,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 
               <form class="pt-3" method="post" onsubmit="return valid();">
                 <div class="form-group" style="position: relative;">
-                  <input id="newpassword" type="password" class="form-control form-control-lg" name="newpassword" placeholder="New Password" required autofocus>
-                  <i class="icon-eye" id="toggleNewPassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                  <input id="newpassword" type="password" class="form-control form-control-lg" name="newpassword"
+                    placeholder="New Password" required autofocus>
+                  <i class="icon-eye" id="toggleNewPassword"
+                    style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                 </div>
                 <div class="form-group" style="position: relative;">
-                  <input id="confirmpassword" type="password" class="form-control form-control-lg" name="confirmpassword" placeholder="Confirm Password" required>
+                  <input id="confirmpassword" type="password" class="form-control form-control-lg"
+                    name="confirmpassword" placeholder="Confirm Password" required>
                   <i class="icon-eye" id="toggleConfirmPassword"
                     style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
                 </div>

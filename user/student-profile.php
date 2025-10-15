@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('includes/dbconnection.php');
-if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
+if (strlen($_SESSION['sturecmsstuid']) == 0) {
   header('location:logout.php');
 } else {
   ?>
@@ -11,13 +11,13 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
   <head>
     <title>Student Management System | View Student Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="vendors/select2/select2.min.css">
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="css/style(v2).css" />
   </head>
@@ -51,7 +51,8 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                   if ($query->rowCount() > 0) {
                     foreach ($results as $row) { ?>
                       <div class="profile-header" style="text-align: center;">
-                        <img src="../admin/images/<?php echo htmlentities($row->Image ?: 'default.png'); ?>" alt="Profile Picture" class="profile-avatar">
+                        <img src="../admin/images/<?php echo htmlentities($row->Image ?: 'default.png'); ?>"
+                          alt="Profile Picture" class="profile-avatar">
                         <h1 class="profile-name"><?php echo htmlentities($row->FirstName . " " . $row->FamilyName); ?></h1>
                         <div class="profile-id">Student ID: <?php echo htmlentities($row->StuID); ?></div>
                       </div>
@@ -60,12 +61,19 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                         <div class="profile-section">
                           <h5 class="profile-section-title"><i class="fas fa-user-circle"></i>Personal Information</h5>
                           <ul class="profile-info-list">
-                            <li><span class="info-label">Full Name</span> <span class="info-value"><?php echo htmlentities(trim($row->FirstName . ' ' . $row->MiddleName . ' ' . $row->FamilyName)); ?></span></li>
-                            <li><span class="info-label">Date of Birth</span> <span class="info-value"><?php echo htmlentities($row->DOB); ?></span></li>
-                            <li><span class="info-label">Gender</span> <span class="info-value"><?php echo htmlentities($row->Gender); ?></span></li>
-                            <li><span class="info-label">Civil Status</span> <span class="info-value"><?php echo htmlentities($row->CivilStatus); ?></span></li>
-                            <li><span class="info-label">Citizenship</span> <span class="info-value"><?php echo htmlentities($row->Citizenship); ?></span></li>
-                            <li><span class="info-label">Religion</span> <span class="info-value"><?php echo htmlentities($row->Religion); ?></span></li>
+                            <li><span class="info-label">Full Name</span> <span
+                                class="info-value"><?php echo htmlentities(trim($row->FirstName . ' ' . $row->MiddleName . ' ' . $row->FamilyName)); ?></span>
+                            </li>
+                            <li><span class="info-label">Date of Birth</span> <span
+                                class="info-value"><?php echo htmlentities($row->DOB); ?></span></li>
+                            <li><span class="info-label">Gender</span> <span
+                                class="info-value"><?php echo htmlentities($row->Gender); ?></span></li>
+                            <li><span class="info-label">Civil Status</span> <span
+                                class="info-value"><?php echo htmlentities($row->CivilStatus); ?></span></li>
+                            <li><span class="info-label">Citizenship</span> <span
+                                class="info-value"><?php echo htmlentities($row->Citizenship); ?></span></li>
+                            <li><span class="info-label">Religion</span> <span
+                                class="info-value"><?php echo htmlentities($row->Religion); ?></span></li>
                           </ul>
                         </div>
 
@@ -73,11 +81,16 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                         <div class="profile-section">
                           <h5 class="profile-section-title"><i class="fas fa-graduation-cap"></i>Academic Details</h5>
                           <ul class="profile-info-list">
-                            <li><span class="info-label">Program</span> <span class="info-value"><?php echo htmlentities($row->Program); ?></span></li>
-                            <li><span class="info-label">Major</span> <span class="info-value"><?php echo htmlentities($row->Major); ?></span></li>
-                            <li><span class="info-label">Year Level</span> <span class="info-value"><?php echo htmlentities($row->YearLevel); ?></span></li>
-                            <li><span class="info-label">LRN</span> <span class="info-value"><?php echo htmlentities($row->LearnersReferenceNo); ?></span></li>
-                            <li><span class="info-label">Category</span> <span class="info-value"><?php echo htmlentities($row->Category); ?></span></li>
+                            <li><span class="info-label">Program</span> <span
+                                class="info-value"><?php echo htmlentities($row->Program); ?></span></li>
+                            <li><span class="info-label">Major</span> <span
+                                class="info-value"><?php echo htmlentities($row->Major); ?></span></li>
+                            <li><span class="info-label">Year Level</span> <span
+                                class="info-value"><?php echo htmlentities($row->YearLevel); ?></span></li>
+                            <li><span class="info-label">LRN</span> <span
+                                class="info-value"><?php echo htmlentities($row->LearnersReferenceNo); ?></span></li>
+                            <li><span class="info-label">Category</span> <span
+                                class="info-value"><?php echo htmlentities($row->Category); ?></span></li>
                           </ul>
                         </div>
 
@@ -85,15 +98,21 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                         <div class="profile-section">
                           <h5 class="profile-section-title"><i class="fas fa-map-marker-alt"></i>Contact & Address</h5>
                           <ul class="profile-info-list">
-                            <li><span class="info-label">Email</span> <span class="info-value"><?php echo htmlentities($row->EmailAddress); ?></span></li>
-                            <li><span class="info-label">Phone</span> <span class="info-value"><?php echo htmlentities($row->ContactNumber); ?></span></li>
+                            <li><span class="info-label">Email</span> <span
+                                class="info-value"><?php echo htmlentities($row->EmailAddress); ?></span></li>
+                            <li><span class="info-label">Phone</span> <span
+                                class="info-value"><?php echo htmlentities($row->ContactNumber); ?></span></li>
                             <li><span class="info-label">Address</span> <span class="info-value">
                                 <?php
-                                  $address = implode(', ', array_filter([
-                                    $row->BuildingHouseNumber, $row->StreetName, $row->Barangay,
-                                    $row->CityMunicipality, $row->Province, $row->PostalCode
-                                  ]));
-                                  echo htmlentities($address ?: 'N/A');
+                                $address = implode(', ', array_filter([
+                                  $row->BuildingHouseNumber,
+                                  $row->StreetName,
+                                  $row->Barangay,
+                                  $row->CityMunicipality,
+                                  $row->Province,
+                                  $row->PostalCode
+                                ]));
+                                echo htmlentities($address ?: 'N/A');
                                 ?>
                               </span></li>
                           </ul>
@@ -103,10 +122,14 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) { // Fixed condition
                         <div class="profile-section">
                           <h5 class="profile-section-title"><i class="fas fa-first-aid"></i>Emergency Contact</h5>
                           <ul class="profile-info-list">
-                            <li><span class="info-label">Name</span> <span class="info-value"><?php echo htmlentities($row->EmergencyContactPerson); ?></span></li>
-                            <li><span class="info-label">Relationship</span> <span class="info-value"><?php echo htmlentities($row->EmergencyRelationship); ?></span></li>
-                            <li><span class="info-label">Phone</span> <span class="info-value"><?php echo htmlentities($row->EmergencyContactNumber); ?></span></li>
-                            <li><span class="info-label">Address</span> <span class="info-value"><?php echo htmlentities($row->EmergencyAddress); ?></span></li>
+                            <li><span class="info-label">Name</span> <span
+                                class="info-value"><?php echo htmlentities($row->EmergencyContactPerson); ?></span></li>
+                            <li><span class="info-label">Relationship</span> <span
+                                class="info-value"><?php echo htmlentities($row->EmergencyRelationship); ?></span></li>
+                            <li><span class="info-label">Phone</span> <span
+                                class="info-value"><?php echo htmlentities($row->EmergencyContactNumber); ?></span></li>
+                            <li><span class="info-label">Address</span> <span
+                                class="info-value"><?php echo htmlentities($row->EmergencyAddress); ?></span></li>
                           </ul>
                         </div>
 
