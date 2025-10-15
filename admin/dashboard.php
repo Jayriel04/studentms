@@ -153,8 +153,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       <div class="calendar-grid">
                         <?php
                         $daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                        $daysOfWeekShort = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
                         foreach ($daysOfWeek as $day) {
-                          echo '<div class="calendar-day">' . $day . '</div>';
+                          echo '<div class="calendar-day calendar-day-full">' . $day . '</div>';
+                        }
+                        foreach ($daysOfWeekShort as $day) {
+                          echo '<div class="calendar-day calendar-day-short">' . $day . '</div>';
                         }
                         $firstDayOfMonth = strtotime("$year-$month-01");
                         $totalDays = date('t', $firstDayOfMonth);
@@ -186,7 +190,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         for ($day = 1; $day <= $totalDays; $day++) {
                           $isToday = (date('Y-m-d') == "$year-$month-" . str_pad($day, 2, '0', STR_PAD_LEFT));
                           echo '<div class="calendar-cell' . ($isToday ? ' today' : '') . '">';
-                          echo '<div style="font-weight:600;color:#007bff;">' . $day . '</div>';
+                          echo '<div class="day-number">' . $day . '</div>';
                           if (isset($noticesByDay[$day])) {
                             echo '<div class="notice-list-in-cell">';
                             foreach ($noticesByDay[$day] as $notice) {
@@ -194,7 +198,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                               $date = htmlentities($notice->CreationDate);
                               $msg = nl2br(htmlentities($notice->NoticeMsg));
                               echo '<div class="notice-item" onclick="showNoticeDetail(\'' . $title . '\', \'' . $date . '\', \'' . str_replace(array("\r", "\n", "'"), array(" ", "\\n", "\\'"), $msg) . '\')">';
-                              echo '<span class="notice-dot"></span>' . $title;
+                              echo '<span class="notice-dot"></span><span class="notice-title">' . $title . '</span>';
                               echo '</div>';
                             }
                             echo '</div>';

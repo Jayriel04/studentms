@@ -1,5 +1,5 @@
 <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-  <div class="navbar-brand-wrapper d-flex align-items-center">
+  <div class="navbar-brand-wrapper d-none d-lg-flex align-items-center">
     <a class="navbar-brand brand-logo" href="dashboard.php">
       <strong style="color: white;">SPS</strong>
     </a>
@@ -21,7 +21,7 @@
         <h5 class="mb-0 font-weight-medium d-none d-lg-flex"><?php echo htmlentities($row->StaffName); ?> Welcome to Dashboard!
         </h5>
         <ul class="navbar-nav navbar-nav-right ml-auto">
-          <li class="nav-item dropdown d-none d-xl-inline-flex user-dropdown">
+          <li class="nav-item dropdown user-dropdown">
             <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
               <img class="img-xs rounded-circle ml-2" src="<?php echo $profileImg; ?>" alt="Profile image"> <span
                 class="font-weight-normal"> <?php echo htmlentities($row->StaffName); ?> </span></a>
