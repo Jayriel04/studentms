@@ -29,6 +29,22 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $filter = $_REQUEST['filter'];
   }
 
+  // Detect if the search term is a skill
+  $isSkillSearch = false;
+  $skill_id = 0;
+  $skill_name = '';
+  if (!empty($searchdata)) {
+    $skillStmt = $dbh->prepare("SELECT id, name FROM skills WHERE LOWER(name) = LOWER(:s) LIMIT 1");
+    $skillStmt->bindValue(':s', $searchdata, PDO::PARAM_STR);
+    $skillStmt->execute();
+    $skill = $skillStmt->fetch(PDO::FETCH_OBJ);
+    if ($skill) {
+      $isSkillSearch = true;
+      $skill_id = $skill->id;
+      $skill_name = $skill->name;
+    }
+  }
+
   // Pagination setup
   $limit = 10; // rows per page
   $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
@@ -86,6 +102,11 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         <a href="import-file.php" class="btn" style="background-color: #007BFF; color: white;">Import</a>
                       </form>
                     </div>
+                    <?php if ($isSkillSearch): ?>
+                      <div class="alert alert-info">
+                        Showing results for skill: <strong><?php echo htmlentities($skill_name); ?></strong>. Students are ranked by total points.
+                      </div>
+                    <?php endif; ?>
                     <div class="table-responsive border rounded p-1">
                       <table class="table">
                         <thead>
@@ -99,45 +120,60 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             <th class="font-weight-bold">Contact Number</th>
                             <th class="font-weight-bold">Email Address</th>
                             <th class="font-weight-bold">Status</th>
+                            <?php if ($isSkillSearch): ?>
+                              <th class="font-weight-bold">Skill</th>
+                            <?php endif; ?>
                             <th class="font-weight-bold">Action</th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php
-                          // Build WHERE clause and parameters
-                          $where = " WHERE 1=1";
                           $params = [];
-                          if (!empty($searchdata)) {
-                            $where .= " AND (StuID LIKE :searchdata OR FamilyName LIKE :searchdata OR FirstName LIKE :searchdata OR EmailAddress LIKE :searchdata)";
-                            $params[':searchdata'] = '%' . $searchdata . '%';
-                          }
-                          if ($filter == 'active') {
-                            $where .= " AND Status=1";
-                          } elseif ($filter == 'inactive') {
-                            $where .= " AND Status=0";
+                          if ($isSkillSearch) {
+                            // Skill-based ranked search
+                            $countSql = "SELECT COUNT(DISTINCT t.ID) FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id";
+                            $countStmt = $dbh->prepare($countSql);
+                            $countStmt->bindValue(':skill_id', $skill_id, PDO::PARAM_INT);
+                            $countStmt->execute();
+                            $totalRows = $countStmt->fetchColumn();
+
+                            $sql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.ContactNumber, t.EmailAddress, t.Status, IFNULL(SUM(sa.points),0) as totalPoints FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id GROUP BY t.ID ORDER BY totalPoints DESC, t.ID DESC LIMIT :limit OFFSET :offset";
+                            $params[':skill_id'] = $skill_id;
+                          } else {
+                            // Regular search
+                            $where = " WHERE 1=1";
+                            if (!empty($searchdata)) {
+                              $where .= " AND (StuID LIKE :searchdata OR FamilyName LIKE :searchdata OR FirstName LIKE :searchdata OR EmailAddress LIKE :searchdata)";
+                              $params[':searchdata'] = '%' . $searchdata . '%';
+                            }
+                            if ($filter == 'active') {
+                              $where .= " AND Status=1";
+                            } elseif ($filter == 'inactive') {
+                              $where .= " AND Status=0";
+                            }
+
+                            $countSql = "SELECT COUNT(*) FROM tblstudent" . $where;
+                            $countQuery = $dbh->prepare($countSql);
+                            foreach ($params as $k => $v) {
+                              $countQuery->bindValue($k, $v, PDO::PARAM_STR);
+                            }
+                            $countQuery->execute();
+                            $totalRows = (int) $countQuery->fetchColumn();
+
+                            $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, ContactNumber, EmailAddress, Status FROM tblstudent" . $where . " ORDER BY ID DESC LIMIT :limit OFFSET :offset";
                           }
 
-                          // Get total rows for pagination
-                          $countSql = "SELECT COUNT(*) FROM tblstudent" . $where;
-                          $countQuery = $dbh->prepare($countSql);
-                          foreach ($params as $k => $v) {
-                            $countQuery->bindValue($k, $v, PDO::PARAM_STR);
-                          }
-                          $countQuery->execute();
-                          $totalRows = (int) $countQuery->fetchColumn();
                           $totalPages = $totalRows > 0 ? ceil($totalRows / $limit) : 1;
 
-                          // Fetch page rows with limit/offset
-                          $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, ContactNumber, EmailAddress, Status FROM tblstudent" . $where . " ORDER BY ID DESC LIMIT :limit OFFSET :offset";
                           $query = $dbh->prepare($sql);
                           foreach ($params as $k => $v) {
-                            $query->bindValue($k, $v, PDO::PARAM_STR);
+                            $query->bindValue($k, $v);
                           }
                           $query->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
                           $query->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
                           $query->execute();
                           $results = $query->fetchAll(PDO::FETCH_OBJ);
-                          $cnt = 1;
+                          $cnt = 1 + $offset;
                           if ($query->rowCount() > 0) {
                             foreach ($results as $row) { ?>
                               <tr>
@@ -150,6 +186,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                 <td><?php echo htmlentities($row->ContactNumber); ?></td>
                                 <td><?php echo htmlentities($row->EmailAddress); ?></td>
                                 <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
+                                <?php if ($isSkillSearch): ?>
+                                  <td><?php echo htmlentities($skill_name); ?></td>
+                                <?php endif; ?>
                                 <td>
                                   <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
                                     class="btn btn-xs" style="background-color: #4CAF50; color: white;">Edit</a>
@@ -166,7 +205,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             }
                           } else { ?>
                             <tr>
-                              <td colspan="10" style="text-align: center; color: red;">No Record Found</td>
+                              <td colspan="<?php echo $isSkillSearch ? '11' : '10'; ?>" style="text-align: center; color: red;">No Record Found</td>
                             </tr>
                           <?php } ?>
                         </tbody>
@@ -176,33 +215,35 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                     <nav aria-label="Page navigation" class="mt-3">
                       <ul class="pagination">
                         <?php
-                        // Build base URL with preserved params
-                        $baseParams = [];
-                        if (!empty($searchdata))
-                          $baseParams['searchdata'] = $searchdata;
-                        if (!empty($filter) && $filter !== 'all')
-                          $baseParams['filter'] = $filter;
+                        if ($totalPages > 1) {
+                          // Build base URL with preserved params
+                          $baseParams = [];
+                          if (!empty($searchdata))
+                            $baseParams['searchdata'] = $searchdata;
+                          if (!empty($filter) && $filter !== 'all')
+                            $baseParams['filter'] = $filter;
 
-                        $buildUrl = function ($p) use ($baseParams) {
-                          $params = $baseParams;
-                          $params['page'] = $p;
-                          return 'manage-students.php?' . http_build_query($params);
-                        };
+                          $buildUrl = function ($p) use ($baseParams) {
+                            $params = $baseParams;
+                            $params['page'] = $p;
+                            return 'manage-students.php?' . http_build_query($params);
+                          };
 
-                        // First
-                        $firstDisabled = $page <= 1 ? ' disabled' : '';
-                        echo '<li class="page-item' . $firstDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl(1)) . '">First</a></li>';
-                        // Prev
-                        $prevPage = max(1, $page - 1);
-                        $prevDisabled = $page <= 1 ? ' disabled' : '';
-                        echo '<li class="page-item' . $prevDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl($prevPage)) . '">Prev</a></li>';
-                        // Next
-                        $nextPage = min($totalPages, $page + 1);
-                        $nextDisabled = $page >= $totalPages ? ' disabled' : '';
-                        echo '<li class="page-item' . $nextDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($nextPage)) . '">Next</a></li>';
-                        // Last
-                        $lastDisabled = $page >= $totalPages ? ' disabled' : '';
-                        echo '<li class="page-item' . $lastDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($totalPages)) . '">Last</a></li>';
+                          // First
+                          $firstDisabled = $page <= 1 ? ' disabled' : '';
+                          echo '<li class="page-item' . $firstDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl(1)) . '">First</a></li>';
+                          // Prev
+                          $prevPage = max(1, $page - 1);
+                          $prevDisabled = $page <= 1 ? ' disabled' : '';
+                          echo '<li class="page-item' . $prevDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl($prevPage)) . '">Prev</a></li>';
+                          // Next
+                          $nextPage = min($totalPages, $page + 1);
+                          $nextDisabled = $page >= $totalPages ? ' disabled' : '';
+                          echo '<li class="page-item' . $nextDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($nextPage)) . '">Next</a></li>';
+                          // Last
+                          $lastDisabled = $page >= $totalPages ? ' disabled' : '';
+                          echo '<li class="page-item' . $lastDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($totalPages)) . '">Last</a></li>';
+                        }
                         ?>
                       </ul>
                     </nav>
