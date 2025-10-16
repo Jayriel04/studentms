@@ -28,20 +28,20 @@
     <br><br><br><br><br>
     <li class="nav-item">
       <a class="nav-link" href="dashboard.php">
-        <i class="icon-screen-desktop menu-icon"></i>
+        <span class="menu-icon">📊</span>
         <span class="menu-title">Dashboard</span>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="view-notice.php">
-        <i class="icon-doc menu-icon"></i>
+        <span class="menu-icon">🔔</span>
         <span class="menu-title">View Notice</span>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="student-profile.php">
-        <i class="icon-user menu-icon"></i>
-        <span class="menu-title">View Profile</span>
+        <span class="menu-icon">👤</span>
+        <span class="menu-title" style="padding-left: 4px;">View Profile</span>
       </a>
     </li>
   </ul>

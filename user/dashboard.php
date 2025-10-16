@@ -4,6 +4,17 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsstuid'] == 0)) {
   header('location:logout.php');
 } else {
+  // Fetch student's name for the welcome banner
+  $stuid = $_SESSION['sturecmsstuid'];
+  $sql = "SELECT FirstName FROM tblstudent WHERE StuID=:stuid";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+  $query->execute();
+  $results = $query->fetchAll(PDO::FETCH_OBJ);
+  $studentName = "Student"; // Default name
+  if ($query->rowCount() > 0) {
+    $studentName = htmlentities($results[0]->FirstName);
+  }
 
   ?>
   <!DOCTYPE html>
@@ -28,18 +39,62 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
         <?php include_once('includes/sidebar.php'); ?>
         <div class="main-panel">
           <div class="content-wrapper">
-            <div class="row purchace-popup">
-              <div class="col-12 stretch-card grid-margin">
-                <div class="card card-secondary">
-                  <span class="card-body d-lg-flex align-items-center">
-                    <p class="mb-lg-0">Notices from the school kindly check! </p>
-                    <a href="view-notice.php" target="_blank"
-                      class="btn btn-warning purchase-button btn-sm my-1 my-sm-0 ml-auto">View Notice</a>
+            <div class="welcome-banner">
+              <p style="font-size: 12px; margin-bottom: 5px;"><?php echo date('F j, Y'); ?></p>
+              <h2>Welcome back, <?php echo $studentName; ?>!</h2>
+              <p>Always stay updated in your student portal</p>
+            </div>
 
-                  </span>
+            <div class="content-grid">
+              <!-- Quick Actions Section -->
+              <div class="courses-section">
+                <div class="section-header">
+                  <div class="section-title" style="margin: 0;">Quick Actions</div>
+                </div>
+                <div class="courses-grid">
+                  <div class="course-card">
+                    <h4>My Profile</h4>
+                    <div class="course-icon">👤</div>
+                    <a href="student-profile.php" class="view-btn">View</a>
+                  </div>
+                  <div class="course-card">
+                    <h4>Update Profile</h4>
+                    <div class="course-icon">✍🏻</div>
+                    <a href="update-profile.php" class="view-btn">Update</a>
+                  </div>
                 </div>
               </div>
+
+              <!-- Daily Notice Section -->
+              <div class="notices-section">
+                <div class="section-header">
+                  <div class="section-title" style="margin: 0;">Daily Notice</div>
+                  <a href="view-notice.php" class="see-all">See all</a>
+                </div>
+                <?php
+                $sql = "SELECT NoticeTitle, NoticeMsg, CreationDate FROM tblnotice ORDER BY CreationDate DESC LIMIT 3";
+                $query = $dbh->prepare($sql);
+                $query->execute();
+                $notices = $query->fetchAll(PDO::FETCH_OBJ);
+
+                if ($query->rowCount() > 0) {
+                  foreach ($notices as $notice) {
+                    ?>
+                    <div class="notice-item">
+                      <div class="notice-title"><?php echo htmlentities($notice->NoticeTitle); ?></div>
+                      <div class="notice-text"><?php echo substr(htmlentities($notice->NoticeMsg), 0, 120); ?>...</div>
+                      <a href="view-notice.php" class="see-more">See more</a>
+                    </div>
+                    <?php
+                  }
+                } else {
+                  echo '<div class="notice-text">No new notices at the moment.</div>';
+                }
+                ?>
+              </div>
             </div>
+
+
           </div>
           <?php include_once('includes/footer.php'); ?>
         </div>

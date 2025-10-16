@@ -6,10 +6,10 @@
     --card-bg: #ffffff;
     --card-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.15);
     --card-border-radius: 16px;
-    --primary-accent: #007bff;
+    --primary-accent: #7952cc;
     --text-primary: #212529;
     --text-secondary: #6c757d;
-    --header-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    --header-bg-gradient: linear-gradient(135deg, #e8dfff 0%, #d4c5f5 100%);
     --icon-color: #adb5bd;
 }
 
@@ -21,7 +21,7 @@
     width: 100%;
     max-width: 900px;
     margin: 2rem auto;
-    border: 1px solid #dee2e6;
+    border: 2px solid #c4b5e8;
 }
 
 /* --- Profile Header --- */
@@ -213,7 +213,7 @@
 .calendar-title {
     font-size: 1.7rem;
     font-weight: 700;
-    color: #d16b8a;
+    color: var(--primary-accent);
     letter-spacing: 1px;
 }
 
@@ -227,10 +227,10 @@
 
 .calendar-day {
     font-weight: 700;
-    color: #d16b8a;
+    color: var(--primary-accent);
     text-align: center;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #d16b8a;
+    border-bottom: 2px solid var(--primary-accent);
     background: #e3e8f0;
     border-radius: 8px 8px 0 0;
     font-size: 1.05rem;
@@ -238,7 +238,7 @@
 
 .day-number {
     font-weight: 600;
-    color: #007bff;
+    color: #6c757d;
 }
 
 .calendar-cell {
@@ -256,15 +256,15 @@
 }
 
 .calendar-cell.today {
-    border: 2px solid #d16b8a;
-    background: #f8e6eb;
+    border: 2px solid var(--primary-accent);
+    background: #f3eefc;
     color: #333333;
 }
 
 .notice-dot {
     width: 10px;
     height: 10px;
-    background: #d16b8a;
+    background: var(--primary-accent);
     border-radius: 50%;
     display: inline-block;
     margin-right: 5px;
@@ -284,7 +284,7 @@
     color: #d16b8a;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
-    border-left: 4px solid #d16b8a;
+    border-left: 4px solid #7952cc;
     font-weight: 500;
 }
 
@@ -310,9 +310,12 @@
     cursor: pointer;
     transition: background 0.2s;
 }
+.calendar-pagination button:hover {
+    background: #6841b8;
+}
 
 .calendar-pagination button:disabled {
-    background: #b3d1ff;
+    background: #c4b5e8;
     cursor: not-allowed;
 }
 
@@ -386,15 +389,15 @@
     position: absolute;
     top: 12px;
     right: 18px;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     cursor: pointer;
-    color: #d16b8a;
+    color: var(--primary-accent);
 }
 
 #noticeModal .modal-title {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #d16b8a;
+    color: var(--primary-accent);
     margin-bottom: 0.5rem;
 }
 
@@ -509,11 +512,14 @@
 }
 
 .sidebar .nav .nav-item .nav-link .menu-icon {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900; /* Use the solid style */
   color: #6c757d;
   margin-right: 18px;
   font-size: 1.2rem;
   transition: all 0.25s ease;
 }
+
 
 /* --- Hover and Active States --- */
 .sidebar .nav .nav-item:not(.nav-category):not(.nav-profile):hover > .nav-link {
@@ -555,4 +561,165 @@
   margin-left: 15px;
   margin-top: -8px;
   margin-bottom: 8px;
+}
+
+/* --- WELCOME BANNER --- */
+.welcome-banner {
+    background: linear-gradient(135deg, #8b6dcc 0%, #a688e8 100%);
+    border-radius: 20px;
+    padding: 40px;
+    color: white;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-banner h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.welcome-banner p {
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+.welcome-banner::after {
+    content: '🎓';
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 100px;
+    opacity: 0.3;
+}
+
+/* --- Dashboard Cards --- */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    align-items: stretch;
+    gap: 20px;
+}
+
+.courses-section {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.see-all {
+    color: #8b6dcc;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+@media (max-width: 992px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+.courses-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.course-card {
+    background: linear-gradient(135deg, #e8dfff 0%, #d4c5f5 100%);
+    border-radius: 15px;
+    padding: 25px;
+    border: 2px solid #c4b5e8;
+    text-align: center;
+}
+
+.course-card h4 {
+    color: #7952cc;
+    font-size: 16px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.course-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.view-btn {
+    background: #7952cc;
+    color: white !important;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.view-btn:hover {
+    background: #6841b8;
+    transform: scale(1.05);
+    color: white !important;
+    text-decoration: none;
+}
+
+/* --- Notices Section --- */
+.notices-section {
+    background: linear-gradient(135deg, #e8dfff 0%, #d4c5f5 100%);
+    border-radius: 15px;
+    padding: 25px;
+    border: 2px solid #c4b5e8;
+    /* box-shadow: 0 4px 12px rgba(0,0,0,0.05); */
+}
+
+.notice-item {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.notice-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.notice-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.notice-text {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.see-more {
+    color: #8b6dcc;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: none;
 }
