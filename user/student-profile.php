@@ -19,7 +19,7 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="css/style(v2).css" />
+    <link rel="stylesheet" href="./css/style(v2).css" />
   </head>
 
   <body>

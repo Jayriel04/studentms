@@ -20,6 +20,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <link rel="stylesheet" href="./vendors/daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="./vendors/chartist/chartist.min.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/style(v2).css">
   </head>
 
   <body>

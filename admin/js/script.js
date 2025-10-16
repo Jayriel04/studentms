@@ -79,3 +79,65 @@ document.addEventListener('DOMContentLoaded', function () {
     toggleOtherGenderInput();
   }
 });
+
+// Functions for Notice Calendar Modal
+function showNoticeDetail(title, date, msg) {
+  const modal = document.getElementById('noticeModal');
+  if (modal) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalDate').innerText = date;
+    document.getElementById('modalMsg').innerHTML = msg.replace(/\\n/g, '<br>');
+    modal.style.display = 'block';
+  }
+}
+
+function closeModal() {
+  const modal = document.getElementById('noticeModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+// Initialize Skills Doughnut Chart on Dashboard
+(function ($) {
+  'use strict';
+  $(function () {
+    if ($("#skillsChart").length) {
+      const skillsDataJSON = $("#skillsChart").data('skills');
+      if (skillsDataJSON) {
+        const skillsData = (typeof skillsDataJSON === 'string') ? JSON.parse(skillsDataJSON) : skillsDataJSON;
+        const labels = skillsData.map(item => item.name);
+        const data = skillsData.map(item => parseInt(item.student_count, 10));
+
+        var barChartCanvas = $("#skillsChart").get(0).getContext("2d");
+        var skillsChart = new Chart(barChartCanvas, {
+          type: 'doughnut',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: ['#4099ff', '#2ed8b6', '#FFB64D'],
+              borderColor: '#ffffff',
+              borderWidth: 2,
+              hoverBorderColor: '#ffffff',
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { animateScale: true, animateRotate: true },
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: { fontColor: '#6c757d', padding: 20 }
+            },
+            tooltips: {
+              backgroundColor: '#3e4b5b',
+              titleFontColor: '#ffffff'
+            }
+          }
+        });
+      }
+    }
+  });
+})(jQuery);

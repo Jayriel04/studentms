@@ -19,25 +19,22 @@
             </div>
             <div class="text-wrapper">
               <p class="profile-name"><?php echo htmlentities($row->StaffName); ?></p>
-              <p class="designation"><?php echo htmlentities($row->Email); ?></p>
             </div>
           </a>
         <?php }
       } ?>
     </li>
-    <li class="nav-item nav-category">
-      <span class="nav-link">Dashboard</span>
-    </li>
+    <br><br><br><br><br>
     <li class="nav-item">
       <a class="nav-link" href="dashboard.php">
-        <span class="menu-title">Dashboard</span>
         <i class="icon-screen-desktop menu-icon"></i>
+        <span class="menu-title">Dashboard</span>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic1">
-        <span class="menu-title">Students</span>
         <i class="icon-people menu-icon"></i>
+        <span class="menu-title">Students</span>
       </a>
       <div class="collapse" id="ui-basic1">
         <ul class="nav flex-column sub-menu">
@@ -50,8 +47,8 @@
     
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#notice" aria-expanded="false" aria-controls="notice">
-        <span class="menu-title">Notice</span>
         <i class="icon-doc menu-icon"></i>
+        <span class="menu-title">Notice</span>
       </a>
       <div class="collapse" id="notice">
         <ul class="nav flex-column sub-menu">
@@ -63,8 +60,8 @@
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#publicnotice" aria-expanded="false"
         aria-controls="publicnotice">
-        <span class="menu-title">Public Notice</span>
         <i class="icon-doc menu-icon"></i>
+        <span class="menu-title">Public Notice</span>
       </a>
       <div class="collapse" id="publicnotice">
         <ul class="nav flex-column sub-menu">
@@ -75,8 +72,8 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#pages" aria-expanded="false" aria-controls="pages">
-        <span class="menu-title">Pages</span>
         <i class="icon-doc menu-icon"></i>
+        <span class="menu-title">Pages</span>
       </a>
       <div class="collapse" id="pages">
         <ul class="nav flex-column sub-menu">
@@ -85,21 +82,10 @@
         </ul>
       </div>
     </li>
-    <!-- <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="reports">
-        <span class="menu-title">Reports</span>
-        <i class="icon-doc menu-icon"></i>
-      </a>
-      <div class="collapse" id="reports">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="between-dates-reports.php"> Student Reports </a></li>
-        </ul>
-      </div>
-    </li> -->
     <li class="nav-item">
       <a class="nav-link" href="search.php">
-        <span class="menu-title">Search</span>
         <i class="icon-magnifier menu-icon"></i>
+        <span class="menu-title">Search</span>
       </a>
     </li>
   </ul>

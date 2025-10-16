@@ -41,6 +41,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
     <link rel="stylesheet" href="./vendors/daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="./vendors/chartist/chartist.min.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/style(v2).css">
   </head>
 
   <body>

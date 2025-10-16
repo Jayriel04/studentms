@@ -1,5 +1,7 @@
 <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
   <div class="navbar-brand-wrapper d-none d-lg-flex align-items-center">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <a class="navbar-brand brand-logo" href="dashboard.php">
       <strong style="color: white;">SPS</strong>
     </a>

@@ -21,28 +21,27 @@
               </div>
               <div class="text-wrapper">
                 <p class="profile-name"><?php echo htmlentities($row->AdminName); ?></p>
-                <p class="designation"><?php echo htmlentities($row->Email); ?></p>
               </div>
             </a>
           <?php }
         }
       } ?>
     </li>
-    <li class="nav-item nav-category">
-      <span class="nav-link">Dashboard</span>
-    </li>
+    <br>
+    <br>
+    <br><br><br>
     <li class="nav-item">
       <a class="nav-link" href="dashboard.php">
-        <span class="menu-title">Dashboard</span>
         <i class="icon-screen-desktop menu-icon"></i>
+        <span class="menu-title">Dashboard</span>
       </a>
     </li>
 
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#ui-basic-staff" aria-expanded="false"
         aria-controls="ui-basic-staff">
-        <span class="menu-title">Staff</span>
         <i class="icon-people menu-icon"></i>
+        <span class="menu-title">Staff</span>
       </a>
       <div class="collapse" id="ui-basic-staff">
         <ul class="nav flex-column sub-menu">
@@ -55,8 +54,8 @@
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#ui-basic-students" aria-expanded="false"
         aria-controls="ui-basic-students">
-        <span class="menu-title">Students</span>
         <i class="icon-people menu-icon"></i>
+        <span class="menu-title">Students</span>
       </a>
       <div class="collapse" id="ui-basic-students">
         <ul class="nav flex-column sub-menu">
@@ -70,8 +69,8 @@
 
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-        <span class="menu-title">Notice</span>
         <i class="icon-doc menu-icon"></i>
+        <span class="menu-title">Notice</span>
       </a>
       <div class="collapse" id="auth">
         <ul class="nav flex-column sub-menu">
@@ -82,8 +81,8 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#auth1" aria-expanded="false" aria-controls="auth">
-        <span class="menu-title">Public Notice</span>
         <i class="icon-doc menu-icon"></i>
+        <span class="menu-title">Public Notice</span>
       </a>
       <div class="collapse" id="auth1">
         <ul class="nav flex-column sub-menu">
@@ -93,8 +92,8 @@
       </div>
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#auth2" aria-expanded="false" aria-controls="auth">
-        <span class="menu-title">Pages</span>
         <i class="icon-doc menu-icon"></i>
+        <span class="menu-title">Pages</span>
       </a>
       <div class="collapse" id="auth2">
         <ul class="nav flex-column sub-menu">
@@ -121,8 +120,8 @@
 
     <li class="nav-item">
       <a class="nav-link" href="search.php">
-        <span class="menu-title">Search</span>
         <i class="icon-magnifier menu-icon"></i>
+        <span class="menu-title">Search</span>
       </a>
     </li>
     </li>

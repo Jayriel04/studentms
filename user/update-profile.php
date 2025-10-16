@@ -239,6 +239,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/style(v2).css">
   </head>
 
   <body>

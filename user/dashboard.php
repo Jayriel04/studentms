@@ -16,9 +16,8 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-    <link rel="stylesheet" href="./vendors/daterangepicker/daterangepicker.css">
-    <link rel="stylesheet" href="./vendors/chartist/chartist.min.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/style(v2).css">
 
   </head>
 
@@ -47,13 +46,8 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
       </div>
     </div>
     <script src="vendors/js/vendor.bundle.base.js"></script>
-    <script src="./vendors/chart.js/Chart.min.js"></script>
-    <script src="./vendors/moment/moment.min.js"></script>
-    <script src="./vendors/daterangepicker/daterangepicker.js"></script>
-    <script src="./vendors/chartist/chartist.min.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <script src="./js/dashboard.js"></script>
   </body>
 
   </html><?php } ?>

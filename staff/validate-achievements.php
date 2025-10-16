@@ -224,6 +224,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/style(v2).css">
+  <link rel="stylesheet" href="./css/style(v2).css">
 </head>
 
 <body>
