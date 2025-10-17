@@ -5,11 +5,11 @@
 :root {
     --card-bg: #ffffff;
     --card-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.15);
-    --card-border-radius: 16px;
-    --primary-accent: #7952cc;
+    --card-border-radius: 20px;
+    --primary-accent: #1565C0;
     --text-primary: #212529;
     --text-secondary: #6c757d;
-    --header-bg-gradient: linear-gradient(135deg, #e8dfff 0%, #d4c5f5 100%);
+    --header-bg-gradient: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
     --icon-color: #adb5bd;
 }
 
@@ -21,7 +21,7 @@
     width: 100%;
     max-width: 900px;
     margin: 2rem auto;
-    border: 2px solid #c4b5e8;
+    border: 2px solid #90caf9;
 }
 
 /* --- Profile Header --- */
@@ -194,7 +194,7 @@
     width: 100%;
     max-width: 100vw;
     margin: 2rem auto;
-    background: #f0f2f5;
+    background: #ffffff;
     border-radius: 18px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     padding: 1.2rem 1.2rem 2rem 1.2rem;
@@ -230,7 +230,7 @@
     color: var(--primary-accent);
     text-align: center;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--primary-accent);
+    border-bottom: 2px solid #90caf9;
     background: #e3e8f0;
     border-radius: 8px 8px 0 0;
     font-size: 1.05rem;
@@ -257,7 +257,7 @@
 
 .calendar-cell.today {
     border: 2px solid var(--primary-accent);
-    background: #f3eefc;
+    background: #e3f2fd;
     color: #333333;
 }
 
@@ -281,16 +281,16 @@
     padding: 6px 10px;
     margin-bottom: 6px;
     font-size: 0.97rem;
-    color: #d16b8a;
+    color: #1565C0;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
-    border-left: 4px solid #7952cc;
+    border-left: 4px solid #2196F3;
     font-weight: 500;
 }
 
 .notice-item:hover {
-    background: #f8e6eb;
-    color: #333333;
+    background: #e3f2fd;
+    color: #003d5b;
 }
 
 .calendar-pagination {
@@ -300,8 +300,8 @@
     margin-top: 1.5rem;
 }
 
-.calendar-pagination button {
-    background: #d16b8a;
+.calendar-pagination button, .btn-outline-primary {
+    background: #2196F3;
     color: #ffffff;
     border: none;
     border-radius: 6px;
@@ -311,7 +311,7 @@
     transition: background 0.2s;
 }
 .calendar-pagination button:hover {
-    background: #6841b8;
+    background: #1976D2;
 }
 
 .calendar-pagination button:disabled {
@@ -415,9 +415,9 @@
 
 /* --- CREATIVE SIDEBAR STYLES (V3) --- */
 .sidebar {
-  background: #191c24; /* A deeper, richer dark background */
-  border-right: 1px solid #2c313a;
-  font-family: 'Poppins', sans-serif; /* A more modern, rounded font */
+    background: linear-gradient(180deg, #2196F3 0%, #1565C0 100%);
+    border-right: 1px solid #1565C0;
+    font-family: 'Poppins', sans-serif;
 }
 
 .sidebar .nav {
@@ -429,7 +429,7 @@
   padding: 30px 20px;
   margin: 0;
   text-align: center;
-  border-bottom: 1px solid #2c313a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .sidebar .nav .nav-item.nav-profile .nav-link {
@@ -447,12 +447,12 @@
 .sidebar .nav .nav-item.nav-profile .profile-image img {
   width: 80px;
   height: 80px;
-  border: 4px solid #2c313a;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar .nav .nav-item.nav-profile .dot-indicator {
-  border: 3px solid #191c24;
+  border: 3px solid #1565C0;
   width: 15px;
   height: 15px;
   right: 5px;
@@ -466,12 +466,12 @@
 .sidebar .nav .nav-item.nav-profile .profile-name {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 .sidebar .nav .nav-item.nav-profile .designation {
     font-size: 0.8rem;
-    color: #8c96a5;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* --- Category Headers --- */
@@ -499,7 +499,7 @@
   align-items: center;
   height: 52px;
   border-radius: 8px;
-  color: #a9b0bb;
+  color: rgba(255, 255, 255, 0.7);
   padding: 10px 15px;
   transition: all 0.25s ease;
   border-top: none;
@@ -509,12 +509,13 @@
 .sidebar .nav .nav-item .nav-link .menu-title {
   font-size: 0.9rem;
   font-weight: 500;
+  color: black;
 }
 
 .sidebar .nav .nav-item .nav-link .menu-icon {
   font-family: "Font Awesome 6 Free";
   font-weight: 900; /* Use the solid style */
-  color: #6c757d;
+  color: rgba(255, 255, 255, 0.7);
   margin-right: 18px;
   font-size: 1.2rem;
   transition: all 0.25s ease;
@@ -523,21 +524,24 @@
 
 /* --- Hover and Active States --- */
 .sidebar .nav .nav-item:not(.nav-category):not(.nav-profile):hover > .nav-link {
-  background: #252932;
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar .nav .nav-item:not(.nav-category):not(.nav-profile):hover > .nav-link .menu-icon {
-  color: #ffffff;
-  transform: scale(1.1);
+  color: white;
+  /* transform: scale(1.1); */ /* Removed to prevent double-scaling */
 }
 
-.sidebar .nav .nav-item.active > .nav-link {
-  color: #ffffff;
-  background: linear-gradient(90deg, rgba(90, 8, 221, 0.3), rgba(58, 150, 255, 0.2));
+.sidebar .nav .nav-item.active:not(.nav-profile) > .nav-link {
+  color: #000000 !important;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.sidebar .nav .nav-item.active > .nav-link:before {
+.sidebar .nav .nav-item.active:not(.nav-profile) > .nav-link:before {
   content: '';
   position: absolute;
   left: 0;
@@ -549,8 +553,8 @@
   box-shadow: 0 0 15px rgba(142, 45, 226, 0.7);
 }
 
-.sidebar .nav .nav-item.active > .nav-link .menu-icon {
-  color: #ffffff;
+.sidebar .nav .nav-item.active:not(.nav-profile) > .nav-link .menu-icon {
+  color: #000000 !important;
 }
 
 /* --- Sub-menu styles (if any) --- */
@@ -565,7 +569,7 @@
 
 /* --- WELCOME BANNER --- */
 .welcome-banner {
-    background: linear-gradient(135deg, #8b6dcc 0%, #a688e8 100%);
+    background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%);
     border-radius: 20px;
     padding: 40px;
     color: white;
@@ -642,15 +646,15 @@
 }
 
 .course-card {
-    background: linear-gradient(135deg, #e8dfff 0%, #d4c5f5 100%);
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
     border-radius: 15px;
     padding: 25px;
-    border: 2px solid #c4b5e8;
+    border: 2px solid #90caf9;
     text-align: center;
 }
 
 .course-card h4 {
-    color: #7952cc;
+    color: #1565C0;
     font-size: 16px;
     margin-bottom: 15px;
     font-weight: 600;
@@ -662,7 +666,7 @@
 }
 
 .view-btn {
-    background: #7952cc;
+    background: #2196F3;
     color: white !important;
     border: none;
     padding: 10px 30px;
@@ -676,7 +680,7 @@
 }
 
 .view-btn:hover {
-    background: #6841b8;
+    background: #1976D2;
     transform: scale(1.05);
     color: white !important;
     text-decoration: none;
@@ -684,11 +688,29 @@
 
 /* --- Notices Section --- */
 .notices-section {
-    background: linear-gradient(135deg, #e8dfff 0%, #d4c5f5 100%);
+    background: white;
     border-radius: 15px;
     padding: 25px;
-    border: 2px solid #c4b5e8;
+    border: 1px solid #e0e0e0;
     /* box-shadow: 0 4px 12px rgba(0,0,0,0.05); */
+}
+
+/* --- HEADER STYLES --- */
+.navbar .navbar-brand-wrapper {
+    background: linear-gradient(180deg, #1565C0 0%, #2196F3 100%);
+}
+
+.navbar .navbar-menu-wrapper {
+    background: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.navbar .navbar-menu-wrapper .navbar-toggler {
+    color: #1565C0;
+}
+
+.navbar .navbar-menu-wrapper h5 {
+    color: #003d5b;
 }
 
 .notice-item {

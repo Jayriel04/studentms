@@ -305,8 +305,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           </div>
                           <div class="form-group">
                             <label>Gender</label>
-                            <select name="gender" id="gender" class="form-control" required
-                              onchange="toggleOtherGenderInput()">
+                            <select name="gender" id="gender" class="form-control" required>
                               <option value="Male" <?php if (isset($row->Gender) && $row->Gender == 'Male')
                                 echo 'selected'; ?>>Male</option>
                               <option value="Female" <?php if (isset($row->Gender) && $row->Gender == 'Female')
@@ -479,131 +478,6 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/script.js"></script>
-    <script>
-      function toggleOtherGenderInput() {
-        var genderSelect = document.getElementById("gender");
-        var otherGenderInput = document.getElementById("otherGenderInput");
-        if (genderSelect.value === "Other") {
-          otherGenderInput.style.display = "block";
-        } else {
-          otherGenderInput.style.display = "none";
-        }
-      }
-      // Trigger on page load to set initial state
-      document.addEventListener('DOMContentLoaded', function () {
-        toggleOtherGenderInput();
-      });
-    </script>
-    <script>
-      // Tag input management
-      (function () {
-        var skills = [];
-        var input = document.getElementById('skillInput');
-        var container = document.getElementById('skillsContainer');
-        var hidden = document.getElementById('skillsHidden');
-
-        function render() {
-          container.innerHTML = '';
-          skills.forEach(function (s, idx) {
-            var span = document.createElement('span');
-            span.className = 'badge badge-info';
-            span.style.marginRight = '6px';
-            span.style.padding = '6px';
-            span.textContent = s;
-            var rm = document.createElement('a');
-            rm.href = '#';
-            rm.style.marginLeft = '6px';
-            rm.style.color = '#fff';
-            rm.innerHTML = '&times;';
-            rm.onclick = function (e) {
-              e.preventDefault();
-              skills.splice(idx, 1);
-              render();
-            };
-            span.appendChild(rm);
-            container.appendChild(span);
-          });
-          hidden.value = skills.join(',');
-        }
-
-        function addFromInput(val) {
-          if (!val) return;
-          val.split(',').forEach(function (part) {
-            var t = part.trim();
-            if (t && skills.indexOf(t) === -1) skills.push(t);
-          });
-          render();
-        }
-
-        if (input) {
-          input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              addFromInput(input.value);
-              input.value = '';
-            }
-            if (e.key === ',') {
-              e.preventDefault();
-              addFromInput(input.value);
-              input.value = '';
-            }
-          });
-          input.addEventListener('blur', function () {
-            addFromInput(input.value);
-            input.value = '';
-          });
-          input.addEventListener('paste', function (e) {
-            var pasted = (e.clipboardData || window.clipboardData).getData('text');
-            addFromInput(pasted);
-            e.preventDefault();
-          });
-        }
-
-        window.prepareSkills = function () {
-          // ensure hidden is up-to-date before form submit
-          hidden.value = skills.join(',');
-          return true;
-        };
-      })();
-    </script>
-    <script>
-      // Fallback: ensure modal opens when button clicked (for projects using older jQuery/bootstrap bindings)
-      (function () {
-        var btn = document.getElementById('openAchModalBtn');
-        if (btn && window.jQuery) {
-          btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            jQuery('#achModal').modal('show');
-          });
-        }
-      })();
-    </script>
-    <script>
-      // Ensure achievement modal form submits reliably
-      (function () {
-        var form = document.getElementById('achForm');
-        var submit = document.getElementById('achSubmitBtn');
-        if (form && submit) {
-          submit.addEventListener('click', function (e) {
-            // call prepareSkills to populate hidden input
-            try { window.prepareSkills(); } catch (ex) { /* ignore */ }
-            // force submit to bypass any interfering handlers
-            // allow default for normal submission, but if default prevented, submit programmatically
-            setTimeout(function () {
-              if (document.activeElement && document.activeElement === submit) {
-                // nothing
-              }
-              try {
-                form.submit();
-              } catch (err) {
-                // fallback: trigger native click on submit
-                submit.click();
-              }
-            }, 10);
-          }, false);
-        }
-      })();
-    </script>
   </body>
 
   </html>

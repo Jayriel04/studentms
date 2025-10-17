@@ -18744,23 +18744,23 @@ dl li {
   content: "\f140";
 }
 
-.sidebar .nav .nav-item.active:not(.navbar-brand-mini-wrapper) {
+/* .sidebar .nav .nav-item.active:not(.navbar-brand-mini-wrapper) {
   background: #282828;
-}
+} */
 
-.sidebar .nav .nav-item.active:not(.navbar-brand-mini-wrapper)>.nav-link .menu-title {
+/* .sidebar .nav .nav-item.active:not(.navbar-brand-mini-wrapper)>.nav-link .menu-title {
   color: #b3b3b3;
   font-family: "Open Sans", sans-serif;
   font-weight: 600;
-}
+} */
 
 .sidebar .nav .nav-item.active:not(.navbar-brand-mini-wrapper)>.nav-link i {
   color: #38ce3c;
 }
 
-.sidebar .nav .nav-item:not(.nav-category):hover {
+/* .sidebar .nav .nav-item:not(.nav-category):hover {
   background: #2c2c43;
-}
+} */
 
 .sidebar .nav .nav-item.nav-profile {
   max-width: 270px;

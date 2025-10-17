@@ -53,14 +53,14 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                 </div>
                 <div class="courses-grid">
                   <div class="course-card">
-                    <h4>My Profile</h4>
-                    <div class="course-icon">👤</div>
-                    <a href="student-profile.php" class="view-btn">View</a>
-                  </div>
-                  <div class="course-card">
                     <h4>Update Profile</h4>
                     <div class="course-icon">✍🏻</div>
                     <a href="update-profile.php" class="view-btn">Update</a>
+                  </div>
+                  <div class="course-card">
+                    <h4>Add Skills</h4>
+                    <div class="course-icon">⛹️</div>
+                    <a href="add-achievement.php" class="view-btn">Add</a>
                   </div>
                 </div>
               </div>

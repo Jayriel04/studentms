@@ -171,7 +171,7 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
                         </div>
                       </div>
                       <div class="profile-footer">
-                        <a href="update-profile.php" class="btn btn-primary">Update Profile</a>
+                        <a href="update-profile.php" class="btn btn-outline-primary">Update Profile</a>
                       </div>
                     <?php }
                   } ?>

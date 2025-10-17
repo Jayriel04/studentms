@@ -32,7 +32,7 @@
     <br><br><br>
     <li class="nav-item">
       <a class="nav-link" href="dashboard.php">
-        <i class="icon-screen-desktop menu-icon"></i>
+        <span class="menu-icon">📊</span>
         <span class="menu-title">Dashboard</span>
       </a>
     </li>
@@ -40,7 +40,7 @@
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#ui-basic-staff" aria-expanded="false"
         aria-controls="ui-basic-staff">
-        <i class="icon-people menu-icon"></i>
+        <span class="menu-icon">👥</span>
         <span class="menu-title">Staff</span>
       </a>
       <div class="collapse" id="ui-basic-staff">
@@ -54,7 +54,7 @@
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#ui-basic-students" aria-expanded="false"
         aria-controls="ui-basic-students">
-        <i class="icon-people menu-icon"></i>
+        <span class="menu-icon">🎓</span>
         <span class="menu-title">Students</span>
       </a>
       <div class="collapse" id="ui-basic-students">
@@ -69,7 +69,7 @@
 
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-        <i class="icon-doc menu-icon"></i>
+        <span class="menu-icon">📌</span>
         <span class="menu-title">Notice</span>
       </a>
       <div class="collapse" id="auth">
@@ -81,7 +81,7 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#auth1" aria-expanded="false" aria-controls="auth">
-        <i class="icon-doc menu-icon"></i>
+        <span class="menu-icon">📣</span>
         <span class="menu-title">Public Notice</span>
       </a>
       <div class="collapse" id="auth1">
@@ -92,7 +92,7 @@
       </div>
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#auth2" aria-expanded="false" aria-controls="auth">
-        <i class="icon-doc menu-icon"></i>
+        <span class="menu-icon">📝</span>
         <span class="menu-title">Pages</span>
       </a>
       <div class="collapse" id="auth2">
@@ -102,25 +102,9 @@
         </ul>
       </div>
     </li>
-
-    <!-- <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#auth22" aria-expanded="false" aria-controls="auth2">
-        <span class="menu-title">Reports</span>
-        <i class="icon-doc menu-icon"></i>
-      </a>
-      <div class="collapse" id="auth22">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="between-dates-reports.php"> Student </a></li>
-        </ul>
-      </div>
-    </li> -->
-
-
-
-
     <li class="nav-item">
       <a class="nav-link" href="search.php">
-        <i class="icon-magnifier menu-icon"></i>
+        <span class="menu-icon">🔎</span>
         <span class="menu-title">Search</span>
       </a>
     </li>

@@ -27,13 +27,13 @@
     <br><br><br><br><br>
     <li class="nav-item">
       <a class="nav-link" href="dashboard.php">
-        <i class="icon-screen-desktop menu-icon"></i>
+        <span class="menu-icon">📊</span>
         <span class="menu-title">Dashboard</span>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic1">
-        <i class="icon-people menu-icon"></i>
+        <span class="menu-icon">🎓</span>
         <span class="menu-title">Students</span>
       </a>
       <div class="collapse" id="ui-basic1">
@@ -47,7 +47,7 @@
     
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#notice" aria-expanded="false" aria-controls="notice">
-        <i class="icon-doc menu-icon"></i>
+        <span class="menu-icon">📌</span>
         <span class="menu-title">Notice</span>
       </a>
       <div class="collapse" id="notice">
@@ -60,7 +60,7 @@
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#publicnotice" aria-expanded="false"
         aria-controls="publicnotice">
-        <i class="icon-doc menu-icon"></i>
+        <span class="menu-icon">📣</span>
         <span class="menu-title">Public Notice</span>
       </a>
       <div class="collapse" id="publicnotice">
@@ -72,7 +72,7 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#pages" aria-expanded="false" aria-controls="pages">
-        <i class="icon-doc menu-icon"></i>
+        <span class="menu-icon">📝</span>
         <span class="menu-title">Pages</span>
       </a>
       <div class="collapse" id="pages">
@@ -84,7 +84,7 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" href="search.php">
-        <i class="icon-magnifier menu-icon"></i>
+        <span class="menu-icon">🔎</span>
         <span class="menu-title">Search</span>
       </a>
     </li>

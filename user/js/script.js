@@ -1,12 +1,26 @@
-function toggleOtherInput() {
-  const select = document.getElementById("genderSelect");
-  const otherInputGroup = document.getElementById("otherInputGroup");
+/**
+ * Toggles the visibility of an input field when "Other" is selected in a dropdown.
+ * @param {string} selectId The ID of the select element.
+ * @param {string} otherInputId The ID of the element to show/hide.
+ */
+function toggleOtherInput(selectId, otherInputId) {
+  const select = document.getElementById(selectId);
+  const otherInputGroup = document.getElementById(otherInputId);
 
-  // Show or hide the input field based on the selected value
-  if (select.value === "Other") {
-    otherInputGroup.style.display = "block"; // Show input
-  } else {
-    otherInputGroup.style.display = "none"; // Hide input
+  function toggle() {
+    if (select && otherInputGroup) {
+      // Show or hide the input field based on the selected value
+      if (select.value === "Other") {
+        otherInputGroup.style.display = "block"; // Show input
+      } else {
+        otherInputGroup.style.display = "none"; // Hide input
+      }
+    }
+  }
+
+  if (select) {
+    select.addEventListener('change', toggle);
+    toggle(); // Initial check on page load
   }
 }
 
@@ -34,4 +48,12 @@ document.addEventListener('DOMContentLoaded', function () {
   setupPasswordToggle('#toggleConfirmPassword', '#confirmpassword'); // For reset-password-process.php
   setupPasswordToggle('#toggleConfirmPassword', '#confirmpassword'); // For reset-password-process.php and change-password.php
   setupPasswordToggle('#toggleCurrentPassword', '#currentpassword'); // For change-password.php
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  // For update-profile.php gender field
+  toggleOtherInput('gender', 'otherGenderInput');
+
+  // For add-student.php gender field
+  toggleOtherInput('genderSelect', 'otherInputGroup');
 });
