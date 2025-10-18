@@ -23,13 +23,6 @@ include('includes/dbconnection.php');
     rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="css/default.css" />
   <link rel="stylesheet" type="text/css" href="css/component.css" />
-  <script src="js/modernizr.custom.js"></script>
-  <script type="text/javascript" src="js/move-top.js"></script>
-  <script type="text/javascript" src="js/easing.js"></script>
-  <script src="js/script.js"></script>
-</head>
-
-<body>
   <div class="top" id="top"></div>
   <?php include_once('includes/header.php'); ?>
   <div class="modern-hero-section">
@@ -181,7 +174,26 @@ include('includes/dbconnection.php');
     </div>
   </div>
 
+  <!-- Back to top button -->
+  <a id="toTop" href="#top" class="scroll" title="Go to top"><i class="fas fa-arrow-up"></i></a>
+
   <?php include_once('includes/footer.php'); ?>
+  <script src="js/modernizr.custom.js"></script>
+  <script type="text/javascript" src="js/move-top.js"></script>
+  <script src="js/script.js"></script>
+  <script type="text/javascript" src="js/easing.js"></script>
+  <script type="text/javascript">
+    jQuery(document).ready(function ($) {
+      var $toTop = $('#toTop');
+      $(window).scroll(function () {
+        if ($(this).scrollTop() > 100) {
+          $toTop.fadeIn();
+        } else {
+          $toTop.fadeOut();
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>
