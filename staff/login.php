@@ -48,87 +48,66 @@ if (isset($_POST['login'])) {
 <html lang="en">
 
 <head>
-    <title>Student Profiling System | Staff Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | Student Profiling System</title>
     <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
-    <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-    <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
-    <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/style(v2).css">
+    <link rel="stylesheet" href="css/login-new.css">
 </head>
 
 <body>
-    <div class="container-scroller">
-        <div class="container-fluid page-body-wrapper full-page-wrapper">
-            <div class="content-wrapper d-flex align-items-center auth">
-                <div class="row flex-grow">
-                    <div class="col-lg-4 mx-auto">
-                        <div class="auth-form-light text-left p-5">
-                            <div class="brand-logo" align="center">Student Profiling System - Staff</div>
-                            <h6 class="font-weight-light">Sign in to continue as Staff.</h6>
-                            <?php if (isset($login_error)): ?>
-                                <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 50px;">
-                                    <div class="toast" id="errorToast"
-                                        style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;"
-                                        data-delay="3000" data-autohide="true">
-                                        <div class="toast-header bg-danger text-white">
-                                            <strong class="mr-auto">Login Failed</strong>
-                                            <small>Now</small>
-                                            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast"
-                                                aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="toast-body">
-                                            <?php echo $login_error; ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-                            <form class="pt-3" id="login" method="post" name="login">
-                                <div class="form-group">
-                                    <input type="text" class="form-control form-control-lg"
-                                        placeholder="Enter your username" required name="username" value="<?php if (isset($_COOKIE['user_login_staff'])) {
-                                            echo $_COOKIE['user_login_staff'];
-                                        } ?>">
-                                </div>
-                                <div class="form-group" style="position: relative;">
-                                    <input type="password" id="password" class="form-control form-control-lg"
-                                        placeholder="Enter your password" name="password" required value="">
-                                    <i class="icon-eye" id="togglePassword"
-                                        style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
-                                </div>
-                                <div class="mt-3">
-                                    <button class="btn btn-success btn-block loginbtn" name="login"
-                                        type="submit">Login</button>
-                                </div>
-                                <div class="my-2 d-flex justify-content-between align-items-center">
-                                    <div class="form-check">
-                                        <label class="form-check-label text-muted">
-                                            <input type="checkbox" id="remember" class="form-check-input"
-                                                name="remember" <?php if (isset($_COOKIE["user_login_staff"])) { ?>
-                                                    checked <?php } ?> /> Keep me signed in
-                                        </label>
-                                    </div>
-                                    <a href="forgot-process.php" class="auth-link text-black">Forgot password?</a>
-                                </div>
-                                <div class="mb-2">
-                                    <a href="../index.php" class="btn btn-block btn-facebook auth-form-btn">
-                                        <i class="icon-social-home mr-2"></i>Back Home
-                                    </a>
-                                </div>
-                            </form>
-                        </div>
+    <div class="container">
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <h1>WELCOME STAFF</h1>
+                <p class="headline">Student Profiling System</p>
+                <p>Sign in to access student records, manage class information, and utilize other staff-specific tools and resources.</p>
+            </div>
+            <div class="circle-decoration"></div>
+        </div>
+
+        <div class="form-section">
+            <h2>Sign in</h2>
+            <p class="subtitle">Enter your credentials to access the staff dashboard.</p>
+
+            <?php if (isset($login_error)): ?>
+                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?php echo $login_error; ?></div>
+            <?php endif; ?>
+
+            <form id="login" method="post" name="login">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">👤</span>
+                        <input type="text" id="username" name="username" placeholder="User Name" required="true" value="<?php if (isset($_COOKIE['user_login_staff'])) {
+                            echo $_COOKIE['user_login_staff'];
+                        } ?>">
                     </div>
                 </div>
-            </div>
+
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="Password" required="true">
+                        <button type="button" class="toggle-password" onclick="togglePassword()">SHOW</button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember" name="remember" <?php if (isset($_COOKIE["user_login_staff"])) { ?> checked <?php } ?>>
+                        <span>Remember me</span>
+                    </label>
+                    <a href="forgot-process.php" class="forgot-password">Forgot Password?</a>
+                </div>
+
+                <button type="submit" name="login" class="btn btn-primary">Sign in</button>
+                <a href="../index.php" class="btn btn-secondary">Back to Home</a>
+
+            </form>
         </div>
     </div>
-    <script src="vendors/js/vendor.bundle.base.js"></script>
-    <script src="js/off-canvas.js"></script>
-    <script src="js/misc.js"></script>
-    <script src="js/script.js"></script>
+
+    <script src="js/login-new.js"></script>
 </body>
 
 </html>

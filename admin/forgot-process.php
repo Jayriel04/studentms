@@ -101,44 +101,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['email'])) {
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>Student Profiling System || Forgot Password</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
-  <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="./css/style(v2).css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password | Student Profiling System</title>
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="stylesheet" href="css/login-new.css">
 </head>
 
 <body>
-  <div class="container-scroller">
-    <div class="container-fluid page-body-wrapper full-page-wrapper">
-      <div class="content-wrapper d-flex align-items-center auth">
-        <div class="row flex-grow">
-          <div class="col-lg-4 mx-auto">
-            <div class="auth-form-light text-left p-5">
-              <div class="brand-logo" align="center" style="font-weight:bold">Admin Password Reset</div>
-              <h6 class="font-weight-light">Enter your admin email to receive a 6-digit reset code.</h6>
-              <?php if (!empty($error)): ?>
-                <div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
-              <form class="pt-3" method="post">
-                <div class="form-group"><input type="email" class="form-control form-control-lg" name="email"
-                    placeholder="Email address" required autofocus></div>
-                <div class="mt-3"><button class="btn btn-success btn-block loginbtn" type="submit">Send OTP</button>
-                </div>
-                <div class="my-2 d-flex justify-content-between align-items-center">
-                  <a href="login.php" class="auth-link text-black">Sign in</a>
-                  <a href="../index.php" class="auth-link text-black">Back Home</a>
-                </div>
-              </form>
+    <div class="container">
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <h1>RESET PASSWORD</h1>
+                <p class="headline">Student Profiling System</p>
+                <p>If you've forgotten your password, enter your email address below. We'll send you a secure code to reset it.</p>
             </div>
-          </div>
+            <div class="circle-decoration"></div>
         </div>
-      </div>
+
+        <div class="form-section">
+            <h2>Forgot Password</h2>
+            <p class="subtitle">Enter your admin email to receive a 6-digit reset code.</p>
+            
+            <?php if (!empty($error)): ?>
+                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?php echo htmlentities($error); ?></div>
+            <?php endif; ?>
+
+            <form method="post">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">✉️</span>
+                        <input type="email" id="email" name="email" placeholder="Email address" required autofocus>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Send Reset Code</button>
+                <a href="login.php" class="btn btn-secondary">Back to Sign In</a>
+            </form>
+        </div>
     </div>
-  </div>
-  <script src="vendors/js/vendor.bundle.base.js"></script>
 </body>
 
 </html>

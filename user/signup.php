@@ -4,6 +4,7 @@ error_reporting(0);
 include('includes/dbconnection.php');
 
 if (isset($_POST['signup'])) {
+    $message = '';
     $stuid = $_POST['stuid'];
     $familyname = $_POST['familyname'];
     $firstname = $_POST['firstname'];
@@ -11,7 +12,7 @@ if (isset($_POST['signup'])) {
     $email = $_POST['email'];
     $password = md5($_POST['password']);
 
-    // Handle profile image upload
+    // Handle profile image upload - this part has a potential security issue with file names.
     $profilepic = $_FILES['profilepic']['name'];
     $profilepic_tmp = $_FILES['profilepic']['tmp_name'];
     $profilepic_folder = "../admin/images/" . $profilepic;
@@ -24,125 +25,117 @@ if (isset($_POST['signup'])) {
     $query->execute();
 
     if ($query->rowCount() > 0) {
-        echo "<script>if(window.showToast) showToast('Account already exists with this Student ID or Email','warning');</script>";
+        $message = 'An account already exists with this Student ID or Email.';
+        $message_type = 'danger';
     } else {
         // Move uploaded file
         if ($profilepic && move_uploaded_file($profilepic_tmp, $profilepic_folder)) {
             $sql = "INSERT INTO tblstudent (StuID, FamilyName, FirstName, MiddleName, EmailAddress, Password, Image) 
                     VALUES (:stuid, :familyname, :firstname, :middlename, :email, :password, :image)";
             $query = $dbh->prepare($sql);
-            $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-            $query->bindParam(':familyname', $familyname, PDO::PARAM_STR);
-            $query->bindParam(':firstname', $firstname, PDO::PARAM_STR);
-            $query->bindParam(':middlename', $middlename, PDO::PARAM_STR);
-            $query->bindParam(':email', $email, PDO::PARAM_STR);
-            $query->bindParam(':password', $password, PDO::PARAM_STR);
-            $query->bindParam(':image', $profilepic, PDO::PARAM_STR);
+            $query->bindParam(':stuid', $stuid);
+            $query->bindParam(':familyname', $familyname);
+            $query->bindParam(':firstname', $firstname);
+            $query->bindParam(':middlename', $middlename);
+            $query->bindParam(':email', $email);
+            $query->bindParam(':password', $password);
+            $query->bindParam(':image', $profilepic);
 
             if ($query->execute()) {
-                echo "<script>if(window.showToast) showToast('Account created successfully!','success'); document.location ='login.php';</script>";
+                $_SESSION['flash_message'] = 'Account created successfully! You can now log in.';
+                header('Location: login.php');
+                exit;
             } else {
-                echo "<script>if(window.showToast) showToast('Something went wrong. Please try again','danger');</script>";
+                $message = 'Something went wrong. Please try again.';
+                $message_type = 'danger';
             }
         } else {
-            echo "<script>if(window.showToast) showToast('Profile picture upload failed. Please try again','danger');</script>";
+            $message = 'Profile picture upload failed. Please try again.';
+            $message_type = 'danger';
         }
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Student Management System | Student Signup</title>
+    <title>Sign Up | Student Profiling System</title>
     <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
-    <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-    <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
-    <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login-new.css">
 </head>
-
 <body>
-    <div class="container-scroller">
-        <div class="container-fluid page-body-wrapper full-page-wrapper">
-            <?php if (isset($error) && !empty($error)) { ?>
-                <div id="login-toast" class="toast-box toast-show" style="z-index: 9999; background-color: #f44336;"><?= htmlspecialchars($error) ?></div>
-            <?php } ?>
-            <div class="content-wrapper d-flex align-items-center auth">
-                <div class="row flex-grow justify-content-center">
-                    <div class="col-12 col-md-8 col-lg-5 mx-auto">
-                        <div class="auth-form-light text-left p-4 p-md-5 rounded shadow-sm">
-                            <div class="brand-logo text-center mb-3" style="font-weight:bold">
-                                Student Management System
-                            </div>
-                            <h6 class="font-weight-light text-center mb-4">Create your account</h6>
-                            <form id="signup" method="post" name="signup" enctype="multipart/form-data">
-                                <div class="row g-2">
-                                    <div class="col-12">
-                                        <div class="form-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Student ID" required
-                                                name="stuid">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Family Name" required
-                                                name="familyname">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group mb-3">
-                                            <input type="text" class="form-control" placeholder="First Name" required
-                                                name="firstname">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Middle Name"
-                                                name="middlename">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group mb-3">
-                                            <input type="email" class="form-control" placeholder="Email" required
-                                                name="email">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group mb-3" style="position: relative;">
-                                            <input type="password" id="password" class="form-control" placeholder="Password" required
-                                                name="password">
-                                            <i class="icon-eye" id="togglePassword"
-                                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group mb-3">
-                                            <label for="profilepic" class="form-label">Profile Picture</label>
-                                            <input type="file" class="form-control" name="profilepic" id="profilepic"
-                                                accept="image/*" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="btn btn-success w-100 mb-3" name="signup" type="submit">Sign Up</button>
-                                <div class="text-center mb-2">
-                                    <a href="login.php" class="auth-link text-black">Already have an account? Login</a>
-                                </div>
-                                <div class="text-center">
-                                    <a href="../index.php" class="btn btn-facebook auth-form-btn">
-                                        <i class="icon-social-home mr-2"></i>Back Home
-                                    </a>
-                                </div>
-                            </form>
-                        </div>
+    <div class="container">
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <h1>JOIN US</h1>
+                <p class="headline">Student Profiling System</p>
+                <p>Create your account to get started. Access your profile, grades, and class information all in one place.</p>
+            </div>
+            <div class="circle-decoration"></div>
+        </div>
+
+        <div class="form-section">
+            <h2>Create Account</h2>
+            <p class="subtitle">Fill out the form below to register.</p>
+
+            <?php if (!empty($message)): ?>
+                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?= htmlspecialchars($message) ?></div>
+            <?php endif; ?>
+
+            <form id="signup" method="post" name="signup" enctype="multipart/form-data">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">🆔</span>
+                        <input type="text" name="stuid" placeholder="Student ID" required="true">
                     </div>
                 </div>
-            </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">👤</span>
+                        <input type="text" name="familyname" placeholder="Family Name" required="true">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">👤</span>
+                        <input type="text" name="firstname" placeholder="First Name" required="true">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">👤</span>
+                        <input type="text" name="middlename" placeholder="Middle Name">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">✉️</span>
+                        <input type="email" name="email" placeholder="Email" required="true">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="Password" required="true">
+                        <button type="button" class="toggle-password" onclick="togglePassword()">SHOW</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="profilepic" style="font-weight: 500; font-size: 13px; color: #333;">Profile Picture</label>
+                    <input type="file" name="profilepic" id="profilepic" class="form-control" accept="image/*" required style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: #f8f8f8;">
+                </div>
+
+                <button class="btn btn-primary" name="signup" type="submit">Sign Up</button>
+                <a href="../index.php" class="btn btn-secondary">Back to Home</a>
+
+                <div class="signup-link">
+                    Already have an account? <a href="login.php">Sign In</a>
+                </div>
+            </form>
         </div>
     </div>
-    <script src="vendors/js/vendor.bundle.base.js"></script>
-    <script src="js/script.js"></script>
+    <script src="js/login-new.js"></script>
 </body>
-
 </html>

@@ -68,130 +68,66 @@ if (isset($_POST['login'])) {
 <html lang="en">
 
 <head>
-  <title>Student Management System || Student Login Page</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | Student Profiling System</title>
   <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
-  <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-  <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
-  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-  <link rel="stylesheet" href="css/style.css">
-  <style>
-    /* Simple toast styles */
-    .toast-box {
-      position: fixed;
-      right: 20px;
-      top: 20px;
-      background: rgba(0, 0, 0, 0.85);
-      color: #fff;
-      padding: 12px 16px;
-      border-radius: 6px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      max-width: 320px;
-      font-family: sans-serif;
-    }
-
-    .toast-box button {
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 18px;
-      line-height: 1;
-      cursor: pointer;
-    }
-
-    .toast-show {
-      animation: toast-in 0.2s ease-out;
-    }
-
-    @keyframes toast-in {
-      from {
-        transform: translateY(-8px);
-        opacity: 0;
-      }
-
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="css/login-new.css">
 </head>
 
 <body>
-  <div class="container-scroller">
-    <div class="container-fluid page-body-wrapper full-page-wrapper">
-      <div class="content-wrapper d-flex align-items-center auth">
-        <div class="row flex-grow">
-          <div class="col-lg-4 mx-auto">
-            <div class="auth-form-light text-left p-5">
-              <div class="brand-logo" align="center" style="font-weight:bold">
-                Student Management System
-              </div>
-              <h6 class="font-weight-light">Sign in to continue as Student.</h6>
-              <form class="pt-3" id="login" method="post" name="login">
-                <div class="form-group">
-                  <input type="text" class="form-control form-control-lg" placeholder="Enter your Student ID"
-                    required="true" name="stuid" value="<?php if (isset($_COOKIE["user_login"])) {
-                      echo $_COOKIE["user_login"];
-                    } ?>">
-                </div>
-                <div class="form-group" style="position: relative;">
-                  <input type="password" id="password" class="form-control form-control-lg"
-                    placeholder="Enter your Password" name="password" required="true" value="<?php if (isset($_COOKIE["userpassword"])) {
-                      echo $_COOKIE["userpassword"];
-                    } ?>">
-                  <i class="icon-eye" id="togglePassword"
-                    style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
-                </div>
-                <div class="mt-3">
-                  <button class="btn btn-success btn-block loginbtn" name="login" type="submit">Login</button>
-                </div>
-                <div class="my-2 d-flex justify-content-between align-items-center">
-                  <div class="form-check">
-                    <label class="form-check-label text-muted">
-                      <input type="checkbox" id="remember" class="form-check-input" name="remember" <?php if (isset($_COOKIE["user_login"])) { ?> checked <?php } ?> /> Keep me signed in </label>
-                  </div>
-                  <a href="forgot-process.php" class="auth-link text-black">Forgot password?</a>
-                </div>
-                <div class="my-2 d-flex justify-content-between align-items-center">
-                  <a href="signup.php" class="auth-link text-black">Don't have an account? Sign Up</a>
-                </div>
-                <div class="mb-2">
-                  <a href="../index.php" class="btn btn-block btn-facebook auth-form-btn">
-                    <i class="icon-social-home mr-2"></i>Back Home </a>
-                </div>
-              </form>
-            </div>
+  <div class="container">
+    <div class="welcome-section">
+      <div class="welcome-content">
+        <h1>WELCOME STUDENT</h1>
+        <p class="headline">Student Profiling System</p>
+        <p>Sign in to view your academic records, check class schedules, and access your personal profile and other student resources.</p>
+      </div>
+      <div class="circle-decoration"></div>
+    </div>
+
+    <div class="form-section">
+      <h2>Sign in</h2>
+      <p class="subtitle">Enter your credentials to access the student portal.</p>
+
+      <?php if (isset($error) && !empty($error)): ?>
+          <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?= htmlspecialchars($error) ?></div>
+      <?php endif; ?>
+
+      <form id="login" method="post" name="login">
+        <div class="input-group">
+          <div class="input-wrapper">
+            <span class="icon">🆔</span>
+            <input type="text" name="stuid" placeholder="Enter your Student ID" required="true" value="<?php if (isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>">
           </div>
         </div>
-      </div>
+
+        <div class="input-group">
+          <div class="input-wrapper">
+            <span class="icon">🔒</span>
+            <input type="password" id="password" name="password" placeholder="Enter your Password" required="true" value="<?php if (isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
+            <button type="button" class="toggle-password" onclick="togglePassword()">SHOW</button>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" id="remember" name="remember" <?php if (isset($_COOKIE["user_login"])) { ?> checked <?php } ?>>
+            <span>Remember me</span>
+          </label>
+          <a href="forgot-process.php" class="forgot-password">Forgot Password?</a>
+        </div>
+
+        <button type="submit" name="login" class="btn btn-primary">Sign in</button>
+        <a href="../index.php" class="btn btn-secondary">Back to Home</a>
+
+        <div class="signup-link">
+          Don't have an account? <a href="signup.php">Sign Up</a>
+        </div>
+      </form>
     </div>
   </div>
-  <script src="vendors/js/vendor.bundle.base.js"></script>
-  <script src="js/off-canvas.js"></script>
-  <script src="js/misc.js"></script>
-  <script src="js/script.js"></script>
-  <?php if (isset($error) && !empty($error)) { ?>
-    <div id="login-toast" class="toast-box toast-show">
-      <div class="toast-message"><?= htmlspecialchars($error) ?></div>
-      <button id="login-toast-close" aria-label="Close">&times;</button>
-    </div>
-    <script>
-      (function () {
-        var toast = document.getElementById('login-toast');
-        var close = document.getElementById('login-toast-close');
-        function hide() { if (!toast) return; toast.style.transition = 'opacity 0.25s ease'; toast.style.opacity = '0'; setTimeout(function () { if (toast && toast.parentNode) toast.parentNode.removeChild(toast); }, 300); }
-        // Auto-hide after 4 seconds
-        setTimeout(hide, 4000);
-        // Close on click
-        close && close.addEventListener('click', hide);
-      })();
-    </script>
-  <?php } ?>
+  <script src="js/login-new.js"></script>
 </body>
 
 </html>

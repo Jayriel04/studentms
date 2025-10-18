@@ -42,48 +42,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp'])) {
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>Student Profiling System || Verify Reset Code</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
-  <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Code | Student Profiling System</title>
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="stylesheet" href="css/login-new.css">
 </head>
 
 <body>
-  <div class="container-scroller">
-    <div class="container-fluid page-body-wrapper full-page-wrapper">
-      <div class="content-wrapper d-flex align-items-center auth">
-        <div class="row flex-grow">
-          <div class="col-lg-4 mx-auto">
-            <div class="auth-form-light text-left p-5">
-              <div class="brand-logo" align="center" style="font-weight:bold">Admin - Verify Code</div>
-              <h6 class="font-weight-light">Enter the 6-digit code sent to
-                <strong><?php echo htmlentities($_SESSION['admin_fp_reset_email']); ?></strong>
-              </h6>
-              <?php if (!empty($error)): ?>
-                <div class="alert alert-danger"><?php echo htmlentities($error); ?></div><?php endif; ?>
-              <form class="pt-3" method="post">
-                <div class="form-group">
-                  <input type="text" class="form-control form-control-lg" name="otp" placeholder="6-digit code" required
-                    pattern="\d{6}" maxlength="6" inputmode="numeric" autofocus>
-                </div>
-                <div class="mt-3">
-                  <button class="btn btn-success btn-block loginbtn" type="submit">Verify Code</button>
-                </div>
-                <div class="my-2 d-flex justify-content-between align-items-center">
-                  <a href="forgot-process.php" class="auth-link text-black">Request new code</a>
-                  <a href="login.php" class="auth-link text-black">Sign in</a>
-                </div>
-              </form>
+    <div class="container">
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <h1>VERIFY YOUR IDENTITY</h1>
+                <p class="headline">Student Profiling System</p>
+                <p>A secure 6-digit code has been sent to your email address. Please enter it to proceed with resetting your password.</p>
             </div>
-          </div>
+            <div class="circle-decoration"></div>
         </div>
-      </div>
+
+        <div class="form-section">
+            <h2>Verify Code</h2>
+            <p class="subtitle">Enter the 6-digit code sent to
+                <strong><?php echo htmlentities($_SESSION['admin_fp_reset_email']); ?></strong>.
+            </p>
+
+            <?php if (!empty($error)): ?>
+                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?php echo htmlentities($error); ?></div>
+            <?php endif; ?>
+
+            <form method="post">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">#</span>
+                        <input type="text" id="otp" name="otp" placeholder="6-digit code" required pattern="\d{6}" maxlength="6" inputmode="numeric" autofocus>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Verify Code</button>
+                <a href="forgot-process.php" class="btn btn-secondary">Request New Code</a>
+
+            </form>
+        </div>
     </div>
-  </div>
-  <script src="vendors/js/vendor.bundle.base.js"></script>
 </body>
 
 </html>

@@ -45,15 +45,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>Student Profiling System || Reset Password</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Password | Student Profiling System</title>
   <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
-  <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-  <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
-  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-  <link rel="stylesheet" href="css/style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/login-new.css">
   <script type="text/javascript">
     function valid() {
       var n = document.getElementById('newpassword').value;
@@ -74,52 +70,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 </head>
 
 <body>
-  <div class="container-scroller">
-    <div class="container-fluid page-body-wrapper full-page-wrapper">
-      <div class="content-wrapper d-flex align-items-center auth">
-        <div class="row flex-grow">
-          <div class="col-lg-4 mx-auto">
-            <div class="auth-form-light text-left p-5">
-              <div class="brand-logo" align="center" style="font-weight:bold">Admin - Student Management System</div>
-              <h6 class="font-weight-light">Set a new password for
-                <strong><?php echo htmlentities($_SESSION['admin_fp_reset_email']); ?></strong>
-              </h6>
-
-              <?php if (!empty($error)): ?>
-                <div class="alert alert-danger" role="alert"><?php echo htmlentities($error); ?></div>
-              <?php endif; ?>
-
-              <form class="pt-3" method="post" onsubmit="return valid();">
-                <div class="form-group" style="position: relative;">
-                  <input id="newpassword" type="password" class="form-control form-control-lg" name="newpassword"
-                    placeholder="New Password" required autofocus>
-                  <i class="icon-eye" id="toggleNewPassword"
-                    style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
-                </div>
-                <div class="form-group" style="position: relative;">
-                  <input id="confirmpassword" type="password" class="form-control form-control-lg"
-                    name="confirmpassword" placeholder="Confirm Password" required>
-                  <i class="icon-eye" id="toggleConfirmPassword"
-                    style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
-                </div>
-                <div class="mt-3">
-                  <button class="btn btn-success btn-block loginbtn" type="submit">Change Password</button>
-                </div>
-                <div class="my-2 d-flex justify-content-between align-items-center">
-                  <a href="login.php" class="auth-link text-black">Sign in</a>
-                </div>
-              </form>
+    <div class="container">
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <h1>SET NEW PASSWORD</h1>
+                <p class="headline">Student Profiling System</p>
+                <p>Create a new, secure password for your account. Make sure it's strong and something you can remember.</p>
             </div>
-          </div>
+            <div class="circle-decoration"></div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <script src="vendors/js/vendor.bundle.base.js"></script>
-  <script src="js/off-canvas.js"></script>
-  <script src="js/misc.js"></script>
-  <script src="js/script.js"></script>
+        <div class="form-section">
+            <h2>Reset Your Password</h2>
+            <p class="subtitle">Set a new password for
+              <strong><?php echo htmlentities($_SESSION['admin_fp_reset_email']); ?></strong>.
+            </p>
+
+            <?php if (!empty($error)): ?>
+                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?php echo htmlentities($error); ?></div>
+            <?php endif; ?>
+
+            <form method="post" onsubmit="return valid();">
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">🔒</span>
+                        <input id="newpassword" type="password" name="newpassword" placeholder="New Password" required autofocus>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility(this, 'newpassword')">SHOW</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <span class="icon">🔒</span>
+                        <input id="confirmpassword" type="password" name="confirmpassword" placeholder="Confirm Password" required>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility(this, 'confirmpassword')">SHOW</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Change Password</button>
+                <a href="login.php" class="btn btn-secondary">Back to Sign In</a>
+
+            </form>
+        </div>
+    </div>
+
+  <script src="js/auth-forms.js"></script>
+  <!-- The showToast function is in script.js, so we keep it for the validation -->
+  <script src="js/script.js"></script> 
 </body>
 
 </html>
