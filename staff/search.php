@@ -43,16 +43,15 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
               <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <form method="get">
-                      <div class="form-group">
-                        <label><strong>Search</strong></label>
+                    <div class="responsive-search-form">
+                      <form method="get" class="form-inline">
                         <input id="searchdata" type="text" name="searchdata" class="form-control"
-                          placeholder="Search by Student ID, Family Name, or First Name"
+                          placeholder="Search by Student ID, Name, or Skill"
                           value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
-                      </div>
-                      <button type="submit" class="btn btn-primary" id="submit">Search</button>
-                    </form>
-                    <div class="d-sm-flex align-items-center mb-4">
+                        <button type="submit" class="btn btn-primary" id="submit">Search</button>
+                      </form>
+                    </div>
+                    <div class="d-sm-flex align-items-center my-4">
                       <?php
                       $isSkillSearch = false;
                       $skill_id = 0;
@@ -74,7 +73,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                         </h4>
                       <?php } ?>
                     </div>
-                    <div class="table-responsive border rounded p-1">
+                    <div class="table-responsive border rounded p-1 card-view">
                       <table class="table">
                         <thead>
                           <tr>
@@ -132,17 +131,17 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                             if (count($results) > 0) {
                               foreach ($results as $row) { ?>
                                 <tr>
-                                  <td><?php echo htmlentities($cnt); ?></td>
-                                  <td><?php echo htmlentities($row->StuID); ?></td>
-                                  <td><?php echo htmlentities($row->FamilyName); ?></td>
-                                  <td><?php echo htmlentities($row->FirstName); ?></td>
-                                  <td><?php echo htmlentities($row->Program); ?></td>
-                                  <td><?php echo htmlentities($row->Gender); ?></td>
-                                  <td><?php echo htmlentities($row->ContactNumber); ?></td>
-                                  <td><?php echo htmlentities($row->EmailAddress); ?></td>
-                                  <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                                  <td><?php echo isset($row->totalPoints) ? htmlentities($row->totalPoints) : '0'; ?></td>
-                                  <td>
+                                  <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
+                                  <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                                  <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
+                                  <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
+                                  <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
+                                  <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
+                                  <td data-label="Contact No."><?php echo htmlentities($row->ContactNumber); ?></td>
+                                  <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
+                                  <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
+                                  <td data-label="Skill Points"><?php echo isset($row->totalPoints) ? htmlentities($row->totalPoints) : '0'; ?></td>
+                                  <td data-label="Action">
                                     <div>
                                       <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-success btn-xs">View</a>
@@ -158,7 +157,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               }
                             } else { ?>
                               <tr>
-                                <td colspan="8" style="text-align: center; color: red;">No record found against this search
+                                <td colspan="11" style="text-align: center; color: red;">No record found against this search
                                 </td>
                               </tr>
                             <?php }
@@ -195,16 +194,16 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                             if ($query->rowCount() > 0) {
                               foreach ($results as $row) { ?>
                                 <tr>
-                                  <td><?php echo htmlentities($cnt); ?></td>
-                                  <td><?php echo htmlentities($row->StuID); ?></td>
-                                  <td><?php echo htmlentities($row->FamilyName); ?></td>
-                                  <td><?php echo htmlentities($row->FirstName); ?></td>
-                                  <td><?php echo htmlentities($row->Program); ?></td>
-                                  <td><?php echo htmlentities($row->Gender); ?></td>
-                                  <td><?php echo htmlentities($row->ContactNumber); ?></td>
-                                  <td><?php echo htmlentities($row->EmailAddress); ?></td>
-                                  <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                                  <td>
+                                  <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
+                                  <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                                  <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
+                                  <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
+                                  <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
+                                  <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
+                                  <td data-label="Contact No."><?php echo htmlentities($row->ContactNumber); ?></td>
+                                  <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
+                                  <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
+                                  <td data-label="Action">
                                     <div>
                                       <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-success btn-xs">View</a>
@@ -221,7 +220,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               }
                             } else { ?>
                               <tr>
-                                <td colspan="8" style="text-align: center; color: red;">No record found against this search
+                                <td colspan="10" style="text-align: center; color: red;">No record found against this search
                                 </td>
                               </tr>
                             <?php }

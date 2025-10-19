@@ -64,23 +64,20 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
               <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <div class="d-sm-flex align-items-center mb-4">
+                    <div class="d-sm-flex align-items-center mb-4 responsive-search-form">
                       <h4 class="card-title mb-sm-0">Manage Staff</h4>
-                      <form method="post" class="ml-auto">
+                      <form method="post" class="form-inline ml-auto">
                         <input type="text" name="searchdata" class="form-control" placeholder="Search by Name or Email"
-                          value="<?php echo htmlentities($searchdata); ?>" style="display: inline-block; width: auto;">
-                        <select name="filter" class="form-control" style="display: inline-block; width: auto;">
-                          <option value="all" <?php if ($filter == 'all')
-                            echo 'selected'; ?>>All</option>
-                          <option value="active" <?php if ($filter == 'active')
-                            echo 'selected'; ?>>Active</option>
-                          <option value="inactive" <?php if ($filter == 'inactive')
-                            echo 'selected'; ?>>Inactive</option>
+                          value="<?php echo htmlentities($searchdata); ?>">
+                        <select name="filter" class="form-control">
+                          <option value="all" <?php if ($filter == 'all') echo 'selected'; ?>>All</option>
+                          <option value="active" <?php if ($filter == 'active') echo 'selected'; ?>>Active</option>
+                          <option value="inactive" <?php if ($filter == 'inactive') echo 'selected'; ?>>Inactive</option>
                         </select>
                         <button type="submit" name="search" class="btn btn-primary">Search</button>
                       </form>
                     </div>
-                    <div class="table-responsive border rounded p-1">
+                    <div class="table-responsive border rounded p-1 card-view">
                       <table class="table">
                         <thead>
                           <tr>
@@ -115,17 +112,17 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                           if ($query->rowCount() > 0) {
                             foreach ($results as $row) { ?>
                               <tr>
-                                <td><?php echo htmlentities($cnt); ?></td>
-                                <td><?php echo htmlentities($row->StaffName); ?></td>
-                                <td><?php echo htmlentities($row->UserName); ?></td>
-                                <td><?php echo htmlentities($row->Email); ?></td>
-                                <td><?php echo htmlentities($row->StaffRegdate); ?></td>
-                                <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                                <td>
+                                <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
+                                <td data-label="Staff Name"><?php echo htmlentities($row->StaffName); ?></td>
+                                <td data-label="User Name"><?php echo htmlentities($row->UserName); ?></td>
+                                <td data-label="Email"><?php echo htmlentities($row->Email); ?></td>
+                                <td data-label="Reg Date"><?php echo htmlentities($row->StaffRegdate); ?></td>
+                                <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
+                                <td data-label="Action">
                                   <a href="edit-staff-detail.php?editid=<?php echo htmlentities($row->ID); ?>"
                                     class="btn btn-xs" style="background-color: #4CAF50; color: white;">Edit</a>
                                   <a href="manage-staff.php?statusid=<?php echo htmlentities($row->ID); ?>&status=<?php echo htmlentities($row->Status); ?>"
-                                    class="btn btn-xs" style="background-color: #007BFF; color: white;">
+                                    class="btn btn-xs ml-2" style="background-color: #007BFF; color: white;">
                                     <?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?>
                                   </a>
                                 </td>

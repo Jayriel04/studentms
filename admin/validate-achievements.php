@@ -226,7 +226,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                   <?php if (empty($rows)): ?>
                     <div class="alert alert-info">No pending achievements found.</div>
                   <?php else: ?>
-                    <div class="table-responsive">
+                    <div class="table-responsive card-view">
                       <table class="table table-hover">
                         <thead>
                           <tr>
@@ -245,15 +245,15 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                         <tbody>
                           <?php foreach ($rows as $r): ?>
                             <tr>
-                              <td><?php echo htmlentities($r->StudentName); ?>
+                              <td data-label="Student"><?php echo htmlentities($r->StudentName); ?>
                                 <br><small><?php echo htmlentities($r->StuID); ?></small></td>
-                              <td><?php echo htmlentities($r->skills); ?></td>
-                              <td><?php echo htmlentities($r->category); ?></td>
-                              <td><?php echo htmlentities($r->level); ?></td>
-                              <td><?php echo htmlentities($r->points); ?></td>
-                              <td><?php echo htmlentities($r->ApproverName ?? ''); ?></td>
-                              <td><?php echo htmlentities($r->approved_at ?? ''); ?></td>
-                              <td>
+                              <td data-label="Skills"><?php echo htmlentities($r->skills); ?></td>
+                              <td data-label="Category"><?php echo htmlentities($r->category); ?></td>
+                              <td data-label="Level"><?php echo htmlentities($r->level); ?></td>
+                              <td data-label="Points"><?php echo htmlentities($r->points); ?></td>
+                              <td data-label="Approver"><?php echo htmlentities($r->ApproverName ?? ''); ?></td>
+                              <td data-label="Approved At"><?php echo htmlentities($r->approved_at ?? ''); ?></td>
+                              <td data-label="Proof">
                                 <?php if (!empty($r->proof_image)): ?>
                                   <a href="../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>"
                                     target="_blank">View</a>
@@ -261,8 +261,8 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
                                   <span>No proof</span>
                                 <?php endif; ?>
                               </td>
-                              <td><?php echo htmlentities($r->created_at); ?></td>
-                              <td>
+                              <td data-label="Submitted"><?php echo htmlentities($r->created_at); ?></td>
+                              <td data-label="Actions">
                                 <form method="post" style="display:inline-block;">
                                   <input type="hidden" name="id" value="<?php echo $r->id; ?>">
                                   <input type="hidden" name="action" value="approve">

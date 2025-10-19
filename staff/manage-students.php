@@ -80,30 +80,26 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                             <div class="col-md-12 grid-margin stretch-card">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="d-sm-flex align-items-center mb-4">
+                                        <div class="d-sm-flex align-items-center mb-4 responsive-search-form">
                                             <h4 class="card-title mb-sm-0">Manage Students</h4>
-                                            <form method="get" class="ml-auto">
+                                            <form method="get" class="form-inline ml-auto">
                                                 <input type="text" name="searchdata" class="form-control"
-                                                    placeholder="Search by ID, Name, or Email"
-                                                    value="<?php echo htmlentities($searchdata); ?>"
-                                                    style="display: inline-block; width: auto;">
-                                                <select name="filter" class="form-control"
-                                                    style="display: inline-block; width: auto;">
+                                                    placeholder="Search by ID, Name, or Skill"
+                                                    value="<?php echo htmlentities($searchdata); ?>">
+                                                <select name="filter" class="form-control">
                                                     <option value="all" <?php if ($filter == 'all')
                                                         echo 'selected'; ?>>All
                                                     </option>
                                                     <option value="active" <?php if ($filter == 'active')
                                                         echo 'selected'; ?>>
                                                         Active</option>
-                                                    <option value="inactive" <?php if ($filter == 'inactive')
-                                                        echo 'selected'; ?>>Inactive</option>
+                                                    <option value="inactive" <?php if ($filter == 'inactive') echo 'selected'; ?>>Inactive</option>
                                                 </select>
                                                 <button type="submit" class="btn btn-primary">Search</button>
-                                                <a href="import-file.php" class="btn"
-                                                    style="background-color: #007BFF; color: white;" ;">Import</a>
+                                                <a href="import-file.php" class="btn btn-info">Import</a>
                                             </form>
                                         </div>
-                                        <div class="table-responsive border rounded p-1">
+                                        <div class="table-responsive border rounded p-1 card-view">
                                             <table class="table">
                                                 <thead>
                                                     <tr>
@@ -176,19 +172,19 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                     if ($query->rowCount() > 0) {
                                                         foreach ($results as $row) { ?>
                                                             <tr>
-                                                                <td><?php echo htmlentities($cnt); ?></td>
-                                                                <td><?php echo htmlentities($row->StuID); ?></td>
-                                                                <td><?php echo htmlentities($row->FamilyName); ?></td>
-                                                                <td><?php echo htmlentities($row->FirstName); ?></td>
-                                                                <td><?php echo htmlentities($row->Program); ?></td>
-                                                                <td><?php echo htmlentities($row->Gender); ?></td>
-                                                                <td><?php echo htmlentities($row->ContactNumber); ?></td>
-                                                                <td><?php echo htmlentities($row->EmailAddress); ?></td>
-                                                                <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
+                                                                <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
+                                                                <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                                                                <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
+                                                                <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
+                                                                <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
+                                                                <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
+                                                                <td data-label="Contact No."><?php echo htmlentities($row->ContactNumber); ?></td>
+                                                                <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
+                                                                <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                                                 <?php if ($isSkillSearch): ?>
-                                                                    <td><?php echo htmlentities($row->totalPoints); ?></td>
+                                                                    <td data-label="Skill Points"><?php echo htmlentities($row->totalPoints); ?></td>
                                                                 <?php endif; ?>
-                                                                <td>
+                                                                <td data-label="Action">
                                                                     <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
                                                                         class="btn btn-success btn-xs">View</a>
                                                                     <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"

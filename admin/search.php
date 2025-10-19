@@ -64,16 +64,18 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
               <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <form method="get" id="searchForm">
-                      <div class="form-group">
-                        <label><strong>Search</strong></label>
-                        <input id="searchdata" type="text" name="searchdata" class="form-control" autocomplete="off"
-                          placeholder="Search by Student ID, Family Name, or First Name"
-                          value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
-                        <div id="suggestions" class="list-group" style="position:relative; z-index:1000;"></div>
-                      </div>
-                      <button type="submit" class="btn btn-primary" id="submit">Search</button>
-                    </form>
+                    <div class="responsive-search-form">
+                      <form method="get" id="searchForm" class="form-inline">
+                        <div class="form-group" style="flex: 1;">
+                          <label for="searchdata" class="sr-only">Search</label>
+                          <input id="searchdata" type="text" name="searchdata" class="form-control w-100" autocomplete="off"
+                            placeholder="Search by Student ID, Name, or Skill"
+                            value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
+                          <div id="suggestions" class="list-group" style="position:relative; z-index:1000;"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary ml-2" id="submit">Search</button>
+                      </form>
+                    </div>
                     <div class="d-sm-flex align-items-center mb-4">
                       <?php
                       $isSkillSearch = false;
@@ -96,7 +98,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                         </h4>
                       <?php } ?>
                     </div>
-                    <div class="table-responsive border rounded p-1">
+                    <div class="table-responsive border rounded p-1 card-view">
                       <table class="table">
                         <thead>
                           <tr>
@@ -152,23 +154,23 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                             if (count($results) > 0) {
                               foreach ($results as $row) { ?>
                                 <tr>
-                                  <td><?php echo htmlentities($cnt); ?></td>
-                                  <td><?php echo htmlentities($row->StuID); ?></td>
-                                  <td><?php echo htmlentities($row->FamilyName); ?></td>
-                                  <td><?php echo htmlentities($row->FirstName); ?></td>
-                                  <td><?php echo htmlentities($row->Program); ?></td>
-                                  <td><?php echo htmlentities($row->Gender); ?></td>
-                                  <td><?php echo htmlentities($row->ContactNumber); ?></td>
-                                  <td><?php echo htmlentities($row->EmailAddress); ?></td>
-                                  <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                                  <td><?php echo isset($skill->name) ? htmlentities($skill->name) : ''; ?></td>
-                                  <td>
+                                  <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
+                                  <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                                  <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
+                                  <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
+                                  <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
+                                  <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
+                                  <td data-label="Contact No."><?php echo htmlentities($row->ContactNumber); ?></td>
+                                  <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
+                                  <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
+                                  <td data-label="Skill"><?php echo isset($skill->name) ? htmlentities($skill->name) : ''; ?></td>
+                                  <td data-label="Action">
                                     <div class="btn-group" role="group" aria-label="Actions">
                                       <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
                                         class="btn btn-info btn-xs">View</a>
-                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->ID ?? $row->sid); ?>"
+                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-primary btn-xs">Edit</a>
-                                      <a href="manage-students.php?statusid=<?php echo htmlentities($row->ID ?? $row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
+                                      <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
                                         class="btn btn-warning btn-xs">
                                         <?php echo (isset($row->Status) && $row->Status == 1) ? 'Deactivate' : 'Activate'; ?>
                                       </a>
@@ -179,7 +181,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                               }
                             } else { ?>
                               <tr>
-                                <td colspan="9" style="text-align: center; color: red;">No record found against this search
+                                <td colspan="11" style="text-align: center; color: red;">No record found against this search
                                 </td>
                               </tr>
                             <?php }
@@ -213,22 +215,22 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                             if ($query->rowCount() > 0) {
                               foreach ($results as $row) { ?>
                                 <tr>
-                                  <td><?php echo htmlentities($cnt); ?></td>
-                                  <td><?php echo htmlentities($row->StuID); ?></td>
-                                  <td><?php echo htmlentities($row->FamilyName); ?></td>
-                                  <td><?php echo htmlentities($row->FirstName); ?></td>
-                                  <td><?php echo htmlentities($row->Program); ?></td>
-                                  <td><?php echo htmlentities($row->Gender); ?></td>
-                                  <td><?php echo htmlentities($row->ContactNumber); ?></td>
-                                  <td><?php echo htmlentities($row->EmailAddress); ?></td>
-                                  <td><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                                  <td>
+                                  <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
+                                  <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                                  <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
+                                  <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
+                                  <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
+                                  <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
+                                  <td data-label="Contact No."><?php echo htmlentities($row->ContactNumber); ?></td>
+                                  <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
+                                  <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
+                                  <td data-label="Action">
                                     <div class="btn-group" role="group" aria-label="Actions">
                                       <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
                                         class="btn btn-info btn-xs">View</a>
-                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->ID ?? $row->sid); ?>"
+                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-primary btn-xs">Edit</a>
-                                      <a href="manage-students.php?statusid=<?php echo htmlentities($row->ID ?? $row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
+                                      <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
                                         class="btn btn-warning btn-xs">
                                         <?php echo (isset($row->Status) && $row->Status == 1) ? 'Deactivate' : 'Activate'; ?>
                                       </a>
@@ -240,7 +242,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                               }
                             } else { ?>
                               <tr>
-                                <td colspan="9" style="text-align: center; color: red;">No record found against this search
+                                <td colspan="10" style="text-align: center; color: red;">No record found against this search
                                 </td>
                               </tr>
                             <?php }

@@ -56,15 +56,15 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
               <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <div class="d-sm-flex align-items-center mb-4">
+                    <div class="d-sm-flex align-items-center mb-4 responsive-search-form">
                       <h4 class="card-title mb-sm-0">Manage Public Notice</h4>
-                      <form method="post" class="ml-auto">
+                      <form method="post" class="form-inline ml-auto">
                         <input type="text" name="searchdata" class="form-control" placeholder="Search by Notice Title"
-                          value="<?php echo htmlentities($searchdata); ?>" style="display: inline-block; width: auto;">
+                          value="<?php echo htmlentities($searchdata); ?>">
                         <button type="submit" name="search" class="btn btn-primary">Search</button>
                       </form>
                     </div>
-                    <div class="table-responsive border rounded p-1">
+                    <div class="table-responsive border rounded p-1 card-view">
                       <table class="table">
                         <thead>
                           <tr>
@@ -90,15 +90,15 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                           if ($query->rowCount() > 0) {
                             foreach ($results as $row) { ?>
                               <tr>
-                                <td><?php echo htmlentities($cnt); ?></td>
-                                <td><?php echo htmlentities($row->NoticeTitle); ?></td>
-                                <td><?php echo htmlentities($row->CreationDate); ?></td>
-                                <td>
+                                <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
+                                <td data-label="Notice Title"><?php echo htmlentities($row->NoticeTitle); ?></td>
+                                <td data-label="Notice Date"><?php echo htmlentities($row->CreationDate); ?></td>
+                                <td data-label="Action">
                                   <div>
                                     <a href="edit-public-notice-detail.php?editid=<?php echo htmlentities($row->ID); ?>"
                                       class="btn btn-xs" style="background-color: #4CAF50; color: white;">Edit</a>
                                     <a href="manage-public-notice.php?delid=<?php echo htmlentities($row->ID); ?>"
-                                      onclick="return confirm('Do you really want to Delete ?');" class="btn btn-xs"
+                                      onclick="return confirm('Do you really want to Delete ?');" class="btn btn-xs ml-2"
                                       style="background-color: #FF5733; color: white;">Delete</a>
                                   </div>
                                 </td>
