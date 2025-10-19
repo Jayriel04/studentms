@@ -8,8 +8,6 @@
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     padding: 1.2rem 1.2rem 2rem 1.2rem;
     box-sizing: border-box;
-    display: flex; /* Added for flex layout */
-    flex-direction: column; /* Added for flex layout */
 }
 
 .calendar-header {
@@ -34,8 +32,6 @@
     gap: 0.7rem;
     margin-bottom: 1.5rem;
     width: 100%;
-    flex-grow: 1; /* Allow grid to grow */
-    grid-auto-rows: minmax(90px, auto); /* Ensure cells can grow */
 }
 
 
@@ -51,6 +47,7 @@
 }
 
 .calendar-cell {
+    min-height: 90px;
     background: #ffffff;
     border-radius: 0 0 10px 10px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
@@ -61,8 +58,6 @@
     font-size: 1rem;
     width: 100%;
     box-sizing: border-box;
-    display: flex; /* For vertical alignment */
-    flex-direction: column; /* For vertical alignment */
 }
 
 .calendar-cell:hover {

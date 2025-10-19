@@ -17,3 +17,11 @@
   text-align: center;
   width: 100%;
 }
+
+@media (max-width: 1199.98px) {
+  .chart-container {
+    border-right: none;
+    border-bottom: 1px solid #e8ecf1;
+    margin-bottom: 1.5rem;
+  }
+}

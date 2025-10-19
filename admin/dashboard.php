@@ -47,7 +47,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                     </div>
                     <div class="row">
                       <!-- Total Students -->
-                      <div class="col-md-6 col-xl-3 grid-margin stretch-card">
+                      <div class="col-6 col-md-6 col-xl-3 grid-margin stretch-card">
                         <div class="card report-card bg-c-danger">
                           <?php
                           $sql_students = "SELECT COUNT(ID) FROM tblstudent";
@@ -61,7 +61,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       </div>
 
                       <!-- Total Public Notices -->
-                      <div class="col-md-6 col-xl-3 grid-margin stretch-card">
+                      <div class="col-6 col-md-6 col-xl-3 grid-margin stretch-card">
                         <div class="card report-card bg-c-primary">
                           <?php
                           $sql_notices = "SELECT COUNT(ID) FROM tblpublicnotice";
@@ -75,7 +75,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       </div>
 
                       <!-- Total Staff -->
-                      <div class="col-md-6 col-xl-3 grid-margin stretch-card">
+                      <div class="col-6 col-md-6 col-xl-3 grid-margin stretch-card">
                         <div class="card report-card bg-c-success">
                           <?php
                           $sql_staff = "SELECT COUNT(ID) FROM tblstaff";
@@ -89,7 +89,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       </div>
 
                       <!-- Pending Validations -->
-                      <div class="col-md-6 col-xl-3 grid-margin stretch-card">
+                      <div class="col-6 col-md-6 col-xl-3 grid-margin stretch-card">
                         <div class="card report-card bg-c-warning">
                           <?php
                           $sqlPending = "SELECT COUNT(*) FROM student_achievements WHERE status = 'pending'";
@@ -114,7 +114,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                 <div class="card">
                   <div class="card-body">
                     <div class="row">
-                      <div class="col-md-6 chart-container">
+                      <div class="col-lg-7 chart-container">
                         <!-- <h4 class="card-title">Student Skill Categories</h4> -->
                         <?php
                         // Count students with Academic skills
@@ -137,7 +137,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         ?>
                         <canvas id="skillsChart" data-skills='<?php echo json_encode($skillsData); ?>'></canvas>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-lg-5">
                         <div class="calendar-container">
                           <div class="calendar-header">
                             <div class="calendar-title">Notice Calendar</div>
@@ -243,6 +243,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <!-- endinject -->
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script src="js/chart.js"></script>
     <script src="js/script.js"></script>
     <script>
       function showNoticeDetail(title, date, msg) {

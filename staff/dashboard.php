@@ -40,7 +40,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                     </div>
                     <div class="row">
                       <!-- Total Students -->
-                      <div class="col-md-6 col-xl-4 grid-margin stretch-card">
+                      <div class="col-6 col-md-6 col-xl-4 grid-margin stretch-card">
                         <div class="card report-card bg-c-danger">
                           <?php
                           $sql_students = "SELECT COUNT(ID) FROM tblstudent";
@@ -54,7 +54,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                       </div>
 
                       <!-- Total Public Notices -->
-                      <div class="col-md-6 col-xl-4 grid-margin stretch-card">
+                      <div class="col-6 col-md-6 col-xl-4 grid-margin stretch-card">
                         <div class="card report-card bg-c-primary">
                           <?php
                           $sql_notices = "SELECT COUNT(ID) FROM tblpublicnotice";
@@ -68,7 +68,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                       </div>
 
                       <!-- Pending Validations -->
-                      <div class="col-md-6 col-xl-4 grid-margin stretch-card">
+                      <div class="col-md-12 col-xl-4 grid-margin stretch-card">
                         <div class="card report-card bg-c-warning">
                           <?php
                           $sqlPending = "SELECT COUNT(*) FROM student_achievements WHERE status = 'pending'";
@@ -89,7 +89,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
 
             <!-- Calendar Notice -->
             <div class="row">
-              <div class="col-md-12 grid-margin stretch-card">
+              <div class="col-md-12 grid-margin">
                 <div class="card">
                   <div class="card-body">
                     <div class="calendar-container">
