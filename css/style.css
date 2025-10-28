@@ -2078,7 +2078,7 @@ ul.p_n-list li a:hover {
 }
 
 .modern-footer-contact-detail {
-	color: #b8cddc;
+	color: #fff !important;
 	margin-bottom: 0.24em;
 	display: block;
 }

@@ -36,7 +36,11 @@
         foreach ($results as $row) { ?>
           <div class="modern-footer-contact-block">
             <span class="modern-footer-contact-title">Contact Us</span>
-            <span class="modern-footer-contact-detail"><b>Address:</b> <?php echo $row->PageDescription; ?></span>
+            <span class="modern-footer-contact-detail"><b>Address:</b> <?php
+            // Strip HTML tags and inline styles from the address to allow CSS to control the color
+            $addressText = preg_replace('/<[^>]*>/', '', $row->PageDescription);
+            echo htmlentities($addressText);
+            ?></span>
             <span class="modern-footer-contact-detail"><b>Phone:</b> <?php echo htmlentities($row->MobileNumber); ?></span>
           </div>
         <?php }
