@@ -12,6 +12,11 @@ if (empty($_SESSION['csrf_token_admin'])) {
   $_SESSION['csrf_token_admin'] = bin2hex(random_bytes(16));
 }
 
+// Search and filter functionality
+$searchdata = isset($_REQUEST['searchdata']) ? trim($_REQUEST['searchdata']) : '';
+$category_filter = isset($_REQUEST['category_filter']) ? $_REQUEST['category_filter'] : 'all';
+
+
 // Handle actions (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_POST['id'])) {
   $id = intval($_POST['id']);
@@ -159,27 +164,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
   exit;
 }
 
-// Fetch pending achievements, optional filter by student
-$stuFilter = null;
-if (isset($_GET['stu']))
-  $stuFilter = $_GET['stu'];
-
-$sql = "SELECT a.id, a.StuID, CONCAT(s.FamilyName, ' ', s.FirstName) AS StudentName, a.category, a.level, a.points, a.proof_image, a.created_at, a.approved_by, a.approved_at, st.AdminName AS ApproverName, GROUP_CONCAT(sk.name SEPARATOR ', ') AS skills
-FROM student_achievements a
-LEFT JOIN student_achievement_skills sas ON a.id = sas.achievement_id
-LEFT JOIN skills sk ON sas.skill_id = sk.id
-JOIN tblstudent s ON a.StuID = s.StuID
-LEFT JOIN tbladmin st ON a.approved_by = st.ID
-WHERE a.status = 'pending'";
-if ($stuFilter) {
-  $sql .= " AND a.StuID = :stu";
-}
-$sql .= " GROUP BY a.id ORDER BY a.created_at DESC";
-$stmt = $dbh->prepare($sql);
-if ($stuFilter)
-  $stmt->bindParam(':stu', $stuFilter);
-$stmt->execute();
-$rows = $stmt->fetchAll(PDO::FETCH_OBJ);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -194,6 +178,24 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/style(v2).css">
+  <style>
+    .modal {
+      display: none; position: fixed; z-index: 1050; left: 0; top: 0; width: 100%; height: 100%;
+      overflow: auto; background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888;
+      width: 80%; max-width: 700px; position: relative; border-radius: 8px;
+    }
+    .modal-content img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+    .close-btn {
+      color: #aaa; float: right; font-size: 28px; font-weight: bold;
+      position: absolute; top: 10px; right: 20px;
+    }
+    .close-btn:hover, .close-btn:focus {
+      color: black; text-decoration: none; cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
@@ -217,46 +219,94 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
             <div class="col-md-12">
               <div class="card">
                 <div class="card-body">
+                  <div class="d-sm-flex align-items-center mb-4 responsive-search-form">
+                    <h4 class="card-title mb-sm-0">Validate Achievements</h4>
+                    <form method="get" class="form-inline ml-auto" style="gap: 0.5rem;">
+                      <input type="text" name="searchdata" class="form-control"
+                        placeholder="Search by Student or Skill" value="<?php echo htmlentities($searchdata); ?>">
+                      <select name="category_filter" class="form-control">
+                        <option value="all" <?php if ($category_filter == 'all')
+                          echo 'selected'; ?>>All Categories
+                        </option>
+                        <option value="Academic" <?php if ($category_filter == 'Academic')
+                          echo 'selected'; ?>>
+                          Academic</option>
+                        <option value="Non-Academic" <?php if ($category_filter == 'Non-Academic')
+                          echo 'selected'; ?>>
+                          Non-Academic</option>
+                      </select>
+                      <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                  </div>
                   <?php if (isset($_SESSION['ach_msg_admin'])): ?>
                     <div class="alert alert-info">
                       <?php echo htmlentities($_SESSION['ach_msg_admin']);
                       unset($_SESSION['ach_msg_admin']); ?></div>
                   <?php endif; ?>
 
+                  <?php
+                  // Fetch pending achievements, optional filter by student
+                  $stuFilter = null;
+                  if (isset($_GET['stu']))
+                    $stuFilter = $_GET['stu'];
+                  
+                  $sql = "SELECT a.id, a.StuID, CONCAT(s.FamilyName, ' ', s.FirstName) AS StudentName, a.category, a.level, a.points, a.proof_image, a.created_at, GROUP_CONCAT(sk.name SEPARATOR ', ') AS skills
+                  FROM student_achievements a
+                  LEFT JOIN student_achievement_skills sas ON a.id = sas.achievement_id
+                  LEFT JOIN skills sk ON sas.skill_id = sk.id
+                  JOIN tblstudent s ON a.StuID = s.StuID
+                  WHERE a.status = 'pending'";
+                  
+                  $params = [];
+                  if ($stuFilter) {
+                    $sql .= " AND a.StuID = :stu";
+                    $params[':stu'] = $stuFilter;
+                  }
+                  if (!empty($searchdata)) {
+                    $sql .= " AND (s.FirstName LIKE :searchdata OR s.FamilyName LIKE :searchdata OR sk.name LIKE :searchdata)";
+                    $params[':searchdata'] = '%' . $searchdata . '%';
+                  }
+                  if ($category_filter !== 'all') {
+                    $sql .= " AND a.category = :category";
+                    $params[':category'] = $category_filter;
+                  }
+                  
+                  $sql .= " GROUP BY a.id ORDER BY a.created_at DESC";
+                  $stmt = $dbh->prepare($sql);
+                  $stmt->execute($params);
+                  $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
+                  ?>
                   <?php if (empty($rows)): ?>
                     <div class="alert alert-info">No pending achievements found.</div>
                   <?php else: ?>
-                    <div class="table-responsive card-view">
-                      <table class="table table-hover">
+                    <div class="table-responsive border rounded p-1 card-view">
+                      <table class="table">
                         <thead>
                           <tr>
-                            <th>Student</th>
-                            <th>Skills</th>
-                            <th>Category</th>
-                            <th>Level</th>
-                            <th>Points</th>
-                            <th>Approver</th>
-                            <th>Approved At</th>
-                            <th>Proof</th>
-                            <th>Submitted</th>
-                            <th>Actions</th>
+                            <th class="font-weight-bold">Student</th>
+                            <th class="font-weight-bold">Skills</th>
+                            <th class="font-weight-bold">Category</th>
+                            <th class="font-weight-bold">Level</th>
+                            <th class="font-weight-bold">Points</th>
+                            <th class="font-weight-bold">Proof</th>
+                            <th class="font-weight-bold">Submitted</th>
+                            <th class="font-weight-bold">Actions</th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php foreach ($rows as $r): ?>
                             <tr>
                               <td data-label="Student"><?php echo htmlentities($r->StudentName); ?>
-                                <br><small><?php echo htmlentities($r->StuID); ?></small></td>
+                                <br><small><?php echo htmlentities($r->StuID); ?></small>
+                              </td>
                               <td data-label="Skills"><?php echo htmlentities($r->skills); ?></td>
                               <td data-label="Category"><?php echo htmlentities($r->category); ?></td>
                               <td data-label="Level"><?php echo htmlentities($r->level); ?></td>
                               <td data-label="Points"><?php echo htmlentities($r->points); ?></td>
-                              <td data-label="Approver"><?php echo htmlentities($r->ApproverName ?? ''); ?></td>
-                              <td data-label="Approved At"><?php echo htmlentities($r->approved_at ?? ''); ?></td>
                               <td data-label="Proof">
                                 <?php if (!empty($r->proof_image)): ?>
-                                  <a href="../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>"
-                                    target="_blank">View</a>
+                                  <a href="#"
+                                    onclick="showProofModal('../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>')">View</a>
                                 <?php else: ?>
                                   <span>No proof</span>
                                 <?php endif; ?>
@@ -293,6 +343,13 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
             </div>
           </div>
         </div>
+        <!-- Proof Modal -->
+        <div id="proofModal" class="modal">
+          <div class="modal-content">
+            <span class="close-btn" onclick="closeProofModal()">&times;</span>
+            <img id="proofImage" src="" alt="Proof Image" style="width:100%">
+          </div>
+        </div>
         <?php include_once('includes/footer.php'); ?>
       </div>
     </div>
@@ -300,6 +357,20 @@ $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
   <script src="vendors/js/vendor.bundle.base.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
+  <script>
+    function showProofModal(imageUrl) {
+      document.getElementById('proofImage').src = imageUrl;
+      document.getElementById('proofModal').style.display = 'block';
+    }
+    function closeProofModal() {
+      document.getElementById('proofModal').style.display = 'none';
+    }
+    window.onclick = function (event) {
+      if (event.target == document.getElementById('proofModal')) {
+        closeProofModal();
+      }
+    }
+  </script>
 </body>
 
 </html>

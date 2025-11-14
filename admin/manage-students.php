@@ -115,7 +115,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             <th class="font-weight-bold">First Name</th>
                             <th class="font-weight-bold">Program</th>
                             <th class="font-weight-bold">Gender</th>
-                            <th class="font-weight-bold">Contact Number</th>
                             <th class="font-weight-bold">Email Address</th>
                             <th class="font-weight-bold">Status</th>
                             <?php if ($isSkillSearch): ?>
@@ -130,12 +129,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                           if ($isSkillSearch) {
                             // Skill-based ranked search
                             $countSql = "SELECT COUNT(DISTINCT t.ID) FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id";
-                            $countStmt = $dbh->prepare($countSql);
+                            $countStmt = $dbh->prepare($countSql); 
                             $countStmt->bindValue(':skill_id', $skill_id, PDO::PARAM_INT);
                             $countStmt->execute();
                             $totalRows = $countStmt->fetchColumn();
 
-                            $sql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.ContactNumber, t.EmailAddress, t.Status, IFNULL(SUM(sa.points),0) as totalPoints FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id GROUP BY t.ID ORDER BY totalPoints DESC, t.ID DESC LIMIT :limit OFFSET :offset";
+                            $sql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, IFNULL(SUM(sa.points),0) as totalPoints FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id GROUP BY t.ID ORDER BY totalPoints DESC, t.ID DESC LIMIT :limit OFFSET :offset";
                             $params[':skill_id'] = $skill_id;
                           } else {
                             // Regular search
@@ -158,7 +157,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             $countQuery->execute();
                             $totalRows = (int) $countQuery->fetchColumn();
 
-                            $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, ContactNumber, EmailAddress, Status FROM tblstudent" . $where . " ORDER BY ID DESC LIMIT :limit OFFSET :offset";
+                            $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent" . $where . " ORDER BY ID DESC LIMIT :limit OFFSET :offset";
                           }
 
                           $totalPages = $totalRows > 0 ? ceil($totalRows / $limit) : 1;
@@ -181,7 +180,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                 <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
                                 <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
                                 <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                <td data-label="Contact No."><?php echo htmlentities($row->ContactNumber); ?></td>
                                 <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
                                 <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                 <?php if ($isSkillSearch): ?>
@@ -203,7 +201,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             }
                           } else { ?>
                             <tr>
-                              <td colspan="<?php echo $isSkillSearch ? '11' : '10'; ?>"
+                              <td colspan="<?php echo $isSkillSearch ? '10' : '9'; ?>"
                                 style="text-align: center; color: red;">No Record Found</td>
                             </tr>
                           <?php } ?>

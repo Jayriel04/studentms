@@ -83,7 +83,6 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                             <th class="font-weight-bold">First Name</th>
                             <th class="font-weight-bold">Program</th>
                             <th class="font-weight-bold">Gender</th>
-                            <th class="font-weight-bold">Contact Number</th>
                             <th class="font-weight-bold">Email Address</th>
                             <th class="font-weight-bold">Status</th>
                             <?php if (isset($isSkillSearch) && $isSkillSearch) { ?>
@@ -112,7 +111,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                             $total_rows = $countStmt->fetchColumn();
                             $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
 
-                            $dataSql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.ContactNumber, t.EmailAddress, t.Status,
+                            $dataSql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status,
                     IFNULL(SUM(sa.points),0) as totalPoints
                     FROM tblstudent t
                     JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved'
@@ -137,7 +136,6 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                   <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
                                   <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
                                   <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                  <td data-label="Contact No."><?php echo htmlentities($row->ContactNumber); ?></td>
                                   <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Skill Points"><?php echo isset($row->totalPoints) ? htmlentities($row->totalPoints) : '0'; ?></td>
@@ -157,7 +155,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               }
                             } else { ?>
                               <tr>
-                                <td colspan="11" style="text-align: center; color: red;">No record found against this search
+                                <td colspan="10" style="text-align: center; color: red;">No record found against this search
                                 </td>
                               </tr>
                             <?php }
@@ -177,7 +175,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                             $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
 
                             // Fetch results for current page
-                            $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, ContactNumber, EmailAddress, Status FROM tblstudent";
+                            $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent";
                             if ($sdata !== '') {
                               $sql .= " WHERE StuID LIKE :sdata OR FamilyName LIKE :sdata OR FirstName LIKE :sdata";
                             }
@@ -200,7 +198,6 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                   <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
                                   <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
                                   <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                  <td data-label="Contact No."><?php echo htmlentities($row->ContactNumber); ?></td>
                                   <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Action">
@@ -220,7 +217,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               }
                             } else { ?>
                               <tr>
-                                <td colspan="10" style="text-align: center; color: red;">No record found against this search
+                                <td colspan="9" style="text-align: center; color: red;">No record found against this search
                                 </td>
                               </tr>
                             <?php }

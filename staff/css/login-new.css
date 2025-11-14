@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #0066cc 0%, #004999 100%);
+    background: linear-gradient(180deg, #1565C0 0%, #2196F3 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -28,7 +28,7 @@ body {
 
 .welcome-section {
     flex: 1;
-    background: linear-gradient(135deg, #0066cc 0%, #004999 100%);
+    background: linear-gradient(180deg, #1565C0 0%, #2196F3 100%);
     padding: 60px 40px;
     color: white;
     position: relative;
@@ -222,7 +222,7 @@ body {
 }
 
 .btn-primary {
-    background: #003d7a;
+    background: #1565C0;
     color: white;
     margin-bottom: 15px;
 }
