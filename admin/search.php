@@ -165,7 +165,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Skill"><?php echo isset($skill->name) ? htmlentities($skill->name) : ''; ?></td>
                                   <td data-label="Action">
-                                    <div class="btn-group" role="group" aria-label="Actions">
+                                    <div class="btn-group" role="group" aria-label="Actions" style="display: flex; gap: 0.5rem;">
                                       <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
                                         class="btn btn-info btn-xs">View</a>
                                       <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
@@ -225,7 +225,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                                   <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Action">
-                                    <div class="btn-group" role="group" aria-label="Actions">
+                                    <div class="btn-group" role="group" aria-label="Actions" style="display: flex; gap: 0.5rem;">
                                       <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
                                         class="btn btn-info btn-xs">View</a>
                                       <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"

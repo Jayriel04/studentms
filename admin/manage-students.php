@@ -87,7 +87,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   <div class="card-body">
                     <div class="d-sm-flex align-items-center mb-4 responsive-search-form">
                       <h4 class="card-title mb-sm-0">Manage Students</h4>
-                      <form method="get" class="form-inline ml-auto">
+                      <form method="get" class="form-inline ml-auto" style="gap: 0.5rem;">
                         <input type="text" name="searchdata" class="form-control"
                           placeholder="Search by ID, Name, or Skill" value="<?php echo htmlentities($searchdata); ?>">
                         <select name="filter" class="form-control">

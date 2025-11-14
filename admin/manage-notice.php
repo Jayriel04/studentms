@@ -57,8 +57,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                 <div class="card">
                   <div class="card-body">
                     <div class="d-sm-flex align-items-center mb-4 responsive-search-form">
-                      <h4 class="card-title mb-sm-0">Manage Notice</h4>
-                      <form method="post" class="form-inline ml-auto">
+                      <h4 class="card-title mb-sm-0">Manage Notice</h4> 
+                      <form method="post" class="form-inline ml-auto" style="gap: 0.5rem;">
                         <input type="text" name="searchdata" class="form-control" placeholder="Search by Notice Title"
                           value="<?php echo htmlentities($searchdata); ?>">
                         <button type="submit" name="search" class="btn btn-primary">Search</button>

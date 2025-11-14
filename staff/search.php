@@ -44,7 +44,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                 <div class="card">
                   <div class="card-body">
                     <div class="responsive-search-form">
-                      <form method="get" class="form-inline">
+                      <form method="get" class="form-inline" style="gap: 0.5rem;">
                         <input id="searchdata" type="text" name="searchdata" class="form-control"
                           placeholder="Search by Student ID, Name, or Skill"
                           value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
@@ -142,7 +142,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Skill Points"><?php echo isset($row->totalPoints) ? htmlentities($row->totalPoints) : '0'; ?></td>
                                   <td data-label="Action">
-                                    <div>
+                                    <div style="display: flex; gap: 0.5rem;">
                                       <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-success btn-xs">View</a>
                                       <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
@@ -204,7 +204,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                   <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Action">
-                                    <div>
+                                    <div style="display: flex; gap: 0.5rem;">
                                       <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-success btn-xs">View</a>
                                       <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
