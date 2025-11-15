@@ -102,8 +102,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                 <td data-label="Action">
                                   <div>
                                     <a href="edit-notice-detail.php?editid=<?php echo htmlentities($row->nid); ?>"
-                                      class="btn btn-xs" style="background-color: #4CAF50; color: white;"
-                                      target="_blank">Edit</a>
+                                      class="btn btn-xs" style="background-color: #4CAF50; color: white;">Edit</a>
                                     <a href="manage-notice.php?delid=<?php echo htmlentities($row->nid); ?>"
                                       onclick="return confirm('Do you really want to Delete ?');" class="btn btn-xs"
                                       style="background-color: #FF5733; color: white;">Delete</a>

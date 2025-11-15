@@ -101,7 +101,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                                 <td data-label="Action">
                                                                     <div>
                                                                         <a href="edit-notice-detail.php?editid=<?php echo htmlentities($row->nid); ?>"
-                                                                            class="btn btn-info btn-xs" target="_blank">Edit</a>
+                                                                            class="btn btn-info btn-xs">Edit</a>
                                                                         <a href="manage-notice.php?delid=<?php echo htmlentities($row->nid); ?>"
                                                                             onclick="return confirm('Do you really want to delete?');"
                                                                             class="btn btn-danger btn-xs">Delete</a>

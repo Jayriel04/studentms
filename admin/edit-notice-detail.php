@@ -90,7 +90,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         }
                       } ?>
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
-
+                      <a href="manage-notice.php" class="btn btn-light">Back</a>
                     </form>
                   </div>
                 </div>
