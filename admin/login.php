@@ -34,7 +34,7 @@ if (isset($_POST['login'])) {
         $_SESSION['login'] = $_POST['username'];
         echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
     } else {
-        echo "<script>alert('Invalid Details');</script>";
+        $login_error = 'Invalid Details. Please check your username and password.';
     }
 }
 ?>
@@ -63,6 +63,10 @@ if (isset($_POST['login'])) {
         <div class="form-section">
             <h2>Sign in</h2>
             <p class="subtitle">Enter your credentials to access the admin dashboard.</p>
+
+            <?php if (isset($login_error)): ?>
+                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?php echo htmlentities($login_error); ?></div>
+            <?php endif; ?>
 
             <form id="login" method="post" name="login">
                 <div class="input-group">

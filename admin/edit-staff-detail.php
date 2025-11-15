@@ -6,28 +6,43 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     header('location:logout.php');
 } else {
     $eid = $_GET['editid'];
+    $success_message = '';
+    $error_message = '';
+
     // Handle update logic first
     if (isset($_POST['submit'])) {
         $name = $_POST['name'];
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-        if (!empty($password)) {
-            $password = md5($password);
-            $sql = "UPDATE tblstaff SET StaffName=:name, UserName=:username, Email=:email, Password=:password WHERE ID=:eid";
+
+        // Check for duplicate username
+        $checkSql = "SELECT ID FROM tblstaff WHERE UserName = :username AND ID != :eid";
+        $checkQuery = $dbh->prepare($checkSql);
+        $checkQuery->bindParam(':username', $username, PDO::PARAM_STR);
+        $checkQuery->bindParam(':eid', $eid, PDO::PARAM_INT);
+        $checkQuery->execute();
+
+        if ($checkQuery->rowCount() > 0) {
+            $error_message = "Username already exists. Please choose a different one.";
         } else {
-            $sql = "UPDATE tblstaff SET StaffName=:name, UserName=:username, Email=:email WHERE ID=:eid";
+            if (!empty($password)) {
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                $sql = "UPDATE tblstaff SET StaffName=:name, UserName=:username, Email=:email, Password=:password WHERE ID=:eid";
+            } else {
+                $sql = "UPDATE tblstaff SET StaffName=:name, UserName=:username, Email=:email WHERE ID=:eid";
+            }
+            $query = $dbh->prepare($sql);
+            $query->bindParam(':name', $name, PDO::PARAM_STR);
+            $query->bindParam(':username', $username, PDO::PARAM_STR);
+            $query->bindParam(':email', $email, PDO::PARAM_STR);
+            $query->bindParam(':eid', $eid, PDO::PARAM_INT);
+            if (!empty($password)) {
+                $query->bindParam(':password', $hashed_password, PDO::PARAM_STR);
+            }
+            $query->execute();
+            $success_message = "Staff record has been updated successfully.";
         }
-        $query = $dbh->prepare($sql);
-        $query->bindParam(':name', $name, PDO::PARAM_STR);
-        $query->bindParam(':username', $username, PDO::PARAM_STR);
-        $query->bindParam(':email', $email, PDO::PARAM_STR);
-        $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-        if (!empty($password)) {
-            $query->bindParam(':password', $password, PDO::PARAM_STR);
-        }
-        $query->execute();
-        echo '<script>alert("Staff record has been updated")</script>';
     }
     // Fetch for prefill
     $sql = "SELECT * FROM tblstaff WHERE ID=:eid";
@@ -72,36 +87,15 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                     <div class="card-body">
                                         <h4 class="card-title" style="text-align: center;">Update Staff Details</h4>
                                         <hr />
-                                        <?php if (isset($success_message)): ?>
-                                            <div aria-live="polite" aria-atomic="true"
-                                                style="position: relative; min-height: 50px;">
-                                                <div class="toast" id="successToast"
-                                                    style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;"
-                                                    data-delay="3000" data-autohide="true">
-                                                    <div class="toast-header bg-success text-white">
-                                                        <strong class="mr-auto">Success</strong>
-                                                        <small>Now</small>
-                                                        <button type="button" class="ml-2 mb-1 close text-white"
-                                                            data-dismiss="toast" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="toast-body">
-                                                        <?php echo $success_message; ?>
-                                                    </div>
-                                                </div>
+                                        <?php if (!empty($success_message)): ?>
+                                            <div class="alert alert-success">
+                                                <?php echo htmlentities($success_message); ?>
                                             </div>
-                                            <script>
-                                                window.addEventListener('DOMContentLoaded', function () {
-                                                    var toastEl = document.getElementById('successToast');
-                                                    if (toastEl && window.$) {
-                                                        $(toastEl).toast('show');
-                                                    } else if (toastEl && typeof bootstrap !== "undefined") {
-                                                        var toast = new bootstrap.Toast(toastEl);
-                                                        toast.show();
-                                                    }
-                                                });
-                                            </script>
+                                        <?php endif; ?>
+                                        <?php if (!empty($error_message)): ?>
+                                            <div class="alert alert-danger">
+                                                <?php echo htmlentities($error_message); ?>
+                                            </div>
                                         <?php endif; ?>
                                         <form class="forms-sample" method="post">
                                             <div class="form-group">

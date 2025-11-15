@@ -5,6 +5,7 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
 } else {
+  $success_message = '';
   if (isset($_POST['submit'])) {
     $nottitle = $_POST['nottitle'];
     $notmsg = $_POST['notmsg'];
@@ -13,9 +14,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $query = $dbh->prepare($sql);
     $query->bindParam(':nottitle', $nottitle, PDO::PARAM_STR);
     $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+    $query->bindParam(':eid', $eid, PDO::PARAM_INT);
     $query->execute();
-    echo '<script>alert("Notice has been updated")</script>';
+    $success_message = "Notice has been updated successfully.";
   }
 
   ?>
@@ -59,6 +60,10 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Update Notice</h4>
+
+                    <?php if (!empty($success_message)): ?>
+                      <div class="alert alert-success"><?php echo htmlentities($success_message); ?></div>
+                    <?php endif; ?>
 
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php

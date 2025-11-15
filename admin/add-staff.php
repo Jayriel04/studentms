@@ -31,10 +31,10 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         $success_message = "Staff has been added.";
         // do not echo alert here; success toast is shown by HTML below
       } else {
-        echo "<script>if(window.showToast) showToast('Something Went Wrong. Please try again','danger'); else alert('Something Went Wrong. Please try again');</script>";
+        $error_message = "Something Went Wrong. Please try again";
       }
     } else {
-      echo "<script>if(window.showToast) showToast('Username already exists. Please try again','warning'); else alert('Username already exists. Please try again');</script>";
+      $error_message = "Username already exists. Please try again";
     }
   }
   ?>
@@ -107,6 +107,32 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         });
                       </script>
                     <?php endif; ?>
+                    <?php if (isset($error_message)): ?>
+                      <!-- Toast for error -->
+                      <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 50px;">
+                        <div class="toast" id="errorToast"
+                          style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;" data-delay="4000"
+                          data-autohide="true">
+                          <div class="toast-header bg-danger text-white">
+                            <strong class="mr-auto">Error</strong>
+                            <small>Now</small>
+                            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast"
+                              aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="toast-body"><?php echo $error_message; ?></div>
+                        </div>
+                      </div>
+                      <script>
+                        window.addEventListener('DOMContentLoaded', function () {
+                          var toastEl = document.getElementById('errorToast');
+                          if (toastEl && window.$) { $(toastEl).toast('show'); } 
+                          else if (toastEl && typeof bootstrap !== "undefined") { new bootstrap.Toast(toastEl).show(); }
+                        });
+                      </script>
+                    <?php endif; ?>
+
                     <form class="forms-sample" method="post">
                       <div class="form-group">
                         <label for="staffname">Staff Name</label>

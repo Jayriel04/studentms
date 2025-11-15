@@ -5,6 +5,7 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
 } else {
+  $success_message = $error_message = '';
   if (isset($_POST['submit'])) {
     $nottitle = $_POST['nottitle'];
     $notmsg = $_POST['notmsg'];
@@ -15,9 +16,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $query->execute();
     $LastInsertId = $dbh->lastInsertId();
     if ($LastInsertId > 0) {
-      echo "<script>if(window.showToast) showToast('Notice has been added.','success'); else alert('Notice has been added.'); window.location.href ='add-notice.php';</script>";
+      $success_message = "Notice has been added successfully.";
     } else {
-      echo "<script>if(window.showToast) showToast('Something Went Wrong. Please try again','danger'); else alert('Something Went Wrong. Please try again');</script>";
+      $error_message = "Something Went Wrong. Please try again.";
     }
   }
   ?>
@@ -61,6 +62,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Add Notice</h4>
+                    <?php if (!empty($success_message)): ?>
+                        <div class="alert alert-success"><?php echo htmlentities($success_message); ?></div>
+                    <?php endif; ?>
+                    <?php if (!empty($error_message)): ?>
+                        <div class="alert alert-danger"><?php echo htmlentities($error_message); ?></div>
+                    <?php endif; ?>
 
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
 

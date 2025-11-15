@@ -10,10 +10,15 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $rid = intval($_GET['delid']);
     $sql = "DELETE FROM tblpublicnotice WHERE ID=:rid";
     $query = $dbh->prepare($sql);
-    $query->bindParam(':rid', $rid, PDO::PARAM_STR);
+    $query->bindParam(':rid', $rid, PDO::PARAM_INT);
     $query->execute();
-    echo "<script>alert('Data deleted');</script>";
+    $_SESSION['delete_message'] = 'Public notice has been deleted successfully.';
     echo "<script>window.location.href = 'manage-public-notice.php'</script>";
+    exit;
+  }
+  if (isset($_SESSION['delete_message'])) {
+    $delete_message = $_SESSION['delete_message'];
+    unset($_SESSION['delete_message']);
   }
 
   // Search functionality
@@ -33,6 +38,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="./css/style(v2).css">
   </head>
 
@@ -125,6 +131,13 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+      <?php if (isset($delete_message)): ?>
+        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
+        toastr.success(<?php echo json_encode($delete_message); ?>);
+      <?php endif; ?>
+    </script>
   </body>
 
   </html>

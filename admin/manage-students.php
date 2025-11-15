@@ -19,6 +19,13 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     echo "<script>var statusMessage = '$statusMessage';</script>";
   }
 
+  // Check for flash message from edit page
+  if(isset($_SESSION['flash_message'])) {
+    $statusMessage = $_SESSION['flash_message'];
+    unset($_SESSION['flash_message']);
+    echo "<script>var statusMessage = '$statusMessage';</script>";
+  }
+
   // Search and filter functionality (support GET or POST so pagination links work)
   $searchdata = '';
   $filter = 'all';

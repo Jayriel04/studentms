@@ -5,6 +5,8 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
 } else {
+  $success_message = '';
+  $error_message = '';
   if (isset($_POST['submit'])) {
     $pagetitle = $_POST['pagetitle'];
     $pagedes = $_POST['pagedes'];
@@ -25,9 +27,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
       $update_query->bindParam(':mobnum', $mobnum, PDO::PARAM_STR);
       $update_query->bindParam(':id', $contactus_id, PDO::PARAM_INT);
       $update_query->execute();
-      echo '<script>alert("Contact us has been updated")</script>';
+      $success_message = "Contact us page has been updated successfully.";
     } else {
-      echo '<script>alert("No Contact Us page found to update!")</script>';
+      $error_message = "No 'Contact Us' page found to update!";
     }
   }
   ?>
@@ -69,6 +71,14 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
+                    <?php if (!empty($success_message)): ?>
+                      <div class="alert alert-success">
+                        <?php echo htmlentities($success_message); ?>
+                      </div>
+                    <?php endif; ?>
+                    <?php if (!empty($error_message)): ?>
+                      <div class="alert alert-danger"><?php echo htmlentities($error_message); ?></div>
+                    <?php endif; ?>
                     <h4 class="card-title" style="text-align: center;">Update Contact Us</h4>
                     <form class="forms-sample" method="post">
                       <?php

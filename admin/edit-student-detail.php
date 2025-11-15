@@ -5,6 +5,8 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
 } else {
+  $success_message = '';
+  $error_message = '';
   if (isset($_POST['submit'])) {
     $stuid = $_POST['stuid'];
     $familyname = $_POST['familyname'];
@@ -52,7 +54,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $isDuplicate = $checkQuery->fetchColumn();
 
     if ($isDuplicate > 0) {
-      echo '<script>alert("This Student ID already exists. Please choose a different one.")</script>';
+      $error_message = "This Student ID already exists. Please choose a different one.";
     } else {
       $sql = "UPDATE tblstudent SET 
          StuID=:stuid, 
@@ -94,7 +96,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
 
       $query = $dbh->prepare($sql);
       if (isset($password) && $password != '') {
-        $hashed_password = md5($password);
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $query->bindParam(':password', $hashed_password, PDO::PARAM_STR);
       }
       $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
@@ -131,7 +133,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
       $query->bindParam(':eid', $eid, PDO::PARAM_STR);
       $query->execute();
 
-      echo '<script>alert("Student details updated successfully."); window.location.href="manage-students.php";</script>';
+      $_SESSION['flash_message'] = "Student details updated successfully.";
+      header('Location: manage-students.php');
+      exit;
     }
   }
   ?>
@@ -171,6 +175,14 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Update Students Details</h4>
                     <hr />
+                    <?php if (!empty($success_message)): ?>
+                        <div class="alert alert-success"><?php echo htmlentities($success_message); ?></div>
+                    <?php endif; ?>
+                    <?php if (!empty($error_message)): ?>
+                        <div class="alert alert-danger">
+                            <?php echo htmlentities($error_message); ?>
+                        </div>
+                    <?php endif; ?>
                     <form class="forms-sample" method="post">
                       <?php
                       $eid = $_GET['editid'];

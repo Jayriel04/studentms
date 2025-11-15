@@ -5,6 +5,7 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
   header('location:logout.php');
 } else {
+  $success_message = '';
   if (isset($_POST['submit'])) {
     $nottitle = $_POST['nottitle'];
     $notmsg = $_POST['notmsg'];
@@ -13,9 +14,9 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     $query = $dbh->prepare($sql);
     $query->bindParam(':nottitle', $nottitle, PDO::PARAM_STR);
     $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+    $query->bindParam(':eid', $eid, PDO::PARAM_INT);
     $query->execute();
-    echo '<script>alert("Notice has been updated successfully.")</script>';
+    $success_message = "Notice has been updated successfully.";
   }
   ?>
   <!DOCTYPE html>
@@ -55,12 +56,17 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Update Notice</h4>
+                    <?php if (!empty($success_message)): ?>
+                      <div class="alert alert-success">
+                        <?php echo htmlentities($success_message); ?>
+                      </div>
+                    <?php endif; ?>
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
                       $eid = $_GET['editid'];
                       $sql = "SELECT NoticeTitle, NoticeMsg, ID as nid FROM tblnotice WHERE ID=:eid";
                       $query = $dbh->prepare($sql);
-                      $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+                      $query->bindParam(':eid', $eid, PDO::PARAM_INT);
                       $query->execute();
                       $results = $query->fetchAll(PDO::FETCH_OBJ);
                       if ($query->rowCount() > 0) {

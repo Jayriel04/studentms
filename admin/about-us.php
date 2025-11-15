@@ -5,6 +5,7 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
 } else {
+  $success_message = '';
   if (isset($_POST['submit'])) {
     $pagetitle = $_POST['pagetitle'];
     $pagedes = $_POST['pagedes'];
@@ -14,9 +15,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $query->bindParam(':pagedes', $pagedes, PDO::PARAM_STR);
 
     $query->execute();
-    echo '<script>if(window.showToast) showToast("About us has been updated","success");</script>';
-
-
+    $success_message = "About Us page has been updated successfully.";
   }
   ?>
   <!DOCTYPE html>
@@ -61,6 +60,10 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   <div class="card-body">
                     <h4 class="card-title" style="text-align: center;">Update About Us</h4>
 
+                    <?php if (!empty($success_message)): ?>
+                      <div class="alert alert-success"><?php echo htmlentities($success_message); ?></div>
+                    <?php endif; ?>
+
                     <form class="forms-sample" method="post">
                       <?php
 
@@ -73,13 +76,13 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         foreach ($results as $row) { ?>
                           <div class="form-group">
                             <label for="exampleInputName1">Page Title:</label>
-                            <input type="text" name="pagetitle" value="<?php echo $row->PageTitle; ?>" class="form-control"
+                            <input type="text" name="pagetitle" value="<?php echo htmlentities($row->PageTitle); ?>" class="form-control"
                               required='true'>
                           </div>
                           <div class="form-group">
                             <label for="exampleInputName1">Page Description:</label>
-                            <textarea type="text" name="pagedes" class="form-control"
-                              required='true'><?php echo $row->PageDescription; ?></textarea>
+                            <textarea name="pagedes" class="form-control"
+                              required='true'><?php echo htmlentities($row->PageDescription); ?></textarea>
                           </div>
                           <?php $cnt = $cnt + 1;
                         }

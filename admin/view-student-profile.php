@@ -8,7 +8,8 @@ if (!isset($_SESSION['sturecmsaid']) || strlen($_SESSION['sturecmsaid']) == 0) {
 }
 $sid = isset($_GET['sid']) ? trim($_GET['sid']) : '';
 if ($sid === '') {
-  echo "<script>alert('No student selected.');window.location='manage-students.php';</script>";
+  $_SESSION['flash_message'] = 'No student selected to view.';
+  header('Location: manage-students.php');
   exit();
 }
 ?>
@@ -181,7 +182,7 @@ if ($sid === '') {
                   </div>
 
                   <div class="profile-footer">
-                    <a href="manage-students.php" class="btn btn-light border">Back to List</a>
+                    <a href="manage-students.php" class="btn btn-primary border">Back to List</a>
                   </div>
 
                 </div>

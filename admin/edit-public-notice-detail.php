@@ -5,6 +5,7 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
 } else {
+  $success_message = '';
   if (isset($_POST['submit'])) {
     $nottitle = $_POST['nottitle'];
     $notmsg = $_POST['notmsg'];
@@ -13,9 +14,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $query = $dbh->prepare($sql);
     $query->bindParam(':nottitle', $nottitle, PDO::PARAM_STR);
     $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
-    $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+    $query->bindParam(':eid', $eid, PDO::PARAM_INT);
     $query->execute();
-    echo '<script>alert("Notice has been updated")</script>';
+    $success_message = "Public notice has been updated successfully.";
   }
 
   ?>
@@ -24,7 +25,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
 
   <head>
 
-    <title>Student Profiling System || Update Notice</title>
+    <title>Student Profiling System || Update Public Notice</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
@@ -45,11 +46,11 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title">Update Notice </h3>
+              <h3 class="page-title">Update Public Notice </h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> Update Notice</li>
+                  <li class="breadcrumb-item active" aria-current="page"> Update Public Notice</li>
                 </ol>
               </nav>
             </div>
@@ -58,14 +59,18 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title" style="text-align: center;">Update Notice</h4>
+                    <h4 class="card-title" style="text-align: center;">Update Public Notice</h4>
+
+                    <?php if (!empty($success_message)): ?>
+                        <div class="alert alert-success"><?php echo htmlentities($success_message); ?></div>
+                    <?php endif; ?>
 
                     <form class="forms-sample" method="post" enctype="multipart/form-data">
                       <?php
                       $eid = $_GET['editid'];
                       $sql = "SELECT * from tblpublicnotice where ID=:eid";
                       $query = $dbh->prepare($sql);
-                      $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+                      $query->bindParam(':eid', $eid, PDO::PARAM_INT);
                       $query->execute();
                       $results = $query->fetchAll(PDO::FETCH_OBJ);
                       $cnt = 1;
