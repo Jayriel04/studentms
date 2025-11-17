@@ -352,7 +352,7 @@ if (isset($_POST['add_achievement'])) {
                           </div>
                           <div class="modal-footer">
                             <button type="button" id="saveTagBtn" class="btn btn-primary">Add Tag</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                           </div>
                         </form>
                       </div>
@@ -373,8 +373,6 @@ if (isset($_POST['add_achievement'])) {
   <script src="vendors/js/vendor.bundle.base.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
-  <script src="../js/jquery-1.11.0.min.js"></script>
-  <script src="../js/bootstrap.js"></script>
   <script>
     (function ($) {
       function debounce(fn, wait) { var t; return function () { var ctx = this, args = arguments; clearTimeout(t); t = setTimeout(function () { fn.apply(ctx, args); }, wait); }; }
@@ -443,18 +441,6 @@ if (isset($_POST['add_achievement'])) {
       $('#skillsContainer').on('click', '.remove-skill', function (e) { e.preventDefault(); $('#skillsContainer').empty(); $('#skillsHidden').val(''); });
 
       function prepareSkills() { /* hidden input already set by selectTag */ }
-      window.prepareSkills = prepareSkills;
-
-      // Make sure the Add Tag button triggers the modal even if data-toggle isn't available
-      $('#addCustomTag').on('click', function () {
-        // Try Bootstrap modal (v4/v3) first
-        if (typeof $().modal === 'function') {
-          $('#addTagModal').modal('show');
-        } else {
-          // fallback: show by changing display
-          $('#addTagModal').show();
-        }
-      });
 
       // Add tag via AJAX
       $('#saveTagBtn').on('click', function (e) {
