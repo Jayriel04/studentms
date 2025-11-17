@@ -175,7 +175,15 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                                 <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
                                                                 <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
                                                                 <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
-                                                                <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
+                                                                <td data-label="Program"><?php
+                                                                  $program_full = htmlentities($row->Program);
+                                                                  // Use regex to find acronym in parentheses
+                                                                  if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
+                                                                    echo $matches[1];
+                                                                  } else {
+                                                                    echo $program_full; // Fallback to full name if no acronym
+                                                                  }
+                                                                  ?></td>
                                                                 <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
                                                                 <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
                                                                 <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
