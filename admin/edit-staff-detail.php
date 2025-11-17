@@ -121,10 +121,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                                     value="<?php echo htmlentities($result->Email); ?>" class="form-control"
                                                     required>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group" style="position: relative;">
                                                 <label>Change Password</label>
-                                                <input type="password" name="password" class="form-control"
+                                                <input type="password" id="password" name="password" class="form-control"
                                                     placeholder="Leave blank to keep unchanged">
+                                                <i class="icon-eye" id="togglePassword"
+                                                   style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
                                             </div>
                                             <div class="form-group">
                                                 <label>StaffRegdate</label>
@@ -147,6 +149,20 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         <script src="vendors/js/vendor.bundle.base.js"></script>
         <script src="js/off-canvas.js"></script>
         <script src="js/misc.js"></script>
+        <script>
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#password');
+
+            if (togglePassword && password) {
+                togglePassword.addEventListener('click', function (e) {
+                    // toggle the type attribute
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    // toggle the eye slash icon
+                    this.classList.toggle('icon-eye-off');
+                });
+            }
+        </script>
     </body>
 
     </html>

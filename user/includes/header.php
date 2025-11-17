@@ -24,7 +24,7 @@
   ?>
       <div class="navbar-menu-wrapper d-flex align-items-center flex-grow-1">
         <h5 class="mb-0 font-weight-medium d-none d-lg-flex">
-          <?php echo htmlentities($row->FirstName . " " . $row->FamilyName); ?>, Welcome to the dashboard!
+          Welcome to the dashboard!
         </h5>
         <ul class="navbar-nav navbar-nav-right ml-auto">
           <li class="nav-item dropdown user-dropdown">

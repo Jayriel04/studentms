@@ -41,7 +41,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       <div class="col-md-12">
                         <div class="d-sm-flex align-items-baseline report-summary-header">
                           <h5 class="font-weight-semibold">Report Summary</h5> <span class="ml-auto">Updated Report</span>
-                          <button class="btn btn-icons border-0 p-2"><i class="icon-refresh"></i></button>
+                          <button class="btn btn-icons border-0 p-2" onclick="location.reload();"><i class="icon-refresh"></i></button>
                         </div>
                       </div>
                     </div>

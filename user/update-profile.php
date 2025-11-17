@@ -476,7 +476,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           </div>
                           <div class="form-group">
                             <label for="category">Category</label>
-                            <select name="category" class="form-control" required>
+                            <select name="category" class="form-control">
                               <option value="">Select Category</option>
                               <option value="New Freshman">New Freshman</option>
                               <option value="Continuing/Returnee">Continuing/Returnee</option>
@@ -488,7 +488,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           </div>
                           <div class="form-group">
                             <label for="yearlevel">Year Level</label>
-                            <select name="yearlevel" class="form-control" required>
+                            <select name="yearlevel" class="form-control">
                               <option value="">Select Year Level</option>
                               <option value="1">1</option>
                               <option value="2">2</option>

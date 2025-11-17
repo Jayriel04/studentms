@@ -370,7 +370,9 @@ if (isset($_POST['add_achievement'])) {
     </div>
   </div>
 
-
+  <script src="vendors/js/vendor.bundle.base.js"></script>
+  <script src="js/off-canvas.js"></script>
+  <script src="js/misc.js"></script>
   <script src="../js/jquery-1.11.0.min.js"></script>
   <script src="../js/bootstrap.js"></script>
   <script>
