@@ -1,5 +1,6 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
+    <br><br><br><br>
     <li class="nav-item nav-profile">
       <?php
       $aid = isset($_SESSION['sturecmsaid']) ? $_SESSION['sturecmsaid'] : null;
@@ -27,8 +28,6 @@
         }
       } ?>
     </li>
-    <br>
-    <br>
     <br><br><br>
     <li class="nav-item">
       <a class="nav-link" href="dashboard.php">

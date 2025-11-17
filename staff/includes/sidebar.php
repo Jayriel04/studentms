@@ -1,5 +1,6 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
+    <br><br><br><br><br>
     <li class="nav-item nav-profile">
       <?php
       $sid = $_SESSION['sturecmsstaffid'];

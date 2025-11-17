@@ -19528,3 +19528,21 @@ ul.pagination li.disabled a {
   pointer-events: none;
   border-color: #ccc;
 }
+
+.container-fluid.page-body-wrapper {
+  display: flex;
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.main-panel {
+  margin-left: 260px;
+  width: calc(100% - 260px);
+}

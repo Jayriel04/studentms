@@ -18757,6 +18757,7 @@ dl li {
 .sidebar .nav .nav-item.active:not(.navbar-brand-mini-wrapper)>.nav-link i {
   color: #38ce3c;
 }
+
 /* 
 .sidebar .nav .nav-item:not(.nav-category):hover {
   background: #2c2c43;
@@ -19527,4 +19528,22 @@ ul.pagination li.disabled a {
   color: #ccc;
   pointer-events: none;
   border-color: #ccc;
+}
+
+.container-fluid.page-body-wrapper {
+  display: flex;
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.main-panel {
+  margin-left: 260px;
+  width: calc(100% - 260px);
 }
