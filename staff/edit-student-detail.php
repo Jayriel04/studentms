@@ -144,6 +144,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="./css/style(v2).css">
   </head>
@@ -205,13 +207,29 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               </div>
                               <div class="form-group">
                                 <label>Program</label>
-                                <input type="text" name="program" value="<?php echo htmlentities($row->Program); ?>"
-                                  class="form-control" required style="text-transform: capitalize;">
+                                <select name="program" id="program" class="form-control" required onchange="updateMajors()">
+                                  <option value="">Select Program</option>
+                                  <option value="Bachelor of Elementary Education (BEEd)" <?php if ($row->Program == 'Bachelor of Elementary Education (BEEd)') echo 'selected'; ?>>Bachelor of Elementary Education (BEEd)</option>
+                                  <option value="Bachelor of Secondary Education (BSEd)" <?php if ($row->Program == 'Bachelor of Secondary Education (BSEd)') echo 'selected'; ?>>Bachelor of Secondary Education (BSEd)</option>
+                                  <option value="Bachelor of Science in Business Administration (BSBA)" <?php if ($row->Program == 'Bachelor of Science in Business Administration (BSBA)') echo 'selected'; ?>>Bachelor of Science in Business Administration (BSBA)</option>
+                                  <option value="Bachelor of Industrial Technology (BindTech)" <?php if ($row->Program == 'Bachelor of Industrial Technology (BindTech)') echo 'selected'; ?>>Bachelor of Industrial Technology (BindTech)</option>
+                                  <option value="Bachelor of Science in Information Technology (BSIT)" <?php if ($row->Program == 'Bachelor of Science in Information Technology (BSIT)') echo 'selected'; ?>>Bachelor of Science in Information Technology (BSIT)</option>
+                                  <?php if (!in_array($row->Program, [
+                                      'Bachelor of Elementary Education (BEEd)',
+                                      'Bachelor of Secondary Education (BSEd)',
+                                      'Bachelor of Science in Business Administration (BSBA)',
+                                      'Bachelor of Industrial Technology (BindTech)',
+                                      'Bachelor of Science in Information Technology (BSIT)'
+                                  ]) && !empty($row->Program)): ?>
+                                    <option value="<?php echo htmlentities($row->Program); ?>" selected><?php echo htmlentities($row->Program); ?></option>
+                                  <?php endif; ?>
+                                </select>
                               </div>
                               <div class="form-group">
                                 <label>Major</label>
-                                <input type="text" name="major" value="<?php echo htmlentities($row->Major); ?>"
-                                  class="form-control" style="text-transform: capitalize;">
+                                <select name="major" id="major" class="form-control" style="text-transform: capitalize;">
+                                     <option value="">Select Major</option>
+                                 </select>
                               </div>
                               <div class="form-group">
                                 <label>Learner's Reference No.</label>
@@ -248,8 +266,19 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               </div>
                               <div class="form-group">
                                 <label>Civil Status</label>
-                                <input type="text" name="civilstatus" value="<?php echo htmlentities($row->CivilStatus); ?>"
-                                  class="form-control" style="text-transform: capitalize;">
+                                <select name="civilstatus" class="form-control">
+                                  <option value="">Select Status</option>
+                                  <option value="Single" <?php if ($row->CivilStatus == 'Single') echo 'selected'; ?>>Single</option>
+                                  <option value="Married" <?php if ($row->CivilStatus == 'Married') echo 'selected'; ?>>Married</option>
+                                  <option value="Divorced" <?php if ($row->CivilStatus == 'Divorced') echo 'selected'; ?>>Divorced</option>
+                                  <option value="Widowed" <?php if ($row->CivilStatus == 'Widowed') echo 'selected'; ?>>Widowed</option>
+                                  <option value="Separated" <?php if ($row->CivilStatus == 'Separated') echo 'selected'; ?>>Separated</option>
+                                  <?php
+                                  $standard_statuses = ['Single', 'Married', 'Divorced', 'Widowed', 'Separated'];
+                                  if (!in_array($row->CivilStatus, $standard_statuses) && !empty($row->CivilStatus)): ?>
+                                    <option value="<?php echo htmlentities($row->CivilStatus); ?>" selected><?php echo htmlentities($row->CivilStatus); ?> (Custom)</option>
+                                  <?php endif; ?>
+                                </select>
                               </div>
                               <div class="form-group">
                                 <label>Religion</label>
@@ -302,13 +331,30 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               </div>
                               <div class="form-group">
                                 <label>City/Municipality</label>
-                                <input type="text" name="citymunicipality"
-                                  value="<?php echo htmlentities($row->CityMunicipality); ?>" class="form-control" style="text-transform: capitalize;">
+                                <div id="city-municipality-container">
+                                  <input type="text" name="citymunicipality" id="citymunicipality-text" value="<?php echo htmlentities($row->CityMunicipality); ?>" class="form-control" style="text-transform: capitalize;">
+                                </div>
                               </div>
                               <div class="form-group">
                                 <label>Province</label>
-                                <input type="text" name="province" value="<?php echo htmlentities($row->Province); ?>"
-                                  class="form-control" style="text-transform: capitalize;">
+                                <select name="province" class="form-control province-select" style="text-transform: capitalize;">
+                                  <option value="">Select Province</option>
+                                  <?php
+                                  $provincesJson = file_get_contents('../data/provinces.json');
+                                  $provinces = json_decode($provincesJson, true);
+                                  if (is_array($provinces)) {
+                                    $current_province = htmlentities($row->Province);
+                                    foreach ($provinces as $province) {
+                                        $selected = ($current_province == $province) ? 'selected' : '';
+                                        echo "<option value=\"" . htmlspecialchars($province) . "\" $selected>" . htmlspecialchars($province) . "</option>";
+                                    }
+                                    // Add the current value as an option if it's not in the standard list
+                                    if (!in_array($current_province, $provinces) && !empty($current_province)) {
+                                        echo "<option value=\"$current_province\" selected>$current_province (Custom)</option>";
+                                    }
+                                  }
+                                  ?>
+                                </select>
                               </div>
                               <div class="form-group">
                                 <label>Postal Code</label>
@@ -388,6 +434,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
       </div>
     </div>
     <script src="vendors/js/vendor.bundle.base.js"></script>
+    <script src="vendors/select2/select2.min.js"></script>
+    <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script>
@@ -400,10 +448,95 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
           otherGenderInput.style.display = "none";
         }
       }
+
+      function updateMajors(currentMajor) {
+        const programSelect = document.getElementById('program');
+        const majorSelect = document.getElementById('major');
+        const selectedProgram = programSelect.value;
+
+        // Clear existing options
+        majorSelect.innerHTML = '<option value="">Select Major</option>';
+
+        const majors = {
+            "Bachelor of Elementary Education (BEEd)": [
+                "Major in General Content"
+            ],
+            "Bachelor of Secondary Education (BSEd)": [
+                "Major in English",
+                "Major in Filipino",
+                "Major in Mathematics"
+            ],
+            "Bachelor of Science in Business Administration (BSBA)": [
+                "Major in Human Resource Management",
+                "Major in Marketing Management"
+            ],
+            "Bachelor of Industrial Technology (BindTech)": [
+                "Major in Computer Technology",
+                "Major in Electronics Technology"
+            ],
+            "Bachelor of Science in Information Technology (BSIT)": [
+                "Major in information technology"
+            ]
+        };
+
+        if (majors[selectedProgram]) {
+            majors[selectedProgram].forEach(function(major) {
+                const option = document.createElement('option');
+                option.value = major;
+                option.textContent = major;
+                if (major === currentMajor) {
+                    option.selected = true;
+                }
+                majorSelect.appendChild(option);
+            });
+        }
+      }
+
       // Trigger on page load to set initial state
       window.addEventListener('DOMContentLoaded', function () {
         toggleOtherGenderInput();
+        // Pass the current major to pre-select it
+        var currentMajor = "<?php echo htmlentities($row->Major, ENT_QUOTES); ?>";
+        updateMajors(currentMajor);
+
+        var currentCity = "<?php echo htmlentities($row->CityMunicipality, ENT_QUOTES); ?>";
+        fetch('../data/cities.json')
+          .then(response => response.json())
+          .then(data => {
+              citiesData = data;
+              updateCities(currentCity);
+          })
+          .catch(error => console.error('Error loading cities:', error));
       });
+
+      var citiesData = {};
+      function updateCities(selectedCity) {
+        var province = $('.province-select').val();
+        var container = $('#city-municipality-container');
+        container.empty();
+
+        if (citiesData[province]) {
+          var select = $('<select name="citymunicipality" id="citymunicipality-select" class="form-control" style="text-transform: capitalize;"></select>');
+          select.append('<option value="">Select City/Municipality</option>');
+          citiesData[province].forEach(function(city) {
+            var option = $('<option></option>').val(city).text(city);
+            if (city === selectedCity) {
+              option.prop('selected', true);
+            }
+            select.append(option);
+          });
+          container.append(select);
+          $('#citymunicipality-select').select2();
+        } else {
+          var input = $('<input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control" style="text-transform: capitalize;">').val(selectedCity);
+          container.append(input);
+        }
+      }
+      // Initialize Select2 for province dropdown
+      if (window.jQuery) {
+        jQuery('.province-select').select2();
+        jQuery('.province-select').on('change', function() { updateCities(''); });
+      }
     </script>
   </body>
 

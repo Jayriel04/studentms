@@ -110,6 +110,8 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="vendors/select2/select2.min.css">
+    <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="./css/style(v2).css">
   </head>
@@ -162,11 +164,20 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                           </div>
                           <div class="form-group">
                             <label>Program</label>
-                            <input type="text" name="program" value="" class="form-control" required style="text-transform: capitalize;">
+                            <select name="program" id="program" class="form-control" required onchange="updateMajors()">
+                              <option value="">Select Program</option>
+                              <option value="Bachelor of Elementary Education (BEEd)">Bachelor of Elementary Education (BEEd)</option>
+                              <option value="Bachelor of Secondary Education (BSEd)">Bachelor of Secondary Education (BSEd)</option>
+                              <option value="Bachelor of Science in Business Administration (BSBA)">Bachelor of Science in Business Administration (BSBA)</option>
+                              <option value="Bachelor of Industrial Technology (BindTech)">Bachelor of Industrial Technology (BindTech)</option>
+                              <option value="Bachelor of Science in Information Technology (BSIT)">Bachelor of Science in Information Technology (BSIT)</option>
+                            </select>
                           </div>
                           <div class="form-group">
                             <label>Major</label>
-                            <input type="text" name="major" value="" class="form-control" style="text-transform: capitalize;">
+                            <select name="major" id="major" class="form-control" style="text-transform: capitalize;">
+                               <option value="">Select Major</option>
+                            </select>
                           </div>
                           <div class="form-group">
                             <label>Learner's Reference No.</label>
@@ -197,7 +208,14 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
 
                           <div class="form-group">
                             <label>Civil Status</label>
-                            <input type="text" name="civilstatus" value="" class="form-control" style="text-transform: capitalize;">
+                            <select name="civilstatus" class="form-control">
+                              <option value="">Select Status</option>
+                              <option value="Single">Single</option>
+                              <option value="Married">Married</option>
+                              <option value="Divorced">Divorced</option>
+                              <option value="Widowed">Widowed</option>
+                              <option value="Separated">Separated</option>
+                            </select>
                           </div>
                           <div class="form-group">
                             <label>Religion</label>
@@ -245,11 +263,24 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                           </div>
                           <div class="form-group">
                             <label>City/Municipality</label>
-                            <input type="text" name="citymunicipality" value="" class="form-control" style="text-transform: capitalize;">
+                            <div id="city-municipality-container">
+                              <input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control" style="text-transform: capitalize;">
+                            </div>
                           </div>
                           <div class="form-group">
                             <label>Province</label>
-                            <input type="text" name="province" value="" class="form-control" style="text-transform: capitalize;">
+                            <select name="province" class="form-control province-select" style="text-transform: capitalize;">
+                              <option value="">Select Province</option>
+                              <?php
+                              $provincesJson = file_get_contents('../data/provinces.json');
+                              $provinces = json_decode($provincesJson, true);
+                              if (is_array($provinces)) {
+                                foreach ($provinces as $province) {
+                                    echo "<option value=\"" . htmlspecialchars($province) . "\">" . htmlspecialchars($province) . "</option>";
+                                }
+                              }
+                              ?>
+                            </select>
                           </div>
                           <div class="form-group">
                             <label>Postal Code</label>
@@ -317,6 +348,11 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
       </div>
     </div>
     <script src="vendors/js/vendor.bundle.base.js"></script>
+    <script src="vendors/select2/select2.min.js"></script>
+    <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
+    <script>
+      var provincesWithCities = { "Cebu": ["Bogo City", "Carcar City", "Danao City", "Naga City", "Talisay City", "Toledo City", "Cebu City", "Lapu-Lapu City", "Mandaue City", "Alcantara", "Alcoy", "Alegria", "Aloguinsan", "Argao", "Asturias", "Badian", "Balamban", "Bantayan", "Barili", "Boljoon", "Borbon", "Carmen", "Catmon", "Compostela", "Consolacion", "Cordoba", "Daanbantayan", "Dalaguete", "Dumanjug", "Ginatilan", "Liloan", "Madridejos", "Malabuyoc", "Medellin", "Minglanilla", "Moalboal", "Oslob", "Pilar", "Pinamungahan", "Poro", "Ronda", "Samboan", "San Fernando", "San Francisco", "San Remigio", "Santa Fe", "Santander", "Sibonga", "Sogod", "Tabogon", "Tabuelan", "Tuburan", "Tudela"] };
+    </script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script>
@@ -328,6 +364,86 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
         } else {
           otherGenderInput.style.display = "none";
         }
+      }
+
+      function updateMajors() {
+        const programSelect = document.getElementById('program');
+        const majorSelect = document.getElementById('major');
+        const selectedProgram = programSelect.value;
+
+        // Clear existing options
+        majorSelect.innerHTML = '<option value="">Select Major</option>';
+
+        const majors = {
+            "Bachelor of Elementary Education (BEEd)": [
+                "Major in General Content"
+            ],
+            "Bachelor of Secondary Education (BSEd)": [
+                "Major in English",
+                "Major in Filipino",
+                "Major in Mathematics"
+            ],
+            "Bachelor of Science in Business Administration (BSBA)": [
+                "Major in Human Resource Management",
+                "Major in Marketing Management"
+            ],
+            "Bachelor of Industrial Technology (BindTech)": [
+                "Major in Computer Technology",
+                "Major in Electronics Technology"
+            ],
+            "Bachelor of Science in Information Technology (BSIT)": [
+                "Major in information technology"
+            ]
+        };
+
+        if (majors[selectedProgram]) {
+            majors[selectedProgram].forEach(function(major) {
+                const option = document.createElement('option');
+                option.value = major;
+                option.textContent = major;
+                majorSelect.appendChild(option);
+            });
+        }
+      }
+
+      var citiesData = {};
+      fetch('../data/cities.json')
+        .then(response => response.json())
+        .then(data => {
+            citiesData = data;
+            updateCities(''); // Initial call
+        })
+        .catch(error => console.error('Error loading cities:', error));
+
+      function updateCities(selectedCity) {
+        var province = $('.province-select').val();
+        var container = $('#city-municipality-container');
+        container.empty();
+
+        if (citiesData[province]) {
+          var select = $('<select name="citymunicipality" id="citymunicipality-select" class="form-control" style="text-transform: capitalize;"></select>');
+          select.append('<option value="">Select City/Municipality</option>');
+          citiesData[province].forEach(function(city) {
+            var option = $('<option></option>').val(city).text(city);
+            if (city === selectedCity) {
+              option.prop('selected', true);
+            }
+            select.append(option);
+          });
+          container.append(select);
+          $('#citymunicipality-select').select2();
+        } else {
+          var input = $('<input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control" style="text-transform: capitalize;">');
+          if (selectedCity) {
+            input.val(selectedCity);
+          }
+          container.append(input);
+        }
+      }
+      // Initialize Select2 for province dropdown
+      if (window.jQuery) {
+        jQuery('.province-select').select2();
+        jQuery('.province-select').on('change', function() { updateCities(''); });
       }
     </script>
   </body>
