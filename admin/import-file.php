@@ -52,6 +52,7 @@ if (isset($_POST['import'])) {
         $successful_imports = 0;
         $failed_imports = 0;
         $skipped_duplicates = 0;
+        $skipped_invalid_format = 0;
         $defaultPassword = "student123";
         // Use password_hash instead of md5 for secure password storage
         $hashedPassword = password_hash($defaultPassword, PASSWORD_DEFAULT);
@@ -96,6 +97,12 @@ if (isset($_POST['import'])) {
             if (empty($stuID)) {
                 $failed_imports++;
                 continue; // Skip rows without a student ID
+            }
+
+            // Validate Student ID format
+            if (!preg_match('/^\d{3} - \d{5}$/', $stuID)) {
+                $skipped_invalid_format++;
+                continue; // Skip rows with invalid student ID format
             }
 
             // Check for duplicates
@@ -155,6 +162,9 @@ if (isset($_POST['import'])) {
         $message .= "Successfully imported: <strong>{$successful_imports}</strong><br>";
         if ($skipped_duplicates > 0) {
             $message .= "Skipped (duplicates): <strong>{$skipped_duplicates}</strong><br>";
+        }
+        if ($skipped_invalid_format > 0) {
+            $message .= "Skipped (invalid ID format): <strong>{$skipped_invalid_format}</strong><br>";
         }
         if ($failed_imports > 0) {
             $message .= "Failed rows: <strong>{$failed_imports}</strong>";

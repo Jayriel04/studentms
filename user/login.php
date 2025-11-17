@@ -7,6 +7,12 @@ if (isset($_POST['login'])) {
   $stuid = $_POST['stuid'];
   $password = $_POST['password'];
 
+  // Server-side validation for student ID format
+  if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
+    $error = 'Invalid Student ID format. Please use the format: 222 - 08410.';
+  } else {
+
+
   // Fetch stored password and status for this student
   $sql = "SELECT StuID, ID, Password, Status FROM tblstudent WHERE StuID=:stuid";
   $query = $dbh->prepare($sql);
@@ -62,6 +68,7 @@ if (isset($_POST['login'])) {
     // Use a non-blocking toast message instead of alert()
     $error = 'Invalid Student ID or Password';
   }
+  }
 }
 ?>
 <!DOCTYPE html>
@@ -98,7 +105,7 @@ if (isset($_POST['login'])) {
         <div class="input-group">
           <div class="input-wrapper">
             <span class="icon">🆔</span>
-            <input type="text" name="stuid" placeholder="Enter your Student ID" required="true" value="<?php if (isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>">
+            <input type="text" name="stuid" placeholder="e.g., 222 - 08410" required="true" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410" value="<?php if (isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>">
           </div>
         </div>
 

@@ -6,6 +6,13 @@ include('includes/dbconnection.php');
 if (isset($_POST['signup'])) {
     $message = '';
     $stuid = $_POST['stuid'];
+
+    // Server-side validation for student ID format
+    if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
+        $message = 'Invalid Student ID format. Please use the format: 222 - 08410.';
+        $message_type = 'danger';
+    } else {
+
     $familyname = $_POST['familyname'];
     $firstname = $_POST['firstname'];
     $middlename = $_POST['middlename'];
@@ -62,6 +69,7 @@ if (isset($_POST['signup'])) {
             $message_type = 'danger';
         }
     }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -96,25 +104,25 @@ if (isset($_POST['signup'])) {
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">🆔</span>
-                        <input type="text" name="stuid" placeholder="Student ID" required="true">
+                        <input type="text" name="stuid" placeholder="e.g., 222 - 08410" required="true" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410">
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">👤</span>
-                        <input type="text" name="familyname" placeholder="Family Name" required="true">
+                        <input type="text" name="familyname" placeholder="Family Name" required="true" style="text-transform: capitalize;">
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">👤</span>
-                        <input type="text" name="firstname" placeholder="First Name" required="true">
+                        <input type="text" name="firstname" placeholder="First Name" required="true" style="text-transform: capitalize;">
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">👤</span>
-                        <input type="text" name="middlename" placeholder="Middle Name">
+                        <input type="text" name="middlename" placeholder="Middle Name" style="text-transform: capitalize;">
                     </div>
                 </div>
                 <div class="input-group">

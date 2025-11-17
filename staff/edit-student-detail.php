@@ -7,6 +7,12 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
 } else {
   if (isset($_POST['submit'])) {
     $stuid = $_POST['stuid'];
+
+    // Server-side validation for student ID format
+    if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
+      echo '<script>if(window.showToast) showToast("Invalid Student ID format. Please use the format: 222 - 08410.","warning");</script>';
+    } else {
+
     $familyname = $_POST['familyname'];
     $firstname = $_POST['firstname'];
     $middlename = $_POST['middlename'];
@@ -125,6 +131,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
 
       echo '<script>if(window.showToast) showToast("Student details updated successfully.","success");</script>';
     }
+    }
   }
   ?>
   <!DOCTYPE html>
@@ -179,38 +186,37 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <hr />
                               <div class="form-group">
                                 <label>Student ID</label>
-                                <input type="text" name="stuid" value="<?php echo htmlentities($row->StuID); ?>"
-                                  class="form-control" required>
+                                <input type="text" name="stuid" value="<?php echo htmlentities($row->StuID); ?>" class="form-control" required placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Family Name</label>
                                 <input type="text" name="familyname" value="<?php echo htmlentities($row->FamilyName); ?>"
-                                  class="form-control" required>
+                                  class="form-control" required style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>First Name</label>
                                 <input type="text" name="firstname" value="<?php echo htmlentities($row->FirstName); ?>"
-                                  class="form-control" required>
+                                  class="form-control" required style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Middle Name</label>
                                 <input type="text" name="middlename" value="<?php echo htmlentities($row->MiddleName); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Program</label>
                                 <input type="text" name="program" value="<?php echo htmlentities($row->Program); ?>"
-                                  class="form-control" required>
+                                  class="form-control" required style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Major</label>
                                 <input type="text" name="major" value="<?php echo htmlentities($row->Major); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Learner's Reference No.</label>
                                 <input type="text" name="lrn" value="<?php echo htmlentities($row->LearnersReferenceNo); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Date of Birth</label>
@@ -220,7 +226,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <div class="form-group">
                                 <label>Place of Birth</label>
                                 <input type="text" name="placeofbirth" value="<?php echo htmlentities($row->PlaceOfBirth); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Gender</label>
@@ -238,17 +244,17 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                 style="display: <?php echo (!in_array($row->Gender, ['Male', 'Female']) && $row->Gender != '') ? 'block' : 'none'; ?>;">
                                 <label>Please Specify</label>
                                 <input type="text" name="otherGender" id="otherGender" class="form-control" value="<?php if (!in_array($row->Gender, ['Male', 'Female']))
-                                  echo htmlentities($row->Gender); ?>">
+                                  echo htmlentities($row->Gender); ?>" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Civil Status</label>
                                 <input type="text" name="civilstatus" value="<?php echo htmlentities($row->CivilStatus); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Religion</label>
                                 <input type="text" name="religion" value="<?php echo htmlentities($row->Religion); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Height (cm)</label>
@@ -263,7 +269,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <div class="form-group">
                                 <label>Citizenship</label>
                                 <input type="text" name="citizenship" value="<?php echo htmlentities($row->Citizenship); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                             </div>
                             <div class="col-6">
@@ -272,37 +278,37 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <div class="form-group">
                                 <label>Father's Name</label>
                                 <input type="text" name="fathersname" value="<?php echo htmlentities($row->FathersName); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Mother's Maiden Name</label>
                                 <input type="text" name="mothersmaidenname"
-                                  value="<?php echo htmlentities($row->MothersMaidenName); ?>" class="form-control">
+                                  value="<?php echo htmlentities($row->MothersMaidenName); ?>" class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Building/House Number</label>
                                 <input type="text" name="buildinghouse"
-                                  value="<?php echo htmlentities($row->BuildingHouseNumber); ?>" class="form-control">
+                                  value="<?php echo htmlentities($row->BuildingHouseNumber); ?>" class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Street Name</label>
                                 <input type="text" name="streetname" value="<?php echo htmlentities($row->StreetName); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Barangay</label>
                                 <input type="text" name="barangay" value="<?php echo htmlentities($row->Barangay); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>City/Municipality</label>
                                 <input type="text" name="citymunicipality"
-                                  value="<?php echo htmlentities($row->CityMunicipality); ?>" class="form-control">
+                                  value="<?php echo htmlentities($row->CityMunicipality); ?>" class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Province</label>
                                 <input type="text" name="province" value="<?php echo htmlentities($row->Province); ?>"
-                                  class="form-control">
+                                  class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Postal Code</label>
@@ -322,12 +328,12 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <div class="form-group">
                                 <label>Emergency Contact Person</label>
                                 <input type="text" name="emergencycontactperson"
-                                  value="<?php echo htmlentities($row->EmergencyContactPerson); ?>" class="form-control">
+                                  value="<?php echo htmlentities($row->EmergencyContactPerson); ?>" class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Emergency Relationship</label>
                                 <input type="text" name="emergencyrelationship"
-                                  value="<?php echo htmlentities($row->EmergencyRelationship); ?>" class="form-control">
+                                  value="<?php echo htmlentities($row->EmergencyRelationship); ?>" class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Emergency Contact Number</label>
@@ -337,7 +343,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <div class="form-group">
                                 <label>Emergency Address</label>
                                 <textarea name="emergencyaddress"
-                                  class="form-control"><?php echo htmlentities($row->EmergencyAddress); ?></textarea>
+                                  class="form-control" style="text-transform: capitalize;"><?php echo htmlentities($row->EmergencyAddress); ?></textarea>
                               </div>
                               <div class="form-group">
                                 <label>Category</label>

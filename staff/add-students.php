@@ -8,6 +8,12 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
   $success_message = $error_message = '';
   if (isset($_POST['submit'])) {
     $stuid = $_POST['stuid'];
+
+    // Server-side validation for student ID format
+    if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
+      $error_message = 'Invalid Student ID format. Please use the format: 222 - 08410.';
+    } else {
+
     $familyname = $_POST['familyname'];
     $firstname = $_POST['firstname'];
     $middlename = $_POST['middlename'];
@@ -95,6 +101,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
       }
     } else {
       $error_message = 'Student ID already exists. Please try again.';
+    }
     }
   }
   ?>
@@ -199,27 +206,27 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                           <hr />
                           <div class="form-group">
                             <label for="stuid">Student ID</label>
-                            <input type="text" name="stuid" class="form-control" required>
+                            <input type="text" name="stuid" class="form-control" required placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="familyname">Family Name</label>
-                            <input type="text" name="familyname" class="form-control" required>
+                            <input type="text" name="familyname" class="form-control" required style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="firstname">First Name</label>
-                            <input type="text" name="firstname" class="form-control" required>
+                            <input type="text" name="firstname" class="form-control" required style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="middlename">Middle Name</label>
-                            <input type="text" name="middlename" class="form-control">
+                            <input type="text" name="middlename" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="program">Program</label>
-                            <input type="text" name="program" class="form-control" required>
+                            <input type="text" name="program" class="form-control" required style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="major">Major</label>
-                            <input type="text" name="major" class="form-control">
+                            <input type="text" name="major" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="lrn">Learner's Reference No.</label>
@@ -231,7 +238,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                           </div>
                           <div class="form-group">
                             <label for="placeofbirth">Place of Birth</label>
-                            <input type="text" name="placeofbirth" class="form-control">
+                            <input type="text" name="placeofbirth" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="gender">Gender</label>
@@ -245,23 +252,23 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                           </div>
                           <div class="form-group" id="otherGenderInput" style="display: none;">
                             <label>Please Specify</label>
-                            <input type="text" name="otherGender" id="otherGender" class="form-control">
+                            <input type="text" name="otherGender" id="otherGender" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="civilstatus">Civil Status</label>
-                            <input type="text" name="civilstatus" class="form-control">
+                            <input type="text" name="civilstatus" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="religion">Religion</label>
-                            <input type="text" name="religion" class="form-control">
+                            <input type="text" name="religion" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="height">Height</label>
                             <input type="number" name="height" class="form-control">
                           </div>
                           <div class="form-group">
-                            <label for="weight">Weight</label>
-                            <input type="number" name="weight" class="form-control">
+                            <label for="weight">Weight (kg)</label>
+                            <input type="text" name="weight" class="form-control">
                           </div>
                           <div class="form-group">
                             <label for="citizenship">Citizenship</label>
@@ -273,31 +280,31 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                           <hr />
                           <div class="form-group">
                             <label for="fathersname">Father's Name</label>
-                            <input type="text" name="fathersname" class="form-control">
+                            <input type="text" name="fathersname" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="mothersmaidenname">Mother's Maiden Name</label>
-                            <input type="text" name="mothersmaidenname" class="form-control">
+                            <input type="text" name="mothersmaidenname" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="buildinghouse">Building/House Number</label>
-                            <input type="text" name="buildinghouse" class="form-control">
+                            <input type="text" name="buildinghouse" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="streetname">Street Name</label>
-                            <input type="text" name="streetname" class="form-control">
+                            <input type="text" name="streetname" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="barangay">Barangay</label>
-                            <input type="text" name="barangay" class="form-control">
+                            <input type="text" name="barangay" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="citymunicipality">City/Municipality</label>
-                            <input type="text" name="citymunicipality" class="form-control">
+                            <input type="text" name="citymunicipality" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="province">Province</label>
-                            <input type="text" name="province" class="form-control">
+                            <input type="text" name="province" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="postalcode">Postal Code</label>
@@ -313,19 +320,19 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                           </div>
                           <div class="form-group">
                             <label for="emergencycontactperson">Emergency Contact Person</label>
-                            <input type="text" name="emergencycontactperson" class="form-control">
+                            <input type="text" name="emergencycontactperson" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="emergencyrelationship">Emergency Relationship</label>
-                            <input type="text" name="emergencyrelationship" class="form-control">
+                            <input type="text" name="emergencyrelationship" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="emergencycontactnumber">Emergency Contact Number</label>
-                            <input type="text" name="emergencycontactnumber" class="form-control">
+                            <input type="text" name="emergencycontactnumber" class="form-control" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="emergencyaddress">Emergency Address</label>
-                            <textarea name="emergencyaddress" class="form-control"></textarea>
+                            <textarea name="emergencyaddress" class="form-control" style="text-transform: capitalize;"></textarea>
                           </div>
                           <div class="form-group">
                             <label for="category">Category</label>

@@ -136,7 +136,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                     <form class="forms-sample" method="post">
                       <div class="form-group">
                         <label for="staffname">Staff Name</label>
-                        <input type="text" name="staffname" class="form-control" required='true'>
+                        <input type="text" name="staffname" class="form-control" required='true' style="text-transform: capitalize;">
                       </div>
                       <div class="form-group">
                         <label for="username">User Name</label>

@@ -265,28 +265,27 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Family Name</label>
                             <input type="text" name="familyname" class="form-control"
-                              value="<?php echo isset($row->FamilyName) ? htmlentities($row->FamilyName) : ''; ?>"
-                              required>
+                              value="<?php echo isset($row->FamilyName) ? htmlentities($row->FamilyName) : ''; ?>" required style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>First Name</label>
                             <input type="text" name="firstname" class="form-control"
-                              value="<?php echo isset($row->FirstName) ? htmlentities($row->FirstName) : ''; ?>" required>
+                              value="<?php echo isset($row->FirstName) ? htmlentities($row->FirstName) : ''; ?>" required style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Middle Name</label>
                             <input type="text" name="middlename" class="form-control"
-                              value="<?php echo isset($row->MiddleName) ? htmlentities($row->MiddleName) : ''; ?>">
+                              value="<?php echo isset($row->MiddleName) ? htmlentities($row->MiddleName) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Program</label>
                             <input type="text" name="program" class="form-control"
-                              value="<?php echo isset($row->Program) ? htmlentities($row->Program) : ''; ?>" required>
+                              value="<?php echo isset($row->Program) ? htmlentities($row->Program) : ''; ?>" required style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Major</label>
                             <input type="text" name="major" class="form-control"
-                              value="<?php echo isset($row->Major) ? htmlentities($row->Major) : ''; ?>">
+                              value="<?php echo isset($row->Major) ? htmlentities($row->Major) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Learners Reference No</label>
@@ -296,12 +295,12 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Date of Birth</label>
                             <input type="date" name="dob" class="form-control"
-                              value="<?php echo isset($row->DOB) ? htmlentities($row->DOB) : ''; ?>" required>
+                              value="<?php echo isset($row->DOB) ? htmlentities($row->DOB) : ''; ?>">
                           </div>
                           <div class="form-group">
                             <label>Place of Birth</label>
                             <input type="text" name="pob" class="form-control"
-                              value="<?php echo isset($row->PlaceOfBirth) ? htmlentities($row->PlaceOfBirth) : ''; ?>">
+                              value="<?php echo isset($row->PlaceOfBirth) ? htmlentities($row->PlaceOfBirth) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Gender</label>
@@ -317,17 +316,17 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group" id="otherGenderInput" style="display: none;">
                             <label>Please Specify</label>
                             <input type="text" name="otherGender" id="otherGender" class="form-control" value="<?php if (isset($row->Gender) && !in_array($row->Gender, ['Male', 'Female']))
-                              echo htmlentities($row->Gender); ?>">
+                              echo htmlentities($row->Gender); ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Civil Status</label>
                             <input type="text" name="civilstatus" class="form-control"
-                              value="<?php echo isset($row->CivilStatus) ? htmlentities($row->CivilStatus) : ''; ?>">
+                              value="<?php echo isset($row->CivilStatus) ? htmlentities($row->CivilStatus) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Religion</label>
                             <input type="text" name="religion" class="form-control"
-                              value="<?php echo isset($row->Religion) ? htmlentities($row->Religion) : ''; ?>">
+                              value="<?php echo isset($row->Religion) ? htmlentities($row->Religion) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Height</label>
@@ -342,7 +341,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Citizenship</label>
                             <input type="text" name="citizenship" class="form-control"
-                              value="<?php echo isset($row->Citizenship) ? htmlentities($row->Citizenship) : ''; ?>">
+                              value="<?php echo isset($row->Citizenship) ? htmlentities($row->Citizenship) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Profile Image</label>
@@ -362,37 +361,37 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Father's Name</label>
                             <input type="text" name="fathersname" class="form-control"
-                              value="<?php echo isset($row->FathersName) ? htmlentities($row->FathersName) : ''; ?>">
+                              value="<?php echo isset($row->FathersName) ? htmlentities($row->FathersName) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Mother's Maiden Name</label>
                             <input type="text" name="mothersmaidenname" class="form-control"
-                              value="<?php echo isset($row->MothersMaidenName) ? htmlentities($row->MothersMaidenName) : ''; ?>">
+                              value="<?php echo isset($row->MothersMaidenName) ? htmlentities($row->MothersMaidenName) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Building/House Number</label>
                             <input type="text" name="buildinghouse" class="form-control"
-                              value="<?php echo isset($row->BuildingHouseNumber) ? htmlentities($row->BuildingHouseNumber) : ''; ?>">
+                              value="<?php echo isset($row->BuildingHouseNumber) ? htmlentities($row->BuildingHouseNumber) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Street Name</label>
                             <input type="text" name="streetname" class="form-control"
-                              value="<?php echo isset($row->StreetName) ? htmlentities($row->StreetName) : ''; ?>">
+                              value="<?php echo isset($row->StreetName) ? htmlentities($row->StreetName) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Barangay</label>
                             <input type="text" name="barangay" class="form-control"
-                              value="<?php echo isset($row->Barangay) ? htmlentities($row->Barangay) : ''; ?>">
+                              value="<?php echo isset($row->Barangay) ? htmlentities($row->Barangay) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>City/Municipality</label>
                             <input type="text" name="citymunicipality" class="form-control"
-                              value="<?php echo isset($row->CityMunicipality) ? htmlentities($row->CityMunicipality) : ''; ?>">
+                              value="<?php echo isset($row->CityMunicipality) ? htmlentities($row->CityMunicipality) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Province</label>
                             <input type="text" name="province" class="form-control"
-                              value="<?php echo isset($row->Province) ? htmlentities($row->Province) : ''; ?>">
+                              value="<?php echo isset($row->Province) ? htmlentities($row->Province) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Postal Code</label>
@@ -412,12 +411,12 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Emergency Contact Person</label>
                             <input type="text" name="emergencycontactperson" class="form-control"
-                              value="<?php echo isset($row->EmergencyContactPerson) ? htmlentities($row->EmergencyContactPerson) : ''; ?>">
+                              value="<?php echo isset($row->EmergencyContactPerson) ? htmlentities($row->EmergencyContactPerson) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Emergency Relationship</label>
                             <input type="text" name="emergencyrelationship" class="form-control"
-                              value="<?php echo isset($row->EmergencyRelationship) ? htmlentities($row->EmergencyRelationship) : ''; ?>">
+                              value="<?php echo isset($row->EmergencyRelationship) ? htmlentities($row->EmergencyRelationship) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Emergency Contact Number</label>
@@ -427,7 +426,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Emergency Address</label>
                             <input type="text" name="emergencyaddress" class="form-control"
-                              value="<?php echo isset($row->EmergencyAddress) ? htmlentities($row->EmergencyAddress) : ''; ?>">
+                              value="<?php echo isset($row->EmergencyAddress) ? htmlentities($row->EmergencyAddress) : ''; ?>" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="category">Category</label>

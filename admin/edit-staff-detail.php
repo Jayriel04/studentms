@@ -106,14 +106,14 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                             <div class="form-group">
                                                 <label>Name</label>
                                                 <input type="text" name="name"
-                                                    value="<?php echo htmlentities($result->StaffName); ?>"
-                                                    class="form-control" required>
+                                                    value="<?php echo htmlentities($result->StaffName); ?>" class="form-control"
+                                                    required style="text-transform: capitalize;">
                                             </div>
                                             <div class="form-group">
                                                 <label>User Name</label>
                                                 <input type="text" name="username"
-                                                    value="<?php echo htmlentities($result->UserName); ?>"
-                                                    class="form-control" required>
+                                                    value="<?php echo htmlentities($result->UserName); ?>" class="form-control"
+                                                    required>
                                             </div>
                                             <div class="form-group">
                                                 <label>Email</label>
