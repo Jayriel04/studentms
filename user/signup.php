@@ -10,12 +10,13 @@ if (isset($_POST['signup'])) {
     $firstname = $_POST['firstname'];
     $middlename = $_POST['middlename'];
     $email = $_POST['email'];
-    $password = md5($_POST['password']);
+    // Use modern password hashing instead of md5
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    // Handle profile image upload - this part has a potential security issue with file names.
-    $profilepic = $_FILES['profilepic']['name'];
-    $profilepic_tmp = $_FILES['profilepic']['tmp_name'];
-    $profilepic_folder = "../admin/images/" . $profilepic;
+    // Sanitize filename for security
+    $profilepic_name = basename($_FILES['profilepic']['name']);
+    $sanitized_pic_name = time() . '_' . preg_replace("/[^a-zA-Z0-9._-]/", "_", $profilepic_name);
+    $profilepic_folder = "../admin/images/" . $sanitized_pic_name;
 
     // Check if student already exists
     $sql = "SELECT ID FROM tblstudent WHERE StuID=:stuid OR EmailAddress=:email";
@@ -29,9 +30,9 @@ if (isset($_POST['signup'])) {
         $message_type = 'danger';
     } else {
         // Move uploaded file
-        if ($profilepic && move_uploaded_file($profilepic_tmp, $profilepic_folder)) {
-            $sql = "INSERT INTO tblstudent (StuID, FamilyName, FirstName, MiddleName, EmailAddress, Password, Image) 
-                    VALUES (:stuid, :familyname, :firstname, :middlename, :email, :password, :image)";
+        if (!empty($_FILES['profilepic']['tmp_name']) && move_uploaded_file($_FILES['profilepic']['tmp_name'], $profilepic_folder)) {
+            $sql = "INSERT INTO tblstudent (StuID, FamilyName, FirstName, MiddleName, EmailAddress, Password, Image, Status, YearLevel) 
+                    VALUES (:stuid, :familyname, :firstname, :middlename, :email, :password, :image, 1, NULL)";
             $query = $dbh->prepare($sql);
             $query->bindParam(':stuid', $stuid);
             $query->bindParam(':familyname', $familyname);
@@ -39,11 +40,18 @@ if (isset($_POST['signup'])) {
             $query->bindParam(':middlename', $middlename);
             $query->bindParam(':email', $email);
             $query->bindParam(':password', $password);
-            $query->bindParam(':image', $profilepic);
+            $query->bindParam(':image', $sanitized_pic_name);
 
             if ($query->execute()) {
-                $_SESSION['flash_message'] = 'Account created successfully! You can now log in.';
-                header('Location: login.php');
+                $lastInsertId = $dbh->lastInsertId();
+
+                // Automatically log the user in
+                $_SESSION['sturecmsstuid'] = $stuid;
+                $_SESSION['sturecmsuid'] = $lastInsertId;
+                $_SESSION['login'] = $stuid;
+
+                // Redirect to the dashboard instead of the login page
+                header('Location: dashboard.php');
                 exit;
             } else {
                 $message = 'Something went wrong. Please try again.';
