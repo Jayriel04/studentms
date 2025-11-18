@@ -15,22 +15,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 
   if ($new !== $conf) {
     $error = 'Passwords do not match.';
-  } else if (strlen($new) < 6) {
-    $error = 'Password must be at least 6 characters.';
+  } else if (strlen($new) < 5) {
+    $error = 'Password must be at least 5 characters long.';
   } else {
-    $hash = password_hash($new, PASSWORD_DEFAULT);
-    $sql = "UPDATE tblstudent SET Password = :p WHERE EmailAddress = :e";
-    $stmt = $dbh->prepare($sql);
-    $stmt->bindParam(':p', $hash, PDO::PARAM_STR);
-    $stmt->bindParam(':e', $_SESSION['fp_reset_email'], PDO::PARAM_STR);
-    $stmt->execute();
+    // Fetch student details before updating password
+    $email = $_SESSION['fp_reset_email'];
+    $sql_select = "SELECT ID, StuID FROM tblstudent WHERE EmailAddress = :email";
+    $query_select = $dbh->prepare($sql_select);
+    $query_select->bindParam(':email', $email, PDO::PARAM_STR);
+    $query_select->execute();
+    $student = $query_select->fetch(PDO::FETCH_OBJ);
 
-    // Clear reset session data
-    unset($_SESSION['fp_reset_code'], $_SESSION['fp_reset_email'], $_SESSION['fp_reset_expires'], $_SESSION['fp_verified']);
+    if ($student) {
+      $hash = password_hash($new, PASSWORD_DEFAULT);
+      $sql_update = "UPDATE tblstudent SET Password = :p WHERE EmailAddress = :e";
+      $stmt_update = $dbh->prepare($sql_update);
+      $stmt_update->bindParam(':p', $hash, PDO::PARAM_STR);
+      $stmt_update->bindParam(':e', $email, PDO::PARAM_STR);
+      $stmt_update->execute();
 
-    $_SESSION['flash'] = ['type' => 'success', 'msg' => 'Password changed successfully. Please sign in.'];
-    header('Location: login.php');
-    exit;
+      // Clear reset session data
+      unset($_SESSION['fp_reset_code'], $_SESSION['fp_reset_email'], $_SESSION['fp_reset_expires'], $_SESSION['fp_verified']);
+
+      // Automatically log the user in
+      $_SESSION['sturecmsstuid'] = $student->StuID;
+      $_SESSION['sturecmsuid'] = $student->ID;
+      $_SESSION['login'] = $student->StuID;
+      header('Location: dashboard.php');
+      exit;
+    } else {
+      // This case is unlikely if they got this far, but good for safety
+      $error = 'An unexpected error occurred. Please try again.';
+    }
   }
 }
 
@@ -44,23 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
   <title>Reset Password | Student Profiling System</title>
   <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
   <link rel="stylesheet" href="css/login-new.css">
-  <script type="text/javascript">
-    function valid() {
-      var n = document.getElementById('newpassword').value;
-      var c = document.getElementById('confirmpassword').value;
-      if (n !== c) {
-        if (window.showToast) showToast('New Password and Confirm Password Field do not match !!', 'warning');
-        document.getElementById('confirmpassword').focus();
-        return false;
-      }
-      if (n.length < 6) {
-        if (window.showToast) showToast('Password must be at least 6 characters.', 'warning');
-        document.getElementById('newpassword').focus();
-        return false;
-      }
-      return true;
-    }
-  </script>
 </head>
 
 <body>
@@ -84,32 +83,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
                 <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?php echo htmlentities($error); ?></div>
             <?php endif; ?>
 
-            <form method="post" onsubmit="return valid();">
+            <form id="resetPasswordForm" method="post">
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">🔒</span>
                         <input id="newpassword" type="password" name="newpassword" placeholder="New Password" required autofocus>
-                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility(this, 'newpassword')">SHOW</button>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility(this, 'newpassword')">SHOW</button> 
                     </div>
+                    <div id="password-strength" style="margin-top: 5px; font-size: 12px; text-align: left; width: 100%;"></div>
                 </div>
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">🔒</span>
                         <input id="confirmpassword" type="password" name="confirmpassword" placeholder="Confirm Password" required>
-                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility(this, 'confirmpassword')">SHOW</button>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility(this, 'confirmpassword')">SHOW</button> 
                     </div>
+                    <div id="password-match-error" style="margin-top: 5px; font-size: 12px; text-align: left; width: 100%; color: red;"></div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Change Password</button>
+                <button type="submit" name="submit" class="btn btn-primary">Change Password</button>
                 <a href="login.php" class="btn btn-secondary">Back to Sign In</a>
-
             </form>
         </div>
     </div>
 
   <script src="js/auth-forms.js"></script>
-  <!-- The showToast function is in script.js, so we keep it for the validation -->
-  <script src="js/script.js"></script>
+  <script>
+      const newPasswordInput = document.getElementById('newpassword');
+      const confirmPasswordInput = document.getElementById('confirmpassword');
+      const passwordMatchErrorDiv = document.getElementById('password-match-error');
+      const form = document.getElementById('resetPasswordForm');
+      const passwordStrengthDiv = document.getElementById('password-strength');
+      const changePasswordButton = form.querySelector('button[type="submit"]');
+
+      function validatePasswords() {
+          const newPassword = newPasswordInput.value;
+          const confirmPassword = confirmPasswordInput.value;
+
+          if (confirmPassword.length > 0 && newPassword !== confirmPassword) {
+              passwordMatchErrorDiv.textContent = 'Passwords do not match.';
+              changePasswordButton.disabled = true;
+          } else {
+              passwordMatchErrorDiv.textContent = '';
+              changePasswordButton.disabled = false;
+          }
+      }
+
+      newPasswordInput.addEventListener('input', function() {
+          validatePasswords();
+          const password = newPasswordInput.value;
+          if (password.length === 0) {
+              passwordStrengthDiv.innerHTML = '';
+              changePasswordButton.disabled = false; // Or true if you want to prevent empty submission
+          } else if (password.length < 5) {
+              passwordStrengthDiv.innerHTML = '<span style="color: red;">Weak: Password must be at least 5 characters.</span>';
+              changePasswordButton.disabled = true;
+          } else {
+              passwordStrengthDiv.innerHTML = '<span style="color: green;">Strong</span>';
+              changePasswordButton.disabled = newPasswordInput.value !== confirmPasswordInput.value;
+          }
+      });
+      confirmPasswordInput.addEventListener('input', validatePasswords);
+
+      form.addEventListener('submit', function(event) {
+          if (newPasswordInput.value !== confirmPasswordInput.value) {
+              event.preventDefault(); // Stop form submission
+              passwordMatchErrorDiv.textContent = 'Passwords do not match. Please correct before submitting.';
+          } else if (newPasswordInput.value.length < 5) {
+              event.preventDefault(); // Stop form submission
+              passwordMatchErrorDiv.textContent = 'Password must be at least 5 characters long.';
+              changePasswordButton.disabled = true;
+          } else {
+              changePasswordButton.disabled = false;
+          }
+      });
+  </script>
 </body>
 
 </html>

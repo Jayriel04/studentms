@@ -1864,7 +1864,7 @@ ul.p_n-list li a:hover {
 }
 
 .modern-btn-nav {
-	background: #095d40;
+	background: #2196F3;
 	color: #fff;
 	font-weight: 700;
 	margin-left: 0.28em;
@@ -1879,7 +1879,7 @@ ul.p_n-list li a:hover {
 
 .modern-btn-nav:hover,
 .modern-btn-nav:focus {
-	background: #2793fd;
+	background: #1565C0;
 	color: #fff;
 }
 
@@ -2056,7 +2056,7 @@ ul.p_n-list li a:hover {
 
 .modern-footer-social-icon:hover {
 	background: #2793fd33;
-	color: #095d40;
+	color: #fff;
 }
 
 .modern-footer-contact {
@@ -2187,7 +2187,7 @@ ul.p_n-list li a:hover {
 }
 
 .modern-btn:hover {
-	background: #095d40;
+	background: #1565C0;
 	color: #fff;
 	box-shadow: 0 2px 14px #095d4077;
 }

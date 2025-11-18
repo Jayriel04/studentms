@@ -1,74 +1,93 @@
 <?php
 session_start();
-error_reporting(0);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 include('includes/dbconnection.php');
 
 if (isset($_POST['signup'])) {
     $message = '';
-    $stuid = $_POST['stuid'];
+    $message_type = 'danger';
+    $stuid = $_POST['stuid'] ?? '';
 
     // Server-side validation for student ID format
     if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
         $message = 'Invalid Student ID format. Please use the format: 222 - 08410.';
         $message_type = 'danger';
     } else {
-
-    $familyname = $_POST['familyname'];
-    $firstname = $_POST['firstname'];
-    $middlename = $_POST['middlename'];
-    $email = $_POST['email'];
-    // Use modern password hashing instead of md5
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-    // Sanitize filename for security
-    $profilepic_name = basename($_FILES['profilepic']['name']);
-    $sanitized_pic_name = time() . '_' . preg_replace("/[^a-zA-Z0-9._-]/", "_", $profilepic_name);
-    $profilepic_folder = "../admin/images/" . $sanitized_pic_name;
-
-    // Check if student already exists
-    $sql = "SELECT ID FROM tblstudent WHERE StuID=:stuid OR EmailAddress=:email";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-    $query->bindParam(':email', $email, PDO::PARAM_STR);
-    $query->execute();
-
-    if ($query->rowCount() > 0) {
-        $message = 'An account already exists with this Student ID or Email.';
-        $message_type = 'danger';
-    } else {
-        // Move uploaded file
-        if (!empty($_FILES['profilepic']['tmp_name']) && move_uploaded_file($_FILES['profilepic']['tmp_name'], $profilepic_folder)) {
-            $sql = "INSERT INTO tblstudent (StuID, FamilyName, FirstName, MiddleName, EmailAddress, Password, Image, Status, YearLevel) 
-                    VALUES (:stuid, :familyname, :firstname, :middlename, :email, :password, :image, 1, NULL)";
-            $query = $dbh->prepare($sql);
-            $query->bindParam(':stuid', $stuid);
-            $query->bindParam(':familyname', $familyname);
-            $query->bindParam(':firstname', $firstname);
-            $query->bindParam(':middlename', $middlename);
-            $query->bindParam(':email', $email);
-            $query->bindParam(':password', $password);
-            $query->bindParam(':image', $sanitized_pic_name);
-
-            if ($query->execute()) {
-                $lastInsertId = $dbh->lastInsertId();
-
-                // Automatically log the user in
-                $_SESSION['sturecmsstuid'] = $stuid;
-                $_SESSION['sturecmsuid'] = $lastInsertId;
-                $_SESSION['login'] = $stuid;
-
-                // Redirect to the dashboard instead of the login page
-                header('Location: dashboard.php');
-                exit;
-            } else {
-                $message = 'Something went wrong. Please try again.';
-                $message_type = 'danger';
-            }
-        } else {
-            $message = 'Profile picture upload failed. Please try again.';
+        $familyname = $_POST['familyname'] ?? '';
+        $firstname = $_POST['firstname'] ?? '';
+        $middlename = $_POST['middlename'] ?? '';
+        $email = $_POST['email'] ?? '';
+        
+        // Validate required fields
+        if (empty($familyname) || empty($firstname) || empty($email) || empty($_POST['password'])) { // Add this check
+            $message = 'Please fill in all required fields.';
             $message_type = 'danger';
+        } elseif (strlen($_POST['password']) < 5) {
+            $message = 'Password must be at least 5 characters long.';
+            $message_type = 'danger';
+        } else {
+            // Use modern password hashing instead of md5
+            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+            // Check if student already exists
+            $sql = "SELECT ID FROM tblstudent WHERE StuID=:stuid OR EmailAddress=:email";
+            $query = $dbh->prepare($sql);
+            $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+            $query->bindParam(':email', $email, PDO::PARAM_STR);
+            $query->execute();
+
+            if ($query->rowCount() > 0) {
+                $message = 'An account already exists with this Student ID or Email.';
+                $message_type = 'danger';
+            } else {
+                $sanitized_pic_name = null; // Default to no image
+
+                // Handle optional profile picture upload
+                if (!empty($_FILES['profilepic']['name'])) {
+                    $profilepic_name = basename($_FILES['profilepic']['name']);
+                    $sanitized_pic_name = time() . '_' . preg_replace("/[^a-zA-Z0-9._-]/", "_", $profilepic_name);
+                    
+                    $images_dir = "../admin/images/";
+                    if (!is_dir($images_dir)) {
+                        mkdir($images_dir, 0755, true);
+                    }
+                    $profilepic_folder = $images_dir . $sanitized_pic_name;
+
+                    if (!move_uploaded_file($_FILES['profilepic']['tmp_name'], $profilepic_folder)) {
+                        $message = 'Profile picture upload failed. Please try again.';
+                        $message_type = 'danger';
+                        $sanitized_pic_name = null; // Ensure it's null on failure
+                    }
+                }
+
+                // Proceed if there was no upload error
+                if (empty($message)) {
+                    $sql = "INSERT INTO tblstudent (StuID, FamilyName, FirstName, MiddleName, EmailAddress, Password, Image) 
+                            VALUES (:stuid, :familyname, :firstname, :middlename, :email, :password, :image)";
+                    $query = $dbh->prepare($sql);
+                    $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+                    $query->bindParam(':familyname', $familyname, PDO::PARAM_STR);
+                    $query->bindParam(':firstname', $firstname, PDO::PARAM_STR);
+                    $query->bindParam(':middlename', $middlename, PDO::PARAM_STR); // This was missing
+                    $query->bindParam(':email', $email, PDO::PARAM_STR);
+                    $query->bindParam(':password', $password, PDO::PARAM_STR);
+                    $query->bindParam(':image', $sanitized_pic_name, PDO::PARAM_STR);
+
+                    if ($query->execute()) {
+                        $lastInsertId = $dbh->lastInsertId();
+                        $_SESSION['sturecmsstuid'] = $stuid;
+                        $_SESSION['sturecmsuid'] = $lastInsertId;
+                        $_SESSION['login'] = $stuid;
+                        header('Location: dashboard.php');
+                        exit;
+                    } else {
+                        $message = 'Database error: ' . $query->errorInfo()[2];
+                        $message_type = 'danger';
+                    }
+                }
+            }
         }
-    }
     }
 }
 ?>
@@ -137,10 +156,11 @@ if (isset($_POST['signup'])) {
                         <input type="password" id="password" name="password" placeholder="Password" required="true">
                         <button type="button" class="toggle-password" onclick="togglePassword()">SHOW</button>
                     </div>
+                    <div id="password-strength" style="margin-top: 5px; font-size: 12px; text-align: left;"></div>
                 </div>
                 <div class="input-group">
                     <label for="profilepic" style="font-weight: 500; font-size: 13px; color: #333;">Profile Picture</label>
-                    <input type="file" name="profilepic" id="profilepic" class="form-control" accept="image/*" required style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: #f8f8f8;">
+                    <input type="file" name="profilepic" id="profilepic" class="form-control" accept="image/*" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: #f8f8f8;">
                 </div>
 
                 <button class="btn btn-primary" name="signup" type="submit">Sign Up</button>
@@ -153,5 +173,24 @@ if (isset($_POST['signup'])) {
         </div>
     </div>
     <script src="js/login-new.js"></script>
+    <script>
+        const passwordInput = document.getElementById('password');
+        const passwordStrengthDiv = document.getElementById('password-strength');
+        const signupButton = document.querySelector('button[name="signup"]');
+
+        passwordInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+            if (password.length === 0) {
+                passwordStrengthDiv.innerHTML = '';
+                signupButton.disabled = false;
+            } else if (password.length < 5) {
+                passwordStrengthDiv.innerHTML = '<span style="color: red;">Weak: Password must be at least 5 characters.</span>';
+                signupButton.disabled = true;
+            } else {
+                passwordStrengthDiv.innerHTML = '<span style="color: green;">Strong</span>';
+                signupButton.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>

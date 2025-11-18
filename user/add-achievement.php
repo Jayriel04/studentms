@@ -285,7 +285,8 @@ if (isset($_POST['add_achievement'])) {
                           <?php endif; ?>
                         </div>
                         <div class="mt-2">
-                          <button type="button" id="loadMoreTags" class="btn btn-sm btn-outline-info">Load more</button>
+                          <button type="button" id="loadMoreTags" class="btn btn-sm btn-outline-info" style="display: none;">Load more</button>
+                          <button type="button" id="loadBackTags" class="btn btn-sm btn-outline-info" style="display: none;">Show Recent</button>
                           <button type="button" id="addCustomTag" class="btn btn-sm btn-outline-primary"
                             data-toggle="modal" data-target="#addTagModal">Add Tag</button>
                         </div>
@@ -408,7 +409,9 @@ if (isset($_POST['add_achievement'])) {
             $list.append($item);
           });
         }
-        $('#loadMoreTags').toggle(filtered.length > start + pageSize);
+        var hasMore = filtered.length > start + pageSize;
+        $('#loadMoreTags').toggle(hasMore);
+        $('#loadBackTags').toggle(!hasMore && currentPage > 1);
       }
 
       $('#skillSearch').on('input', debounce(function () {
@@ -417,6 +420,11 @@ if (isset($_POST['add_achievement'])) {
       }, 250));
 
       $('#clearSkillSearch').on('click', function () { $('#skillSearch').val(''); currentQuery = ''; renderSuggestions(true); });
+
+      $('#loadBackTags').on('click', function() {
+        currentPage = 1;
+        renderSuggestions(true);
+      });
 
       $('#loadMoreTags').on('click', function () { currentPage++; renderSuggestions(false); });
 
