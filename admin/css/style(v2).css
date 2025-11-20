@@ -149,9 +149,9 @@ body {
 .report-card .card-link:hover { opacity: 1; }
 
 .report-card.bg-c-danger { background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%) !important; }
-.report-card.bg-c-primary { background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%) !important; }
-.report-card.bg-c-success { background: linear-gradient(135deg, #00bfa5 0%, #00796b 100%) !important; }
-.report-card.bg-c-warning { background: linear-gradient(135deg, #f57c00 0%, #e65100 100%) !important; }
+.report-card.bg-c-primary { background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%) !important; }
+.report-card.bg-c-success { background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%) !important; }
+.report-card.bg-c-warning { background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%) !important; }
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
