@@ -2,11 +2,76 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
+
 if (strlen($_SESSION['sturecmsstaffid']) == 0) {
   header('location:logout.php');
-} else {
-  $q = isset($_GET['q']) ? trim($_GET['q']) : '';
-  ?>
+}
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// Include PHPMailer and mail config
+require_once __DIR__ . '/../vendor/autoload.php';
+include_once __DIR__ . '/../includes/mail_config.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
+    $toEmail = $_POST['student_email'];
+    $recipientStuID = $_POST['student_stuid'];
+    $subject = $_POST['subject'];
+    $messageBody = $_POST['message'];
+
+    $mail = new PHPMailer(true);
+    try {
+        //Server settings
+        $mail->isSMTP();
+        $mail->Host       = $MAIL_HOST;
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $MAIL_USERNAME;
+        $mail->Password   = $MAIL_PASSWORD;
+        $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = $MAIL_PORT;
+
+        //Recipients
+        $fromEmail = !empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME;
+        $fromName = !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System';
+        $mail->setFrom($fromEmail, $fromName);
+        $mail->addAddress($toEmail);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body    = nl2br($messageBody);
+        $mail->AltBody = $messageBody;
+
+        $mail->send();
+        $_SESSION['flash_message'] = 'Message has been sent successfully.';
+
+        // Also save the message to the database
+        try {
+            $senderID = $_SESSION['sturecmsstaffid'];
+            $senderType = 'staff';
+            $isRead = 0; // 0 for unread
+
+            $sql = "INSERT INTO tblmessages (SenderID, SenderType, RecipientStuID, Subject, Message, IsRead, Timestamp) VALUES (:sender_id, :sender_type, :recipient_stuid, :subject, :message, :is_read, NOW())";
+            $stmt = $dbh->prepare($sql);
+            $stmt->bindParam(':sender_id', $senderID, PDO::PARAM_INT);
+            $stmt->bindParam(':sender_type', $senderType, PDO::PARAM_STR);
+            $stmt->bindParam(':recipient_stuid', $recipientStuID, PDO::PARAM_STR);
+            $stmt->bindParam(':subject', $subject, PDO::PARAM_STR);
+            $stmt->bindParam(':message', $messageBody, PDO::PARAM_STR);
+            $stmt->bindParam(':is_read', $isRead, PDO::PARAM_INT);
+            $stmt->execute();
+        } catch (Exception $e) {
+            // Optionally, handle DB insertion error, though the email might have sent.
+        }
+    } catch (Exception $e) {
+        $_SESSION['flash_message_error'] = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
+    // Redirect to the same page to avoid form resubmission
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+?>
   <!DOCTYPE html>
   <html lang="en">
 
@@ -20,6 +85,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <link rel="stylesheet" href="./vendors/daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="./vendors/chartist/chartist.min.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="./css/style(v2).css">
   </head>
 
@@ -45,7 +111,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                   <div class="card-body">
                     <div class="responsive-search-form">
                       <form method="get" class="form-inline" style="gap: 0.5rem;">
-                        <input id="searchdata" type="text" name="searchdata" class="form-control"
+                        <input id="searchdata" type="text" name="searchdata" class="form-control"  style="width: 85%;"
                           placeholder="Search by Student ID, Name, or Skill"
                           value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
                         <button type="submit" class="btn btn-primary" id="submit">Search</button>
@@ -83,10 +149,9 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                             <th class="font-weight-bold">First Name</th>
                             <th class="font-weight-bold">Program</th>
                             <th class="font-weight-bold">Gender</th>
-                            <th class="font-weight-bold">Email Address</th>
                             <th class="font-weight-bold">Status</th>
                             <?php if (isset($isSkillSearch) && $isSkillSearch) { ?>
-                              <th class="font-weight-bold">Total Points</th>
+                              <th class="font-weight-bold">Skill</th>
                             <?php } ?>
                             <th class="font-weight-bold">Action</th>
                           </tr>
@@ -144,25 +209,28 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                   }
                                   ?></td>
                                   <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                  <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                                  <td data-label="Skill Points"><?php echo isset($row->totalPoints) ? htmlentities($row->totalPoints) : '0'; ?></td>
+                                  <td data-label="Skill"><?php echo isset($skill->name) ? htmlentities($skill->name) : ''; ?></td>
                                   <td data-label="Action">
                                     <div style="display: flex; gap: 0.5rem;">
                                       <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-success btn-xs">View</a>
                                       <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-info btn-xs">Edit</a>
-                                      <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
-                                        class="btn btn-warning btn-xs"><?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?></a>
-                                      <!-- Validate Achievements moved to sidebar -->
+                                      <?php if (isset($row->Status) && $row->Status == 1): ?>
+                                        <button type="button" class="btn btn-warning btn-xs message-btn" data-toggle="modal" data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>" data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>" data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
+                                      <?php else: ?>
+                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-secondary btn-xs">
+                                          Activate
+                                        </a>
+                                      <?php endif; ?>
                                     </div>
                                   </td>
                                 </tr>
                                 <?php $cnt++;
                               }
                             } else { ?>
-                              <tr>
+                              <tr class="text-center">
                                 <td colspan="10" style="text-align: center; color: red;">No record found against this search
                                 </td>
                               </tr>
@@ -215,23 +283,25 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                   ?></td>
                                   <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
                                   <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
-                                  <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Action">
                                     <div style="display: flex; gap: 0.5rem;">
                                       <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-success btn-xs">View</a>
-                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
-                                        class="btn btn-info btn-xs">Edit</a>
-                                      <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
-                                        class="btn btn-warning btn-xs"><?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?></a>
-                                      <!-- Validate Achievements moved to sidebar -->
+                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="btn btn-info btn-xs">Edit</a> 
+                                      <?php if (isset($row->Status) && $row->Status == 1): ?>
+                                        <button type="button" class="btn btn-warning btn-xs message-btn" data-toggle="modal" data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>" data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>" data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
+                                      <?php else: ?>
+                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-secondary btn-xs">
+                                          Activate
+                                        </a>
+                                      <?php endif; ?>
                                     </div>
                                   </td>
                                 </tr>
                                 <?php
                                 $cnt++;
                               }
-                            } else { ?>
+                            } else { ?> 
                               <tr>
                                 <td colspan="9" style="text-align: center; color: red;">No record found against this search
                                 </td>
@@ -281,15 +351,63 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
         </div>
       </div>
     </div>
+
+    <!-- Message Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="messageModalLabel">Send Message to <span id="studentName"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form method="post">
+            <div class="modal-body">
+              <input type="hidden" name="student_email" id="studentEmail">
+              <input type="hidden" name="student_stuid" id="studentStuID">
+              <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" class="form-control" id="subject" name="subject" required>
+              </div>
+              <div class="form-group">
+                <label for="message">Message</label>
+                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" name="send_message" class="btn btn-primary">Send Message</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="./vendors/chart.js/Chart.min.js"></script>
     <script src="./vendors/moment/moment.min.js"></script>
     <script src="./vendors/daterangepicker/daterangepicker.js"></script>
     <script src="./vendors/chartist/chartist.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="./js/dashboard.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          var messageButtons = document.querySelectorAll('.message-btn');
+          messageButtons.forEach(function(button) {
+              button.addEventListener('click', function() {
+                  document.getElementById('studentEmail').value = this.getAttribute('data-email');
+                  document.getElementById('studentName').innerText = this.getAttribute('data-name');
+                  document.getElementById('studentStuID').value = this.getAttribute('data-stuid');
+              });
+          });
+
+          <?php if(isset($_SESSION['flash_message'])): ?> toastr.success('<?php echo $_SESSION['flash_message']; ?>'); <?php unset($_SESSION['flash_message']); endif; ?>
+          <?php if(isset($_SESSION['flash_message_error'])): ?> toastr.error('<?php echo $_SESSION['flash_message_error']; ?>'); <?php unset($_SESSION['flash_message_error']); endif; ?>
+      });
+    </script>
   </body>
 
   </html>
-<?php } ?>

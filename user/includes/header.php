@@ -10,6 +10,31 @@
     </a>
   </div>
   <?php
+  // Handle AJAX request to mark notifications as read
+  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_read_type']) && isset($_POST['id'])) {
+    $type = $_POST['mark_read_type'];
+    $id = $_POST['id'];
+    $stuid = $_SESSION['sturecmsstuid'];
+    $update_sql = "";
+  
+    if ($type === 'achievement') {
+      $update_sql = "UPDATE student_achievements SET is_read = 1 WHERE id = :id AND StuID = :stuid";
+    } elseif ($type === 'message') {
+      $update_sql = "UPDATE tblmessages SET IsRead = 1 WHERE ID = :id AND RecipientStuID = :stuid";
+    }
+  
+    if ($update_sql) {
+      $update_query = $dbh->prepare($update_sql);
+      $update_query->bindParam(':id', $id, PDO::PARAM_INT);
+      $update_query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+      $update_query->execute();
+      echo "success";
+      exit; // Stop further script execution
+    }
+    echo "error";
+    exit;
+  } ?>
+  <?php
   $uid = $_SESSION['sturecmsuid'];
   $sql = "SELECT * FROM tblstudent WHERE ID=:uid";
   $query = $dbh->prepare($sql);
@@ -28,18 +53,30 @@
         </h5>
         <ul class="navbar-nav navbar-nav-right ml-auto">
           <?php
-            // Fetch count of rejected achievements with reasons for the logged-in student
-            $rejected_sql = "SELECT COUNT(id) as count FROM student_achievements WHERE StuID = :stuid AND status = 'rejected' AND rejection_reason IS NOT NULL";
-            $rejected_query = $dbh->prepare($rejected_sql);
-            $rejected_query->bindParam(':stuid', $_SESSION['sturecmsstuid'], PDO::PARAM_STR);
-            $rejected_query->execute();
-            $rejected_count = $rejected_query->fetch(PDO::FETCH_OBJ)->count;
+          // Fetch count of unread rejected achievements
+          $rejected_sql = "SELECT COUNT(id) as count FROM student_achievements WHERE StuID = :stuid AND status = 'rejected' AND rejection_reason IS NOT NULL AND is_read = 0";
+          $rejected_query = $dbh->prepare($rejected_sql);
+          $rejected_query->bindParam(':stuid', $_SESSION['sturecmsstuid'], PDO::PARAM_STR);
+          $rejected_query->execute();
+          $rejected_count = (int) $rejected_query->fetch(PDO::FETCH_OBJ)->count;
+
+          // Fetch count of unread messages
+          $messages_sql = "SELECT COUNT(ID) as count FROM tblmessages WHERE RecipientStuID = :stuid AND IsRead = 0";
+          $messages_query = $dbh->prepare($messages_sql);
+          $messages_query->bindParam(':stuid', $_SESSION['sturecmsstuid'], PDO::PARAM_STR);
+          $messages_query->execute();
+          $messages_count = (int) $messages_query->fetch(PDO::FETCH_OBJ)->count;
+
+          // Combine counts for the badge
+          $total_notifications = $rejected_count + $messages_count;
           ?>
           <li class="nav-item">
             <a class="nav-link notification-icon-wrapper" onclick="toggleNotificationModal()">
               <span style="font-size: 25px;">🔔</span>
-              <?php if ($rejected_count > 0): ?>
-                <span class="notification-badge"><?php echo $rejected_count; ?></span>
+              <?php if ($total_notifications > 0): ?>
+                <span class="notification-badge">
+                  <?php echo $total_notifications; ?>
+                </span>
               <?php endif; ?>
             </a>
           </li>
@@ -79,42 +116,96 @@
       </div>
       <div class="notification-modal-body">
         <?php
-          $rejected_achievements_sql = "SELECT level, category, status, rejection_reason, created_at FROM student_achievements WHERE StuID = :stuid AND status = 'rejected' AND rejection_reason IS NOT NULL ORDER BY created_at DESC";
-          $rejected_achievements_query = $dbh->prepare($rejected_achievements_sql);
-          $rejected_achievements_query->bindParam(':stuid', $_SESSION['sturecmsstuid'], PDO::PARAM_STR);
-          $rejected_achievements_query->execute();
-          $rejected_achievements = $rejected_achievements_query->fetchAll(PDO::FETCH_OBJ);
+        // Fetch unread messages
+        $messages_list_sql = "
+            SELECT 
+                m.ID, m.Subject, m.Message, m.Timestamp, m.SenderType, m.SenderID, m.IsRead,
+                CASE
+                    WHEN m.SenderType = 'admin' THEN a.AdminName
+                    WHEN m.SenderType = 'staff' THEN s.StaffName
+                    ELSE 'System'
+                END AS SenderName
+    FROM (SELECT * FROM tblmessages WHERE RecipientStuID = :stuid ORDER BY Timestamp DESC LIMIT 10) m
+            LEFT JOIN tbladmin a ON m.SenderID = a.ID AND m.SenderType = 'admin'
+            LEFT JOIN tblstaff s ON m.SenderID = s.ID AND m.SenderType = 'staff'
+            WHERE m.RecipientStuID = :stuid
+            ORDER BY m.Timestamp DESC";
+        $messages_list_query = $dbh->prepare($messages_list_sql);
+        $messages_list_query->bindParam(':stuid', $_SESSION['sturecmsstuid'], PDO::PARAM_STR);
+        $messages_list_query->execute();
+        $messages = $messages_list_query->fetchAll(PDO::FETCH_OBJ);
 
-          if ($rejected_achievements_query->rowCount() > 0) {
-            foreach ($rejected_achievements as $achievement) {
-              // Create a unique ID for each collapsible element
-              $details_id = 'details-' . uniqid();
-        ?>
-              <div class="notification-item">
-                <div class="notification-item-header">
-                  <strong class="notification-type">Achievement Rejected</strong>
-                  <a href="javascript:void(0);" class="see-more-link" data-read="false" onclick="toggleNotificationDetails('<?php echo $details_id; ?>', this)">See more</a>
-                </div>
-                <div class="notification-summary">
-                  Your submission for a/an "<?php echo htmlentities($achievement->level); ?>" level achievement in the "<?php echo htmlentities($achievement->category); ?>" category was not approved.
-                </div>
-                <div id="<?php echo $details_id; ?>" class="notification-details" style="display: none;">
-                  <p class="reason">
-                    <strong>Rejection Reason:</strong>
-                    <?php echo htmlentities($achievement->rejection_reason); ?>
-                  </p>
-                  <p class="meta">Submitted on: <?php echo date('F j, Y, g:i a', strtotime($achievement->created_at)); ?></p>
-                </div>
+        // Fetch unread rejected achievements
+        $rejected_achievements_sql = "SELECT id, level, category, rejection_reason, created_at, is_read FROM student_achievements WHERE StuID = :stuid AND status = 'rejected' AND rejection_reason IS NOT NULL ORDER BY created_at DESC LIMIT 10";
+        $rejected_achievements_query = $dbh->prepare($rejected_achievements_sql);
+        $rejected_achievements_query->bindParam(':stuid', $_SESSION['sturecmsstuid'], PDO::PARAM_STR);
+        $rejected_achievements_query->execute();
+        $rejected_achievements = $rejected_achievements_query->fetchAll(PDO::FETCH_OBJ);
+
+        if (empty($messages) && empty($rejected_achievements)) {
+          echo "<p>No new notifications found.</p>";
+        } else {
+          // Display new messages
+          foreach ($messages as $message) {
+            $details_id = 'msg-details-' . $message->ID;
+            $is_unread = $message->IsRead == 0;
+            ?>
+            <div class="notification-item <?php if ($is_unread) echo 'unread-notification'; ?>">
+              <div class="notification-item-header">
+                <strong class="notification-type">New Message</strong>
+                <a href="javascript:void(0);" class="see-more-link" data-read="<?php echo $is_unread ? 'false' : 'true'; ?>"
+                  onclick="toggleMessageDetails('<?php echo $details_id; ?>', this, <?php echo $message->ID; ?>)">See
+                  more</a>
               </div>
-        <?php
-            }
-          } else {
-            echo "<p>No notifications found.</p>";
+              <div class="notification-summary">
+                From: <strong><?php echo htmlentities($message->SenderName); ?></strong><br>
+                Subject: <?php echo htmlentities($message->Subject); ?>
+              </div>
+              <div id="<?php echo $details_id; ?>" class="notification-details" style="display: none;">
+                <p class="reason" style="white-space: pre-wrap;"><?php echo htmlentities($message->Message); ?></p>
+                <p class="meta">Received on: <?php echo date('F j, Y, g:i a', strtotime($message->Timestamp)); ?></p>
+              </div>
+            </div>
+            <?php
           }
+
+          // Display rejected achievements
+          foreach ($rejected_achievements as $achievement) {
+            $details_id = 'ach-details-' . $achievement->id;
+            $is_unread = $achievement->is_read == 0;
+            ?>
+            <div class="notification-item <?php if ($is_unread) echo 'unread-notification'; ?>">
+              <div class="notification-item-header">
+                <strong class="notification-type">Achievement Rejected</strong>
+                <a href="javascript:void(0);" class="see-more-link" data-read="<?php echo $is_unread ? 'false' : 'true'; ?>"
+                  onclick="toggleAchievementDetails('<?php echo $details_id; ?>', this, <?php echo $achievement->id; ?>)">See
+                  more</a>
+              </div>
+              <div class="notification-summary">
+                Your submission for a/an "<?php echo htmlentities($achievement->level); ?>" level achievement in the
+                "<?php echo htmlentities($achievement->category); ?>" category was not approved.
+              </div>
+              <div id="<?php echo $details_id; ?>" class="notification-details" style="display: none;">
+                <p class="reason">
+                  <strong>Rejection Reason:</strong>
+                  <?php echo htmlentities($achievement->rejection_reason); ?>
+                </p>
+                <p class="meta">Submitted on: <?php echo date('F j, Y, g:i a', strtotime($achievement->created_at)); ?></p>
+              </div>
+            </div>
+            <?php
+          }
+        }
         ?>
       </div>
     </div>
   </div>
+
+  <style>
+    .unread-notification {
+      background-color: #f0f8ff; /* A light blue background for unread items */
+    }
+  </style>
 
   <script>
     function toggleNotificationModal() {
@@ -122,24 +213,9 @@
       if (modal) modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
     }
 
-    function toggleNotificationDetails(id, link) {
+    function toggleDetails(id, link) {
       var details = document.getElementById(id);
       if (details) {
-        // Check if the notification has been read before
-        if (link.getAttribute('data-read') === 'false') {
-          link.setAttribute('data-read', 'true'); // Mark as read
-
-          // Decrement the badge count
-          var badge = document.querySelector('.notification-badge');
-          if (badge) {
-            var currentCount = parseInt(badge.textContent, 10);
-            if (currentCount > 1) {
-              badge.textContent = currentCount - 1;
-            } else {
-              badge.style.display = 'none'; // Hide badge when count is zero
-            }
-          }
-        }
         if (details.style.display === 'none') {
           details.style.display = 'block';
           link.textContent = 'See less';
@@ -149,7 +225,50 @@
         }
       }
     }
+
+    function markNotificationAsRead(link) {
+      if (link.getAttribute('data-read') === 'false') {
+        link.setAttribute('data-read', 'true'); // Mark as read
+        var badge = document.querySelector('.notification-badge');
+        if (badge) {
+          var currentCount = parseInt(badge.textContent, 10);
+          if (currentCount > 1) {
+            badge.textContent = currentCount - 1;
+          } else {
+            badge.style.display = 'none';
+          }
+        }
+      }
+    }
+
+    function toggleAchievementDetails(elementId, link, achievementId) {
+      toggleDetails(elementId, link);
+      if (link.getAttribute('data-read') === 'false') {
+        link.closest('.notification-item').classList.remove('unread-notification');
+        markNotificationAsRead(link);
+        // AJAX call to mark achievement as read
+        fetch(window.location.pathname, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'mark_read_type=achievement&id=' + achievementId
+        });
+      }
+    }
+
+    function toggleMessageDetails(elementId, link, messageId) {
+      toggleDetails(elementId, link);
+      if (link.getAttribute('data-read') === 'false') {
+        link.closest('.notification-item').classList.remove('unread-notification');
+        markNotificationAsRead(link);
+        // AJAX call to mark message as read
+        fetch(window.location.pathname, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'mark_read_type=message&id=' + messageId
+        });
+      }
+    }
     // Close modal if user clicks outside of it
-    window.onclick = function(event) { if (event.target == document.getElementById('notificationModal')) { toggleNotificationModal(); } }
+    window.onclick = function (event) { if (event.target == document.getElementById('notificationModal')) { toggleNotificationModal(); } }
   </script>
 </nav>

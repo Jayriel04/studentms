@@ -4,10 +4,79 @@ error_reporting(0);
 include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
   header('location:logout.php');
-} else {
-  $q = isset($_GET['q']) ? trim($_GET['q']) : '';
+}
 
-  // AJAX suggestions endpoint: returns JSON list of students matching term
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// Include PHPMailer
+require_once __DIR__ . '/../vendor/autoload.php';
+include_once __DIR__ . '/../includes/mail_config.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
+    $toEmail = $_POST['student_email'];
+    $recipientStuID = $_POST['student_stuid'];
+    $subject = $_POST['subject'];
+    $messageBody = $_POST['message'];
+
+    $mail = new PHPMailer(true);
+    try {
+        //Server settings
+        $mail->isSMTP();
+        $mail->Host       = $MAIL_HOST;
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $MAIL_USERNAME;
+        $mail->Password   = $MAIL_PASSWORD;
+        $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = $MAIL_PORT;
+
+        //Recipients
+        $fromEmail = !empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME;
+        $fromName = !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System';
+        $mail->setFrom($fromEmail, $fromName);
+        $mail->addAddress($toEmail);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body    = nl2br($messageBody);
+        $mail->AltBody = $messageBody;
+
+        $mail->send();
+        $_SESSION['flash_message'] = 'Message has been sent successfully.';
+
+        // Also save the message to the database
+        try {
+            $senderID = $_SESSION['sturecmsaid']; // Admin ID from session
+            $senderType = 'admin'; // Set sender type as admin
+            $isRead = 0; // 0 for unread
+
+            $sql = "INSERT INTO tblmessages (SenderID, SenderType, RecipientStuID, Subject, Message, IsRead, Timestamp) VALUES (:sender_id, :sender_type, :recipient_stuid, :subject, :message, :is_read, NOW())";
+            $stmt = $dbh->prepare($sql);
+            $stmt->bindParam(':sender_id', $senderID, PDO::PARAM_INT);
+            $stmt->bindParam(':sender_type', $senderType, PDO::PARAM_STR);
+            $stmt->bindParam(':recipient_stuid', $recipientStuID, PDO::PARAM_STR);
+            $stmt->bindParam(':subject', $subject, PDO::PARAM_STR);
+            $stmt->bindParam(':message', $messageBody, PDO::PARAM_STR);
+            $stmt->bindParam(':is_read', $isRead, PDO::PARAM_INT);
+            $stmt->execute();
+        } catch (Exception $e) {
+            // Optionally, handle DB insertion error, though the email might have sent.
+        }
+    } catch (Exception $e) {
+        $_SESSION['flash_message_error'] = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
+    // Redirect to the same page to avoid form resubmission
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
+
+
+if (true) {
+    $q = isset($_GET['q']) ? trim($_GET['q']) : '';
+
+    // AJAX suggestions endpoint: returns JSON list of students matching term
   if (isset($_GET['suggest'])) {
     header('Content-Type: application/json');
     $term = isset($_GET['term']) ? trim($_GET['term']) : '';
@@ -42,6 +111,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
     <link rel="stylesheet" href="./vendors/chartist/chartist.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   </head>
 
   <body>
@@ -108,7 +178,6 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                             <th class="font-weight-bold">First Name</th>
                             <th class="font-weight-bold">Program</th>
                             <th class="font-weight-bold">Gender</th>
-                            <th class="font-weight-bold">Email Address</th>
                             <th class="font-weight-bold">Status</th>
                             <?php if (isset($isSkillSearch) && $isSkillSearch) { ?>
                               <th class="font-weight-bold">Skill</th>
@@ -158,7 +227,6 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                                   <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td><td data-label="Program">
                                   <?php
                                   $program_full = htmlentities($row->Program);
-                                  // Use regex to find acronym in parentheses
                                   if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
                                     echo $matches[1];
                                   } else {
@@ -166,7 +234,6 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                                   } ?>
                                 </td>
                                   <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                  <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Skill"><?php echo isset($skill->name) ? htmlentities($skill->name) : ''; ?></td>
                                   <td data-label="Action">
@@ -175,18 +242,25 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                                         class="btn btn-info btn-xs">View</a>
                                       <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-primary btn-xs">Edit</a>
-                                      <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
-                                        class="btn btn-warning btn-xs">
-                                        <?php echo (isset($row->Status) && $row->Status == 1) ? 'Deactivate' : 'Activate'; ?>
-                                      </a>
+                                      <?php if (isset($row->Status) && $row->Status == 1): ?>
+                                        <button type="button" class="btn btn-warning btn-xs message-btn" 
+                                                data-toggle="modal" data-target="#messageModal" 
+                                                data-email="<?php echo htmlentities($row->EmailAddress); ?>" 
+                                                data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>"
+                                                data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
+                                      <?php else: ?>
+                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-secondary btn-xs">
+                                          Activate
+                                        </a>
+                                      <?php endif; ?>
                                     </div>
                                   </td>
                                 </tr>
                                 <?php $cnt++;
                               }
                             } else { ?>
-                              <tr>
-                                <td colspan="10" style="text-align: center; color: red;">No record found against this search
+                              <tr class="text-center">
+                                <td colspan="9" style="color: red;">No record found against this search
                                 </td>
                               </tr>
                             <?php }
@@ -235,7 +309,6 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                                   } ?>
                                 </td>
                                   <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                  <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Action">
                                     <div class="btn-group" role="group" aria-label="Actions" style="display: flex; gap: 0.5rem;">
@@ -243,19 +316,26 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
                                         class="btn btn-info btn-xs">View</a>
                                       <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-primary btn-xs">Edit</a>
-                                      <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
-                                        class="btn btn-warning btn-xs">
-                                        <?php echo (isset($row->Status) && $row->Status == 1) ? 'Deactivate' : 'Activate'; ?>
-                                      </a>
+                                      <?php if (isset($row->Status) && $row->Status == 1): ?>
+                                        <button type="button" class="btn btn-warning btn-xs message-btn" 
+                                                data-toggle="modal" data-target="#messageModal" 
+                                                data-email="<?php echo htmlentities($row->EmailAddress); ?>" 
+                                                data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>"
+                                                data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
+                                      <?php else: ?>
+                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-secondary btn-xs">
+                                          Activate
+                                        </a>
+                                      <?php endif; ?>
                                     </div>
                                   </td>
                                 </tr>
                                 <?php
                                 $cnt++;
                               }
-                            } else { ?>
-                              <tr>
-                                <td colspan="9" style="text-align: center; color: red;">No record found against this search
+                            } else { ?> 
+                              <tr class="text-center">
+                                <td colspan="8" style="color: red;">No record found against this search
                                 </td>
                               </tr>
                             <?php }
@@ -303,6 +383,38 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
         </div>
       </div>
     </div>
+
+    <!-- Message Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="messageModalLabel">Send Message to <span id="studentName"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form method="post">
+            <div class="modal-body">
+              <input type="hidden" name="student_email" id="studentEmail">
+              <input type="hidden" name="student_stuid" id="studentStuID">
+              <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" class="form-control" id="subject" name="subject" required>
+              </div>
+              <div class="form-group">
+                <label for="message">Message</label>
+                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" name="send_message" class="btn btn-primary">Send Message</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="./vendors/chart.js/Chart.min.js"></script>
     <script src="./vendors/moment/moment.min.js"></script>
@@ -311,6 +423,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="./js/dashboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
       (function () {
         function debounce(fn, delay) { var t; return function () { var ctx = this, args = arguments; clearTimeout(t); t = setTimeout(function () { fn.apply(ctx, args); }, delay); }; }
@@ -345,6 +458,29 @@ if (strlen($_SESSION['sturecmsaid']) == 0) { // Ensure admin session is checked
         // Hide suggestions when clicking outside
         document.addEventListener('click', function (e) { if (!document.getElementById('suggestions').contains(e.target) && e.target !== $input) { $suggest.innerHTML = ''; } });
       })();
+
+      // Handle message modal
+      document.addEventListener('DOMContentLoaded', function() {
+          var messageButtons = document.querySelectorAll('.message-btn');
+          messageButtons.forEach(function(button) {
+              button.addEventListener('click', function() {
+                  var studentEmail = this.getAttribute('data-email');
+                  var studentName = this.getAttribute('data-name');
+                  document.getElementById('studentEmail').value = studentEmail;
+                  document.getElementById('studentStuID').value = this.getAttribute('data-stuid');
+                  document.getElementById('studentName').innerText = studentName;
+              });
+          });
+
+          <?php if(isset($_SESSION['flash_message'])): ?>
+            toastr.success('<?php echo $_SESSION['flash_message']; ?>');
+            <?php unset($_SESSION['flash_message']); ?>
+          <?php endif; ?>
+          <?php if(isset($_SESSION['flash_message_error'])): ?>
+            toastr.error('<?php echo $_SESSION['flash_message_error']; ?>');
+            <?php unset($_SESSION['flash_message_error']); ?>
+          <?php endif; ?>
+      });
     </script>
   </body>
 
