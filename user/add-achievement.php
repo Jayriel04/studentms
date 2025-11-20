@@ -90,6 +90,7 @@ if (isset($_POST['add_achievement'])) {
     'Provincial' => 40,
     'City' => 30,
     'School' => 10,
+    'Hobby' => 1,
   );
   $points = isset($points_map[$ach_level]) ? $points_map[$ach_level] : 0;
 
@@ -256,7 +257,7 @@ if (isset($_POST['add_achievement'])) {
 
                   <form id="addAchievementForm" method="post" enctype="multipart/form-data">
                     <div class="form-group">
-                      <label>Skill / Tag</label>
+                      <label for="skillSearch">Skill / Tag</label>
                       <p class="card-description">Select one tag. Click a suggestion to choose it or add a custom tag.
                       </p>
                       <div style="margin-bottom:8px;">
@@ -285,8 +286,10 @@ if (isset($_POST['add_achievement'])) {
                           <?php endif; ?>
                         </div>
                         <div class="mt-2">
-                          <button type="button" id="loadMoreTags" class="btn btn-sm btn-outline-info" style="display: none;">Load more</button>
-                          <button type="button" id="loadBackTags" class="btn btn-sm btn-outline-info" style="display: none;">Show Recent</button>
+                          <button type="button" id="loadMoreTags" class="btn btn-sm btn-outline-info"
+                            style="display: none;">Load more</button>
+                          <button type="button" id="loadBackTags" class="btn btn-sm btn-outline-info"
+                            style="display: none;">Show Recent</button>
                           <button type="button" id="addCustomTag" class="btn btn-sm btn-outline-primary"
                             data-toggle="modal" data-target="#addTagModal">Add Tag</button>
                         </div>
@@ -297,7 +300,7 @@ if (isset($_POST['add_achievement'])) {
                     </div>
                     <div class="form-group">
                       <label>Category</label>
-                      <select name="ach_category" class="form-control">
+                      <select name="ach_category" id="ach_category" class="form-control">
                         <option value="Non-Academic">Non-Academic</option>
                         <option value="Academic">Academic</option>
                       </select>
@@ -305,6 +308,7 @@ if (isset($_POST['add_achievement'])) {
                     <div class="form-group">
                       <label>Achievement Level</label>
                       <select name="ach_level" class="form-control">
+                        <option>Hobby</option>
                         <option>School</option>
                         <option>City</option>
                         <option>Provincial</option>
@@ -421,7 +425,7 @@ if (isset($_POST['add_achievement'])) {
 
       $('#clearSkillSearch').on('click', function () { $('#skillSearch').val(''); currentQuery = ''; renderSuggestions(true); });
 
-      $('#loadBackTags').on('click', function() {
+      $('#loadBackTags').on('click', function () {
         currentPage = 1;
         renderSuggestions(true);
       });
@@ -431,11 +435,12 @@ if (isset($_POST['add_achievement'])) {
       $('#skillSuggestionsList').on('click', '.skill-sugg', function () {
         var $item = $(this).closest('.skill-item');
         var name = $item.data('name');
+        var category = $item.data('category');
         var id = $item.data('id');
-        selectTag(name, id);
+        selectTag(name, id, category);
       });
 
-      function selectTag(name, id) {
+      function selectTag(name, id, category) {
         $('#skillsContainer').empty();
         var $chip = $(
           '<span class="badge badge-pill badge-success mr-2">' + escapeHtml(name) +
@@ -444,6 +449,9 @@ if (isset($_POST['add_achievement'])) {
         $('#skillsContainer').append($chip);
         $('#skillsHidden').val(name);
         if (typeof id !== 'undefined') $('#skillsIdHidden').val(id); else $('#skillsIdHidden').val('');
+        if (typeof category !== 'undefined' && category) {
+          $('#ach_category').val(category);
+        }
       }
 
       $('#skillsContainer').on('click', '.remove-skill', function (e) { e.preventDefault(); $('#skillsContainer').empty(); $('#skillsHidden').val(''); });
@@ -468,7 +476,7 @@ if (isset($_POST['add_achievement'])) {
             if (typeof $().modal === 'function') $('#addTagModal').modal('hide'); else $('#addTagModal').hide();
             $('#tagName').val('');
             $('#tagCategory').val('Non-Academic');
-            renderSuggestions(true);
+            renderSuggestions(true); // Re-render suggestions to include the new one
             selectTag(res.name, res.tblskill_id || res.skill_id || res.id);
           } else {
             alert((res && res.msg) ? res.msg : 'Error adding tag');

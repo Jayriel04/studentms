@@ -21,6 +21,7 @@ $category_filter = isset($_REQUEST['category_filter']) ? $_REQUEST['category_fil
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_POST['id'])) {
   $id = intval($_POST['id']);
   $action = $_POST['action'];
+  $notes = isset($_POST['rejection_reason']) ? trim($_POST['rejection_reason']) : 'rejected';
   // CSRF check
   if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token_admin']) {
     $_SESSION['ach_msg_admin'] = 'Invalid CSRF token.';
@@ -93,11 +94,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
       $u->execute();
       $affected = $u->rowCount();
       if ($affected > 0) {
+        $uRejection = $dbh->prepare("UPDATE student_achievements SET rejection_reason=:reason WHERE id=:id");
+        $uRejection->bindParam(':reason', $notes, PDO::PARAM_STR);
+        $uRejection->bindParam(':id', $id, PDO::PARAM_INT);
+        $uRejection->execute();
         try {
           $chkApp = $dbh->prepare("SHOW TABLES LIKE 'achievement_approvals'");
           $chkApp->execute();
           if ($chkApp->rowCount() > 0) {
-            $notes = 'rejected';
             $ins = $dbh->prepare("INSERT INTO achievement_approvals (achievement_id, approved_by, approved_at, notes) VALUES (:aid, :staff, NOW(), :notes)");
             $ins->bindParam(':aid', $id, PDO::PARAM_INT);
             $ins->bindParam(':staff', $adminId);
@@ -190,6 +194,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
     .modal-content img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
     .close-btn {
       color: #aaa; float: right; font-size: 28px; font-weight: bold;
+      position: absolute; top: 10px; right: 20px;
+    }
+    .modal-header .close {
+      padding: 1rem; margin: -1rem -1rem -1rem auto;
       position: absolute; top: 10px; right: 20px;
     }
     .close-btn:hover, .close-btn:focus {
@@ -322,15 +330,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
                                       value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
                                   <button type="submit" class="btn btn-success btn-sm">Approve</button>
                                 </form>
-                                <form method="post" style="display:inline-block;margin-left:6px;">
-                                  <input type="hidden" name="id" value="<?php echo $r->id; ?>">
-                                  <input type="hidden" name="action" value="reject">
-                                  <input type="hidden" name="csrf_token"
-                                    value="<?php echo $_SESSION['csrf_token_admin']; ?>">
-                                  <?php if ($stuFilter) { ?><input type="hidden" name="stu"
-                                      value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
-                                  <button type="submit" class="btn btn-danger btn-sm">Reject</button>
-                                </form>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                  onclick="openRejectModal(<?php echo $r->id; ?>)">Reject</button>
                               </td>
                             </tr>
                           <?php endforeach; ?>
@@ -350,6 +351,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
             <img id="proofImage" src="" alt="Proof Image" style="width:100%">
           </div>
         </div>
+        <!-- Reject Modal -->
+        <div id="rejectModal" class="modal">
+          <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+              <h5 class="modal-title">Reason for Rejection</h5>
+              <button type="button" class="close" onclick="closeRejectModal()">&times;</button>
+            </div>
+            <form id="rejectForm" method="post">
+              <div class="modal-body">
+                <input type="hidden" name="id" id="rejectId">
+                <input type="hidden" name="action" value="reject">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token_admin']; ?>">
+                <?php if (isset($stuFilter) && $stuFilter) { ?><input type="hidden" name="stu"
+                  value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
+                <div class="form-group">
+                  <label for="rejection_reason">Please provide a reason for rejecting this achievement:</label>
+                  <textarea name="rejection_reason" id="rejection_reason" class="form-control" rows="4"
+                    required></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Cancel</button>
+                <button type="submit" class="btn btn-danger">Submit Rejection</button>
+              </div>
+            </form>
+          </div>
+        </div>
         <?php include_once('includes/footer.php'); ?>
       </div>
     </div>
@@ -365,10 +393,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
     function closeProofModal() {
       document.getElementById('proofModal').style.display = 'none';
     }
-    window.onclick = function (event) {
+    window.onclick = function(event) {
       if (event.target == document.getElementById('proofModal')) {
         closeProofModal();
       }
+      if (event.target == document.getElementById('rejectModal')) {
+        closeRejectModal();
+      }
+    }
+
+    function openRejectModal(id) {
+      document.getElementById('rejectId').value = id;
+      document.getElementById('rejectModal').style.display = 'block';
+    }
+
+    function closeRejectModal() {
+      document.getElementById('rejectModal').style.display = 'none';
+      document.getElementById('rejection_reason').value = '';
     }
   </script>
 </body>
