@@ -492,68 +492,28 @@ if (true) {
       </div>
     </div>
     <script src="vendors/js/vendor.bundle.base.js"></script>
-    <script src="./vendors/chart.js/Chart.min.js"></script>
-    <script src="./vendors/moment/moment.min.js"></script>
-    <script src="./vendors/daterangepicker/daterangepicker.js"></script>
-    <script src="./vendors/chartist/chartist.min.js"></script>
     <script src="js/off-canvas.js"></script>
-    <script src="js/misc.js"></script>
-    <script src="./js/dashboard.js"></script>
+    <script src="js/misc.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="js/script.js"></script>
     <script>
-      (function () {
-        function debounce(fn, delay) { var t; return function () { var ctx = this, args = arguments; clearTimeout(t); t = setTimeout(function () { fn.apply(ctx, args); }, delay); }; }
-        var $input = document.getElementById('searchdata');
-        var $suggest = document.getElementById('suggestions');
-
-        function render(rows) {
-          $suggest.innerHTML = '';
-          if (!rows || rows.length === 0) return;
-          rows.forEach(function (r) {
-            var item = document.createElement('a');
-            item.href = '#';
-            item.className = 'list-group-item list-group-item-action';
-            item.textContent = r.StuID + ' — ' + r.FamilyName + ', ' + r.FirstName;
-            item.dataset.stuid = r.StuID;
-            item.addEventListener('click', function (e) { e.preventDefault(); $input.value = this.dataset.stuid; document.getElementById('searchForm').submit(); });
-            $suggest.appendChild(item);
-          });
-        }
-
-        var fetchSuggestions = debounce(function () {
-          var q = $input.value.trim();
-          var url = window.location.pathname + '?suggest=1&term=' + encodeURIComponent(q);
-          fetch(url, { credentials: 'same-origin' }).then(function (res) { return res.json(); }).then(function (json) { render(json); }).catch(function () { render([]); });
-        }, 200);
-
-        $input.addEventListener('input', function () { fetchSuggestions(); });
-
-        // On focus show default list
-        $input.addEventListener('focus', function () { fetchSuggestions(); });
-
-        // Hide suggestions when clicking outside
-        document.addEventListener('click', function (e) { if (!document.getElementById('suggestions').contains(e.target) && e.target !== $input) { $suggest.innerHTML = ''; } });
-      })();
-
       // Handle message modal
       document.addEventListener('DOMContentLoaded', function () {
         var messageButtons = document.querySelectorAll('.message-btn');
         messageButtons.forEach(function (button) {
           button.addEventListener('click', function () {
-            var studentEmail = this.getAttribute('data-email');
-            var studentName = this.getAttribute('data-name');
-            document.getElementById('studentEmail').value = studentEmail;
+            document.getElementById('studentEmail').value = this.getAttribute('data-email');
             document.getElementById('studentStuID').value = this.getAttribute('data-stuid');
-            document.getElementById('studentName').innerText = studentName;
+            document.getElementById('studentName').innerText = this.getAttribute('data-name');
           });
         });
 
         <?php if (isset($_SESSION['flash_message'])): ?>
-          toastr.success('<?php echo $_SESSION['flash_message']; ?>');
+          toastr.success('<?php echo addslashes($_SESSION['flash_message']); ?>');
           <?php unset($_SESSION['flash_message']); ?>
         <?php endif; ?>
         <?php if (isset($_SESSION['flash_message_error'])): ?>
-          toastr.error('<?php echo $_SESSION['flash_message_error']; ?>');
+          toastr.error('<?php echo addslashes($_SESSION['flash_message_error']); ?>');
           <?php unset($_SESSION['flash_message_error']); ?>
         <?php endif; ?>
       });

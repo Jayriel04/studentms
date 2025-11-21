@@ -141,3 +141,56 @@ function closeModal() {
     }
   });
 })(jQuery);
+
+// Functions for search page suggestions
+(function () {
+  const searchInput = document.getElementById('searchdata');
+  if (!searchInput) return;
+
+  function debounce(fn, delay) {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
+
+  const suggestionsContainer = document.getElementById('suggestions');
+
+  function renderSuggestions(rows) {
+    suggestionsContainer.innerHTML = '';
+    if (!rows || rows.length === 0) return;
+
+    rows.forEach(function (row) {
+      const item = document.createElement('a');
+      item.href = '#';
+      item.className = 'list-group-item list-group-item-action';
+      item.textContent = `${row.StuID} — ${row.FamilyName}, ${row.FirstName}`;
+      item.dataset.stuid = row.StuID;
+      item.addEventListener('click', function (e) {
+        e.preventDefault();
+        searchInput.value = this.dataset.stuid;
+        document.getElementById('searchForm').submit();
+      });
+      suggestionsContainer.appendChild(item);
+    });
+  }
+
+  const fetchSuggestions = debounce(function () {
+    const query = searchInput.value.trim();
+    const url = `${window.location.pathname}?suggest=1&term=${encodeURIComponent(query)}`;
+    fetch(url, { credentials: 'same-origin' })
+      .then(res => res.json())
+      .then(json => renderSuggestions(json))
+      .catch(() => renderSuggestions([]));
+  }, 200);
+
+  searchInput.addEventListener('input', fetchSuggestions);
+  searchInput.addEventListener('focus', fetchSuggestions);
+
+  document.addEventListener('click', function (e) {
+    if (!suggestionsContainer.contains(e.target) && e.target !== searchInput) {
+      suggestionsContainer.innerHTML = '';
+    }
+  });
+})();
