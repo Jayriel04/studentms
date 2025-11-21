@@ -85,7 +85,7 @@ function showNoticeDetail(title, date, msg) {
   const modal = document.getElementById('noticeModal');
   if (modal) {
     document.getElementById('modalTitle').innerText = title;
-    document.getElementById('modalDate').innerText = date;
+    document.getElementById('modalDate').innerText = 'Posted on: ' + date;
     document.getElementById('modalMsg').innerHTML = msg.replace(/\\n/g, '<br>');
     modal.style.display = 'block';
   }

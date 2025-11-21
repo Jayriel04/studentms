@@ -102,8 +102,8 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                     echo '<div class="notice-list-in-cell">';
                     foreach ($noticesByDay[$day] as $notice) {
                       $title = htmlentities($notice->NoticeTitle);
-                      $date = htmlentities($notice->CreationDate);
-                      $msg = nl2br(htmlentities($notice->NoticeMsg));
+                      $date = htmlentities(date('F j, Y g:i A', strtotime($notice->CreationDate)));
+                      $msg = str_replace(["'", "\r", "\n"], ["\\'", "", "\\n"], htmlentities($notice->NoticeMsg));
                       echo '<div class="notice-item" onclick="showNoticeDetail(\'' . $title . '\', \'' . $date . '\', \'' . str_replace(array("\r", "\n", "'"), array(" ", "\\n", "\\'"), $msg) . '\')">';
                       echo '<span class="notice-dot"></span><span class="notice-title">' . $title . '</span>';
                       echo '</div>';
@@ -140,7 +140,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
       function showNoticeDetail(title, date, msg) {
         const modal = document.getElementById('noticeModal');
         document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalDate').innerText = date;
+        document.getElementById('modalDate').innerText = 'Posted on: ' + date;
         document.getElementById('modalMsg').innerText = msg;
         modal.style.display = 'block';
       }

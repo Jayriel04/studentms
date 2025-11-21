@@ -14,6 +14,26 @@ use PHPMailer\PHPMailer\Exception;
 require_once __DIR__ . '/../vendor/autoload.php';
 include_once __DIR__ . '/../includes/mail_config.php';
 
+// AJAX endpoint for student mentions
+if (isset($_GET['mention_suggest'])) {
+  header('Content-Type: application/json');
+  $term = isset($_GET['term']) ? trim($_GET['term']) : '';
+  $response = [];
+  if (strlen($term) > 1) {
+    try {
+      $stmt = $dbh->prepare("SELECT StuID, FamilyName, FirstName FROM tblstudent WHERE FamilyName LIKE :t OR FirstName LIKE :t LIMIT 10");
+      $like = $term . '%';
+      $stmt->bindValue(':t', $like, PDO::PARAM_STR);
+      $stmt->execute();
+      $response = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+      // Log error, but return empty array
+    }
+  }
+  echo json_encode($response);
+  exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_notice'])) {
   $nottitle = $_POST['nottitle'];
   $notmsg = $_POST['notmsg'];
@@ -24,6 +44,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_notice'])) {
   $query->execute();
   $LastInsertId = $dbh->lastInsertId();
   if ($LastInsertId > 0) {
+    // Handle mentions
+    preg_match_all('/@\[([^\]]+)\]\(([^)]+)\)/', $notmsg, $matches, PREG_SET_ORDER);
+    preg_match_all('/@\[([^\]]+)\]\(([^)]+)\)/', $_POST['notmsg'], $matches, PREG_SET_ORDER);
+    foreach ($matches as $match) {
+      $mentionedStuID = $match[2];
+      $messageSQL = "INSERT INTO tblmessages (SenderID, SenderType, SenderName, RecipientStuID, Subject, Message, IsRead, Timestamp) VALUES (:sid, 'staff', (SELECT StaffName FROM tblstaff WHERE ID=:sid), :stuid, :subject, :msg, 0, NOW())";
+      $messageStmt = $dbh->prepare($messageSQL);
+      $messageStmt->bindValue(':sid', $_SESSION['sturecmsstaffid'], PDO::PARAM_INT);
+      $messageStmt->bindValue(':stuid', $mentionedStuID, PDO::PARAM_STR);
+      $messageStmt->bindValue(':subject', "You were mentioned in a notice: " . $nottitle, PDO::PARAM_STR);
+      $messageStmt->bindValue(':msg', "You were mentioned in the notice titled '{$nottitle}'.\n\nContent:\n" . $notmsg, PDO::PARAM_STR);
+      $messageStmt->execute();
+    }
     $_SESSION['flash_message'] = "Notice has been added successfully.";
   } else {
     $_SESSION['flash_message_error'] = "Something Went Wrong while adding the notice. Please try again.";
@@ -458,6 +491,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
     <script src="js/script.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script src="js/mention.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
           var messageButtons = document.querySelectorAll('.message-btn');
@@ -468,6 +502,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                   document.getElementById('studentStuID').value = this.getAttribute('data-stuid');
               });
           });
+
+          // Initialize mention functionality on the notice message textarea
+          const notemsgTextarea = document.getElementById('notmsg');
+          if(notemsgTextarea) {
+            initializeMention(notemsgTextarea, 'search.php?mention_suggest=1');
+          }
 
           <?php if(isset($_SESSION['flash_message'])): ?> toastr.success('<?php echo $_SESSION['flash_message']; ?>'); <?php unset($_SESSION['flash_message']); endif; ?>
           <?php if(isset($_SESSION['flash_message_error'])): ?> toastr.error('<?php echo $_SESSION['flash_message_error']; ?>'); <?php unset($_SESSION['flash_message_error']); endif; ?>
