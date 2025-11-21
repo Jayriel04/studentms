@@ -10,7 +10,7 @@ function initializeMention(textarea, suggestionUrl) {
             suggestionsBox.style.position = 'absolute';
             suggestionsBox.style.zIndex = '1050';
             suggestionsBox.style.maxHeight = '200px';
-            suggestions.style.width = '250px';
+            suggestionsBox.style.width = '250px';
             suggestionsBox.style.overflowY = 'auto';
             textarea.parentNode.insertBefore(suggestionsBox, textarea.nextSibling);
         }
@@ -45,7 +45,7 @@ function initializeMention(textarea, suggestionUrl) {
             suggestionsBox.appendChild(item);
         });
 
-        // Position the box - this is a simple positioning, might need adjustment
+        // Position the box
         const rect = textarea.getBoundingClientRect();
         const parentRect = textarea.parentNode.getBoundingClientRect();
         suggestionsBox.style.top = `${rect.bottom - parentRect.top}px`;
@@ -70,7 +70,6 @@ function initializeMention(textarea, suggestionUrl) {
 
         if (atPos !== -1 && (atPos === 0 || /\s/.test(text[atPos - 1]))) {
             const query = text.substring(atPos + 1, cursorPos);
-            // Avoid fetching for empty query or if it contains spaces
             if (!/\s/.test(query)) {
                 mentionStartIndex = atPos;
                 currentMentionQuery = query;
@@ -90,10 +89,8 @@ function initializeMention(textarea, suggestionUrl) {
     });
 
     textarea.addEventListener('keydown', (e) => {
-        if (suggestionsBox && suggestionsBox.style.display === 'block') {
-            if (e.key === 'Escape') {
-                hideSuggestions();
-            }
+        if (suggestionsBox && suggestionsBox.style.display === 'block' && e.key === 'Escape') {
+            hideSuggestions();
         }
     });
 

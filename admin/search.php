@@ -43,17 +43,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_notice'])) {
   $query->execute();
   $LastInsertId = $dbh->lastInsertId();
   if ($LastInsertId > 0) {
-    // Handle mentions
-    preg_match_all('/@\[([^\]]+)\]\(([^)]+)\)/', $notmsg, $matches, PREG_SET_ORDER);
-    foreach ($matches as $match) {
-      $mentionedStuID = $match[2];
-      $messageSQL = "INSERT INTO tblmessages (SenderID, SenderType, SenderName, RecipientStuID, Subject, Message, IsRead, Timestamp) VALUES (:sid, 'admin', (SELECT AdminName FROM tbladmin WHERE ID=:sid), :stuid, :subject, :msg, 0, NOW())";
-      $messageStmt = $dbh->prepare($messageSQL);
-      $messageStmt->bindValue(':sid', $_SESSION['sturecmsaid'], PDO::PARAM_INT);
-      $messageStmt->bindValue(':stuid', $mentionedStuID, PDO::PARAM_STR);
-      $messageStmt->bindValue(':subject', "You were mentioned in a notice: " . $nottitle, PDO::PARAM_STR);
-      $messageStmt->bindValue(':msg', "You were mentioned in the notice titled '{$nottitle}'.\n\nContent:\n" . $notmsg, PDO::PARAM_STR);
-      $messageStmt->execute();
+    // Handle mentions - extract mentions in format "@FirstName FamilyName "
+    preg_match_all('/@([A-Za-z]+)\s+([A-Za-z]+)\s/', $notmsg, $matches, PREG_SET_ORDER);
+    
+    if (!empty($matches)) {
+      foreach ($matches as $match) {
+        $firstName = trim($match[1]);
+        $familyName = trim($match[2]);
+        
+        // Get the student ID from database using first and last name
+        $studentStmt = $dbh->prepare("SELECT StuID FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
+        $studentStmt->bindValue(':fname', $firstName, PDO::PARAM_STR);
+        $studentStmt->bindValue(':lname', $familyName, PDO::PARAM_STR);
+        $studentStmt->execute();
+        $student = $studentStmt->fetch(PDO::FETCH_OBJ);
+        
+        if ($student) {
+          $mentionedStuID = $student->StuID;
+          $messageSQL = "INSERT INTO tblmessages (SenderID, SenderType, RecipientStuID, Subject, Message, IsRead, Timestamp) VALUES (:sid, :stype, :stuid, :subject, :msg, 0, NOW())";
+          $messageStmt = $dbh->prepare($messageSQL);
+          $messageStmt->bindValue(':sid', $_SESSION['sturecmsaid'], PDO::PARAM_INT);
+          $messageStmt->bindValue(':stype', 'admin', PDO::PARAM_STR);
+          $messageStmt->bindValue(':stuid', $mentionedStuID, PDO::PARAM_STR);
+          $messageStmt->bindValue(':subject', "You were mentioned in a notice: " . $nottitle, PDO::PARAM_STR);
+          $messageStmt->bindValue(':msg', "You were mentioned in the notice titled '{$nottitle}'.\n\nContent:\n" . $notmsg, PDO::PARAM_STR);
+          $messageStmt->execute();
+        }
+      }
     }
     $_SESSION['flash_message'] = "Notice has been added successfully.";
   } else {

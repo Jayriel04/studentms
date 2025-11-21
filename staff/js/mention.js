@@ -53,6 +53,7 @@ function initializeMention(textarea, suggestionUrl) {
     }
 
     function insertMention(user) {
+        // Insert mention in format: @FirstName FamilyName (with trailing space)
         const mentionText = `@${user.FirstName} ${user.FamilyName} `;
         const currentText = textarea.value;
         const textBefore = currentText.substring(0, mentionStartIndex);
