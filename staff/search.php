@@ -14,6 +14,26 @@ use PHPMailer\PHPMailer\Exception;
 require_once __DIR__ . '/../vendor/autoload.php';
 include_once __DIR__ . '/../includes/mail_config.php';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_notice'])) {
+  $nottitle = $_POST['nottitle'];
+  $notmsg = $_POST['notmsg'];
+  $sql = "insert into tblnotice(NoticeTitle,NoticeMsg)values(:nottitle,:notmsg)";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':nottitle', $nottitle, PDO::PARAM_STR);
+  $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
+  $query->execute();
+  $LastInsertId = $dbh->lastInsertId();
+  if ($LastInsertId > 0) {
+    $_SESSION['flash_message'] = "Notice has been added successfully.";
+  } else {
+    $_SESSION['flash_message_error'] = "Something Went Wrong while adding the notice. Please try again.";
+  }
+  // Redirect to the same page to avoid form resubmission
+  header("Location: " . $_SERVER['REQUEST_URI']);
+  exit;
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
     $toEmail = $_POST['student_email'];
     $recipientStuID = $_POST['student_stuid'];
@@ -87,6 +107,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="./css/style(v2).css">
+    <style>
+      #addNoticeModal .modal-dialog {
+        /* Position the modal on the right side of the screen */
+        position: fixed;
+        top: 20px; /* Adjust top position freely */
+        right: 20px; /* Adjust right position freely */
+        margin: 0;
+        width: 500px; /* Or any width you prefer */
+        max-width: calc(100% - 40px);
+      }
+      #addNoticeModal .modal-content { height: calc(70vh - 40px); }
+    </style>
   </head>
 
   <body>
@@ -346,8 +378,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                 </div>
               </div>
             </div>
+            <div style="position: fixed; bottom: 90px; right: 80px; z-index: 1030;">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNoticeModal" title="Add Notice"
+                style="font-size: 2rem; line-height: 1; padding: 0.1rem 0.75rem; border-radius: 50%; width: 60px; height: 60px;">
+                +
+              </button>
+            </div>
           </div>
           <?php include_once('includes/footer.php'); ?>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Notice Modal -->
+    <div class="modal fade" id="addNoticeModal" tabindex="-1" role="dialog" aria-labelledby="addNoticeModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addNoticeModalLabel">Add New Notice</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form method="post">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="nottitle">Notice Title</label>
+                <input type="text" class="form-control" id="nottitle" name="nottitle" required>
+              </div>
+              <div class="form-group">
+                <label for="notmsg">Notice Message</label>
+                <textarea class="form-control" id="notmsg" name="notmsg" rows="5" required></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" name="add_notice" class="btn btn-primary">Add Notice</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

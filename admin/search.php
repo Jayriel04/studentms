@@ -13,70 +13,90 @@ use PHPMailer\PHPMailer\Exception;
 require_once __DIR__ . '/../vendor/autoload.php';
 include_once __DIR__ . '/../includes/mail_config.php';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_notice'])) {
+  $nottitle = $_POST['nottitle'];
+  $notmsg = $_POST['notmsg'];
+  $sql = "insert into tblnotice(NoticeTitle,NoticeMsg)values(:nottitle,:notmsg)";
+  $query = $dbh->prepare($sql);
+  $query->bindParam(':nottitle', $nottitle, PDO::PARAM_STR);
+  $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
+  $query->execute();
+  $LastInsertId = $dbh->lastInsertId();
+  if ($LastInsertId > 0) {
+    $_SESSION['flash_message'] = "Notice has been added successfully.";
+  } else {
+    $_SESSION['flash_message_error'] = "Something Went Wrong while adding the notice. Please try again.";
+  }
+  // Redirect to the same page to avoid form resubmission
+  header("Location: " . $_SERVER['REQUEST_URI']);
+  exit;
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
-    $toEmail = $_POST['student_email'];
-    $recipientStuID = $_POST['student_stuid'];
-    $subject = $_POST['subject'];
-    $messageBody = $_POST['message'];
+  $toEmail = $_POST['student_email'];
+  $recipientStuID = $_POST['student_stuid'];
+  $subject = $_POST['subject'];
+  $messageBody = $_POST['message'];
 
-    $mail = new PHPMailer(true);
+  $mail = new PHPMailer(true);
+  try {
+    //Server settings
+    $mail->isSMTP();
+    $mail->Host = $MAIL_HOST;
+    $mail->SMTPAuth = true;
+    $mail->Username = $MAIL_USERNAME;
+    $mail->Password = $MAIL_PASSWORD;
+    $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = $MAIL_PORT;
+
+    //Recipients
+    $fromEmail = !empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME;
+    $fromName = !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System';
+    $mail->setFrom($fromEmail, $fromName);
+    $mail->addAddress($toEmail);
+
+    // Content
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+    $mail->Body = nl2br($messageBody);
+    $mail->AltBody = $messageBody;
+
+    $mail->send();
+    $_SESSION['flash_message'] = 'Message has been sent successfully.';
+
+    // Also save the message to the database
     try {
-        //Server settings
-        $mail->isSMTP();
-        $mail->Host       = $MAIL_HOST;
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $MAIL_USERNAME;
-        $mail->Password   = $MAIL_PASSWORD;
-        $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = $MAIL_PORT;
+      $senderID = $_SESSION['sturecmsaid']; // Admin ID from session
+      $senderType = 'admin'; // Set sender type as admin
+      $isRead = 0; // 0 for unread
 
-        //Recipients
-        $fromEmail = !empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME;
-        $fromName = !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System';
-        $mail->setFrom($fromEmail, $fromName);
-        $mail->addAddress($toEmail);
-
-        // Content
-        $mail->isHTML(true);
-        $mail->Subject = $subject;
-        $mail->Body    = nl2br($messageBody);
-        $mail->AltBody = $messageBody;
-
-        $mail->send();
-        $_SESSION['flash_message'] = 'Message has been sent successfully.';
-
-        // Also save the message to the database
-        try {
-            $senderID = $_SESSION['sturecmsaid']; // Admin ID from session
-            $senderType = 'admin'; // Set sender type as admin
-            $isRead = 0; // 0 for unread
-
-            $sql = "INSERT INTO tblmessages (SenderID, SenderType, RecipientStuID, Subject, Message, IsRead, Timestamp) VALUES (:sender_id, :sender_type, :recipient_stuid, :subject, :message, :is_read, NOW())";
-            $stmt = $dbh->prepare($sql);
-            $stmt->bindParam(':sender_id', $senderID, PDO::PARAM_INT);
-            $stmt->bindParam(':sender_type', $senderType, PDO::PARAM_STR);
-            $stmt->bindParam(':recipient_stuid', $recipientStuID, PDO::PARAM_STR);
-            $stmt->bindParam(':subject', $subject, PDO::PARAM_STR);
-            $stmt->bindParam(':message', $messageBody, PDO::PARAM_STR);
-            $stmt->bindParam(':is_read', $isRead, PDO::PARAM_INT);
-            $stmt->execute();
-        } catch (Exception $e) {
-            // Optionally, handle DB insertion error, though the email might have sent.
-        }
+      $sql = "INSERT INTO tblmessages (SenderID, SenderType, RecipientStuID, Subject, Message, IsRead, Timestamp) VALUES (:sender_id, :sender_type, :recipient_stuid, :subject, :message, :is_read, NOW())";
+      $stmt = $dbh->prepare($sql);
+      $stmt->bindParam(':sender_id', $senderID, PDO::PARAM_INT);
+      $stmt->bindParam(':sender_type', $senderType, PDO::PARAM_STR);
+      $stmt->bindParam(':recipient_stuid', $recipientStuID, PDO::PARAM_STR);
+      $stmt->bindParam(':subject', $subject, PDO::PARAM_STR);
+      $stmt->bindParam(':message', $messageBody, PDO::PARAM_STR);
+      $stmt->bindParam(':is_read', $isRead, PDO::PARAM_INT);
+      $stmt->execute();
     } catch (Exception $e) {
-        $_SESSION['flash_message_error'] = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+      // Optionally, handle DB insertion error, though the email might have sent.
     }
-    // Redirect to the same page to avoid form resubmission
-    header("Location: " . $_SERVER['REQUEST_URI']);
-    exit;
+  } catch (Exception $e) {
+    $_SESSION['flash_message_error'] = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+  }
+  // Redirect to the same page to avoid form resubmission
+  header("Location: " . $_SERVER['REQUEST_URI']);
+  exit;
 }
 
 
 
 if (true) {
-    $q = isset($_GET['q']) ? trim($_GET['q']) : '';
+  $q = isset($_GET['q']) ? trim($_GET['q']) : '';
 
-    // AJAX suggestions endpoint: returns JSON list of students matching term
+  // AJAX suggestions endpoint: returns JSON list of students matching term
   if (isset($_GET['suggest'])) {
     header('Content-Type: application/json');
     $term = isset($_GET['term']) ? trim($_GET['term']) : '';
@@ -112,6 +132,20 @@ if (true) {
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+      #addNoticeModal .modal-dialog {
+        /* Position the modal on the right side of the screen */
+        position: fixed;
+        top: 20px; /* Adjust top position freely */
+        right: 20px; /* Adjust right position freely */
+        margin: 0;
+        width: 500px; /* Or any width you prefer */
+        max-width: calc(100% - 40px);
+      }
+      #addNoticeModal .modal-content {
+        height: calc(70vh - 40px); /* Example: make it almost full height */
+      }
+    </style>
   </head>
 
   <body>
@@ -138,8 +172,8 @@ if (true) {
                       <form method="get" id="searchForm" class="form-inline">
                         <div class="form-group" style="flex: 1;">
                           <label for="searchdata" class="sr-only">Search</label>
-                          <input id="searchdata" type="text" name="searchdata" class="form-control w-100" autocomplete="off"
-                            placeholder="Search by Student ID, Name, or Skill"
+                          <input id="searchdata" type="text" name="searchdata" class="form-control w-100"
+                            autocomplete="off" placeholder="Search by Student ID, Name, or Skill"
                             value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
                           <div id="suggestions" class="list-group" style="position:relative; z-index:1000;"></div>
                         </div>
@@ -224,32 +258,35 @@ if (true) {
                                   <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
                                   <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
                                   <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
-                                  <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td><td data-label="Program">
-                                  <?php
-                                  $program_full = htmlentities($row->Program);
-                                  if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
-                                    echo $matches[1];
-                                  } else {
-                                    echo $program_full; // Fallback to full name if no acronym
-                                  } ?>
-                                </td>
+                                  <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
+                                  <td data-label="Program">
+                                    <?php
+                                    $program_full = htmlentities($row->Program);
+                                    if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
+                                      echo $matches[1];
+                                    } else {
+                                      echo $program_full; // Fallback to full name if no acronym
+                                    } ?>
+                                  </td>
                                   <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                                  <td data-label="Skill"><?php echo isset($skill->name) ? htmlentities($skill->name) : ''; ?></td>
+                                  <td data-label="Skill"><?php echo isset($skill->name) ? htmlentities($skill->name) : ''; ?>
+                                  </td>
                                   <td data-label="Action">
-                                    <div class="btn-group" role="group" aria-label="Actions" style="display: flex; gap: 0.5rem;">
+                                    <div class="btn-group" role="group" aria-label="Actions"
+                                      style="display: flex; gap: 0.5rem;">
                                       <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
                                         class="btn btn-info btn-xs">View</a>
                                       <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-primary btn-xs">Edit</a>
                                       <?php if (isset($row->Status) && $row->Status == 1): ?>
-                                        <button type="button" class="btn btn-warning btn-xs message-btn" 
-                                                data-toggle="modal" data-target="#messageModal" 
-                                                data-email="<?php echo htmlentities($row->EmailAddress); ?>" 
-                                                data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>"
-                                                data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
+                                        <button type="button" class="btn btn-warning btn-xs message-btn" data-toggle="modal"
+                                          data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>"
+                                          data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>"
+                                          data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
                                       <?php else: ?>
-                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-secondary btn-xs">
+                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
+                                          class="btn btn-secondary btn-xs">
                                           Activate
                                         </a>
                                       <?php endif; ?>
@@ -299,31 +336,32 @@ if (true) {
                                   <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
                                   <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
                                   <td data-label="Program">
-                                  <?php
-                                  $program_full = htmlentities($row->Program);
-                                  // Use regex to find acronym in parentheses
-                                  if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
-                                    echo $matches[1];
-                                  } else {
-                                    echo $program_full; // Fallback to full name if no acronym
-                                  } ?>
-                                </td>
+                                    <?php
+                                    $program_full = htmlentities($row->Program);
+                                    // Use regex to find acronym in parentheses
+                                    if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
+                                      echo $matches[1];
+                                    } else {
+                                      echo $program_full; // Fallback to full name if no acronym
+                                    } ?>
+                                  </td>
                                   <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Action">
-                                    <div class="btn-group" role="group" aria-label="Actions" style="display: flex; gap: 0.5rem;">
+                                    <div class="btn-group" role="group" aria-label="Actions"
+                                      style="display: flex; gap: 0.5rem;">
                                       <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
                                         class="btn btn-info btn-xs">View</a>
                                       <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-primary btn-xs">Edit</a>
                                       <?php if (isset($row->Status) && $row->Status == 1): ?>
-                                        <button type="button" class="btn btn-warning btn-xs message-btn" 
-                                                data-toggle="modal" data-target="#messageModal" 
-                                                data-email="<?php echo htmlentities($row->EmailAddress); ?>" 
-                                                data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>"
-                                                data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
+                                        <button type="button" class="btn btn-warning btn-xs message-btn" data-toggle="modal"
+                                          data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>"
+                                          data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>"
+                                          data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
                                       <?php else: ?>
-                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-secondary btn-xs">
+                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
+                                          class="btn btn-secondary btn-xs">
                                           Activate
                                         </a>
                                       <?php endif; ?>
@@ -333,7 +371,7 @@ if (true) {
                                 <?php
                                 $cnt++;
                               }
-                            } else { ?> 
+                            } else { ?>
                               <tr class="text-center">
                                 <td colspan="8" style="color: red;">No record found against this search
                                 </td>
@@ -378,14 +416,52 @@ if (true) {
                 </div>
               </div>
             </div>
+            <div style="position: fixed; bottom: 90px; right: 80px; z-index: 1030;">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNoticeModal" title="Add Notice"
+                style="font-size: 2rem; line-height: 1; padding: 0.1rem 0.75rem; border-radius: 50%; width: 60px; height: 60px;">
+                +
+              </button>
+            </div>
           </div>
           <?php include_once('includes/footer.php'); ?>
         </div>
       </div>
     </div>
 
+    <!-- Add Notice Modal -->
+    <div class="modal fade" id="addNoticeModal" tabindex="-1" role="dialog" aria-labelledby="addNoticeModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addNoticeModalLabel">Add New Notice</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form method="post">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="nottitle">Notice Title</label>
+                <input type="text" class="form-control" id="nottitle" name="nottitle" required>
+              </div>
+              <div class="form-group">
+                <label for="notmsg">Notice Message</label>
+                <textarea class="form-control" id="notmsg" name="notmsg" rows="5" required></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" name="add_notice" class="btn btn-primary">Add Notice</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <!-- Message Modal -->
-    <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel"
+      aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -460,26 +536,26 @@ if (true) {
       })();
 
       // Handle message modal
-      document.addEventListener('DOMContentLoaded', function() {
-          var messageButtons = document.querySelectorAll('.message-btn');
-          messageButtons.forEach(function(button) {
-              button.addEventListener('click', function() {
-                  var studentEmail = this.getAttribute('data-email');
-                  var studentName = this.getAttribute('data-name');
-                  document.getElementById('studentEmail').value = studentEmail;
-                  document.getElementById('studentStuID').value = this.getAttribute('data-stuid');
-                  document.getElementById('studentName').innerText = studentName;
-              });
+      document.addEventListener('DOMContentLoaded', function () {
+        var messageButtons = document.querySelectorAll('.message-btn');
+        messageButtons.forEach(function (button) {
+          button.addEventListener('click', function () {
+            var studentEmail = this.getAttribute('data-email');
+            var studentName = this.getAttribute('data-name');
+            document.getElementById('studentEmail').value = studentEmail;
+            document.getElementById('studentStuID').value = this.getAttribute('data-stuid');
+            document.getElementById('studentName').innerText = studentName;
           });
+        });
 
-          <?php if(isset($_SESSION['flash_message'])): ?>
-            toastr.success('<?php echo $_SESSION['flash_message']; ?>');
-            <?php unset($_SESSION['flash_message']); ?>
-          <?php endif; ?>
-          <?php if(isset($_SESSION['flash_message_error'])): ?>
-            toastr.error('<?php echo $_SESSION['flash_message_error']; ?>');
-            <?php unset($_SESSION['flash_message_error']); ?>
-          <?php endif; ?>
+        <?php if (isset($_SESSION['flash_message'])): ?>
+          toastr.success('<?php echo $_SESSION['flash_message']; ?>');
+          <?php unset($_SESSION['flash_message']); ?>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['flash_message_error'])): ?>
+          toastr.error('<?php echo $_SESSION['flash_message_error']; ?>');
+          <?php unset($_SESSION['flash_message_error']); ?>
+        <?php endif; ?>
       });
     </script>
   </body>
