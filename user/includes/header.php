@@ -70,15 +70,21 @@
           // Combine counts for the badge
           $total_notifications = $rejected_count + $messages_count;
           ?>
-          <li class="nav-item">
-            <a class="nav-link notification-icon-wrapper" onclick="toggleNotificationModal()">
-              <span style="font-size: 25px;">🔔</span>
+          <li class="nav-item" style="position: relative;">
+            <a href="javascript:void(0)" id="notifIcon" class="nav-link notification-icon-wrapper" aria-haspopup="true"
+              aria-expanded="false">
+              <i class="icon-bell" style="font-size: 20px;"></i>
               <?php if ($total_notifications > 0): ?>
-                <span class="notification-badge">
+                <span class="notification-badge" id="notifBadge">
                   <?php echo $total_notifications; ?>
                 </span>
+              <?php else: ?>
+                <span class="notification-badge" id="notifBadge" style="display:none;"></span>
               <?php endif; ?>
             </a>
+
+            <!-- Notification Panel (hidden by default) -->
+            <div id="notifPanel" class="notification-panel" role="dialog" aria-label="Notifications" aria-hidden="true"></div>
           </li>
           <li class="nav-item dropdown user-dropdown">
             <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
@@ -107,168 +113,171 @@
   }
   ?>
 
-  <!-- Notification Modal -->
-  <div id="notificationModal" class="notification-modal">
-    <div class="notification-modal-content">
-      <div class="notification-modal-header">
-        <h5 class="notification-modal-title">Notifications</h5>
-        <span class="close-notification-modal" onclick="toggleNotificationModal()">&times;</span>
-      </div>
-      <div class="notification-modal-body">
-        <?php
-        // Fetch unread messages
-        $messages_list_sql = "
-            SELECT 
-                m.ID, m.Subject, m.Message, m.Timestamp, m.SenderType, m.SenderID, m.IsRead,
-                CASE
-                    WHEN m.SenderType = 'admin' THEN a.AdminName
-                    WHEN m.SenderType = 'staff' THEN s.StaffName
-                    ELSE 'System'
-                END AS SenderName
-    FROM (SELECT * FROM tblmessages WHERE RecipientStuID = :stuid ORDER BY Timestamp DESC LIMIT 10) m
-            LEFT JOIN tbladmin a ON m.SenderID = a.ID AND m.SenderType = 'admin'
-            LEFT JOIN tblstaff s ON m.SenderID = s.ID AND m.SenderType = 'staff'
-            WHERE m.RecipientStuID = :stuid
-            ORDER BY m.Timestamp DESC";
-        $messages_list_query = $dbh->prepare($messages_list_sql);
-        $messages_list_query->bindParam(':stuid', $_SESSION['sturecmsstuid'], PDO::PARAM_STR);
-        $messages_list_query->execute();
-        $messages = $messages_list_query->fetchAll(PDO::FETCH_OBJ);
-
-        // Fetch unread rejected achievements
-        $rejected_achievements_sql = "SELECT id, level, category, rejection_reason, created_at, is_read FROM student_achievements WHERE StuID = :stuid AND status = 'rejected' AND rejection_reason IS NOT NULL ORDER BY created_at DESC LIMIT 10";
-        $rejected_achievements_query = $dbh->prepare($rejected_achievements_sql);
-        $rejected_achievements_query->bindParam(':stuid', $_SESSION['sturecmsstuid'], PDO::PARAM_STR);
-        $rejected_achievements_query->execute();
-        $rejected_achievements = $rejected_achievements_query->fetchAll(PDO::FETCH_OBJ);
-
-        if (empty($messages) && empty($rejected_achievements)) {
-          echo "<p>No new notifications found.</p>";
-        } else {
-          // Display new messages
-          foreach ($messages as $message) {
-            $details_id = 'msg-details-' . $message->ID;
-            $is_unread = $message->IsRead == 0;
-            ?>
-            <div class="notification-item <?php if ($is_unread) echo 'unread-notification'; ?>">
-              <div class="notification-item-header">
-                <strong class="notification-type">New Message</strong>
-                <a href="javascript:void(0);" class="see-more-link" data-read="<?php echo $is_unread ? 'false' : 'true'; ?>"
-                  onclick="toggleMessageDetails('<?php echo $details_id; ?>', this, <?php echo $message->ID; ?>)">See
-                  more</a>
-              </div>
-              <div class="notification-summary">
-                From: <strong><?php echo htmlentities($message->SenderName); ?></strong><br>
-                Subject: <?php echo htmlentities($message->Subject); ?>
-              </div>
-              <div id="<?php echo $details_id; ?>" class="notification-details" style="display: none;">
-                <p class="reason" style="white-space: pre-wrap;"><?php echo htmlentities($message->Message); ?></p>
-                <p class="meta">Received on: <?php echo date('F j, Y, g:i a', strtotime($message->Timestamp)); ?></p>
-              </div>
-            </div>
-            <?php
-          }
-
-          // Display rejected achievements
-          foreach ($rejected_achievements as $achievement) {
-            $details_id = 'ach-details-' . $achievement->id;
-            $is_unread = $achievement->is_read == 0;
-            ?>
-            <div class="notification-item <?php if ($is_unread) echo 'unread-notification'; ?>">
-              <div class="notification-item-header">
-                <strong class="notification-type">Achievement Rejected</strong>
-                <a href="javascript:void(0);" class="see-more-link" data-read="<?php echo $is_unread ? 'false' : 'true'; ?>"
-                  onclick="toggleAchievementDetails('<?php echo $details_id; ?>', this, <?php echo $achievement->id; ?>)">See
-                  more</a>
-              </div>
-              <div class="notification-summary">
-                Your submission for a/an "<?php echo htmlentities($achievement->level); ?>" level achievement in the
-                "<?php echo htmlentities($achievement->category); ?>" category was not approved.
-              </div>
-              <div id="<?php echo $details_id; ?>" class="notification-details" style="display: none;">
-                <p class="reason">
-                  <strong>Rejection Reason:</strong>
-                  <?php echo htmlentities($achievement->rejection_reason); ?>
-                </p>
-                <p class="meta">Submitted on: <?php echo date('F j, Y, g:i a', strtotime($achievement->created_at)); ?></p>
-              </div>
-            </div>
-            <?php
-          }
-        }
-        ?>
-      </div>
-    </div>
-  </div>
-
-  <style>
-    .unread-notification {
-      background-color: #f0f8ff; /* A light blue background for unread items */
-    }
-  </style>
-
   <script>
-    function toggleNotificationModal() {
-      var modal = document.getElementById('notificationModal');
-      if (modal) modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-    }
+    (function () {
+      const notifIcon = document.getElementById('notifIcon');
+      const notifPanel = document.getElementById('notifPanel');
+      const notifBadge = document.getElementById('notifBadge');
+      let panelVisible = false;
+      let notificationsLoaded = false;
 
-    function toggleDetails(id, link) {
-      var details = document.getElementById(id);
-      if (details) {
-        if (details.style.display === 'none') {
-          details.style.display = 'block';
-          link.textContent = 'See less';
-        } else {
-          details.style.display = 'none';
-          link.textContent = 'See more';
+      function openPanel() {
+        if (!notifPanel) return;
+        notifPanel.classList.add('show');
+        notifPanel.setAttribute('aria-hidden', 'false');
+        notifIcon.setAttribute('aria-expanded', 'true');
+        panelVisible = true;
+        if (!notificationsLoaded) {
+          fetchNotifications();
         }
       }
-    }
 
-    function markNotificationAsRead(link) {
-      if (link.getAttribute('data-read') === 'false') {
-        link.setAttribute('data-read', 'true'); // Mark as read
-        var badge = document.querySelector('.notification-badge');
-        if (badge) {
-          var currentCount = parseInt(badge.textContent, 10);
-          if (currentCount > 1) {
-            badge.textContent = currentCount - 1;
-          } else {
-            badge.style.display = 'none';
+      function closePanel() {
+        if (!notifPanel) return;
+        notifPanel.classList.remove('show');
+        notifPanel.setAttribute('aria-hidden', 'true');
+        notifIcon.setAttribute('aria-expanded', 'false');
+        panelVisible = false;
+      }
+
+      function togglePanel() {
+        panelVisible ? closePanel() : openPanel();
+      }
+
+      function fetchNotifications() {
+        notifPanel.innerHTML = '<div class="notif-empty">Loading...</div>';
+        // We use the existing PHP logic by fetching the current page with a special parameter
+        fetch(window.location.pathname + '?get_notifications=1')
+          .then(response => response.text())
+          .then(html => {
+            notifPanel.innerHTML = html;
+            notificationsLoaded = true;
+          }).catch(() => {
+            notifPanel.innerHTML = '<div class="notif-empty">Could not load notifications.</div>';
+          });
+      }
+
+      function markAllAsRead() {
+        // This AJAX call will mark all notifications as read.
+      }
+
+      if (notifIcon) {
+        notifIcon.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          togglePanel();
+        });
+      }
+
+      // Close on outside click
+      document.addEventListener('click', function (e) {
+        if (!panelVisible) return;
+        if (notifPanel && !notifPanel.contains(e.target) && notifIcon && !notifIcon.contains(e.target)) {
+          closePanel();
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && panelVisible) {
+          closePanel();
+        }
+      });
+    })();
+
+    // Delegated event listener for "See more" links
+    document.addEventListener('click', function (event) {
+      const target = event.target;
+      if (target && target.classList.contains('see-more-link')) {
+        event.preventDefault();
+        const detailsId = target.getAttribute('data-details-id');
+        const detailsElement = document.getElementById(detailsId);
+
+        if (detailsElement) {
+          const isVisible = detailsElement.style.display === 'block';
+          detailsElement.style.display = isVisible ? 'none' : 'block';
+          target.textContent = isVisible ? 'See more' : 'See less';
+
+          // Mark as read if it's the first time clicking "See more"
+          if (!isVisible && target.getAttribute('data-read') === 'false') {
+            target.setAttribute('data-read', 'true'); // Mark as read on the frontend
+            target.closest('.notif-item').classList.remove('unread-notification');
+
+            const notificationType = target.getAttribute('data-type');
+            const notificationId = target.getAttribute('data-id');
+
+            // AJAX call to mark as read on the backend
+            fetch(window.location.pathname, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: `mark_read_type=${notificationType}&id=${notificationId}`
+            });
+
+            // Decrement badge count
+            const badge = document.getElementById('notifBadge');
+            const currentCount = parseInt(badge.textContent, 10);
+            badge.textContent = currentCount > 1 ? currentCount - 1 : '';
+            if (currentCount <= 1) badge.style.display = 'none';
           }
         }
       }
-    }
-
-    function toggleAchievementDetails(elementId, link, achievementId) {
-      toggleDetails(elementId, link);
-      if (link.getAttribute('data-read') === 'false') {
-        link.closest('.notification-item').classList.remove('unread-notification');
-        markNotificationAsRead(link);
-        // AJAX call to mark achievement as read
-        fetch(window.location.pathname, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: 'mark_read_type=achievement&id=' + achievementId
-        });
-      }
-    }
-
-    function toggleMessageDetails(elementId, link, messageId) {
-      toggleDetails(elementId, link);
-      if (link.getAttribute('data-read') === 'false') {
-        link.closest('.notification-item').classList.remove('unread-notification');
-        markNotificationAsRead(link);
-        // AJAX call to mark message as read
-        fetch(window.location.pathname, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: 'mark_read_type=message&id=' + messageId
-        });
-      }
-    }
-    // Close modal if user clicks outside of it
-    window.onclick = function (event) { if (event.target == document.getElementById('notificationModal')) { toggleNotificationModal(); } }
+    });
   </script>
 </nav>
+<?php
+// This block will execute when the fetch request with `get_notifications=1` is made.
+if (isset($_GET['get_notifications'])) {
+  ob_clean(); // Clear any previous output
+  $stuid = $_SESSION['sturecmsstuid'];
+
+  // Fetch unread messages
+  $messages_sql = "SELECT m.ID, m.Subject, m.Message, m.Timestamp, m.IsRead, s.StaffName as SenderName FROM tblmessages m JOIN tblstaff s ON m.SenderID = s.ID WHERE m.RecipientStuID = :stuid ORDER BY m.Timestamp DESC LIMIT 5";
+  $messages_query = $dbh->prepare($messages_sql);
+  $messages_query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+  $messages_query->execute();
+  $messages = $messages_query->fetchAll(PDO::FETCH_OBJ);
+
+  // Fetch unread rejected achievements
+  $rejected_sql = "SELECT id, level, category, rejection_reason, created_at, is_read FROM student_achievements WHERE StuID = :stuid AND status = 'rejected' AND rejection_reason IS NOT NULL ORDER BY created_at DESC LIMIT 5";
+  $rejected_query = $dbh->prepare($rejected_sql);
+  $rejected_query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+  $rejected_query->execute();
+  $rejected_achievements = $rejected_query->fetchAll(PDO::FETCH_OBJ);
+
+  echo '<div class="panel-header"><span>Notifications</span></div>';
+  echo '<div class="panel-body">';
+
+  if (empty($messages) && empty($rejected_achievements)) {
+    echo '<div class="notif-empty">No new notifications.</div>';
+  } else {
+    foreach ($rejected_achievements as $achievement) {
+      $details_id = 'ach-details-' . $achievement->id;
+      $is_unread = $achievement->is_read == 0;
+      echo '<div class="notif-item ' . ($is_unread ? 'unread-notification' : '') . '">';
+      echo '<div class="icon-wrapper ach-icon"><i class="icon-close"></i></div>';
+      echo '<div class="msg-content">';
+      echo '<div class="msg-header">Achievement Rejected <a href="#" class="see-more-link" data-details-id="' . $details_id . '" data-id="' . $achievement->id . '" data-type="achievement" data-read="' . ($is_unread ? 'false' : 'true') . '">See more</a></div>';
+      echo '<div class="msg-summary">Your ' . htmlentities($achievement->level) . ' achievement in ' . htmlentities($achievement->category) . ' was not approved.</div>';
+      echo '<div class="notification-details" id="' . $details_id . '" style="display:none;"><p class="reason"><strong>Reason:</strong> ' . htmlentities($achievement->rejection_reason) . '</p></div>';
+      echo '<div class="msg-time">' . date('F j, Y, g:i a', strtotime($achievement->created_at)) . '</div>';
+      echo '</div></div>';
+    }
+    foreach ($messages as $message) {
+      $details_id = 'msg-details-' . $message->ID;
+      $is_unread = $message->IsRead == 0;
+      echo '<div class="notif-item ' . ($is_unread ? 'unread-notification' : '') . '">';
+      echo '<div class="icon-wrapper msg-icon"><i class="icon-envelope"></i></div>';
+      echo '<div class="msg-content">';
+      echo '<div class="msg-header">New Message from ' . htmlentities($message->SenderName) . ' <a href="#" class="see-more-link" data-details-id="' . $details_id . '" data-id="' . $message->ID . '" data-type="message" data-read="' . ($is_unread ? 'false' : 'true') . '">See more</a></div>';
+      echo '<div class="msg-summary">Subject: ' . htmlentities($message->Subject) . '</div>';
+      echo '<div class="notification-details" id="' . $details_id . '" style="display:none;"><p>' . nl2br(htmlentities($message->Message)) . '</p></div>';
+      echo '<div class="msg-time">' . date('F j, Y, g:i a', strtotime($message->Timestamp)) . '</div>';
+      echo '</div></div>';
+    }
+  }
+  echo '</div>';
+  exit; // Stop execution after sending the panel content
+}
+
+// This block handles marking all notifications as read
+?>
