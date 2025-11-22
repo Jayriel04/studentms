@@ -221,9 +221,8 @@ if (true) {
                         <div class="form-group" style="flex: 1;">
                           <label for="searchdata" class="sr-only">Search</label>
                           <input id="searchdata" type="text" name="searchdata" class="form-control w-100"
-                            autocomplete="off" placeholder="Search by Student ID, Name, or Skill"
+                            placeholder="Search by Student ID, Name, or Skill"
                             value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
-                          <div id="suggestions" class="list-group" style="position:relative; z-index:1000;"></div>
                         </div>
                         <button type="submit" class="btn btn-primary ml-2" id="submit">Search</button>
                       </form>

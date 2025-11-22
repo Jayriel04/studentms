@@ -114,105 +114,63 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   <div class="card-body">
                     <div class="row">
                       <div class="col-lg-7 chart-container">
-                        <!-- <h4 class="card-title">Student Skill Categories</h4> -->
                         <?php
-                        // Count students with Academic skills
-                        $sqlAcademic = "SELECT COUNT(ID) FROM tblstudent WHERE Academic IS NOT NULL AND Academic != ''";
-                        $countAcademic = $dbh->query($sqlAcademic)->fetchColumn();
-
-                        // Count students with Non-Academic skills
-                        $sqlNonAcademic = "SELECT COUNT(ID) FROM tblstudent WHERE NonAcademic IS NOT NULL AND NonAcademic != ''";
-                        $countNonAcademic = $dbh->query($sqlNonAcademic)->fetchColumn();
-
-                        // Count students with no skills
-                        $sqlNone = "SELECT COUNT(ID) FROM tblstudent WHERE (Academic IS NULL OR Academic = '') AND (NonAcademic IS NULL OR NonAcademic = '')";
-                        $countNone = $dbh->query($sqlNone)->fetchColumn();
-
-                        $skillsData = [
-                          ['name' => 'Academic', 'student_count' => $countAcademic],
-                          ['name' => 'Non-Academic', 'student_count' => $countNonAcademic],
-                          ['name' => 'None', 'student_count' => $countNone],
+                        // Count students per year level
+                        $sqlYearLevels = "SELECT YearLevel, COUNT(ID) as student_count FROM tblstudent WHERE YearLevel IN ('1', '2', '3', '4') GROUP BY YearLevel ORDER BY YearLevel ASC";
+                        $queryYearLevels = $dbh->prepare($sqlYearLevels);
+                        $queryYearLevels->execute();
+                        $yearLevelResults = $queryYearLevels->fetchAll(PDO::FETCH_OBJ);
+                        
+                        $yearCounts = ['1' => 0, '2' => 0, '3' => 0, '4' => 0];
+                        foreach ($yearLevelResults as $row) {
+                            if (isset($yearCounts[$row->YearLevel])) {
+                                $yearCounts[$row->YearLevel] = (int)$row->student_count;
+                            }
+                        }
+                        
+                        $yearLevelData = [
+                            ['name' => '1st Year', 'student_count' => $yearCounts['1']],
+                            ['name' => '2nd Year', 'student_count' => $yearCounts['2']],
+                            ['name' => '3rd Year', 'student_count' => $yearCounts['3']],
+                            ['name' => '4th Year', 'student_count' => $yearCounts['4']],
                         ];
                         ?>
-                        <canvas id="skillsChart" data-skills='<?php echo json_encode($skillsData); ?>'></canvas>
+                        <canvas id="yearLevelChart" data-year-levels='<?php echo json_encode($yearLevelData); ?>'></canvas>
                       </div>
                       <div class="col-lg-5">
-                        <div class="calendar-container">
-                          <div class="calendar-header">
-                            <div class="calendar-title">Notice Calendar</div>
-                            <?php
-                            $month = isset($_GET['month']) ? (int) $_GET['month'] : date('n');
-                            $year = isset($_GET['year']) ? (int) $_GET['year'] : date('Y');
-                            $prev_month = $month == 1 ? 12 : $month - 1;
-                            $prev_year = $month == 1 ? $year - 1 : $year;
-                            $next_month = $month == 12 ? 1 : $month + 1;
-                            $next_year = $month == 12 ? $year + 1 : $year;
-                            ?>
-                            <div>
-                              <a href="?month=<?php echo $prev_month; ?>&year=<?php echo $prev_year; ?>"
-                                class="btn btn-outline-primary btn-sm">&lt; Prev</a>
-                              <span
-                                style="font-weight:600; margin:0 10px;"><?php echo date('F Y', strtotime("$year-$month-01")); ?></span>
-                              <a href="?month=<?php echo $next_month; ?>&year=<?php echo $next_year; ?>"
-                                class="btn btn-outline-primary btn-sm">Next &gt;</a>
-                            </div>
-                          </div>
-                          <div class="calendar-grid">
-                            <?php
-                            $daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                            $daysOfWeekShort = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-                            foreach ($daysOfWeek as $day) {
-                              echo '<div class="calendar-day calendar-day-full">' . $day . '</div>';
-                            }
-                            foreach ($daysOfWeekShort as $day) {
-                              echo '<div class="calendar-day calendar-day-short">' . $day . '</div>';
-                            }
-                            $firstDayOfMonth = strtotime("$year-$month-01");
-                            $totalDays = date('t', $firstDayOfMonth);
-                            $startDay = date('w', $firstDayOfMonth);
+                        <div class="notice-list-container">
+                          <h4 class="card-title">Recent Notices</h4>
+                          <?php
+                          // Fetch recent notices
+                          $sql = "SELECT NoticeTitle, CreationDate, NoticeMsg FROM tblnotice ORDER BY CreationDate DESC LIMIT 5";
+                          $query = $dbh->prepare($sql);
+                          $query->execute();
+                          $notices = $query->fetchAll(PDO::FETCH_OBJ);
 
-                            // Fetch all notices for this month
-                            $sql = "SELECT NoticeTitle, CreationDate, NoticeMsg FROM tblnotice WHERE MONTH(CreationDate)=:month AND YEAR(CreationDate)=:year ORDER BY CreationDate ASC";
-                            $query = $dbh->prepare($sql);
-                            $query->bindParam(':month', $month, PDO::PARAM_INT);
-                            $query->bindParam(':year', $year, PDO::PARAM_INT);
-                            $query->execute();
-                            $notices = $query->fetchAll(PDO::FETCH_OBJ);
-
-                            // Organize notices by day
-                            $noticesByDay = [];
+                          if (empty($notices)) {
+                            echo '<p>No recent notices found.</p>';
+                          } else {
+                            echo '<ul class="list-group list-group-flush">';
                             foreach ($notices as $notice) {
-                              $day = date('j', strtotime($notice->CreationDate));
-                              if (!isset($noticesByDay[$day]))
-                                $noticesByDay[$day] = [];
-                              $noticesByDay[$day][] = $notice;
+                              $title = htmlentities($notice->NoticeTitle);
+                              $date = date('M j, Y', strtotime($notice->CreationDate));
+                              $msg = nl2br(htmlentities($notice->NoticeMsg));
+                              $full_date = htmlentities($notice->CreationDate);
+                              ?>
+                              <li class="list-group-item notice-list-item"
+                                onclick="showNoticeDetail('<?php echo $title; ?>', '<?php echo $full_date; ?>', '<?php echo str_replace(array("\r", "\n", "'"), array(" ", "\\n", "\\'"), $msg); ?>')">
+                                <div class="d-flex w-100 justify-content-between">
+                                  <h6 class="mb-1"><?php echo $title; ?></h6>
+                                  <small><?php echo $date; ?></small>
+                                </div>
+                              </li>
+                              <?php
                             }
-
-                            // Print empty cells before first day
-                            for ($i = 0; $i < $startDay; $i++) {
-                              echo '<div class="calendar-cell"></div>';
-                            }
-
-                            // Print days
-                            for ($day = 1; $day <= $totalDays; $day++) {
-                              $isToday = (date('Y-m-d') == "$year-$month-" . str_pad($day, 2, '0', STR_PAD_LEFT));
-                              echo '<div class="calendar-cell' . ($isToday ? ' today' : '') . '">';
-                              echo '<div class="day-number">' . $day . '</div>';
-                              if (isset($noticesByDay[$day])) {
-                                echo '<div class="notice-list-in-cell">';
-                                foreach ($noticesByDay[$day] as $notice) {
-                                  $title = htmlentities($notice->NoticeTitle);
-                                  $date = htmlentities($notice->CreationDate);
-                                  $msg = nl2br(htmlentities($notice->NoticeMsg));
-                                  echo '<div class="notice-item" onclick="showNoticeDetail(\'' . $title . '\', \'' . $date . '\', \'' . str_replace(array("\r", "\n", "'"), array(" ", "\\n", "\\'"), $msg) . '\')">';
-                                  echo '<span class="notice-dot"></span><span class="notice-title">' . $title . '</span>';
-                                  echo '</div>';
-                                }
-                                echo '</div>';
-                              }
-                              echo '</div>';
-                            }
-                            ?>
+                            echo '</ul>';
+                          }
+                          ?>
+                          <div class="mt-3">
+                            <a href="manage-notice.php" class="btn btn-outline-primary btn-sm">View All Notices</a>
                           </div>
                         </div>
                       </div>
@@ -242,20 +200,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <!-- endinject -->
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <script src="js/chart.js"></script>
     <script src="js/script.js"></script>
-    <script>
-      function showNoticeDetail(title, date, msg) {
-        const modal = document.getElementById('noticeModal');
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalDate').innerText = date;
-        document.getElementById('modalMsg').innerHTML = msg.replace(/\\n/g, '<br>');
-        modal.style.display = 'block';
-      }
-      function closeModal() {
-        document.getElementById('noticeModal').style.display = 'none';
-      }
-    </script>
   </body>
 
   </html><?php } ?>

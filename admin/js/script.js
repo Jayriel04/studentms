@@ -101,39 +101,44 @@ function closeModal() {
 // Initialize Skills Doughnut Chart on Dashboard
 (function ($) {
   'use strict';
-  $(function () {
-    if ($("#skillsChart").length) {
-      const skillsDataJSON = $("#skillsChart").data('skills');
-      if (skillsDataJSON) {
-        const skillsData = (typeof skillsDataJSON === 'string') ? JSON.parse(skillsDataJSON) : skillsDataJSON;
-        const labels = skillsData.map(item => item.name);
-        const data = skillsData.map(item => parseInt(item.student_count, 10));
+  $(function() {
+    if ($("#yearLevelChart").length) {
+      const yearLevelDataJSON = $("#yearLevelChart").data('year-levels');
+      if (yearLevelDataJSON) {
+        const yearLevelData = (typeof yearLevelDataJSON === 'string') ? JSON.parse(yearLevelDataJSON) : yearLevelDataJSON;
+        const labels = yearLevelData.map(item => item.name);
+        const data = yearLevelData.map(item => parseInt(item.student_count, 10));
 
-        var barChartCanvas = $("#skillsChart").get(0).getContext("2d");
-        var skillsChart = new Chart(barChartCanvas, {
-          type: 'doughnut',
+        var barChartCanvas = $("#yearLevelChart").get(0).getContext("2d");
+        new Chart(barChartCanvas, {
+          type: 'bar', // Changed from 'doughnut' to 'bar'
           data: {
             labels: labels,
             datasets: [{
+              label: 'Number of Students',
               data: data,
-              backgroundColor: ['#4099ff', '#2ed8b6', '#FFB64D'],
-              borderColor: '#ffffff',
-              borderWidth: 2,
-              hoverBorderColor: '#ffffff',
+              backgroundColor: [
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(255, 99, 132, 0.6)'
+              ],
+              borderColor: [
+                'rgba(75, 192, 192, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)'
+              ],
+              borderWidth: 1
             }],
           },
           options: {
             responsive: true,
-            maintainAspectRatio: false,
-            animation: { animateScale: true, animateRotate: true },
-            legend: {
-              display: true,
-              position: 'bottom',
-              labels: { fontColor: '#6c757d', padding: 20 }
+            plugins: {
+              legend: { display: false },
+              title: { display: true, text: 'Student Distribution by Year Level' }
             },
-            tooltips: {
-              backgroundColor: '#3e4b5b',
-              titleFontColor: '#ffffff'
+            scales: {
+              y: { beginAtZero: true, ticks: { stepSize: 1 } }
             }
           }
         });
@@ -141,56 +146,3 @@ function closeModal() {
     }
   });
 })(jQuery);
-
-// Functions for search page suggestions
-(function () {
-  const searchInput = document.getElementById('searchdata');
-  if (!searchInput) return;
-
-  function debounce(fn, delay) {
-    let timeoutId;
-    return function (...args) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fn.apply(this, args), delay);
-    };
-  }
-
-  const suggestionsContainer = document.getElementById('suggestions');
-
-  function renderSuggestions(rows) {
-    suggestionsContainer.innerHTML = '';
-    if (!rows || rows.length === 0) return;
-
-    rows.forEach(function (row) {
-      const item = document.createElement('a');
-      item.href = '#';
-      item.className = 'list-group-item list-group-item-action';
-      item.textContent = `${row.StuID} — ${row.FamilyName}, ${row.FirstName}`;
-      item.dataset.stuid = row.StuID;
-      item.addEventListener('click', function (e) {
-        e.preventDefault();
-        searchInput.value = this.dataset.stuid;
-        document.getElementById('searchForm').submit();
-      });
-      suggestionsContainer.appendChild(item);
-    });
-  }
-
-  const fetchSuggestions = debounce(function () {
-    const query = searchInput.value.trim();
-    const url = `${window.location.pathname}?suggest=1&term=${encodeURIComponent(query)}`;
-    fetch(url, { credentials: 'same-origin' })
-      .then(res => res.json())
-      .then(json => renderSuggestions(json))
-      .catch(() => renderSuggestions([]));
-  }, 200);
-
-  searchInput.addEventListener('input', fetchSuggestions);
-  searchInput.addEventListener('focus', fetchSuggestions);
-
-  document.addEventListener('click', function (e) {
-    if (!suggestionsContainer.contains(e.target) && e.target !== searchInput) {
-      suggestionsContainer.innerHTML = '';
-    }
-  });
-})();
