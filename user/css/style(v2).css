@@ -692,7 +692,6 @@
     font-weight: 600;
     transition: all 0.3s;
     text-decoration: none;
-    display: inline-block;
 }
 
 .view-btn:hover {
@@ -958,14 +957,20 @@
     right: -215px;
     top: calc(100% + 15px);
     width: 360px;
-    max-height: 450px;
+    height: 320px;              /* fixed, short height so panel itself doesn't grow */
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-    overflow: hidden;
+    overflow: hidden;           /* keep header/footer fixed, body will scroll */
     display: none;
     z-index: 1050;
     border: 1px solid #e9ecef;
+}
+
+.notification-panel .panel-body {
+    height: calc(320px - 56px); /* subtract approximate header/footer height */
+    overflow-y: auto;           /* make the list scrollable when many items */
+    padding: 8px;
 }
 
 .notification-panel.show {
@@ -1097,5 +1102,114 @@
         right: 6px;
         left: 6px;
         width: auto;
+        height: 55vh;                  /* fixed relative height on tiny screens */
+    }
+
+    .notification-panel .panel-body {
+        height: calc(55vh - 52px);     /* keep body scrollable while header/footer stay visible */
+        overflow-y: auto;
+    }
+}
+
+/* Responsive: make notification panel shrink / fixed on mobile */
+@media (max-width: 768px) {
+    .notification-panel {
+        position: fixed;
+        top: 56px;
+        right: 12px;
+        left: auto;
+        width: 320px;
+        height: 55vh;                  /* fixed relative height for mobile/tablet */
+        margin: 0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .notification-panel .panel-header {
+        padding: 10px 12px;
+        font-size: 1rem;
+    }
+
+    .notification-panel .panel-body {
+        height: calc(55vh - 52px);     /* ensure scrolling area for many notifications */
+        overflow-y: auto;
+        padding: 8px;
+    }
+
+    .notification-panel .notif-item {
+        padding: 8px;
+        gap: 10px;
+    }
+
+    .notification-panel .notif-item .icon-wrapper {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .notification-panel .msg-content {
+        font-size: 0.9rem;
+    }
+
+    .notification-panel .msg-content .msg-time {
+        font-size: 0.78rem;
+    }
+
+    .notification-panel .panel-footer {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .notification-panel {
+        /* full-width with small gutters on tiny screens */
+        position: fixed;
+        top: 56px;
+        left: 8px;
+        right: 8px;
+        width: auto;
+        max-height: 20vh;
+        border-radius: 10px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+    }
+
+    .notification-panel .panel-header {
+        padding: 8px 10px;
+        font-size: 0.95rem;
+    }
+
+    .notification-panel .panel-body {
+        height: 100px;
+        max-height: calc(55vh - 44px);
+        padding: 1px;
+    }
+
+    .notification-panel .notif-item {
+        padding: 6px;
+        gap: 8px;
+    }
+
+    .notification-panel .notif-item .icon-wrapper {
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+    }
+
+    .notification-panel .msg-content {
+        font-size: 0.82rem;
+    }
+
+    .notification-panel .msg-content .msg-header {
+        font-size: 0.92rem;
+    }
+
+    .notification-panel .msg-content .msg-time {
+        font-size: 0.72rem;
+    }
+
+    .notification-panel .panel-footer {
+        padding: 6px 10px;
+        font-size: 0.82rem;
     }
 }
