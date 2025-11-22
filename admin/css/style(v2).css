@@ -436,3 +436,45 @@ body {
         padding: 0.25rem 0.5rem; /* Smaller buttons */
     }
 }
+
+/* --- RESPONSIVE SIDEBAR (OFF-CANVAS) --- */
+@media (max-width: 991.98px) {
+  .sidebar-offcanvas {
+    position: fixed;
+    top: 70px; /* Height of the navbar */
+    bottom: 0;
+    left: -240px; /* Width of the sidebar */
+    width: 240px;
+    z-index: 1030;
+    transition: all 0.25s ease-out;
+    overflow-y: auto;
+  }
+
+  .sidebar-offcanvas.active {
+    left: 0;
+  }
+
+  .main-panel {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .page-body-wrapper {
+    padding-top: 70px;
+  }
+
+  .navbar .navbar-brand-wrapper {
+    width: auto;
+  }
+
+  .navbar .navbar-menu-wrapper {
+    width: auto;
+    flex-grow: 1;
+  }
+
+  /* Make dashboard cards stack on smaller screens */
+  .report-summary-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+}

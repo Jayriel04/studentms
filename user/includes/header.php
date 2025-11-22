@@ -48,6 +48,9 @@
       $profileImg = !empty($row->Image) ? "../admin/images/" . $row->Image : "images/faces/face8.jpg";
   ?>
       <div class="navbar-menu-wrapper d-flex align-items-center flex-grow-1">
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas" data-target="#sidebar">
+          <span class="icon-menu"></span>
+        </button>
         <h5 class="mb-0 font-weight-medium d-none d-lg-flex">
           Welcome to the dashboard!
         </h5>
@@ -104,9 +107,6 @@
             </div>
           </li>
         </ul>
-        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-          <span class="icon-menu"></span>
-        </button>
       </div>
   <?php
     }
