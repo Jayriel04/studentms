@@ -349,26 +349,86 @@ if (true) {
                               </tr>
                             <?php }
                           } else {
-                            $countSql = "SELECT COUNT(ID) FROM tblstudent";
-                            if ($sdata !== '') {
-                              $countSql .= " WHERE StuID LIKE :sdata OR FamilyName LIKE :sdata OR FirstName LIKE :sdata";
+                            // Enhanced search: allow searching across many tblstudent fields:
+                            // StuID, FamilyName, FirstName, Program, Major, YearLevel, Gender,
+                            // Barangay, CityMunicipality, Province, Category, EmailAddress and map
+                            // keywords "active"/"inactive" to Status.
+                            $total_rows = 0;
+                            $params = [];
+                            $whereParts = [];
+
+                            $term = trim($sdata);
+                            if ($term !== '') {
+                              $termLike = '%' . $term . '%';
+                              $params[':term_like'] = $termLike;
+                              // direct matches
+                              $whereParts[] = "StuID LIKE :term_like";
+                              $whereParts[] = "FamilyName LIKE :term_like";
+                              $whereParts[] = "FirstName LIKE :term_like";
+                              $whereParts[] = "Program LIKE :term_like";
+                              $whereParts[] = "Major LIKE :term_like";
+                              $whereParts[] = "Barangay LIKE :term_like";
+                              $whereParts[] = "CityMunicipality LIKE :term_like";
+                              $whereParts[] = "Province LIKE :term_like";
+                              $whereParts[] = "Category LIKE :term_like";
+                              $whereParts[] = "EmailAddress LIKE :term_like";
+
+                              // Year level exact match if they search '1','2','3','4' or 'year 1' etc.
+                              if (preg_match('/^\s*(?:year\s*)?([1-4])(?:st|nd|rd|th)?\s*(?:year)?\s*$/i', $term, $ym)) {
+                                $whereParts[] = "YearLevel = :year_level";
+                                $params[':year_level'] = $ym[1];
+                              } else {
+                                // match possible textual year terms like 'grade 11' won't be present in schema,
+                                // but keep YearLevel pattern match against the term if it's numeric
+                                if (preg_match('/^\d+$/', $term)) {
+                                  $whereParts[] = "YearLevel = :year_level_num";
+                                  $params[':year_level_num'] = $term;
+                                }
+                              }
+
+                              // Gender match (Male/Female/Other)
+                              if (preg_match('/^(male|female|m|f)$/i', $term, $gm)) {
+                                $gval = (strtolower($gm[1]) === 'm') ? 'Male' : ((strtolower($gm[1]) === 'f') ? 'Female' : ucfirst(strtolower($gm[1])));
+                                $whereParts[] = "Gender = :gender_val";
+                                $params[':gender_val'] = $gval;
+                              } else {
+                                // allow fuzzy gender search too
+                                $whereParts[] = "Gender LIKE :term_like";
+                              }
+
+                              // Map status keywords
+                              $lower = strtolower($term);
+                              if ($lower === 'active') {
+                                $whereParts[] = "Status = :status_active";
+                                $params[':status_active'] = 1;
+                              } elseif ($lower === 'inactive' || $lower === 'graduated' || $lower === 'transferred') {
+                                // there's only a Status bit in the schema; treat other keywords as Status = 0
+                                $whereParts[] = "Status = :status_inactive";
+                                $params[':status_inactive'] = 0;
+                              }
+                            } else {
+                              // empty search => match all
+                              $whereParts[] = "1";
                             }
+
+                            $whereSQL = ' WHERE ' . implode(' OR ', $whereParts);
+
+                            // count
+                            $countSql = "SELECT COUNT(ID) FROM tblstudent " . $whereSQL;
                             $countStmt = $dbh->prepare($countSql);
-                            if ($sdata !== '') {
-                              $countStmt->bindValue(':sdata', '%' . $sdata . '%', PDO::PARAM_STR);
+                            foreach ($params as $k => $v) {
+                              // guess param type
+                              $countStmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
                             }
                             $countStmt->execute();
-                            $total_rows = $countStmt->fetchColumn();
+                            $total_rows = (int) $countStmt->fetchColumn();
                             $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
 
-                            $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent";
-                            if ($sdata !== '') {
-                              $sql .= " WHERE StuID LIKE :sdata OR FamilyName LIKE :sdata OR FirstName LIKE :sdata";
-                            }
-                            $sql .= " ORDER BY ID DESC LIMIT :offset, :limit";
+                            // data query
+                            $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent " . $whereSQL . " ORDER BY ID DESC LIMIT :offset, :limit";
                             $query = $dbh->prepare($sql);
-                            if ($sdata !== '') {
-                              $query->bindValue(':sdata', '%' . $sdata . '%', PDO::PARAM_STR);
+                            foreach ($params as $k => $v) {
+                              $query->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
                             }
                             $query->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
                             $query->bindValue(':limit', (int) $no_of_records_per_page, PDO::PARAM_INT);
@@ -377,52 +437,52 @@ if (true) {
                             $cnt = 1 + $offset;
                             if ($query->rowCount() > 0) {
                               foreach ($results as $row) { ?>
-                                <tr>
-                                  <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
-                                  <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
-                                  <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
-                                  <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
-                                  <td data-label="Program">
-                                    <?php
-                                    $program_full = htmlentities($row->Program);
-                                    // Use regex to find acronym in parentheses
-                                    if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
-                                      echo $matches[1];
-                                    } else {
-                                      echo $program_full; // Fallback to full name if no acronym
-                                    } ?>
-                                  </td>
-                                  <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                  <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                                  <td data-label="Action">
-                                    <div class="btn-group" role="group" aria-label="Actions"
-                                      style="display: flex; gap: 0.5rem;">
-                                      <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
-                                        class="btn btn-info btn-xs">View</a>
-                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
-                                        class="btn btn-primary btn-xs">Edit</a>
-                                      <?php if (isset($row->Status) && $row->Status == 1): ?>
-                                        <button type="button" class="btn btn-warning btn-xs message-btn" data-toggle="modal"
-                                          data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>"
-                                          data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>"
-                                          data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
-                                      <?php else: ?>
-                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
-                                          class="btn btn-secondary btn-xs">
-                                          Activate
-                                        </a>
-                                      <?php endif; ?>
-                                    </div>
-                                  </td>
-                                </tr>
+                                 <tr>
+                                   <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
+                                   <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                                   <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
+                                   <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
+                                   <td data-label="Program">
+                                     <?php
+                                     $program_full = htmlentities($row->Program);
+                                     // Use regex to find acronym in parentheses
+                                     if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
+                                       echo $matches[1];
+                                     } else {
+                                       echo $program_full; // Fallback to full name if no acronym
+                                     } ?>
+                                   </td>
+                                   <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
+                                   <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
+                                   <td data-label="Action">
+                                     <div class="btn-group" role="group" aria-label="Actions"
+                                       style="display: flex; gap: 0.5rem;">
+                                       <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
+                                         class="btn btn-info btn-xs">View</a>
+                                       <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
+                                         class="btn btn-primary btn-xs">Edit</a>
+                                       <?php if (isset($row->Status) && $row->Status == 1): ?>
+                                         <button type="button" class="btn btn-warning btn-xs message-btn" data-toggle="modal"
+                                           data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>"
+                                           data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>"
+                                           data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
+                                       <?php else: ?>
+                                         <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
+                                           class="btn btn-secondary btn-xs">
+                                           Activate
+                                         </a>
+                                       <?php endif; ?>
+                                     </div>
+                                   </td>
+                                 </tr>
                                 <?php
                                 $cnt++;
                               }
                             } else { ?>
-                              <tr class="text-center">
-                                <td colspan="8" style="color: red;">No record found against this search
-                                </td>
-                              </tr>
+                               <tr class="text-center">
+                                 <td colspan="8" style="color: red;">No record found against this search
+                                 </td>
+                               </tr>
                             <?php }
                           } ?>
                         </tbody>
