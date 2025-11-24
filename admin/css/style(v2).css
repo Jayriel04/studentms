@@ -386,31 +386,20 @@ body {
 
 /* --- RESPONSIVE SEARCH FORM --- */
 @media (max-width: 575.98px) {
-  .card-body .responsive-search-form {
+  .responsive-search-form .form-inline {
     flex-direction: column;
     align-items: stretch !important;
   }
 
-  .card-body .responsive-search-form .card-title {
-    margin-bottom: 1rem !important;
-  }
-
-  .card-body .responsive-search-form form {
-    flex-wrap: wrap; /* Allow items to wrap */
-    justify-content: space-between; /* Distribute space */
-    width: 100%;
-    margin-left: 0 !important;
-  }
-
-  .card-body .responsive-search-form form .form-control,
-  .card-body .responsive-search-form form .btn {
+  .responsive-search-form .form-inline .form-group {
     margin-bottom: 0.5rem;
+    width: 100%;
   }
 
-  .card-body .responsive-search-form form input[name="searchdata"] { flex: 1 1 100%; }
-  .card-body .responsive-search-form form select[name="filter"] { flex: 1 1 48%; }
-  .card-body .responsive-search-form form button[name="search"] { flex: 1 1 48%; }
-  .card-body .responsive-search-form form .btn-info { flex: 1 1 100%; margin-top: 0.5rem; }
+  .responsive-search-form .form-inline .btn {
+    width: 100%;
+    margin-left: 0 !important; /* Override Bootstrap's margin */
+  }
 }
 
 /* --- RESPONSIVE TABLE (SCALED VIEW) --- */
@@ -476,5 +465,11 @@ body {
   .report-summary-header {
     flex-direction: column;
     align-items: flex-start !important;
+  }
+
+  /* Move user dropdown to the left on mobile */
+  .navbar .navbar-menu-wrapper .navbar-nav-right.ml-auto {
+    margin-left: 0 !important;
+    margin-right: auto !important;
   }
 }
