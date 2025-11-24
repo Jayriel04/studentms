@@ -1213,3 +1213,13 @@
         font-size: 0.82rem;
     }
 }
+
+/* --- CUSTOM RESPONSIVE NAVBAR --- */
+@media (max-width: 991.98px) {
+  .navbar .navbar-menu-wrapper .navbar-nav.ml-auto {
+    margin-left: 0 !important;
+    margin-right: auto;
+    flex-direction: row; /* Ensure items stay in a row */
+    align-items: center;
+  }
+}

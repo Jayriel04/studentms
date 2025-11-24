@@ -78,7 +78,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       </div>
                       <div class="form-group">
                         <label for="exampleInputName1">Notice Message</label>
-                        <textarea name="notmsg" value="" class="form-control" required='true'></textarea>
+                        <textarea name="notmsg" value="" class="form-control" style="height: 30vh;" required='true'></textarea>
                       </div>
 
                       <button type="submit" class="btn btn-primary mr-2" name="submit">Add</button>

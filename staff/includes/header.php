@@ -19,8 +19,7 @@
       // Use user's profile image if exists, else fallback
       $profileImg = !empty($row->Image) ? "../admin/images/" . $row->Image : "images/faces/face8.jpg";
       ?>
-      <div class="navbar-menu-wrapper d-flex align-items-center flex-grow-1">
-        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+      <div class="navbar-menu-wrapper d-flex align-items-center flex-grow-1        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
           data-toggle="offcanvas">
           <span class="icon-menu"></span>
         </button>

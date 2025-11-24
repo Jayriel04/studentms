@@ -201,6 +201,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/chart.js"></script>
   </body>
 
   </html><?php } ?>

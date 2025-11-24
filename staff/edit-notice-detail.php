@@ -8,15 +8,39 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
   $success_message = '';
   if (isset($_POST['submit'])) {
     $nottitle = $_POST['nottitle'];
-    $notmsg = $_POST['notmsg'];
+    $notmsg = $_POST['notmsg']; // The notice message with potential mentions
     $eid = $_GET['editid'];
     $sql = "UPDATE tblnotice SET NoticeTitle=:nottitle, NoticeMsg=:notmsg WHERE ID=:eid";
     $query = $dbh->prepare($sql);
     $query->bindParam(':nottitle', $nottitle, PDO::PARAM_STR);
     $query->bindParam(':notmsg', $notmsg, PDO::PARAM_STR);
     $query->bindParam(':eid', $eid, PDO::PARAM_INT);
-    $query->execute();
-    $success_message = "Notice has been updated successfully.";
+    if ($query->execute()) {
+      $success_message = "Notice has been updated successfully.";
+
+      // Handle mentions: extract mentions in the format "@FirstName FamilyName"
+      preg_match_all('/@([A-Za-z]+)\s+([A-Za-z]+)\s/', $notmsg, $matches, PREG_SET_ORDER);
+
+      if (!empty($matches)) {
+        foreach ($matches as $match) {
+          $firstName = trim($match[1]);
+          $familyName = trim($match[2]);
+
+          // Get student ID from the database
+          $studentStmt = $dbh->prepare("SELECT StuID FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
+          $studentStmt->bindValue(':fname', $firstName, PDO::PARAM_STR);
+          $studentStmt->bindValue(':lname', $familyName, PDO::PARAM_STR);
+          $studentStmt->execute();
+          $student = $studentStmt->fetch(PDO::FETCH_OBJ);
+
+          if ($student) {
+            $messageSQL = "INSERT INTO tblmessages (SenderID, SenderType, RecipientStuID, Subject, Message, IsRead, Timestamp) VALUES (:sid, :stype, :stuid, :subject, :msg, 0, NOW())";
+            $messageStmt = $dbh->prepare($messageSQL);
+            $messageStmt->execute([':sid' => $_SESSION['sturecmsstaffid'], ':stype' => 'staff', ':stuid' => $student->StuID, ':subject' => "You were mentioned in an updated notice: " . $nottitle, ':msg' => "You were mentioned in the updated notice titled '{$nottitle}'.\n\nContent:\n" . $notmsg]);
+          }
+        }
+      }
+    }
   }
   ?>
   <!DOCTYPE html>
@@ -78,7 +102,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                           </div>
                           <div class="form-group">
                             <label for="exampleInputName1">Notice Message</label>
-                            <textarea name="notmsg" class="form-control"
+                            <textarea name="notmsg" id="notmsg" class="form-control" style="height: 30vh;"
                               required='true'><?php echo htmlentities($row->NoticeMsg); ?></textarea>
                           </div>
                         <?php }
@@ -102,6 +126,15 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="js/misc.js"></script>
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
+    <script src="js/mention.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const notemsgTextarea = document.getElementById('notmsg');
+        if(notemsgTextarea) {
+          initializeMention(notemsgTextarea, 'search.php?mention_suggest=1');
+        }
+      });
+    </script>
   </body>
 
   </html>

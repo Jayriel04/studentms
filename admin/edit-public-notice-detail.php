@@ -83,7 +83,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                           </div>
                           <div class="form-group">
                             <label for="exampleInputName1">Notice Message</label>
-                            <textarea name="notmsg" value="" class="form-control"
+                            <textarea name="notmsg" value="" class="form-control" style="height: 30vh;"
                               required='true'><?php echo htmlentities($row->NoticeMessage); ?></textarea>
                           </div>
                           <?php $cnt = $cnt + 1;
