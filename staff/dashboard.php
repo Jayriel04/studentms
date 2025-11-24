@@ -175,6 +175,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     </div>
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="vendors/chart.js/Chart.min.js"></script>
+    <script src="js/chart.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script>

@@ -316,29 +316,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                               </tr>
                             <?php }
                           } else {
-                            // Regular student search (as before)
-                            // Total rows
-                            $countSql = "SELECT COUNT(ID) FROM tblstudent";
-                            if ($sdata !== '') {
-                              $countSql .= " WHERE StuID LIKE :sdata OR FamilyName LIKE :sdata OR FirstName LIKE :sdata";
+                            // Enhanced search across tblstudent fields:
+                            // StuID, FamilyName, FirstName, Program, Major, YearLevel, Gender,
+                            // Barangay, CityMunicipality, Province, Category, EmailAddress
+                            // plus mapping keywords "active" => Status = 1, "inactive"/"graduated"/"transferred" => Status = 0
+                            $total_rows = 0;
+                            $params = [];
+                            $whereParts = [];
+
+                            $term = trim($sdata);
+                            if ($term !== '') {
+                              $termLike = '%' . $term . '%';
+                              $params[':term_like'] = $termLike;
+
+                              // Basic text fields
+                              $whereParts[] = "StuID LIKE :term_like";
+                              $whereParts[] = "FamilyName LIKE :term_like";
+                              $whereParts[] = "FirstName LIKE :term_like";
+                              $whereParts[] = "Program LIKE :term_like";
+                              $whereParts[] = "Major LIKE :term_like";
+                              $whereParts[] = "Barangay LIKE :term_like";
+                              $whereParts[] = "CityMunicipality LIKE :term_like";
+                              $whereParts[] = "Province LIKE :term_like";
+                              $whereParts[] = "Category LIKE :term_like";
+                              $whereParts[] = "EmailAddress LIKE :term_like";
+
+                              // YearLevel exact numeric match (accept "year 1", "1", "Year 2" etc)
+                              if (preg_match('/^\s*(?:year\s*)?([0-9]+)\s*$/i', $term, $ym)) {
+                                $whereParts[] = "YearLevel = :year_level";
+                                $params[':year_level'] = $ym[1];
+                              }
+
+                              // Gender exact match (male/female/m/f)
+                              if (preg_match('/^(male|female|m|f)$/i', $term, $gm)) {
+                                $g = strtolower($gm[1]);
+                                if ($g === 'm') {
+                                  $gval = 'Male';
+                                } elseif ($g === 'f') {
+                                  $gval = 'Female';
+                                } else {
+                                  $gval = ucfirst($g);
+                                }
+                                $whereParts[] = "Gender = :gender_val";
+                                $params[':gender_val'] = $gval;
+                              } else {
+                                // allow fuzzy gender searches as LIKE too
+                                $whereParts[] = "Gender LIKE :term_like";
+                              }
+
+                              // Status mapping
+                              $lower = strtolower($term);
+                              if ($lower === 'active') {
+                                $whereParts[] = "Status = :status_active";
+                                $params[':status_active'] = 1;
+                              } elseif ($lower === 'inactive' || $lower === 'graduated' || $lower === 'transferred') {
+                                // schema uses tinyint Status; treat these as non-active (0)
+                                $whereParts[] = "Status = :status_inactive";
+                                $params[':status_inactive'] = 0;
+                              }
+                            } else {
+                              // empty search -> match all
+                              $whereParts[] = "1";
                             }
+
+                            $whereSQL = ' WHERE ' . implode(' OR ', $whereParts);
+
+                            // count
+                            $countSql = "SELECT COUNT(ID) FROM tblstudent " . $whereSQL;
                             $countStmt = $dbh->prepare($countSql);
-                            if ($sdata !== '') {
-                              $countStmt->bindValue(':sdata', '%' . $sdata . '%', PDO::PARAM_STR);
+                            foreach ($params as $k => $v) {
+                              $countStmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
                             }
                             $countStmt->execute();
-                            $total_rows = $countStmt->fetchColumn();
+                            $total_rows = (int) $countStmt->fetchColumn();
                             $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
 
-                            // Fetch results for current page
-                            $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent";
-                            if ($sdata !== '') {
-                              $sql .= " WHERE StuID LIKE :sdata OR FamilyName LIKE :sdata OR FirstName LIKE :sdata";
-                            }
-                            $sql .= " ORDER BY ID DESC LIMIT :offset, :limit";
+                            // data query
+                            $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent " . $whereSQL . " ORDER BY ID DESC LIMIT :offset, :limit";
                             $query = $dbh->prepare($sql);
-                            if ($sdata !== '') {
-                              $query->bindValue(':sdata', '%' . $sdata . '%', PDO::PARAM_STR);
+                            foreach ($params as $k => $v) {
+                              $query->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
                             }
                             $query->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
                             $query->bindValue(':limit', (int) $no_of_records_per_page, PDO::PARAM_INT);
@@ -353,21 +410,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                                   <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
                                   <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
                                   <td data-label="Program"><?php
-                                  $program_full = htmlentities($row->Program);
-                                  // Use regex to find acronym in parentheses
-                                  if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
-                                    echo $matches[1];
-                                  } else {
-                                    echo $program_full; // Fallback to full name if no acronym
-                                  }
+                                    $program_full = htmlentities($row->Program);
+                                    if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
+                                      echo $matches[1];
+                                    } else {
+                                      echo $program_full;
+                                    }
                                   ?></td>
                                   <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                  <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
+                                  <td data-label="Status"><?php echo ($row->Status == 1) ? 'Active' : 'Inactive'; ?></td>
                                   <td data-label="Action">
                                     <div style="display: flex; gap: 0.5rem;">
                                       <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
                                         class="btn btn-success btn-xs">View</a>
-                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="btn btn-info btn-xs">Edit</a> 
+                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
+                                        class="btn btn-info btn-xs">Edit</a>
                                       <?php if (isset($row->Status) && $row->Status == 1): ?>
                                         <button type="button" class="btn btn-warning btn-xs message-btn" data-toggle="modal" data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>" data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>" data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
                                       <?php else: ?>
@@ -378,8 +435,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                                     </div>
                                   </td>
                                 </tr>
-                                <?php
-                                $cnt++;
+                                <?php $cnt++;
                               }
                             } else { ?> 
                               <tr>
