@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 20, 2025 at 08:30 AM
+-- Generation Time: Nov 24, 2025 at 01:44 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -109,16 +109,16 @@ CREATE TABLE `student_achievements` (
 --
 
 INSERT INTO `student_achievements` (`id`, `StuID`, `level`, `category`, `proof_image`, `status`, `rejection_reason`, `is_read`, `approved_by`, `approved_at`, `points`, `created_at`) VALUES
-(32, '222 - 08410', 'School', 'Non-Academic', '1763611964_Screenshot__5_.png', 'approved', NULL, 0, 1, '2025-11-20 12:13:26', 10, '2025-11-20 12:12:44'),
+(32, '222 - 08410', 'School', 'Non-Academic', '1763611964_Screenshot__5_.png', 'approved', NULL, 1, 1, '2025-11-20 12:13:26', 10, '2025-11-20 12:12:44'),
 (33, '111 - 11111', 'City', 'Non-Academic', '1763611994_Screenshot__228_.png', 'approved', NULL, 0, 1, '2025-11-20 12:13:25', 30, '2025-11-20 12:13:14'),
 (34, '222 - 08412', 'Regional', 'Non-Academic', '1763612150_Screenshot__234_.png', 'approved', NULL, 0, 1, '2025-11-20 12:15:57', 50, '2025-11-20 12:15:50'),
 (35, '222 - 08412', 'School', 'Academic', '1763613076_Screenshot__5_.png', 'approved', NULL, 0, 1, '2025-11-20 12:32:43', 10, '2025-11-20 12:31:16'),
 (36, '111 - 11111', 'City', 'Academic', '1763613117_Screenshot__228_.png', 'approved', NULL, 0, 1, '2025-11-20 12:32:42', 30, '2025-11-20 12:31:57'),
-(37, '222 - 08410', 'Provincial', 'Academic', '1763613152_Screenshot__235_.png', 'approved', NULL, 0, 1, '2025-11-20 12:32:41', 40, '2025-11-20 12:32:32'),
-(39, '222 - 08410', 'International', 'Non-Academic', '1763613844_Screenshot__234_.png', 'approved', NULL, 0, 1, '2025-11-20 12:44:14', 100, '2025-11-20 12:44:04'),
-(42, '222 - 08410', 'Hobby', 'Non-Academic', '', 'rejected', 'please provide a proff', 0, 1, '2025-11-20 12:56:34', 1, '2025-11-20 12:56:17'),
-(43, '222 - 08410', 'School', 'Non-Academic', '', 'rejected', 'please provide a proff', 0, 1, '2025-11-20 12:59:59', 10, '2025-11-20 12:59:41'),
-(44, '222 - 08410', 'Regional', 'Academic', '', 'rejected', 'please provide a proof of achievement and this is non academic!', 0, 1, '2025-11-20 13:31:43', 50, '2025-11-20 13:31:02');
+(37, '222 - 08410', 'Provincial', 'Academic', '1763613152_Screenshot__235_.png', 'approved', NULL, 1, 1, '2025-11-20 12:32:41', 40, '2025-11-20 12:32:32'),
+(39, '222 - 08410', 'International', 'Non-Academic', '1763613844_Screenshot__234_.png', 'approved', NULL, 1, 1, '2025-11-20 12:44:14', 100, '2025-11-20 12:44:04'),
+(42, '222 - 08410', 'Hobby', 'Non-Academic', '', 'rejected', 'please provide a proff', 1, 1, '2025-11-20 12:56:34', 1, '2025-11-20 12:56:17'),
+(43, '222 - 08410', 'School', 'Non-Academic', '', 'rejected', 'please provide a proff', 1, 1, '2025-11-20 12:59:59', 10, '2025-11-20 12:59:41'),
+(44, '222 - 08410', 'Regional', 'Academic', '', 'rejected', 'please provide a proof of achievement and this is non academic!', 1, 1, '2025-11-20 13:31:43', 50, '2025-11-20 13:31:02');
 
 -- --------------------------------------------------------
 
@@ -195,7 +195,8 @@ CREATE TABLE `tblmessages` (
 --
 
 INSERT INTO `tblmessages` (`ID`, `SenderID`, `SenderType`, `RecipientStuID`, `Subject`, `Message`, `IsRead`, `Timestamp`) VALUES
-(1, 1, 'staff', '222 - 08410', 'Sample Email SMS', 'Sample Email Messaging', 0, '2025-11-20 07:15:50');
+(6, 1, 'admin', '222 - 08412', 'You were mentioned in a notice: Mobile Legends Choosen Player', 'You were mentioned in the notice titled \'Mobile Legends Choosen Player\'.\n\nContent:\n@Jayriel Senilla ', 0, '2025-11-21 14:31:09'),
+(7, 1, 'admin', '222 - 08412', 'Sample Email Message', 'Sample messaging!!', 0, '2025-11-22 08:03:46');
 
 -- --------------------------------------------------------
 
@@ -206,7 +207,6 @@ INSERT INTO `tblmessages` (`ID`, `SenderID`, `SenderType`, `RecipientStuID`, `Su
 CREATE TABLE `tblnotice` (
   `ID` int(5) NOT NULL,
   `NoticeTitle` mediumtext DEFAULT NULL,
-  `ClassId` int(10) DEFAULT NULL,
   `NoticeMsg` mediumtext DEFAULT NULL,
   `CreationDate` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -215,15 +215,16 @@ CREATE TABLE `tblnotice` (
 -- Dumping data for table `tblnotice`
 --
 
-INSERT INTO `tblnotice` (`ID`, `NoticeTitle`, `ClassId`, `NoticeMsg`, `CreationDate`) VALUES
-(7, 'Test Notice', 1, 'This is the test notice. This is the test notice. This is the test notice. This is the test notice. This is the test notice.', '2025-01-01 06:03:25'),
-(8, 'Test Notice 02', 1, 'Testing notice number 2', '2025-01-04 04:12:07'),
-(9, 'Sample01', 8, 'This is sample post!!', '2025-07-28 05:37:25'),
-(10, 'Sample03', NULL, 'this sample 03', '2025-08-26 05:26:30'),
-(11, 'Sample04', NULL, 'This is sample 04', '2025-08-26 05:27:00'),
-(12, 'Sample05', NULL, 'This is sample 06', '2025-08-26 05:29:03'),
-(13, 'Sample04', NULL, 'This is sample notice number 4', '2025-09-29 07:06:13'),
-(14, 'Sample06', NULL, 'Idk ngano ni red na', '2025-10-02 09:54:16');
+INSERT INTO `tblnotice` (`ID`, `NoticeTitle`, `NoticeMsg`, `CreationDate`) VALUES
+(7, 'Test Notice', 'This is the test notice. This is the test notice. This is the test notice. This is the test notice. This is the test notice.', '2025-01-01 06:03:25'),
+(8, 'Test Notice 02', 'Testing notice number 2', '2025-01-04 04:12:07'),
+(9, 'Sample01', 'This is sample post!!', '2025-07-28 05:37:25'),
+(10, 'Sample03', 'this sample 03', '2025-08-26 05:26:30'),
+(11, 'Sample04', 'This is sample 04', '2025-08-26 05:27:00'),
+(12, 'Sample05', 'This is sample 06', '2025-08-26 05:29:03'),
+(13, 'Sample04', 'This is sample notice number 4', '2025-09-29 07:06:13'),
+(14, 'Sample06', 'Idk ngano ni red na', '2025-10-02 09:54:16'),
+(23, 'Mobile Legends Choosen Player', '@Jayriel Senilla ', '2025-11-21 14:31:09');
 
 -- --------------------------------------------------------
 
@@ -415,19 +416,19 @@ CREATE TABLE `tblstudent` (
 
 INSERT INTO `tblstudent` (`ID`, `StuID`, `FamilyName`, `FirstName`, `MiddleName`, `Program`, `Major`, `LearnersReferenceNo`, `DOB`, `PlaceOfBirth`, `Gender`, `CivilStatus`, `Religion`, `Height`, `Weight`, `Citizenship`, `FathersName`, `MothersMaidenName`, `BuildingHouseNumber`, `StreetName`, `Barangay`, `CityMunicipality`, `Province`, `PostalCode`, `ContactNumber`, `EmailAddress`, `EmergencyContactPerson`, `EmergencyRelationship`, `EmergencyContactNumber`, `EmergencyAddress`, `Category`, `YearLevel`, `Password`, `Image`, `Academic`, `NonAcademic`, `Status`) VALUES
 (1, '222 - 08412', 'Senilla', 'Jayriel', 'Longakit', 'BSIT', 'InfoTech', '119323090042', '2004-04-09', 'idk', 'Mechanic', 'single', 'Roman Catholic', '164cm', '57kg', 'Filipino', 'Arnulfo Senilla', 'Jennifer Longakit', '587-A', 'Carnation street', 'Casili', 'Consolacion', 'Cebu', '6014', '09319106644', 'jayriel@test.com', 'jaynard senilla', 'brother', '09238263741', 'idk', 'Regular', '4', '$2y$10$m4ESgI.efyRszHdUes2XiOf9d606./wyvvN7nDoKptDxHWypKqik6', 'pfpjm.jfif', 'Best in Art', 'Mobile Legends', 1),
-(2, '222 - 08410', 'Ypil', 'John Mar', 'Hortilana', 'Bachelor of Science in Information Technology (BSIT)', '', '119323090040', '2002-12-22', 'idk', 'Male', 'Single', 'Roman Catholic', '164cm', '57cm', 'Filipino', 'idk', 'idk', 'idk', 'idk', 'idk', 'Mandaue City', 'Cebu', '6004', '09319106644', 'ypil.johnmar.mcc@gmail.com', 'Denise', 'wife', '09238263740', 'idk', '', '', '$2y$10$RV2LjH1NklSikQGVOfXIk.jPsI6TRI6NX8lVrIJ4NU6b.uvTlLwki', 'pfpjm.jfif', 'Best in Art', 'Mobile Legends', 1),
+(2, '222 - 08410', 'Ypil', 'John Mar', 'Hortilana', 'Bachelor of Science in Information Technology (BSIT)', '', '119323090040', '2002-12-22', 'idk', 'Male', 'Single', 'Roman Catholic', '164cm', '57cm', 'Filipino', 'idk', 'idk', 'idk', 'idk', 'idk', 'Mandaue City', 'Cebu', '6004', '09319106644', 'ypil.johnmar.mcc@gmail.com', 'Denise', 'wife', '09238263740', 'idk', '', '4', '$2y$10$RV2LjH1NklSikQGVOfXIk.jPsI6TRI6NX8lVrIJ4NU6b.uvTlLwki', 'pfpjm.jfif', 'Best in Art', 'Mobile Legends', 1),
 (3, '112233', 'Canonio', 'Jezrah Faith', 'Conde', 'BSIT', 'InfoTech', '119323090041', '2004-05-13', 'idk', 'Female', 'Single', 'Roman Catholic', '164cm', '49kg', 'Filipino', 'EdilJr Canonio', 'Nimfa Conde', 'idk', 'idk', 'idk', 'idk', 'idk', '6004', '09319106639', 'canonio.jezrahfaith.mcc@gmail.com', 'Marissa Canonio', 'Step Mother', '09238263740', 'idk', 'Regular', '4', '$2y$10$7B0fv2araaGH2rbuhL72x.SrdIKlNwGDbjkhFlXE5ZyECsEV5GqzW', 'pfpjez.jfif', NULL, NULL, 1),
-(9, '2025-001', 'Garcia', 'Juan', 'Santos', 'BSIT', 'Software Engineering', 'LRN12345', '2003-05-12', 'Manila', 'Male', 'Single', 'Catholic', '170', '65', 'Filipino', 'Pedro Garcia', 'Maria Santos', '123', 'Mabini St', 'Barangay 1', 'Quezon City', 'Metro Manila', '1100', '09171234567', 'juan.garcia@example.com', 'Ana Garcia', 'Sister', '09181234567', '123 Mabini St, QC', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
-(10, '2025-002', 'Reyes', 'Maria', 'Lopez', 'BSBA', 'Marketing', 'LRN67890', '2002-11-23', 'Cebu', 'Female', 'Single', 'Catholic', '160', '50', 'Filipino', 'Jose Reyes', 'Elena Lopez', '456', 'Rizal Ave', 'Barangay 5', 'Cebu City', 'Cebu', '6000', '09991234567', 'maria.reyes@example.com', 'Jose Reyes', 'Father', '09981234567', '456 Rizal Ave, Cebu', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
-(11, '2025-003', 'Cruz', 'Mark', 'Antonio', 'BSCE', 'Structural Engineering', 'LRN54321', '2001-07-19', 'Davao', 'Male', 'Married', 'Christian', '175', '70', 'Filipino', 'Andres Cruz', 'Luz Antonio', '789', 'Bonifacio St', 'Barangay 10', 'Davao City', 'Davao del Sur', '8000', '09221234567', 'mark.cruz@example.com', 'Anna Cruz', 'Wife', '09281234567', '789 Bonifacio St, Davao', 'Irregular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
-(12, '2025-004', 'Torres', 'Angela', 'Dela Cruz', 'BSN', 'Nursing', 'LRN98765', '2004-01-05', 'Baguio', 'Female', 'Single', 'Catholic', '158', '48', 'Filipino', 'Mario Torres', 'Cristina Dela Cruz', '321', 'Session Rd', 'Barangay 3', 'Baguio City', 'Benguet', '2600', '09331234567', 'angela.torres@example.com', 'Cristina Dela Cruz', 'Mother', '09381234567', '321 Session Rd, Baguio', 'Regular', '', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
+(9, '2025-001', 'Garcia', 'Juan', 'Santos', 'BSIT', 'Software Engineering', 'LRN12345', '2003-05-12', 'Manila', 'Male', 'Single', 'Catholic', '170', '65', 'Filipino', 'Pedro Garcia', 'Maria Santos', '123', 'Mabini St', 'Barangay 1', 'Quezon City', 'Metro Manila', '1100', '09171234567', 'juan.garcia@example.com', 'Ana Garcia', 'Sister', '09181234567', '123 Mabini St, QC', 'Regular', '2', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
+(10, '205 - 00223', 'Reyes', 'Maria', 'Lopez', 'BSBA', '', 'LRN67890', '2002-11-23', 'Cebu', 'Female', 'Single', 'Catholic', '160', '50', 'Filipino', 'Jose Reyes', 'Elena Lopez', '456', 'Rizal Ave', 'Barangay 5', 'Cebu City', 'Cebu', '6000', '09991234567', 'maria.reyes@example.com', 'Jose Reyes', 'Father', '09981234567', '456 Rizal Ave, Cebu', 'Regular', '3', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
+(11, '225 - 00323', 'Cruz', 'Mark', 'Antonio', 'BSCE', '', 'LRN54321', '2001-07-19', 'Davao', 'Male', 'Married', 'Christian', '175', '70', 'Filipino', 'Andres Cruz', 'Luz Antonio', '789', 'Bonifacio St', 'Barangay 10', 'Davao City', 'Davao del Sur', '8000', '09221234567', 'mark.cruz@example.com', 'Anna Cruz', 'Wife', '09281234567', '789 Bonifacio St, Davao', 'Irregular', '2', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
+(12, '2025-004', 'Torres', 'Angela', 'Dela Cruz', 'BSN', 'Nursing', 'LRN98765', '2004-01-05', 'Baguio', 'Female', 'Single', 'Catholic', '158', '48', 'Filipino', 'Mario Torres', 'Cristina Dela Cruz', '321', 'Session Rd', 'Barangay 3', 'Baguio City', 'Benguet', '2600', '09331234567', 'angela.torres@example.com', 'Cristina Dela Cruz', 'Mother', '09381234567', '321 Session Rd, Baguio', 'Regular', '4', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
 (13, '2025-005', 'Villanueva', 'Jose', 'Martinez', 'BSA', 'Accounting', 'LRN19283', '2003-09-30', 'Iloilo', 'Male', 'Single', 'Catholic', '172', '68', 'Filipino', 'Ramon Villanueva', 'Teresa Martinez', '654', 'Lopez Jaena St', 'Barangay 8', 'Iloilo City', 'Iloilo', '5000', '09451234567', 'jose.villanueva@example.com', 'Teresa Martinez', 'Mother', '09481234567', '654 Lopez Jaena St, Iloilo', 'Regular', '4', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
 (14, 'TEST123', 'Smith', 'John', 'A', 'BSCS', 'Software', '', '0000-00-00', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '$2y$10$HI12KNlEI6sXFFYSfwPz5O2vWo4kVHPJS9jGjbTKEgcmskAKBAVyW', NULL, NULL, NULL, 1),
-(15, '1001', 'Santos', 'Juan', 'Dela Cruz', 'BSIT', 'Software Engineering', 'LRN12345', '2002-05-14', 'Manila', 'Male', 'Single', 'Catholic', '170', '65', 'Filipino', 'Pedro Santos', 'Maria Dela Cruz', '123', 'Rizal St.', 'Barangay 1', 'Quezon City', 'Metro Manila', '1100', '09171234567', 'juan.santos@email.com', 'Ana Santos', 'Mother', '09181234567', '123 Rizal St., QC', 'Regular', '', '$2y$10$MhCRDxWeewte4q8N62uGK.dB7UQZhjJYnbHkskAKC9qtGWXhNlfAe', NULL, NULL, NULL, 1),
-(16, '1002', 'Reyes', 'Maria', 'Lopez', 'BSBA', 'Marketing', 'LRN54321', '2001-11-20', 'Cebu City', 'Female', 'Single', 'Catholic', '160', '50', 'Filipino', 'Jose Reyes', 'Carmen Lopez', '45', 'Mabini St.', 'Barangay Central', 'Cebu City', 'Cebu', '6000', '09271234567', 'maria.reyes@email.com', 'Jose Reyes', 'Father', '09281234567', '45 Mabini St., Cebu', 'Regular', '', '$2y$10$MhCRDxWeewte4q8N62uGK.dB7UQZhjJYnbHkskAKC9qtGWXhNlfAe', NULL, NULL, NULL, 1),
+(15, '100 - 10003', 'Santos', 'Juan', 'Dela Cruz', 'BSIT', '', 'LRN12345', '2002-05-14', 'Manila', 'Male', 'Single', 'Catholic', '170', '65', 'Filipino', 'Pedro Santos', 'Maria Dela Cruz', '123', 'Rizal St.', 'Barangay 1', 'Quezon City', 'Metro Manila', '1100', '09171234567', 'juan.santos@email.com', 'Ana Santos', 'Mother', '09181234567', '123 Rizal St., QC', 'Regular', '3', '$2y$10$MhCRDxWeewte4q8N62uGK.dB7UQZhjJYnbHkskAKC9qtGWXhNlfAe', NULL, NULL, NULL, 1),
+(16, '100 - 10002', 'Reyes', 'Maria', 'Lopez', 'BSBA', '', 'LRN54321', '2001-11-20', 'Cebu City', 'Female', 'Single', 'Catholic', '160', '50', 'Filipino', 'Jose Reyes', 'Carmen Lopez', '45', 'Mabini St.', 'Barangay Central', 'Cebu City', 'Cebu', '6000', '09271234567', 'maria.reyes@email.com', 'Jose Reyes', 'Father', '09281234567', '45 Mabini St., Cebu', 'Regular', '2', '$2y$10$MhCRDxWeewte4q8N62uGK.dB7UQZhjJYnbHkskAKC9qtGWXhNlfAe', NULL, NULL, NULL, 1),
 (17, '1003', 'Cruz', 'Mark', 'Antonio', 'BSCS', 'Data Science', 'LRN67890', '2003-03-08', 'Davao City', 'Male', 'Single', 'Christian', '175', '70', 'Filipino', 'Ramon Cruz', 'Luz Antonio', '67', 'Bonifacio St.', 'Barangay 2', 'Davao City', 'Davao del Sur', '8000', '09391234567', 'mark.cruz@email.com', 'Luz Antonio', 'Mother', '09381234567', '67 Bonifacio St., Davao', 'Regular', '', '$2y$10$MhCRDxWeewte4q8N62uGK.dB7UQZhjJYnbHkskAKC9qtGWXhNlfAe', NULL, NULL, NULL, 1),
-(18, '1004', 'Garcia', 'Ana', 'Mendoza', 'BSED', 'English', 'LRN98765', '2000-09-15', 'Baguio City', 'Female', 'Married', 'Catholic', '158', '48', 'Filipino', 'Mario Garcia', 'Elena Mendoza', '89', 'Session Rd.', 'Barangay West', 'Baguio City', 'Benguet', '2600', '09451234567', 'ana.garcia@email.com', 'Mario Garcia', 'Father', '09481234567', '89 Session Rd., Baguio', 'Irregular', '', '$2y$10$MhCRDxWeewte4q8N62uGK.dB7UQZhjJYnbHkskAKC9qtGWXhNlfAe', NULL, NULL, NULL, 1),
-(19, '1005', 'Flores', 'Carlos', 'Ramos', 'BSCE', 'Structural Engineering', 'LRN11223', '2002-01-25', 'Iloilo City', 'Male', 'Single', 'Catholic', '180', '72', 'Filipino', 'Andres Flores', 'Teresa Ramos', '321', 'Lopez Jaena St.', 'Barangay East', 'Iloilo City', 'Iloilo', '5000', '09561234567', 'carlos.flores@email.com', 'Teresa Ramos', 'Mother', '09581234567', '321 Lopez Jaena St., Iloilo', 'Regular', '4', '$2y$10$MhCRDxWeewte4q8N62uGK.dB7UQZhjJYnbHkskAKC9qtGWXhNlfAe', NULL, NULL, NULL, 1),
+(18, '100 - 11000', 'Garcia', 'Ana', 'Mendoza', 'Bachelor of Science in Business Administration (BSBA)', 'Major in Human Resource Management', 'LRN98765', '2000-09-15', 'Baguio City', 'Female', 'Married', 'Catholic', '158', '48', 'Filipino', 'Mario Garcia', 'Elena Mendoza', '89', 'Session Rd.', 'Barangay West', 'Baguio City', 'Benguet', '2600', '09451234567', 'ana.garcia@email.com', 'Mario Garcia', 'Father', '09481234567', '89 Session Rd., Baguio', 'Irregular', '3', '$2y$10$MhCRDxWeewte4q8N62uGK.dB7UQZhjJYnbHkskAKC9qtGWXhNlfAe', NULL, NULL, NULL, 1),
+(19, '100 - 10000', 'Flores', 'Carlos', 'Ramos', 'Bachelor of Elementary Education (BEEd)', 'Major in General Content', 'LRN11223', '2002-01-25', 'Iloilo City', 'Male', 'Single', 'Catholic', '180', '72', 'Filipino', 'Andres Flores', 'Teresa Ramos', '321', 'Lopez Jaena St.', 'Barangay East', 'Iloilo City', 'Iloilo', '5000', '09561234567', 'carlos.flores@email.com', 'Teresa Ramos', 'Mother', '09581234567', '321 Lopez Jaena St., Iloilo', 'Regular', '2', '$2y$10$MhCRDxWeewte4q8N62uGK.dB7UQZhjJYnbHkskAKC9qtGWXhNlfAe', NULL, NULL, NULL, 1),
 (20, '12345', 'Crazy', 'Rapid', 'Boots', '', NULL, NULL, '0000-00-00', NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'saging@test.com', NULL, NULL, NULL, NULL, '', '1', '$2y$10$3sUTYaeAFwO0ZxbM54afr.2Bn9HeWVpubli/PPnMn8zMRHwOn/5lC', 'anonymous-user.png', NULL, NULL, 1),
 (21, '222-08800', 'Canonio', 'Seg Francis', 'Kiem', '', NULL, NULL, '0000-00-00', NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'canonio.segfrancis.mcc@gmail.com', NULL, NULL, NULL, NULL, '', '1', '$2y$10$PBmGXFQarxtc0i1lOhoN7Otgp1kz9v4wXSLDIAnTIDPl58FWiiHrW', 'Screenshot 2025-02-13 182718.png', NULL, NULL, 1),
 (22, '1111', 'Senilla', 'Senilla', 'Sam', '', NULL, NULL, '0000-00-00', NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'jayriel.senilla@mc-college.online', NULL, NULL, NULL, NULL, '', '1', '$2y$10$NeKFtteePIK5KQITC9w/KuaZHAb2FwSe2I/YMkzvUmdQ0kfU2pi0y', '1763278247_Screenshot__235_.png', NULL, NULL, 1),
@@ -557,13 +558,13 @@ ALTER TABLE `tbladmin`
 -- AUTO_INCREMENT for table `tblmessages`
 --
 ALTER TABLE `tblmessages`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tblnotice`
 --
 ALTER TABLE `tblnotice`
-  MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `tblpage`
