@@ -1,9 +1,9 @@
 <?php
 // Example of PDO connection using environment variables
-$host = getenv('DB_HOST');
-$dbname = getenv('DB_NAME');
-$user = getenv('DB_USER');
-$password = getenv('DB_PASSWORD');
+$host = getenv('dpg-d4ijlsili9vc73ejsmc0-a.oregon-postgres.render.com');
+$dbname = getenv('studentmsdb');
+$user = getenv('studentmsdb_user');
+$password = getenv('11t2icxENdAP3KowXwkjREBznMXKV5Sq');
 
 try {
     $conn = new PDO("pgsql:host=$host;dbname=$dbname", $user, $password);
