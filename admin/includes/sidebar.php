@@ -36,18 +36,12 @@
       </a>
     </li>
 
+    <!-- Staff (direct link to Manage Staff) -->
     <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#ui-basic-staff" aria-expanded="false"
-        aria-controls="ui-basic-staff">
+      <a class="nav-link" href="manage-staff.php">
         <span class="menu-icon">👥</span>
         <span class="menu-title">Staff</span>
       </a>
-      <div class="collapse" id="ui-basic-staff">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="add-staff.php">Add Staff</a></li>
-          <li class="nav-item"><a class="nav-link" href="manage-staff.php">Manage Staff</a></li>
-        </ul>
-      </div>
     </li>
 
     <li class="nav-item">
@@ -65,30 +59,22 @@
       </div>
     </li>
 
-
+    <!-- Notice (direct link to Manage Notice) -->
     <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+      <a class="nav-link" href="manage-notice.php">
         <span class="menu-icon">📌</span>
         <span class="menu-title">Notice</span>
       </a>
-      <div class="collapse" id="auth">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="add-notice.php"> Add Notice </a></li>
-          <li class="nav-item"> <a class="nav-link" href="manage-notice.php"> Manage Notice </a></li>
-        </ul>
-      </div>
     </li>
+
+    <!-- Public Notice (direct link to Manage Public Notice) -->
     <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#auth1" aria-expanded="false" aria-controls="auth">
+      <a class="nav-link" href="manage-public-notice.php">
         <span class="menu-icon">📣</span>
         <span class="menu-title">Public Notice</span>
       </a>
-      <div class="collapse" id="auth1">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="add-public-notice.php"> Add Public Notice </a></li>
-          <li class="nav-item"> <a class="nav-link" href="manage-public-notice.php"> Manage Public Notice </a></li>
-        </ul>
-      </div>
+    </li>
+
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#auth2" aria-expanded="false" aria-controls="auth">
         <span class="menu-icon">📝</span>
@@ -106,7 +92,6 @@
         <span class="menu-icon">🔎</span>
         <span class="menu-title">Search</span>
       </a>
-    </li>
     </li>
   </ul>
 </nav>

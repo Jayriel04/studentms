@@ -45,32 +45,23 @@
         </ul>
       </div>
     </li>
-    
+
+    <!-- Notice (direct link to Manage Notice) -->
     <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#notice" aria-expanded="false" aria-controls="notice">
+      <a class="nav-link" href="manage-notice.php">
         <span class="menu-icon">📌</span>
         <span class="menu-title">Notice</span>
       </a>
-      <div class="collapse" id="notice">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="add-notice.php"> Add Notice </a></li>
-          <li class="nav-item"> <a class="nav-link" href="manage-notice.php"> Manage Notice </a></li>
-        </ul>
-      </div>
     </li>
+
+    <!-- Public Notice (direct link to Manage Public Notice) -->
     <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#publicnotice" aria-expanded="false"
-        aria-controls="publicnotice">
+      <a class="nav-link" href="manage-public-notice.php">
         <span class="menu-icon">📣</span>
         <span class="menu-title">Public Notice</span>
       </a>
-      <div class="collapse" id="publicnotice">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="add-public-notice.php"> Add Public Notice </a></li>
-          <li class="nav-item"> <a class="nav-link" href="manage-public-notice.php"> Manage Public Notice </a></li>
-        </ul>
-      </div>
     </li>
+
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#pages" aria-expanded="false" aria-controls="pages">
         <span class="menu-icon">📝</span>
