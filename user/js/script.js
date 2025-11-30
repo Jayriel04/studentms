@@ -57,3 +57,23 @@ document.addEventListener('DOMContentLoaded', function () {
   // For add-student.php gender field
   toggleOtherInput('genderSelect', 'otherInputGroup');
 });
+
+/**
+ * Sets the active class on a clicked sidebar menu item.
+ * @param {HTMLElement} element The clicked menu item element.
+ */
+function selectMenu(element) {
+  const items = document.querySelectorAll('.menu-item');
+  items.forEach(item => item.classList.remove('active'));
+  element.classList.add('active');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Add click listeners to new menu items
+  const menuItems = document.querySelectorAll('.sidebar .menu-item');
+  menuItems.forEach(item => {
+    item.addEventListener('click', function() {
+      selectMenu(this);
+    });
+  });
+});

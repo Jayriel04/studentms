@@ -178,6 +178,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="js/chart.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script src="js/script.js"></script>
     <script>
       function showNoticeDetail(title, date, msg) {
         const modal = document.getElementById('noticeModal');

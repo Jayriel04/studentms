@@ -1223,3 +1223,130 @@
     align-items: center;
   }
 }
+
+/* --- NEW SIDEBAR UI (FROM EXAMPLE) --- */
+.sidebar {
+  background: #ffffff;
+  border: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 240px;
+  padding: 0;
+}
+
+.sidebar .header {
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+  padding: 40px 20px 30px;
+  text-align: center;
+  color: white;
+}
+
+.sidebar .logo-link {
+  text-decoration: none;
+}
+
+.sidebar .logo {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 20px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar .logo img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.sidebar .header h1 {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+.sidebar .menu {
+  padding: 20px;
+  margin-top: 60px;
+}
+
+.sidebar .menu-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  background: #ffffff;
+  border: 2px solid #E3F2FD;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: #333;
+}
+
+.sidebar .menu-item:hover {
+  background: #2196F3;
+  color: white;
+  border-color: #2196F3;
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.sidebar .nav-item.active > .menu-item,
+.sidebar .menu-item.active {
+  background: #2196F3;
+  color: white;
+  border-color: #2196F3;
+}
+
+.sidebar .menu-item-icon {
+  font-size: 24px;
+  margin-right: 16px;
+  width: 32px;
+  text-align: center;
+}
+
+.sidebar .menu-item-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Override default nav styles */
+.sidebar .nav, .sidebar .nav .nav-item, .sidebar .nav .nav-item .nav-link {
+  padding: 0;
+  margin: 0;
+  height: auto;
+}
+
+/* --- SUB-MENU STYLES FOR NEW UI --- */
+.sidebar .sub-menu {
+  padding: 0 0 10px 30px; /* Indent sub-menu */
+  background: transparent;
+  margin-top: -12px; /* Pull up under parent */
+}
+
+.sidebar .sub-menu .sub-item {
+  padding: 12px 20px;
+  margin-bottom: 8px;
+  font-size: 14px; /* Slightly smaller font for sub-items */
+  border-width: 1px;
+  border-color: #F5F5F5;
+}
+
+.sidebar .sub-menu .sub-item:hover {
+  transform: translateX(4px); /* Smaller transform for sub-items */
+}
+
+/* Ensure the active parent item remains styled when a child is active */
+.sidebar .menu-item.active {
+  background: #2196F3;
+  color: white;
+  border-color: #2196F3;
+}

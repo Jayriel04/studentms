@@ -1,12 +1,12 @@
 <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-  <div class="navbar-brand-wrapper d-none d-lg-flex align-items-center">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <a class="navbar-brand brand-logo" href="dashboard.php">
-      <strong style="color: white;">SPS</strong>
+  <div class="navbar-brand-wrapper d-none d-lg-flex align-items-center" style="background: #ffffff;">
+    <a class="navbar-brand brand-logo" href="dashboard.php" style="display: flex; align-items: center; gap: 10px;">
+      <img src="../admin/images/logo/logo.jpg" alt="logo" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" />
+      <strong style="color: #333;">SPS</strong>
     </a>
-    <a class="navbar-brand brand-logo-mini" href="dashboard.php"><img src="images/logo-mini.svg" alt="logo" /></a>
+    <a class="navbar-brand brand-logo-mini" href="dashboard.php"><img src="../admin/images/logo/logo.jpg" alt="logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" /></a>
   </div>
+
   <?php
   $sid = $_SESSION['sturecmsstaffid'];
   $sql = "SELECT * FROM tblstaff WHERE ID=:sid";
@@ -19,7 +19,7 @@
       // Use user's profile image if exists, else fallback
       $profileImg = !empty($row->Image) ? "../admin/images/" . $row->Image : "images/faces/face8.jpg";
       ?>
-      <div class="navbar-menu-wrapper d-flex align-items-center flex-grow-1        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+      <div class="navbar-menu-wrapper d-flex align-items-center flex-grow-1"> <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
           data-toggle="offcanvas">
           <span class="icon-menu"></span>
         </button>
