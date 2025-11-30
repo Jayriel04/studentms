@@ -160,22 +160,21 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                         </div>
                         <div class="row">
                             <div class="col-md-12 grid-margin stretch-card">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="d-sm-flex align-items-center mb-4 responsive-search-form">
-                                            <h4 class="card-title mb-sm-0">Manage Notice</h4>
-                                            <form method="post" class="form-inline ml-auto" style="gap: 0.5rem;">
-                                                <input type="text" name="searchdata" class="form-control"
+                                <div class="table-card">
+                                    <div class="table-header">
+                                        <h2 class="table-title">Manage Notices</h2>
+                                        <div class="table-actions">
+                                            <form method="post" class="d-flex" style="gap: 12px;">
+                                                <input type="text" name="searchdata" class="search-box"
                                                     placeholder="Search by Notice Title"
                                                     value="<?php echo htmlentities($searchdata); ?>">
-                                                <button type="submit" name="search" class="btn btn-primary">Search</button>
-
-                                                <!-- Add Notice button opens modal -->
-                                                <button type="button" class="btn btn-success ml-2" data-toggle="modal" data-target="#addNoticeModal">
-                                                  Add Notice
-                                                </button>
+                                                <button type="submit" name="search" class="filter-btn">🔍 Search</button>
                                             </form>
+                                            <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal">
+                                                + Add New Notice
+                                            </button>
                                         </div>
+                                    </div>
 
                                         <!-- Add Notice Modal -->
                                         <div class="modal fade" id="addNoticeModal" tabindex="-1" role="dialog" aria-labelledby="addNoticeModalLabel" aria-hidden="true">
@@ -256,14 +255,13 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                           </div>
                                         </div>
 
-                                        <div class="table-responsive border rounded p-1 card-view">
+                                        <div class="table-wrapper">
                                             <table class="table">
                                                 <thead>
                                                     <tr>
-                                                        <th class="font-weight-bold">S.No</th>
-                                                        <th class="font-weight-bold">Notice Title</th>
-                                                        <th class="font-weight-bold">Notice Date</th>
-                                                        <th class="font-weight-bold">Action</th>
+                                                        <th>Notice Title</th>
+                                                        <th>Notice Date</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -272,46 +270,38 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                     if (!empty($searchdata)) {
                                                         $sql .= " WHERE NoticeTitle LIKE :searchdata";
                                                     }
+                                                    $sql .= " ORDER BY CreationDate DESC";
                                                     $query = $dbh->prepare($sql);
                                                     if (!empty($searchdata)) {
                                                         $query->bindValue(':searchdata', '%' . $searchdata . '%', PDO::PARAM_STR);
                                                     }
                                                     $query->execute();
                                                     $results = $query->fetchAll(PDO::FETCH_OBJ);
-
-                                                    $cnt = 1;
                                                     if ($query->rowCount() > 0) {
                                                         foreach ($results as $row) { ?>
                                                             <tr>
-                                                                <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
-                                                                <td data-label="Notice Title"><?php echo htmlentities($row->NoticeTitle); ?></td>
-                                                                <td data-label="Notice Date"><?php echo htmlentities($row->CreationDate); ?></td>
-                                                                <td data-label="Action">
-                                                                    <div>
-                                                                        <button type="button" class="btn btn-info btn-xs btn-edit-notice"
+                                                                <td><?php echo htmlentities($row->NoticeTitle); ?></td>
+                                                                <td><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
+                                                                <td>
+                                                                    <div class="action-buttons">
+                                                                        <button type="button" class="action-btn edit btn-edit-notice" title="Edit"
                                                                           data-id="<?php echo htmlentities($row->nid); ?>"
                                                                           data-title="<?php echo htmlentities($row->NoticeTitle); ?>"
-                                                                          data-msg="<?php echo htmlspecialchars($row->NoticeMsg, ENT_QUOTES); ?>">Edit</button>
-
-                                                                        <a href="manage-notice.php?delid=<?php echo htmlentities($row->nid); ?>"
-                                                                            onclick="return confirm('Do you really want to delete?');"
-                                                                            class="btn btn-danger btn-xs">Delete</a>
+                                                                          data-msg="<?php echo htmlspecialchars($row->NoticeMsg, ENT_QUOTES); ?>">✏️</button>
+                                                                        <a href="manage-notice.php?delid=<?php echo htmlentities($row->nid); ?>" onclick="return confirm('Do you really want to Delete ?');" class="action-btn" style="background: #fee2e2; color: #ef4444;" title="Delete">🗑️</a>
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            <?php $cnt++;
-                                                        }
+                                                            <?php }
                                                     } else { ?>
                                                         <tr>
-                                                            <td colspan="4" style="text-align: center; color: red;">No Record
-                                                                Found</td>
+                                                            <td colspan="3" style="text-align: center; color: red;">No Record Found</td>
                                                         </tr>
                                                     <?php } ?>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </div>

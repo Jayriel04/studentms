@@ -57,6 +57,21 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
   $offset = ($page - 1) * $limit;
   ?>
+  <?php
+  // Helper function to get initials from a name
+  function getInitials($name)
+  {
+    $words = explode(' ', trim($name));
+    $initials = '';
+    if (count($words) >= 2) {
+      $initials .= strtoupper(substr($words[0], 0, 1));
+      $initials .= strtoupper(substr(end($words), 0, 1));
+    } else if (count($words) == 1) {
+      $initials .= strtoupper(substr($words[0], 0, 2));
+    }
+    return $initials;
+  }
+  ?>
   <!DOCTYPE html>
   <html lang="en">
 
@@ -81,62 +96,56 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Manage Students</h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Manage Students</li>
-                </ol>
-              </nav>
+              <a href="add-students.php" class="add-btn" style="text-decoration: none;">+ Add New Student</a>
             </div>
             <div class="row">
               <div class="col-md-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="d-sm-flex align-items-center mb-4 responsive-search-form">
-                      <h4 class="card-title mb-sm-0">Manage Students</h4>
-                      <form method="get" class="form-inline ml-auto" style="gap: 0.5rem;">
-                        <input type="text" name="searchdata" class="form-control"
+                <div class="table-card">
+                  <div class="table-header">
+                    <h2 class="table-title">Student List</h2>
+                    <div class="table-actions">
+                      <form method="get" class="d-flex" style="gap: 12px;">
+                        <input type="text" name="searchdata" class="search-box"
                           placeholder="Search by ID, Name, or Skill" value="<?php echo htmlentities($searchdata); ?>">
-                        <select name="filter" class="form-control">
+                        <select name="filter" class="filter-btn" onchange="this.form.submit()">
                           <option value="all" <?php if ($filter == 'all') echo 'selected'; ?>>All</option>
                           <option value="active" <?php if ($filter == 'active') echo 'selected'; ?>>Active</option>
                           <option value="inactive" <?php if ($filter == 'inactive') echo 'selected'; ?>>Inactive</option>
                         </select>
-                        <button type="submit" name="search" class="btn btn-primary">Search</button>
-                        <a href="import-file.php" class="btn btn-info">Import</a>
+                        <button type="submit" name="search" class="filter-btn">🔍 Search</button>
                       </form>
+                      <a href="import-file.php" class="add-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none;">
+                        <span style="font-size: 18px; margin-top: -2px;">📥</span> Import
+                      </a>
                     </div>
+                  </div>
+
                     <?php if ($isSkillSearch): ?>
                       <div class="alert alert-info">
                         Showing results for skill: <strong><?php echo htmlentities($skill_name); ?></strong>. Students are
                         ranked by total points.
                       </div>
                     <?php endif; ?>
-                    <div class="table-responsive border rounded card-view">
+                    <div class="table-wrapper">
                       <table class="table">
                         <thead>
                           <tr>
-                            <th class="font-weight-bold">S.No</th>
-                            <th class="font-weight-bold">Student ID</th>
-                            <th class="font-weight-bold">Family Name</th>
-                            <th class="font-weight-bold">First Name</th>
-                            <th class="font-weight-bold">Program</th>
-                            <th class="font-weight-bold">Gender</th>
-                            <th class="font-weight-bold">Email Address</th>
-                            <th class="font-weight-bold">Status</th>
+                            <th>Student</th>
+                            <th>Student ID</th>
+                            <th>Program</th>
+                            <th>Status</th>
                             <?php if ($isSkillSearch): ?>
-                              <th class="font-weight-bold">Skill Points</th>
+                              <th>Skill Points</th>
                             <?php endif; ?>
-                            <th class="font-weight-bold">Action</th>
+                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php
                           $params = [];
                           if ($isSkillSearch) {
-                            // Skill-based ranked search
                             $countSql = "SELECT COUNT(DISTINCT t.ID) FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id";
-                            $countStmt = $dbh->prepare($countSql); 
+                            $countStmt = $dbh->prepare($countSql);
                             $countStmt->bindValue(':skill_id', $skill_id, PDO::PARAM_INT);
                             $countStmt->execute();
                             $totalRows = $countStmt->fetchColumn();
@@ -144,80 +153,77 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             $sql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, IFNULL(SUM(sa.points),0) as totalPoints FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id GROUP BY t.ID ORDER BY totalPoints DESC, t.ID DESC LIMIT :limit OFFSET :offset";
                             $params[':skill_id'] = $skill_id;
                           } else {
-                            // Regular search
                             $where = " WHERE 1=1";
                             if (!empty($searchdata)) {
                               $where .= " AND (StuID LIKE :searchdata OR FamilyName LIKE :searchdata OR FirstName LIKE :searchdata OR EmailAddress LIKE :searchdata)";
                               $params[':searchdata'] = '%' . $searchdata . '%';
                             }
-                            if ($filter == 'active') {
-                              $where .= " AND Status=1";
-                            } elseif ($filter == 'inactive') {
-                              $where .= " AND Status=0";
-                            }
+                            if ($filter == 'active') { $where .= " AND Status=1"; } 
+                            elseif ($filter == 'inactive') { $where .= " AND Status=0"; }
 
                             $countSql = "SELECT COUNT(*) FROM tblstudent" . $where;
                             $countQuery = $dbh->prepare($countSql);
-                            foreach ($params as $k => $v) {
-                              $countQuery->bindValue($k, $v, PDO::PARAM_STR);
-                            }
+                            foreach ($params as $k => $v) { $countQuery->bindValue($k, $v, PDO::PARAM_STR); }
                             $countQuery->execute();
                             $totalRows = (int) $countQuery->fetchColumn();
 
-                            $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent" . $where . " ORDER BY ID DESC LIMIT :limit OFFSET :offset";
+                            $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent" . $where . " ORDER BY FamilyName ASC, FirstName ASC LIMIT :limit OFFSET :offset";
                           }
 
                           $totalPages = $totalRows > 0 ? ceil($totalRows / $limit) : 1;
 
                           $query = $dbh->prepare($sql);
-                          foreach ($params as $k => $v) {
-                            $query->bindValue($k, $v);
-                          }
+                          foreach ($params as $k => $v) { $query->bindValue($k, $v); }
                           $query->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
                           $query->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
                           $query->execute();
                           $results = $query->fetchAll(PDO::FETCH_OBJ);
-                          $cnt = 1 + $offset;
                           if ($query->rowCount() > 0) {
                             foreach ($results as $row) { ?>
                               <tr>
-                                <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
-                                <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
-                                <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
-                                <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
-                                <td data-label="Program">
+                                <td>
+                                  <div class="user-info">
+                                    <div class="user-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                      <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
+                                    </div>
+                                    <div class="user-details">
+                                      <span class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
+                                      <span class="user-email"><?php echo htmlentities($row->EmailAddress); ?></span>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td><?php echo htmlentities($row->StuID); ?></td>
+                                <td>
                                   <?php
                                   $program_full = htmlentities($row->Program);
-                                  // Use regex to find acronym in parentheses
                                   if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
                                     echo $matches[1];
                                   } else {
-                                    echo $program_full; // Fallback to full name if no acronym
+                                    echo $program_full;
                                   } ?>
                                 </td>
-                                <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                <td data-label="Email"><?php echo htmlentities($row->EmailAddress); ?></td>
-                                <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
+                                <td>
+                                  <span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>">
+                                    <?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?>
+                                  </span>
+                                </td>
                                 <?php if ($isSkillSearch): ?>
-                                  <td data-label="Skill Points"><?php echo htmlentities($row->totalPoints); ?></td>
+                                  <td><?php echo htmlentities($row->totalPoints); ?></td>
                                 <?php endif; ?>
-                                <td data-label="Action">
-                                  <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
-                                    class="btn btn-xs" style="background-color: #4CAF50; color: white;">Edit</a>
-                                  <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
-                                    class="btn btn-xs ml-2" style="background-color: #007BFF; color: white;">
-                                    <?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?>
-                                  </a>
-                                  <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
-                                    class="btn btn-xs" style="background-color: #17a2b8; color: white;">View</a>
-                                  <!-- Validate Achievements moved to sidebar -->
+                                <td>
+                                  <div class="action-buttons">
+                                    <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>" class="action-btn edit" title="View Profile" style="background: #e0e7ff; color: #4f46e5;">👁️</a>
+                                    <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="Edit">✏️</a>
+                                    <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="action-btn toggle <?php echo $row->Status == 1 ? 'deactivate' : ''; ?>" title="<?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?>">
+                                      <?php echo $row->Status == 1 ? '🔒' : '🔑'; ?>
+                                    </a>
+                                  </div>
                                 </td>
                               </tr>
-                              <?php $cnt++;
-                            }
+                              <?php }
                           } else { ?>
                             <tr>
-                              <td colspan="<?php echo $isSkillSearch ? '10' : '9'; ?>"
+                              <td colspan="<?php echo $isSkillSearch ? '6' : '5'; ?>"
                                 style="text-align: center; color: red;">No Record Found</td>
                             </tr>
                           <?php } ?>
@@ -225,41 +231,32 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       </table>
                     </div>
                     <!-- Pagination controls -->
-                    <nav aria-label="Page navigation" class="mt-3">
-                      <ul class="pagination">
+                    <div class="pagination">
+                      <div class="pagination-info">
+                        Showing <?php echo $offset + 1; ?>-<?php echo min($offset + $limit, $totalRows); ?> of <?php echo $totalRows; ?> students
+                      </div>
+                      <div class="pagination-buttons">
                         <?php
                         if ($totalPages > 1) {
-                          // Build base URL with preserved params
                           $baseParams = [];
-                          if (!empty($searchdata))
-                            $baseParams['searchdata'] = $searchdata;
-                          if (!empty($filter) && $filter !== 'all')
-                            $baseParams['filter'] = $filter;
+                          if (!empty($searchdata)) $baseParams['searchdata'] = $searchdata;
+                          if (!empty($filter) && $filter !== 'all') $baseParams['filter'] = $filter;
 
                           $buildUrl = function ($p) use ($baseParams) {
                             $params = $baseParams;
                             $params['page'] = $p;
                             return 'manage-students.php?' . http_build_query($params);
                           };
-
-                          // First
-                          $firstDisabled = $page <= 1 ? ' disabled' : '';
-                          echo '<li class="page-item' . $firstDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl(1)) . '">First</a></li>';
-                          // Prev
-                          $prevPage = max(1, $page - 1);
-                          $prevDisabled = $page <= 1 ? ' disabled' : '';
-                          echo '<li class="page-item' . $prevDisabled . '"><a class="page-link" href="' . ($page <= 1 ? '#' : $buildUrl($prevPage)) . '">Prev</a></li>';
-                          // Next
-                          $nextPage = min($totalPages, $page + 1);
-                          $nextDisabled = $page >= $totalPages ? ' disabled' : '';
-                          echo '<li class="page-item' . $nextDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($nextPage)) . '">Next</a></li>';
-                          // Last
-                          $lastDisabled = $page >= $totalPages ? ' disabled' : '';
-                          echo '<li class="page-item' . $lastDisabled . '"><a class="page-link" href="' . ($page >= $totalPages ? '#' : $buildUrl($totalPages)) . '">Last</a></li>';
+                          
+                          $prevDisabled = $page <= 1 ? 'disabled' : '';
+                          echo '<a href="' . ($page <= 1 ? '#' : $buildUrl($page - 1)) . '" class="pagination-btn" ' . $prevDisabled . '>Previous</a>';
+                          
+                          $nextDisabled = $page >= $totalPages ? 'disabled' : '';
+                          echo '<a href="' . ($page >= $totalPages ? '#' : $buildUrl($page + 1)) . '" class="pagination-btn" ' . $nextDisabled . '>Next</a>';
                         }
                         ?>
-                      </ul>
-                    </nav>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

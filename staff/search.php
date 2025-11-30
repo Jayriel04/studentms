@@ -14,6 +14,20 @@ use PHPMailer\PHPMailer\Exception;
 require_once __DIR__ . '/../vendor/autoload.php';
 include_once __DIR__ . '/../includes/mail_config.php';
 
+// Helper function to get initials from a name
+function getInitials($name)
+{
+  $words = explode(' ', trim($name));
+  $initials = '';
+  if (count($words) >= 2) {
+    $initials .= strtoupper(substr($words[0], 0, 1));
+    $initials .= strtoupper(substr(end($words), 0, 1));
+  } else if (count($words) == 1) {
+    $initials .= strtoupper(substr($words[0], 0, 2));
+  }
+  return $initials;
+}
+
 // AJAX endpoint for student mentions
 if (isset($_GET['mention_suggest'])) {
   header('Content-Type: application/json');
@@ -187,23 +201,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
             </div>
             <div class="row">
               <div class="col-md-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="responsive-search-form">
-                      <form method="get" class="form-inline" style="gap: 0.5rem;">
-                        <input id="searchdata" type="text" name="searchdata" class="form-control"  style="width: 85%;"
+                <div class="table-card">
+                  <div class="table-header">
+                    <h2 class="table-title">Student Search</h2>
+                    <div class="table-actions">
+                      <form method="get" class="d-flex" style="gap: 12px;">
+                        <input id="searchdata" type="text" name="searchdata" class="search-box"
                           placeholder="Search by Student ID, Name, or Skill"
                           value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
-                        <button type="submit" class="btn btn-primary" id="submit">Search</button>
+                        <button type="submit" class="filter-btn" id="submit">🔍 Search</button>
                       </form>
+                      <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal">+ Add Notice</button>
                     </div>
-                    <div class="d-sm-flex align-items-center my-4">
+                  </div>
+                    <div class="d-sm-flex align-items-center mt-4 mb-2">
                       <?php
                       $isSkillSearch = false;
                       $skill_id = 0;
                       if (isset($_GET['searchdata'])) {
                         $sdata = trim($_GET['searchdata']);
-                        // Detect if the search term matches an existing skill (case-insensitive exact match)
                         $skillStmt = $dbh->prepare("SELECT id, name FROM skills WHERE LOWER(name) = LOWER(:s) LIMIT 1");
                         $skillStmt->bindValue(':s', $sdata, PDO::PARAM_STR);
                         $skillStmt->execute();
@@ -213,7 +229,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                           $skill_id = $skill->id;
                         }
                         ?>
-                        <hr />
                         <h4 align="center">Results for
                           "<?php echo htmlentities($sdata); ?>"<?php echo ($isSkillSearch) ? ' (skill search - ranked by points)' : ''; ?>
                         </h4>
@@ -223,12 +238,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                       <table class="table">
                         <thead>
                           <tr>
-                            <th class="font-weight-bold">S.No</th>
+                            <th class="font-weight-bold">Student</th>
                             <th class="font-weight-bold">Student ID</th>
-                            <th class="font-weight-bold">Family Name</th>
-                            <th class="font-weight-bold">First Name</th>
                             <th class="font-weight-bold">Program</th>
-                            <th class="font-weight-bold">Gender</th>
                             <th class="font-weight-bold">Status</th>
                             <?php if (isset($isSkillSearch) && $isSkillSearch) { ?>
                               <th class="font-weight-bold">Skill</th>
@@ -238,14 +250,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                         </thead>
                         <tbody>
                           <?php
-                          // Admin-style search logic (preserving search via GET), 5 results per page
                           $sdata = isset($_GET['searchdata']) ? trim($_GET['searchdata']) : '';
                           $pageno = isset($_GET['pageno']) ? max(1, intval($_GET['pageno'])) : 1;
                           $no_of_records_per_page = 5;
                           $offset = ($pageno - 1) * $no_of_records_per_page;
 
                           if ($isSkillSearch && $skill_id) {
-                            // Skill-based ranked search: sum approved points per student for the given skill
                             $countSql = "SELECT COUNT(DISTINCT t.ID) FROM tblstudent t
                      JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved'
                      JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id
@@ -275,33 +285,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                             if (count($results) > 0) {
                               foreach ($results as $row) { ?>
                                 <tr>
-                                  <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
-                                  <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
-                                  <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
-                                  <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
-                                  <td data-label="Program"><?php
-                                  $program_full = htmlentities($row->Program);
-                                  // Use regex to find acronym in parentheses
-                                  if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
-                                    echo $matches[1];
-                                  } else {
-                                    echo $program_full; // Fallback to full name if no acronym
-                                  }
-                                  ?></td>
-                                  <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                  <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                                  <td data-label="Skill"><?php echo isset($skill->name) ? htmlentities($skill->name) : ''; ?></td>
-                                  <td data-label="Action">
-                                    <div style="display: flex; gap: 0.5rem;">
-                                      <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
-                                        class="btn btn-success btn-xs">View</a>
-                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
-                                        class="btn btn-info btn-xs">Edit</a>
+                                  <td>
+                                    <div class="user-info">
+                                      <div class="user-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                        <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
+                                      </div>
+                                      <div class="user-details">
+                                        <span class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
+                                        <span class="user-email"><?php echo htmlentities($row->EmailAddress); ?></span>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td><?php echo htmlentities($row->StuID); ?></td>
+                                  <td><?php echo htmlentities($row->Program); ?></td>
+                                  <td><span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></span></td>
+                                  <?php if ($isSkillSearch): ?>
+                                    <td><?php echo htmlentities($row->totalPoints); ?></td>
+                                  <?php endif; ?>
+                                  <td>
+                                    <div class="action-buttons">
+                                      <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="View Profile" style="background: #e0e7ff; color: #4f46e5;">👁️</a>
+                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="Edit">✏️</a>
                                       <?php if (isset($row->Status) && $row->Status == 1): ?>
-                                        <button type="button" class="btn btn-warning btn-xs message-btn" data-toggle="modal" data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>" data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>" data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
+                                        <button type="button" class="action-btn toggle deactivate message-btn" title="Message" data-toggle="modal" data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>" data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>" data-stuid="<?php echo htmlentities($row->StuID); ?>">✉️</button>
                                       <?php else: ?>
-                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-secondary btn-xs">
-                                          Activate
+                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="action-btn toggle" title="Activate">
+                                          🔑
                                         </a>
                                       <?php endif; ?>
                                     </div>
@@ -311,15 +320,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                               }
                             } else { ?>
                               <tr class="text-center">
-                                <td colspan="10" style="text-align: center; color: red;">No record found against this search
+                                <td colspan="<?php echo $isSkillSearch ? '6' : '5'; ?>" style="text-align: center; color: red;">No record found against this search
                                 </td>
                               </tr>
                             <?php }
                           } else {
-                            // Enhanced search across tblstudent fields:
-                            // StuID, FamilyName, FirstName, Program, Major, YearLevel, Gender,
-                            // Barangay, CityMunicipality, Province, Category, EmailAddress
-                            // plus mapping keywords "active" => Status = 1, "inactive"/"graduated"/"transferred" => Status = 0
                             $total_rows = 0;
                             $params = [];
                             $whereParts = [];
@@ -329,7 +334,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                               $termLike = '%' . $term . '%';
                               $params[':term_like'] = $termLike;
 
-                              // Basic text fields
                               $whereParts[] = "StuID LIKE :term_like";
                               $whereParts[] = "FamilyName LIKE :term_like";
                               $whereParts[] = "FirstName LIKE :term_like";
@@ -341,36 +345,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                               $whereParts[] = "Category LIKE :term_like";
                               $whereParts[] = "EmailAddress LIKE :term_like";
 
-                              // YearLevel exact numeric match (accept "year 1", "1", "Year 2" etc)
                               if (preg_match('/^\s*(?:year\s*)?([0-9]+)\s*$/i', $term, $ym)) {
                                 $whereParts[] = "YearLevel = :year_level";
                                 $params[':year_level'] = $ym[1];
                               }
 
-                              // Gender exact match (male/female/m/f)
                               if (preg_match('/^(male|female|m|f)$/i', $term, $gm)) {
                                 $g = strtolower($gm[1]);
-                                if ($g === 'm') {
-                                  $gval = 'Male';
-                                } elseif ($g === 'f') {
-                                  $gval = 'Female';
-                                } else {
-                                  $gval = ucfirst($g);
-                                }
+                                if ($g === 'm') { $gval = 'Male'; } 
+                                elseif ($g === 'f') { $gval = 'Female'; } 
+                                else { $gval = ucfirst($g); }
                                 $whereParts[] = "Gender = :gender_val";
                                 $params[':gender_val'] = $gval;
                               } else {
-                                // allow fuzzy gender searches as LIKE too
                                 $whereParts[] = "Gender LIKE :term_like";
                               }
 
-                              // Status mapping
                               $lower = strtolower($term);
                               if ($lower === 'active') {
                                 $whereParts[] = "Status = :status_active";
                                 $params[':status_active'] = 1;
                               } elseif ($lower === 'inactive' || $lower === 'graduated' || $lower === 'transferred') {
-                                // schema uses tinyint Status; treat these as non-active (0)
                                 $whereParts[] = "Status = :status_inactive";
                                 $params[':status_inactive'] = 0;
                               }
@@ -381,7 +376,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
 
                             $whereSQL = ' WHERE ' . implode(' OR ', $whereParts);
 
-                            // count
                             $countSql = "SELECT COUNT(ID) FROM tblstudent " . $whereSQL;
                             $countStmt = $dbh->prepare($countSql);
                             foreach ($params as $k => $v) {
@@ -391,7 +385,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                             $total_rows = (int) $countStmt->fetchColumn();
                             $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
 
-                            // data query
                             $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent " . $whereSQL . " ORDER BY ID DESC LIMIT :offset, :limit";
                             $query = $dbh->prepare($sql);
                             foreach ($params as $k => $v) {
@@ -405,41 +398,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                             if ($query->rowCount() > 0) {
                               foreach ($results as $row) { ?>
                                 <tr>
-                                  <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
-                                  <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
-                                  <td data-label="Family Name"><?php echo htmlentities($row->FamilyName); ?></td>
-                                  <td data-label="First Name"><?php echo htmlentities($row->FirstName); ?></td>
-                                  <td data-label="Program"><?php
-                                    $program_full = htmlentities($row->Program);
-                                    if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
-                                      echo $matches[1];
-                                    } else {
-                                      echo $program_full;
-                                    }
-                                  ?></td>
-                                  <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                  <td data-label="Status"><?php echo ($row->Status == 1) ? 'Active' : 'Inactive'; ?></td>
-                                  <td data-label="Action">
-                                    <div style="display: flex; gap: 0.5rem;">
-                                      <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
-                                        class="btn btn-success btn-xs">View</a>
-                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
-                                        class="btn btn-info btn-xs">Edit</a>
+                                  <td>
+                                    <div class="user-info">
+                                      <div class="user-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                        <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
+                                      </div>
+                                      <div class="user-details">
+                                        <span class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
+                                        <span class="user-email"><?php echo htmlentities($row->EmailAddress); ?></span>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td><?php echo htmlentities($row->StuID); ?></td>
+                                  <td><?php echo htmlentities($row->Program); ?></td>
+                                  <td><span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></span></td>
+                                  <td>
+                                    <div class="action-buttons">
+                                      <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="View Profile" style="background: #e0e7ff; color: #4f46e5;">👁️</a>
+                                      <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="Edit">✏️</a>
                                       <?php if (isset($row->Status) && $row->Status == 1): ?>
-                                        <button type="button" class="btn btn-warning btn-xs message-btn" data-toggle="modal" data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>" data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>" data-stuid="<?php echo htmlentities($row->StuID); ?>">Message</button>
+                                        <button type="button" class="action-btn toggle deactivate message-btn" title="Message" data-toggle="modal" data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>" data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>" data-stuid="<?php echo htmlentities($row->StuID); ?>">✉️</button>
                                       <?php else: ?>
-                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="btn btn-secondary btn-xs">
-                                          Activate
+                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="action-btn toggle" title="Activate">
+                                          🔑
                                         </a>
                                       <?php endif; ?>
                                     </div>
                                   </td>
                                 </tr>
-                                <?php $cnt++;
-                              }
+                                <?php }
                             } else { ?> 
                               <tr>
-                                <td colspan="9" style="text-align: center; color: red;">No record found against this search
+                                <td colspan="5" style="text-align: center; color: red;">No record found against this search
                                 </td>
                               </tr>
                             <?php }
@@ -447,46 +437,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                         </tbody>
                       </table>
                       <!-- Pagination controls -->
-                      <?php if (isset($total_pages) && $total_pages > 1) { ?>
-                        <div align="left" class="mt-4">
-                          <ul class="pagination">
-                            <li><a
-                                href="?pageno=1<?php echo ($sdata !== '') ? '&searchdata=' . urlencode($sdata) : ''; ?>"><strong>First</strong></a>
-                            </li>
-                            <li class="<?php if ($pageno <= 1) {
-                              echo 'disabled';
-                            } ?>">
-                              <a href="<?php if ($pageno <= 1) {
-                                echo '#';
-                              } else {
-                                echo '?pageno=' . ($pageno - 1) . (($sdata !== '') ? '&searchdata=' . urlencode($sdata) : '');
-                              } ?>"><strong style="padding-left: 10px">Prev</strong></a>
-                            </li>
-                            <li class="<?php if ($pageno >= $total_pages) {
-                              echo 'disabled';
-                            } ?>">
-                              <a href="<?php if ($pageno >= $total_pages) {
-                                echo '#';
-                              } else {
-                                echo '?pageno=' . ($pageno + 1) . (($sdata !== '') ? '&searchdata=' . urlencode($sdata) : '');
-                              } ?>"><strong style="padding-left: 10px">Next</strong></a>
-                            </li>
-                            <li><a
-                                href="?pageno=<?php echo $total_pages; ?><?php echo ($sdata !== '') ? '&searchdata=' . urlencode($sdata) : ''; ?>"><strong
-                                  style="padding-left: 10px">Last</strong></a></li>
-                          </ul>
+                      <div class="pagination">
+                        <div class="pagination-info">
+                          <?php if (isset($total_rows) && $total_rows > 0): ?>
+                            Showing <?php echo $offset + 1; ?>-<?php echo min($offset + $no_of_records_per_page, $total_rows); ?> of <?php echo $total_rows; ?> results
+                          <?php endif; ?>
                         </div>
-                      <?php } ?>
+                        <div class="pagination-buttons">
+                          <?php
+                          if (isset($total_pages) && $total_pages > 1) {
+                            $baseParams = [];
+                            if (!empty($sdata)) $baseParams['searchdata'] = $sdata;
+                            $buildUrl = fn($p) => 'search.php?' . http_build_query(array_merge($baseParams, ['pageno' => $p]));
+                            
+                            $prevDisabled = $pageno <= 1 ? 'disabled' : '';
+                            echo '<a href="' . ($pageno <= 1 ? '#' : $buildUrl($pageno - 1)) . '" class="pagination-btn" ' . $prevDisabled . '>Previous</a>';
+                            
+                            $nextDisabled = $pageno >= $total_pages ? 'disabled' : '';
+                            echo '<a href="' . ($pageno >= $total_pages ? '#' : $buildUrl($pageno + 1)) . '" class="pagination-btn" ' . $nextDisabled . '>Next</a>';
+                          }
+                          ?>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div style="position: fixed; bottom: 90px; right: 80px; z-index: 1030;">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNoticeModal" title="Add Notice"
-                style="font-size: 2rem; line-height: 1; padding: 0.1rem 0.75rem; border-radius: 50%; width: 60px; height: 60px;">
-                +
-              </button>
             </div>
           </div>
           <?php include_once('includes/footer.php'); ?>

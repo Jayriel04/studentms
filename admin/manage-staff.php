@@ -16,7 +16,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $query->bindParam(':sid', $sid, PDO::PARAM_INT);
     $query->execute();
     $statusMessage = $newStatus == 1 ? 'Staff activated successfully.' : 'Staff deactivated successfully.';
-    echo "<script>var statusMessage = '".addslashes($statusMessage)."';</script>";
+    echo "<script>var statusMessage = '" . addslashes($statusMessage) . "';</script>";
   }
 
   // Add Staff handling (moved from add-staff.php)
@@ -108,6 +108,20 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   if (isset($_POST['filter'])) {
     $filter = $_POST['filter'];
   }
+
+  // Helper function to get initials from a name
+  function getInitials($name)
+  {
+    $words = explode(' ', trim($name));
+    $initials = '';
+    if (count($words) >= 2) {
+      $initials .= strtoupper(substr($words[0], 0, 1));
+      $initials .= strtoupper(substr(end($words), 0, 1));
+    } else if (count($words) == 1) {
+      $initials .= strtoupper(substr($words[0], 0, 2));
+    }
+    return $initials;
+  }
   ?>
   <!DOCTYPE html>
   <html lang="en">
@@ -133,194 +147,204 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Manage Staff</h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Manage Staff</li>
-                </ol>
-              </nav>
+              <button type="button" class="add-btn" data-toggle="modal" data-target="#addStaffModal">
+                + Add New Staff
+              </button>
             </div>
             <div class="row">
               <div class="col-md-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="d-sm-flex align-items-center mb-4 responsive-search-form">
-                      <h4 class="card-title mb-sm-0">Manage Staff</h4>
-                      <form method="post" class="form-inline ml-auto" style="gap: 0.5rem;">
-                        <input type="text" name="searchdata" class="form-control" placeholder="Search by Name or Email"
+                <div class="table-card">
+                  <div class="table-header">
+                    <h2 class="table-title">Manage Staff</h2>
+                    <div class="table-actions">
+                      <form method="post" class="d-flex" style="gap: 12px;">
+                        <input type="text" name="searchdata" class="search-box" placeholder="Search by Name or Email"
                           value="<?php echo htmlentities($searchdata); ?>">
-                        <select name="filter" class="form-control">
-                          <option value="all" <?php if ($filter == 'all') echo 'selected'; ?>>All</option>
-                          <option value="active" <?php if ($filter == 'active') echo 'selected'; ?>>Active</option>
-                          <option value="inactive" <?php if ($filter == 'inactive') echo 'selected'; ?>>Inactive</option>
+                        <select name="filter" class="filter-btn" onchange="this.form.submit()">
+                          <option value="all" <?php if ($filter == 'all')
+                            echo 'selected'; ?>>All</option>
+                          <option value="active" <?php if ($filter == 'active')
+                            echo 'selected'; ?>>Active</option>
+                          <option value="inactive" <?php if ($filter == 'inactive')
+                            echo 'selected'; ?>>Inactive</option>
                         </select>
-                        <button type="submit" name="search" class="btn btn-primary">Search</button>
-
-                        <!-- Add Staff button opens modal -->
-                        <button type="button" class="btn btn-success ml-2" data-toggle="modal" data-target="#addStaffModal">
-                          Add Staff
-                        </button>
+                        <button type="submit" name="search" class="filter-btn">🔍 Search</button>
                       </form>
                     </div>
+                  </div>
 
-                    <!-- Add Staff Modal -->
-                    <div class="modal fade" id="addStaffModal" tabindex="-1" role="dialog" aria-labelledby="addStaffModalLabel" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <form method="post" id="addStaffForm">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="addStaffModalLabel">Add Staff</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
+                  <!-- Add Staff Modal -->
+                  <div class="modal fade" id="addStaffModal" tabindex="-1" role="dialog"
+                    aria-labelledby="addStaffModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <form method="post" id="addStaffForm">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="addStaffModalLabel">Add Staff</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="form-group">
+                              <label for="staffname">Staff Name</label>
+                              <input type="text" name="staffname" class="form-control" required='true'
+                                style="text-transform: capitalize;">
                             </div>
-                            <div class="modal-body">
-                              <div class="form-group">
-                                <label for="staffname">Staff Name</label>
-                                <input type="text" name="staffname" class="form-control" required='true' style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label for="username">User Name</label>
-                                <input type="text" name="username" class="form-control" required='true'>
-                              </div>
-                              <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" name="email" class="form-control" required='true'>
-                              </div>
-                              <div class="form-group" style="position: relative;">
-                                <label for="password">Password</label>
-                                <input type="password" id="add_password" name="password" class="form-control" required='true'>
-                                <i class="icon-eye" id="toggleAddPassword"
-                                  style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
-                              </div>
+                            <div class="form-group">
+                              <label for="username">User Name</label>
+                              <input type="text" name="username" class="form-control" required='true'>
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary" name="add_staff">Add</button>
+                            <div class="form-group">
+                              <label for="email">Email</label>
+                              <input type="email" name="email" class="form-control" required='true'>
                             </div>
-                          </form>
-                        </div>
+                            <div class="form-group" style="position: relative;">
+                              <label for="password">Password</label>
+                              <input type="password" id="add_password" name="password" class="form-control"
+                                required='true'>
+                              <i class="icon-eye" id="toggleAddPassword"
+                                style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="add_staff">Add</button>
+                          </div>
+                        </form>
                       </div>
                     </div>
+                  </div>
 
-                    <!-- Edit Staff Modal -->
-                    <div class="modal fade" id="editStaffModal" tabindex="-1" role="dialog" aria-labelledby="editStaffModalLabel" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <form method="post" id="editStaffForm">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="editStaffModalLabel">Edit Staff</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
+                  <!-- Edit Staff Modal -->
+                  <div class="modal fade" id="editStaffModal" tabindex="-1" role="dialog"
+                    aria-labelledby="editStaffModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <form method="post" id="editStaffForm">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="editStaffModalLabel">Edit Staff</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <input type="hidden" name="edit_id" id="edit_id">
+                            <div class="form-group">
+                              <label for="edit_name">Staff Name</label>
+                              <input type="text" name="edit_name" id="edit_name" class="form-control" required
+                                style="text-transform: capitalize;">
                             </div>
-                            <div class="modal-body">
-                              <input type="hidden" name="edit_id" id="edit_id">
-                              <div class="form-group">
-                                <label for="edit_name">Staff Name</label>
-                                <input type="text" name="edit_name" id="edit_name" class="form-control" required style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label for="edit_username">User Name</label>
-                                <input type="text" name="edit_username" id="edit_username" class="form-control" required>
-                              </div>
-                              <div class="form-group">
-                                <label for="edit_email">Email</label>
-                                <input type="email" name="edit_email" id="edit_email" class="form-control" required>
-                              </div>
-                              <div class="form-group" style="position: relative;">
-                                <label for="edit_password">Change Password</label>
-                                <input type="password" id="edit_password" name="edit_password" class="form-control" placeholder="Leave blank to keep unchanged">
-                                <i class="icon-eye" id="toggleEditPassword"
-                                  style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
-                              </div>
-                              <div class="form-group">
-                                <label for="edit_regdate">Staff Regdate</label>
-                                <input type="text" id="edit_regdate" class="form-control" readonly>
-                              </div>
+                            <div class="form-group">
+                              <label for="edit_username">User Name</label>
+                              <input type="text" name="edit_username" id="edit_username" class="form-control" required>
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary" name="edit_staff">Save changes</button>
+                            <div class="form-group">
+                              <label for="edit_email">Email</label>
+                              <input type="email" name="edit_email" id="edit_email" class="form-control" required>
                             </div>
-                          </form>
-                        </div>
+                            <div class="form-group" style="position: relative;">
+                              <label for="edit_password">Change Password</label>
+                              <input type="password" id="edit_password" name="edit_password" class="form-control"
+                                placeholder="Leave blank to keep unchanged">
+                              <i class="icon-eye" id="toggleEditPassword"
+                                style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
+                            </div>
+                            <div class="form-group">
+                              <label for="edit_regdate">Staff Regdate</label>
+                              <input type="text" id="edit_regdate" class="form-control" readonly>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="edit_staff">Save changes</button>
+                          </div>
+                        </form>
                       </div>
                     </div>
+                  </div>
 
-                    <div class="table-responsive border rounded p-1 card-view">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th class="font-weight-bold">S.No</th>
-                            <th class="font-weight-bold">Staff Name</th>
-                            <th class="font-weight-bold">User Name</th>
-                            <th class="font-weight-bold">Email</th>
-                            <th class="font-weight-bold">Reg Date</th>
-                            <th class="font-weight-bold">Status</th>
-                            <th class="font-weight-bold">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php
-                          $sql = "SELECT ID, StaffName, UserName, Email, StaffRegdate, Status FROM tblstaff WHERE 1=1";
-                          if (!empty($searchdata)) {
-                            $sql .= " AND (StaffName LIKE :searchdata OR Email LIKE :searchdata)";
-                          }
-                          if ($filter == 'active') {
-                            $sql .= " AND Status=1";
-                          } elseif ($filter == 'inactive') {
-                            $sql .= " AND Status=0";
-                          }
-                          $sql .= " ORDER BY ID DESC";
-                          $query = $dbh->prepare($sql);
-                          if (!empty($searchdata)) {
-                            $query->bindValue(':searchdata', '%' . $searchdata . '%', PDO::PARAM_STR);
-                          }
-                          $query->execute();
-                          $results = $query->fetchAll(PDO::FETCH_OBJ);
-                          $cnt = 1;
-                          if ($query->rowCount() > 0) {
-                            foreach ($results as $row) { ?>
-                              <tr>
-                                <td data-label="S.No"><?php echo htmlentities($cnt); ?></td>
-                                <td data-label="Staff Name"><?php echo htmlentities($row->StaffName); ?></td>
-                                <td data-label="User Name"><?php echo htmlentities($row->UserName); ?></td>
-                                <td data-label="Email"><?php echo htmlentities($row->Email); ?></td>
-                                <td data-label="Reg Date"><?php echo htmlentities($row->StaffRegdate); ?></td>
-                                <td data-label="Status"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></td>
-                                <td data-label="Action">
-                                  <!-- Edit button opens edit modal and passes data via data- attributes -->
-                                  <button type="button"
-                                    class="btn btn-xs btn-edit"
+                  <div class="table-wrapper">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Staff Member</th>
+                          <th>Username</th>
+                          <th>Registration Date</th>
+                          <th>Status</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php
+                        $sql = "SELECT ID, StaffName, UserName, Email, StaffRegdate, Status FROM tblstaff WHERE 1=1";
+                        if (!empty($searchdata)) {
+                          $sql .= " AND (StaffName LIKE :searchdata OR Email LIKE :searchdata)";
+                        }
+                        if ($filter == 'active') {
+                          $sql .= " AND Status=1";
+                        } elseif ($filter == 'inactive') {
+                          $sql .= " AND Status=0";
+                        }
+                        $sql .= " ORDER BY ID DESC";
+                        $query = $dbh->prepare($sql);
+                        if (!empty($searchdata)) {
+                          $query->bindValue(':searchdata', '%' . $searchdata . '%', PDO::PARAM_STR);
+                        }
+                        $query->execute();
+                        $results = $query->fetchAll(PDO::FETCH_OBJ);
+                        $cnt = 1;
+                        if ($query->rowCount() > 0) {
+                          foreach ($results as $row) { ?>
+                            <tr>
+                              <td>
+                                <div class="user-info">
+                                  <div class="user-avatar"
+                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    <?php echo getInitials($row->StaffName); ?>
+                                  </div>
+                                  <div class="user-details">
+                                    <span class="user-name"><?php echo htmlentities($row->StaffName); ?></span>
+                                    <span class="user-email"><?php echo htmlentities($row->Email); ?></span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td><?php echo htmlentities($row->UserName); ?></td>
+                              <td><?php echo date('M d, Y', strtotime($row->StaffRegdate)); ?></td>
+                              <td>
+                                <span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>">
+                                  <?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?>
+                                </span>
+                              </td>
+                              <td>
+                                <div class="action-buttons">
+                                  <button class="action-btn edit btn-edit" title="Edit"
                                     data-id="<?php echo htmlentities($row->ID); ?>"
                                     data-name="<?php echo htmlentities($row->StaffName); ?>"
                                     data-username="<?php echo htmlentities($row->UserName); ?>"
                                     data-email="<?php echo htmlentities($row->Email); ?>"
-                                    data-regdate="<?php echo htmlentities($row->StaffRegdate); ?>"
-                                    style="background-color: #4CAF50; color: white;">Edit</button>
-
+                                    data-regdate="<?php echo htmlentities($row->StaffRegdate); ?>">✏️</button>
                                   <a href="manage-staff.php?statusid=<?php echo htmlentities($row->ID); ?>&status=<?php echo htmlentities($row->Status); ?>"
-                                    class="btn btn-xs ml-2" style="background-color: #007BFF; color: white;">
-                                    <?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?>
+                                    class="action-btn toggle <?php echo $row->Status == 1 ? 'deactivate' : ''; ?>"
+                                    title="<?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?>">
+                                    <?php echo $row->Status == 1 ? '🔒' : '🔑'; ?>
                                   </a>
-                                </td>
-                              </tr>
-                              <?php $cnt++;
-                            }
-                          } else { ?>
-                            <tr>
-                              <td colspan="7" style="text-align: center; color: red;">No Record Found</td>
+                                </div>
+                              </td>
                             </tr>
-                          <?php } ?>
-                        </tbody>
-                      </table>
-                    </div>
+                            <?php $cnt++;
+                          }
+                        } else { ?>
+                          <tr>
+                            <td colspan="5" style="text-align: center; color: red;">No Record Found</td>
+                          </tr>
+                        <?php } ?>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
             </div>
-            <?php include_once('includes/footer.php'); ?>
           </div>
         </div>
       </div>
@@ -379,21 +403,21 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         });
       <?php endif; ?>
 
-      // Toggle password visibility for add modal
-      (function () {
-        var toggle = document.getElementById('toggleAddPassword');
-        var pwd = document.getElementById('add_password');
-        if (!toggle || !pwd) return;
-        toggle.addEventListener('click', function () {
-          if (pwd.type === 'password') {
-            pwd.type = 'text';
-            toggle.classList.add('active');
-          } else {
-            pwd.type = 'password';
-            toggle.classList.remove('active');
-          }
-        });
-      })();
+        // Toggle password visibility for add modal
+        (function () {
+          var toggle = document.getElementById('toggleAddPassword');
+          var pwd = document.getElementById('add_password');
+          if (!toggle || !pwd) return;
+          toggle.addEventListener('click', function () {
+            if (pwd.type === 'password') {
+              pwd.type = 'text';
+              toggle.classList.add('active');
+            } else {
+              pwd.type = 'password';
+              toggle.classList.remove('active');
+            }
+          });
+        })();
 
       // Toggle password visibility for edit modal
       (function () {

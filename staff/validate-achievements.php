@@ -16,6 +16,20 @@ if (empty($_SESSION['csrf_token'])) {
 $searchdata = isset($_REQUEST['searchdata']) ? trim($_REQUEST['searchdata']) : '';
 $category_filter = isset($_REQUEST['category_filter']) ? $_REQUEST['category_filter'] : 'all';
 
+// Helper function to get initials from a name
+function getInitials($name)
+{
+  $words = explode(' ', trim($name));
+  $initials = '';
+  if (count($words) >= 2) {
+    $initials .= strtoupper(substr($words[0], 0, 1));
+    $initials .= strtoupper(substr(end($words), 0, 1));
+  } else if (count($words) == 1) {
+    $initials .= strtoupper(substr($words[0], 0, 2));
+  }
+  return $initials;
+}
+
 
 // Handle actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_POST['id'])) {
@@ -258,11 +272,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
 
           <div class="row">
             <div class="col-md-12">
-              <div class="card">
-                <div class="card-body">
-                  <div class="d-sm-flex align-items-center mb-4 responsive-search-form">
-                    <h4 class="card-title mb-sm-0">Validate Achievements</h4>
-                    <form method="get" class="form-inline ml-auto" style="gap: 0.5rem;">
+              <div class="table-card" style="width: 150vh;">
+                <div class="table-header">
+                  <h2 class="table-title">Validate Achievements</h2>
+                  <div class="table-actions">
+                    <form method="get" class="d-flex" style="gap: 12px;">
                       <input type="text" name="searchdata" class="form-control"
                         placeholder="Search by Student or Skill" value="<?php echo htmlentities($searchdata); ?>">
                       <select name="category_filter" class="form-control">
@@ -276,8 +290,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
                           echo 'selected'; ?>>
                           Non-Academic</option>
                       </select>
-                      <button type="submit" class="btn btn-primary">Search</button>
+                      <button type="submit" class="filter-btn">🔍 Search</button>
                     </form>
+                  </div>
                   </div>
                   <?php if (isset($_SESSION['ach_msg'])): ?>
                     <div class="alert alert-info">
@@ -398,7 +413,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
             </form>
           </div>
         </div>
-        <?php include_once('includes/footer.php'); ?>
       </div>
     </div>
   </div>
