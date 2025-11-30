@@ -127,10 +127,11 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
     <script src="js/mention.js"></script>
+    <script src="js/toast.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         const notemsgTextarea = document.getElementById('notmsg');
-        if(notemsgTextarea) {
+        if (notemsgTextarea) {
           initializeMention(notemsgTextarea, 'search.php?mention_suggest=1');
         }
       });

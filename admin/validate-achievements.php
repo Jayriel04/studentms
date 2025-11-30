@@ -198,24 +198,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
   <link rel="stylesheet" href="css/style(v2).css">
   <style>
     .modal {
-      display: none; position: fixed; z-index: 1050; left: 0; top: 0; width: 100%; height: 100%;
-      overflow: auto; background-color: rgba(0,0,0,0.5);
+      display: none;
+      position: fixed;
+      z-index: 1050;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
     }
+
     .modal-content {
-      background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888;
-      width: 80%; max-width: 700px; position: relative; border-radius: 8px;
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 700px;
+      position: relative;
+      border-radius: 8px;
     }
-    .modal-content img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+    .modal-content img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
     .close-btn {
-      color: #aaa; float: right; font-size: 28px; font-weight: bold;
-      position: absolute; top: 10px; right: 20px;
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      position: absolute;
+      top: 10px;
+      right: 20px;
     }
+
     .modal-header .close {
-      padding: 1rem; margin: -1rem -1rem -1rem auto;
-      position: absolute; top: 10px; right: 20px;
+      padding: 1rem;
+      margin: -1rem -1rem -1rem auto;
+      position: absolute;
+      top: 10px;
+      right: 20px;
     }
-    .close-btn:hover, .close-btn:focus {
-      color: black; text-decoration: none; cursor: pointer;
+
+    .close-btn:hover,
+    .close-btn:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -238,8 +272,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
                   <h2 class="table-title">Validate Achievements</h2>
                   <div class="table-actions">
                     <form method="get" class="d-flex" style="gap: 12px;">
-                      <input type="text" name="searchdata" class="form-control"
-                        placeholder="Search by Student or Skill" value="<?php echo htmlentities($searchdata); ?>">
+                      <input type="text" name="searchdata" class="form-control" placeholder="Search by Student or Skill"
+                        value="<?php echo htmlentities($searchdata); ?>">
                       <select name="category_filter" class="form-control">
                         <option value="all" <?php if ($category_filter == 'all')
                           echo 'selected'; ?>>All Categories
@@ -254,109 +288,113 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
                       <button type="submit" class="filter-btn" style="width: 40vh;">🔍 Search</button>
                     </form>
                   </div>
+                </div>
+                <?php if (isset($_SESSION['ach_msg_admin'])): ?>
+                  <div class="alert alert-info">
+                    <?php echo htmlentities($_SESSION['ach_msg_admin']);
+                    unset($_SESSION['ach_msg_admin']); ?>
                   </div>
-                  <?php if (isset($_SESSION['ach_msg_admin'])): ?>
-                    <div class="alert alert-info">
-                      <?php echo htmlentities($_SESSION['ach_msg_admin']);
-                      unset($_SESSION['ach_msg_admin']); ?></div>
-                  <?php endif; ?>
+                <?php endif; ?>
 
-                  <?php
-                  // Fetch pending achievements, optional filter by student
-                  $stuFilter = null;
-                  if (isset($_GET['stu']))
-                    $stuFilter = $_GET['stu'];
-                  
-                  $sql = "SELECT a.id, a.StuID, CONCAT(s.FamilyName, ' ', s.FirstName) AS StudentName, a.category, a.level, a.points, a.proof_image, a.created_at, GROUP_CONCAT(sk.name SEPARATOR ', ') AS skills
+                <?php
+                // Fetch pending achievements, optional filter by student
+                $stuFilter = null;
+                if (isset($_GET['stu']))
+                  $stuFilter = $_GET['stu'];
+
+                $sql = "SELECT a.id, a.StuID, CONCAT(s.FamilyName, ' ', s.FirstName) AS StudentName, a.category, a.level, a.points, a.proof_image, a.created_at, GROUP_CONCAT(sk.name SEPARATOR ', ') AS skills
                   FROM student_achievements a
                   LEFT JOIN student_achievement_skills sas ON a.id = sas.achievement_id
                   LEFT JOIN skills sk ON sas.skill_id = sk.id
                   JOIN tblstudent s ON a.StuID = s.StuID
                   WHERE a.status = 'pending'";
-                  
-                  $params = [];
-                  if ($stuFilter) {
-                    $sql .= " AND a.StuID = :stu";
-                    $params[':stu'] = $stuFilter;
-                  }
-                  if (!empty($searchdata)) {
-                    $sql .= " AND (s.FirstName LIKE :searchdata OR s.FamilyName LIKE :searchdata OR sk.name LIKE :searchdata)";
-                    $params[':searchdata'] = '%' . $searchdata . '%';
-                  }
-                  if ($category_filter !== 'all') {
-                    $sql .= " AND a.category = :category";
-                    $params[':category'] = $category_filter;
-                  }
-                  
-                  $sql .= " GROUP BY a.id ORDER BY a.created_at DESC";
-                  $stmt = $dbh->prepare($sql);
-                  $stmt->execute($params);
-                  $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
-                  ?>
-                  <?php if (empty($rows)): ?>
-                    <div class="alert alert-info">No pending achievements found.</div>
-                  <?php else: ?>
-                    <div class="table-wrapper">
-                      <table class="table">
-                        <thead>
+
+                $params = [];
+                if ($stuFilter) {
+                  $sql .= " AND a.StuID = :stu";
+                  $params[':stu'] = $stuFilter;
+                }
+                if (!empty($searchdata)) {
+                  $sql .= " AND (s.FirstName LIKE :searchdata OR s.FamilyName LIKE :searchdata OR sk.name LIKE :searchdata)";
+                  $params[':searchdata'] = '%' . $searchdata . '%';
+                }
+                if ($category_filter !== 'all') {
+                  $sql .= " AND a.category = :category";
+                  $params[':category'] = $category_filter;
+                }
+
+                $sql .= " GROUP BY a.id ORDER BY a.created_at DESC";
+                $stmt = $dbh->prepare($sql);
+                $stmt->execute($params);
+                $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
+                ?>
+                <?php if (empty($rows)): ?>
+                  <div class="alert alert-info">No pending achievements found.</div>
+                <?php else: ?>
+                  <div class="table-wrapper">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Student</th>
+                          <th>Skills</th>
+                          <th>Category</th>
+                          <th>Level</th>
+                          <th>Points</th>
+                          <th>Proof</th>
+                          <th>Submitted</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php foreach ($rows as $r): ?>
                           <tr>
-                            <th>Student</th>
-                            <th>Skills</th>
-                            <th>Category</th>
-                            <th>Level</th>
-                            <th>Points</th>
-                            <th>Proof</th>
-                            <th>Submitted</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php foreach ($rows as $r): ?>
-                            <tr>
-                              <td>
-                                <div class="user-info">
-                                  <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                                    <?php echo getInitials($r->StudentName); ?>
-                                  </div>
-                                  <div class="user-details">
-                                    <span class="user-name"><?php echo htmlentities($r->StudentName); ?></span>
-                                    <span class="user-email"><?php echo htmlentities($r->StuID); ?></span>
-                                  </div>
+                            <td>
+                              <div class="user-info">
+                                <div class="user-avatar"
+                                  style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                  <?php echo getInitials($r->StudentName); ?>
                                 </div>
-                              </td>
-                              <td><?php echo htmlentities($r->skills); ?></td>
-                              <td><?php echo htmlentities($r->category); ?></td>
-                              <td><?php echo htmlentities($r->level); ?></td>
-                              <td><?php echo htmlentities($r->points); ?></td>
-                              <td>
-                                <?php if (!empty($r->proof_image)): ?>
-                                  <button class="action-btn edit" style="background: #e0e7ff; color: #4f46e5;"
-                                    onclick="showProofModal('../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>')">View</a>
+                                <div class="user-details">
+                                  <span class="user-name"><?php echo htmlentities($r->StudentName); ?></span>
+                                  <span class="user-email"><?php echo htmlentities($r->StuID); ?></span>
+                                </div>
+                              </div>
+                            </td>
+                            <td><?php echo htmlentities($r->skills); ?></td>
+                            <td><?php echo htmlentities($r->category); ?></td>
+                            <td><?php echo htmlentities($r->level); ?></td>
+                            <td><?php echo htmlentities($r->points); ?></td>
+                            <td>
+                              <?php if (!empty($r->proof_image)): ?>
+                                <button class="action-btn edit" style="background: #e0e7ff; color: #4f46e5;"
+                                  onclick="showProofModal('../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>')">View</a>
                                 <?php else: ?>
                                   <span>No proof</span>
                                 <?php endif; ?>
-                              </td>
-                              <td><?php echo date('M d, Y', strtotime($r->created_at)); ?></td>
-                              <td>
-                                <div class="action-buttons">
-                                  <form method="post" style="display:inline-block;">
-                                    <input type="hidden" name="id" value="<?php echo $r->id; ?>">
-                                    <input type="hidden" name="action" value="approve">
-                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token_admin']; ?>">
-                                    <?php if ($stuFilter) { ?><input type="hidden" name="stu" value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
-                                    <button type="submit" class="action-btn toggle" title="Approve">✔️</button>
-                                  </form>
-                                  <button type="button" class="action-btn toggle deactivate" title="Reject"
-                                    onclick="openRejectModal(<?php echo $r->id; ?>)">❌</button>
-                                </div>
-                              </td>
-                            </tr>
-                          <?php endforeach; ?>
-                        </tbody>
-                      </table>
-                    </div>
-                  <?php endif; ?>
-                </div>
+                            </td>
+                            <td><?php echo date('M d, Y', strtotime($r->created_at)); ?></td>
+                            <td>
+                              <div class="action-buttons">
+                                <form method="post" style="display:inline-block;">
+                                  <input type="hidden" name="id" value="<?php echo $r->id; ?>">
+                                  <input type="hidden" name="action" value="approve">
+                                  <input type="hidden" name="csrf_token"
+                                    value="<?php echo $_SESSION['csrf_token_admin']; ?>">
+                                  <?php if ($stuFilter) { ?><input type="hidden" name="stu"
+                                      value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
+                                  <button type="submit" class="action-btn toggle" title="Approve">✔️</button>
+                                </form>
+                                <button type="button" class="action-btn toggle deactivate" title="Reject"
+                                  onclick="openRejectModal(<?php echo $r->id; ?>)">❌</button>
+                              </div>
+                            </td>
+                          </tr>
+                        <?php endforeach; ?>
+                      </tbody>
+                    </table>
+                  </div>
+                <?php endif; ?>
+              </div>
             </div>
           </div>
         </div>
@@ -380,7 +418,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
                 <input type="hidden" name="action" value="reject">
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token_admin']; ?>">
                 <?php if (isset($stuFilter) && $stuFilter) { ?><input type="hidden" name="stu"
-                  value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
+                    value="<?php echo htmlentities($stuFilter); ?>"><?php } ?>
                 <div class="form-group">
                   <label for="rejection_reason">Please provide a reason for rejecting this achievement:</label>
                   <textarea name="rejection_reason" id="rejection_reason" class="form-control" rows="4"
@@ -399,6 +437,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
     </div>
   </div>
   <script src="vendors/js/vendor.bundle.base.js"></script>
+  <script src="js/toast.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
   <script>
@@ -409,7 +448,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
     function closeProofModal() {
       document.getElementById('proofModal').style.display = 'none';
     }
-    window.onclick = function(event) {
+    window.onclick = function (event) {
       if (event.target == document.getElementById('proofModal')) {
         closeProofModal();
       }

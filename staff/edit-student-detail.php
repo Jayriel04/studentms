@@ -13,53 +13,53 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
       echo '<script>if(window.showToast) showToast("Invalid Student ID format. Please use the format: 222 - 08410.","warning");</script>';
     } else {
 
-    $familyname = $_POST['familyname'];
-    $firstname = $_POST['firstname'];
-    $middlename = $_POST['middlename'];
-    $program = $_POST['program'];
-    $major = $_POST['major'];
-    $lrn = $_POST['lrn'];
-    $dob = $_POST['dob'];
-    $placeofbirth = $_POST['placeofbirth'];
-    $gender = $_POST['gender'];
-    if ($gender === "Other") {
-      $gender = $_POST['otherGender'];
-    }
-    $civilstatus = $_POST['civilstatus'];
-    $religion = $_POST['religion'];
-    $height = $_POST['height'];
-    $weight = $_POST['weight'];
-    $citizenship = $_POST['citizenship'];
-    $fathersname = $_POST['fathersname'];
-    $mothersmaidenname = $_POST['mothersmaidenname'];
-    $buildinghouse = $_POST['buildinghouse'];
-    $streetname = $_POST['streetname'];
-    $barangay = $_POST['barangay'];
-    $citymunicipality = $_POST['citymunicipality'];
-    $province = $_POST['province'];
-    $postalcode = $_POST['postalcode'];
-    $contactnumber = $_POST['contactnumber'];
-    $emailaddress = $_POST['emailaddress'];
-    $emergencycontactperson = $_POST['emergencycontactperson'];
-    $emergencyrelationship = $_POST['emergencyrelationship'];
-    $emergencycontactnumber = $_POST['emergencycontactnumber'];
-    $emergencyaddress = $_POST['emergencyaddress'];
-    $category = $_POST['category'];
-    $yearlevel = $_POST['yearlevel'];
-    $eid = $_GET['editid'];
+      $familyname = $_POST['familyname'];
+      $firstname = $_POST['firstname'];
+      $middlename = $_POST['middlename'];
+      $program = $_POST['program'];
+      $major = $_POST['major'];
+      $lrn = $_POST['lrn'];
+      $dob = $_POST['dob'];
+      $placeofbirth = $_POST['placeofbirth'];
+      $gender = $_POST['gender'];
+      if ($gender === "Other") {
+        $gender = $_POST['otherGender'];
+      }
+      $civilstatus = $_POST['civilstatus'];
+      $religion = $_POST['religion'];
+      $height = $_POST['height'];
+      $weight = $_POST['weight'];
+      $citizenship = $_POST['citizenship'];
+      $fathersname = $_POST['fathersname'];
+      $mothersmaidenname = $_POST['mothersmaidenname'];
+      $buildinghouse = $_POST['buildinghouse'];
+      $streetname = $_POST['streetname'];
+      $barangay = $_POST['barangay'];
+      $citymunicipality = $_POST['citymunicipality'];
+      $province = $_POST['province'];
+      $postalcode = $_POST['postalcode'];
+      $contactnumber = $_POST['contactnumber'];
+      $emailaddress = $_POST['emailaddress'];
+      $emergencycontactperson = $_POST['emergencycontactperson'];
+      $emergencyrelationship = $_POST['emergencyrelationship'];
+      $emergencycontactnumber = $_POST['emergencycontactnumber'];
+      $emergencyaddress = $_POST['emergencyaddress'];
+      $category = $_POST['category'];
+      $yearlevel = $_POST['yearlevel'];
+      $eid = $_GET['editid'];
 
-    // Check if the new Student ID already exists
-    $checkSql = "SELECT COUNT(*) FROM tblstudent WHERE StuID = :stuid AND ID != :eid";
-    $checkQuery = $dbh->prepare($checkSql);
-    $checkQuery->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-    $checkQuery->bindParam(':eid', $eid, PDO::PARAM_STR);
-    $checkQuery->execute();
-    $isDuplicate = $checkQuery->fetchColumn();
+      // Check if the new Student ID already exists
+      $checkSql = "SELECT COUNT(*) FROM tblstudent WHERE StuID = :stuid AND ID != :eid";
+      $checkQuery = $dbh->prepare($checkSql);
+      $checkQuery->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+      $checkQuery->bindParam(':eid', $eid, PDO::PARAM_STR);
+      $checkQuery->execute();
+      $isDuplicate = $checkQuery->fetchColumn();
 
-    if ($isDuplicate > 0) {
-      echo '<script>if(window.showToast) showToast("This Student ID already exists. Please choose a different one.","warning");</script>';
-    } else {
-      $sql = "UPDATE tblstudent SET 
+      if ($isDuplicate > 0) {
+        echo '<script>if(window.showToast) showToast("This Student ID already exists. Please choose a different one.","warning");</script>';
+      } else {
+        $sql = "UPDATE tblstudent SET 
                 StuID=:stuid, 
                 FamilyName=:familyname, 
                 FirstName=:firstname, 
@@ -93,44 +93,44 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                 YearLevel=:yearlevel 
                 WHERE ID=:eid";
 
-      $query = $dbh->prepare($sql);
-      // Binding parameters
-      $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-      $query->bindParam(':familyname', $familyname, PDO::PARAM_STR);
-      $query->bindParam(':firstname', $firstname, PDO::PARAM_STR);
-      $query->bindParam(':middlename', $middlename, PDO::PARAM_STR);
-      $query->bindParam(':program', $program, PDO::PARAM_STR);
-      $query->bindParam(':major', $major, PDO::PARAM_STR);
-      $query->bindParam(':lrn', $lrn, PDO::PARAM_STR);
-      $query->bindParam(':dob', $dob, PDO::PARAM_STR);
-      $query->bindParam(':placeofbirth', $placeofbirth, PDO::PARAM_STR);
-      $query->bindParam(':gender', $gender, PDO::PARAM_STR);
-      $query->bindParam(':civilstatus', $civilstatus, PDO::PARAM_STR);
-      $query->bindParam(':religion', $religion, PDO::PARAM_STR);
-      $query->bindParam(':height', $height, PDO::PARAM_STR);
-      $query->bindParam(':weight', $weight, PDO::PARAM_STR);
-      $query->bindParam(':citizenship', $citizenship, PDO::PARAM_STR);
-      $query->bindParam(':fathersname', $fathersname, PDO::PARAM_STR);
-      $query->bindParam(':mothersmaidenname', $mothersmaidenname, PDO::PARAM_STR);
-      $query->bindParam(':buildinghouse', $buildinghouse, PDO::PARAM_STR);
-      $query->bindParam(':streetname', $streetname, PDO::PARAM_STR); // New binding
-      $query->bindParam(':barangay', $barangay, PDO::PARAM_STR);
-      $query->bindParam(':citymunicipality', $citymunicipality, PDO::PARAM_STR);
-      $query->bindParam(':province', $province, PDO::PARAM_STR);
-      $query->bindParam(':postalcode', $postalcode, PDO::PARAM_STR);
-      $query->bindParam(':contactnumber', $contactnumber, PDO::PARAM_STR);
-      $query->bindParam(':emailaddress', $emailaddress, PDO::PARAM_STR);
-      $query->bindParam(':emergencycontactperson', $emergencycontactperson, PDO::PARAM_STR);
-      $query->bindParam(':emergencyrelationship', $emergencyrelationship, PDO::PARAM_STR);
-      $query->bindParam(':emergencycontactnumber', $emergencycontactnumber, PDO::PARAM_STR);
-      $query->bindParam(':emergencyaddress', $emergencyaddress, PDO::PARAM_STR);
-      $query->bindParam(':category', $category, PDO::PARAM_STR);
-      $query->bindParam(':yearlevel', $yearlevel, PDO::PARAM_STR);
-      $query->bindParam(':eid', $eid, PDO::PARAM_STR);
-      $query->execute();
+        $query = $dbh->prepare($sql);
+        // Binding parameters
+        $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+        $query->bindParam(':familyname', $familyname, PDO::PARAM_STR);
+        $query->bindParam(':firstname', $firstname, PDO::PARAM_STR);
+        $query->bindParam(':middlename', $middlename, PDO::PARAM_STR);
+        $query->bindParam(':program', $program, PDO::PARAM_STR);
+        $query->bindParam(':major', $major, PDO::PARAM_STR);
+        $query->bindParam(':lrn', $lrn, PDO::PARAM_STR);
+        $query->bindParam(':dob', $dob, PDO::PARAM_STR);
+        $query->bindParam(':placeofbirth', $placeofbirth, PDO::PARAM_STR);
+        $query->bindParam(':gender', $gender, PDO::PARAM_STR);
+        $query->bindParam(':civilstatus', $civilstatus, PDO::PARAM_STR);
+        $query->bindParam(':religion', $religion, PDO::PARAM_STR);
+        $query->bindParam(':height', $height, PDO::PARAM_STR);
+        $query->bindParam(':weight', $weight, PDO::PARAM_STR);
+        $query->bindParam(':citizenship', $citizenship, PDO::PARAM_STR);
+        $query->bindParam(':fathersname', $fathersname, PDO::PARAM_STR);
+        $query->bindParam(':mothersmaidenname', $mothersmaidenname, PDO::PARAM_STR);
+        $query->bindParam(':buildinghouse', $buildinghouse, PDO::PARAM_STR);
+        $query->bindParam(':streetname', $streetname, PDO::PARAM_STR); // New binding
+        $query->bindParam(':barangay', $barangay, PDO::PARAM_STR);
+        $query->bindParam(':citymunicipality', $citymunicipality, PDO::PARAM_STR);
+        $query->bindParam(':province', $province, PDO::PARAM_STR);
+        $query->bindParam(':postalcode', $postalcode, PDO::PARAM_STR);
+        $query->bindParam(':contactnumber', $contactnumber, PDO::PARAM_STR);
+        $query->bindParam(':emailaddress', $emailaddress, PDO::PARAM_STR);
+        $query->bindParam(':emergencycontactperson', $emergencycontactperson, PDO::PARAM_STR);
+        $query->bindParam(':emergencyrelationship', $emergencyrelationship, PDO::PARAM_STR);
+        $query->bindParam(':emergencycontactnumber', $emergencycontactnumber, PDO::PARAM_STR);
+        $query->bindParam(':emergencyaddress', $emergencyaddress, PDO::PARAM_STR);
+        $query->bindParam(':category', $category, PDO::PARAM_STR);
+        $query->bindParam(':yearlevel', $yearlevel, PDO::PARAM_STR);
+        $query->bindParam(':eid', $eid, PDO::PARAM_STR);
+        $query->execute();
 
-      echo '<script>if(window.showToast) showToast("Student details updated successfully.","success");</script>';
-    }
+        echo '<script>if(window.showToast) showToast("Student details updated successfully.","success");</script>';
+      }
     }
   }
   ?>
@@ -188,7 +188,9 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <hr />
                               <div class="form-group">
                                 <label>Student ID</label>
-                                <input type="text" name="stuid" value="<?php echo htmlentities($row->StuID); ?>" class="form-control" required placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410" style="text-transform: capitalize;">
+                                <input type="text" name="stuid" value="<?php echo htmlentities($row->StuID); ?>"
+                                  class="form-control" required placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}"
+                                  title="The format must be: 222 - 08410" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Family Name</label>
@@ -209,27 +211,38 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                 <label>Program</label>
                                 <select name="program" id="program" class="form-control" required onchange="updateMajors()">
                                   <option value="">Select Program</option>
-                                  <option value="Bachelor of Elementary Education (BEEd)" <?php if ($row->Program == 'Bachelor of Elementary Education (BEEd)') echo 'selected'; ?>>Bachelor of Elementary Education (BEEd)</option>
-                                  <option value="Bachelor of Secondary Education (BSEd)" <?php if ($row->Program == 'Bachelor of Secondary Education (BSEd)') echo 'selected'; ?>>Bachelor of Secondary Education (BSEd)</option>
-                                  <option value="Bachelor of Science in Business Administration (BSBA)" <?php if ($row->Program == 'Bachelor of Science in Business Administration (BSBA)') echo 'selected'; ?>>Bachelor of Science in Business Administration (BSBA)</option>
-                                  <option value="Bachelor of Industrial Technology (BindTech)" <?php if ($row->Program == 'Bachelor of Industrial Technology (BindTech)') echo 'selected'; ?>>Bachelor of Industrial Technology (BindTech)</option>
-                                  <option value="Bachelor of Science in Information Technology (BSIT)" <?php if ($row->Program == 'Bachelor of Science in Information Technology (BSIT)') echo 'selected'; ?>>Bachelor of Science in Information Technology (BSIT)</option>
-                                  <?php if (!in_array($row->Program, [
+                                  <option value="Bachelor of Elementary Education (BEEd)" <?php if ($row->Program == 'Bachelor of Elementary Education (BEEd)')
+                                    echo 'selected'; ?>>Bachelor of Elementary Education
+                                    (BEEd)</option>
+                                  <option value="Bachelor of Secondary Education (BSEd)" <?php if ($row->Program == 'Bachelor of Secondary Education (BSEd)')
+                                    echo 'selected'; ?>>Bachelor of Secondary Education (BSEd)
+                                  </option>
+                                  <option value="Bachelor of Science in Business Administration (BSBA)" <?php if ($row->Program == 'Bachelor of Science in Business Administration (BSBA)')
+                                    echo 'selected'; ?>>Bachelor of Science in Business Administration (BSBA)</option>
+                                  <option value="Bachelor of Industrial Technology (BindTech)" <?php if ($row->Program == 'Bachelor of Industrial Technology (BindTech)')
+                                    echo 'selected'; ?>>
+                                    Bachelor of Industrial Technology (BindTech)</option>
+                                  <option value="Bachelor of Science in Information Technology (BSIT)" <?php if ($row->Program == 'Bachelor of Science in Information Technology (BSIT)')
+                                    echo 'selected'; ?>>Bachelor of Science in Information Technology (BSIT)</option>
+                                  <?php if (
+                                    !in_array($row->Program, [
                                       'Bachelor of Elementary Education (BEEd)',
                                       'Bachelor of Secondary Education (BSEd)',
                                       'Bachelor of Science in Business Administration (BSBA)',
                                       'Bachelor of Industrial Technology (BindTech)',
                                       'Bachelor of Science in Information Technology (BSIT)'
-                                  ]) && !empty($row->Program)): ?>
-                                    <option value="<?php echo htmlentities($row->Program); ?>" selected><?php echo htmlentities($row->Program); ?></option>
+                                    ]) && !empty($row->Program)
+                                  ): ?>
+                                    <option value="<?php echo htmlentities($row->Program); ?>" selected>
+                                      <?php echo htmlentities($row->Program); ?></option>
                                   <?php endif; ?>
                                 </select>
                               </div>
                               <div class="form-group">
                                 <label>Major</label>
                                 <select name="major" id="major" class="form-control" style="text-transform: capitalize;">
-                                     <option value="">Select Major</option>
-                                 </select>
+                                  <option value="">Select Major</option>
+                                </select>
                               </div>
                               <div class="form-group">
                                 <label>Learner's Reference No.</label>
@@ -268,15 +281,26 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                 <label>Civil Status</label>
                                 <select name="civilstatus" class="form-control">
                                   <option value="">Select Status</option>
-                                  <option value="Single" <?php if ($row->CivilStatus == 'Single') echo 'selected'; ?>>Single</option>
-                                  <option value="Married" <?php if ($row->CivilStatus == 'Married') echo 'selected'; ?>>Married</option>
-                                  <option value="Divorced" <?php if ($row->CivilStatus == 'Divorced') echo 'selected'; ?>>Divorced</option>
-                                  <option value="Widowed" <?php if ($row->CivilStatus == 'Widowed') echo 'selected'; ?>>Widowed</option>
-                                  <option value="Separated" <?php if ($row->CivilStatus == 'Separated') echo 'selected'; ?>>Separated</option>
+                                  <option value="Single" <?php if ($row->CivilStatus == 'Single')
+                                    echo 'selected'; ?>>Single
+                                  </option>
+                                  <option value="Married" <?php if ($row->CivilStatus == 'Married')
+                                    echo 'selected'; ?>>Married
+                                  </option>
+                                  <option value="Divorced" <?php if ($row->CivilStatus == 'Divorced')
+                                    echo 'selected'; ?>>
+                                    Divorced</option>
+                                  <option value="Widowed" <?php if ($row->CivilStatus == 'Widowed')
+                                    echo 'selected'; ?>>Widowed
+                                  </option>
+                                  <option value="Separated" <?php if ($row->CivilStatus == 'Separated')
+                                    echo 'selected'; ?>>
+                                    Separated</option>
                                   <?php
                                   $standard_statuses = ['Single', 'Married', 'Divorced', 'Widowed', 'Separated'];
                                   if (!in_array($row->CivilStatus, $standard_statuses) && !empty($row->CivilStatus)): ?>
-                                    <option value="<?php echo htmlentities($row->CivilStatus); ?>" selected><?php echo htmlentities($row->CivilStatus); ?> (Custom)</option>
+                                    <option value="<?php echo htmlentities($row->CivilStatus); ?>" selected>
+                                      <?php echo htmlentities($row->CivilStatus); ?> (Custom)</option>
                                   <?php endif; ?>
                                 </select>
                               </div>
@@ -312,12 +336,14 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <div class="form-group">
                                 <label>Mother's Maiden Name</label>
                                 <input type="text" name="mothersmaidenname"
-                                  value="<?php echo htmlentities($row->MothersMaidenName); ?>" class="form-control" style="text-transform: capitalize;">
+                                  value="<?php echo htmlentities($row->MothersMaidenName); ?>" class="form-control"
+                                  style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Building/House Number</label>
                                 <input type="text" name="buildinghouse"
-                                  value="<?php echo htmlentities($row->BuildingHouseNumber); ?>" class="form-control" style="text-transform: capitalize;">
+                                  value="<?php echo htmlentities($row->BuildingHouseNumber); ?>" class="form-control"
+                                  style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Street Name</label>
@@ -332,12 +358,15 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <div class="form-group">
                                 <label>City/Municipality</label>
                                 <div id="city-municipality-container">
-                                  <input type="text" name="citymunicipality" id="citymunicipality-text" value="<?php echo htmlentities($row->CityMunicipality); ?>" class="form-control" style="text-transform: capitalize;">
+                                  <input type="text" name="citymunicipality" id="citymunicipality-text"
+                                    value="<?php echo htmlentities($row->CityMunicipality); ?>" class="form-control"
+                                    style="text-transform: capitalize;">
                                 </div>
                               </div>
                               <div class="form-group">
                                 <label>Province</label>
-                                <select name="province" class="form-control province-select" style="text-transform: capitalize;">
+                                <select name="province" class="form-control province-select"
+                                  style="text-transform: capitalize;">
                                   <option value="">Select Province</option>
                                   <?php
                                   $provincesJson = file_get_contents('../data/provinces.json');
@@ -345,12 +374,12 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                   if (is_array($provinces)) {
                                     $current_province = htmlentities($row->Province);
                                     foreach ($provinces as $province) {
-                                        $selected = ($current_province == $province) ? 'selected' : '';
-                                        echo "<option value=\"" . htmlspecialchars($province) . "\" $selected>" . htmlspecialchars($province) . "</option>";
+                                      $selected = ($current_province == $province) ? 'selected' : '';
+                                      echo "<option value=\"" . htmlspecialchars($province) . "\" $selected>" . htmlspecialchars($province) . "</option>";
                                     }
                                     // Add the current value as an option if it's not in the standard list
                                     if (!in_array($current_province, $provinces) && !empty($current_province)) {
-                                        echo "<option value=\"$current_province\" selected>$current_province (Custom)</option>";
+                                      echo "<option value=\"$current_province\" selected>$current_province (Custom)</option>";
                                     }
                                   }
                                   ?>
@@ -374,12 +403,14 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <div class="form-group">
                                 <label>Emergency Contact Person</label>
                                 <input type="text" name="emergencycontactperson"
-                                  value="<?php echo htmlentities($row->EmergencyContactPerson); ?>" class="form-control" style="text-transform: capitalize;">
+                                  value="<?php echo htmlentities($row->EmergencyContactPerson); ?>" class="form-control"
+                                  style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Emergency Relationship</label>
                                 <input type="text" name="emergencyrelationship"
-                                  value="<?php echo htmlentities($row->EmergencyRelationship); ?>" class="form-control" style="text-transform: capitalize;">
+                                  value="<?php echo htmlentities($row->EmergencyRelationship); ?>" class="form-control"
+                                  style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label>Emergency Contact Number</label>
@@ -388,8 +419,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               </div>
                               <div class="form-group">
                                 <label>Emergency Address</label>
-                                <textarea name="emergencyaddress"
-                                  class="form-control" style="text-transform: capitalize;"><?php echo htmlentities($row->EmergencyAddress); ?></textarea>
+                                <textarea name="emergencyaddress" class="form-control"
+                                  style="text-transform: capitalize;"><?php echo htmlentities($row->EmergencyAddress); ?></textarea>
                               </div>
                               <div class="form-group">
                                 <label>Category</label>
@@ -438,6 +469,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script src="js/toast.js"></script>
     <script>
       function toggleOtherGenderInput() {
         var genderSelect = document.getElementById("gender");
@@ -458,37 +490,37 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
         majorSelect.innerHTML = '<option value="">Select Major</option>';
 
         const majors = {
-            "Bachelor of Elementary Education (BEEd)": [
-                "Major in General Content"
-            ],
-            "Bachelor of Secondary Education (BSEd)": [
-                "Major in English",
-                "Major in Filipino",
-                "Major in Mathematics"
-            ],
-            "Bachelor of Science in Business Administration (BSBA)": [
-                "Major in Human Resource Management",
-                "Major in Marketing Management"
-            ],
-            "Bachelor of Industrial Technology (BindTech)": [
-                "Major in Computer Technology",
-                "Major in Electronics Technology"
-            ],
-            "Bachelor of Science in Information Technology (BSIT)": [
-                "Major in information technology"
-            ]
+          "Bachelor of Elementary Education (BEEd)": [
+            "Major in General Content"
+          ],
+          "Bachelor of Secondary Education (BSEd)": [
+            "Major in English",
+            "Major in Filipino",
+            "Major in Mathematics"
+          ],
+          "Bachelor of Science in Business Administration (BSBA)": [
+            "Major in Human Resource Management",
+            "Major in Marketing Management"
+          ],
+          "Bachelor of Industrial Technology (BindTech)": [
+            "Major in Computer Technology",
+            "Major in Electronics Technology"
+          ],
+          "Bachelor of Science in Information Technology (BSIT)": [
+            "Major in information technology"
+          ]
         };
 
         if (majors[selectedProgram]) {
-            majors[selectedProgram].forEach(function(major) {
-                const option = document.createElement('option');
-                option.value = major;
-                option.textContent = major;
-                if (major === currentMajor) {
-                    option.selected = true;
-                }
-                majorSelect.appendChild(option);
-            });
+          majors[selectedProgram].forEach(function (major) {
+            const option = document.createElement('option');
+            option.value = major;
+            option.textContent = major;
+            if (major === currentMajor) {
+              option.selected = true;
+            }
+            majorSelect.appendChild(option);
+          });
         }
       }
 
@@ -503,8 +535,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
         fetch('../data/cities.json')
           .then(response => response.json())
           .then(data => {
-              citiesData = data;
-              updateCities(currentCity);
+            citiesData = data;
+            updateCities(currentCity);
           })
           .catch(error => console.error('Error loading cities:', error));
       });
@@ -518,7 +550,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
         if (citiesData[province]) {
           var select = $('<select name="citymunicipality" id="citymunicipality-select" class="form-control" style="text-transform: capitalize;"></select>');
           select.append('<option value="">Select City/Municipality</option>');
-          citiesData[province].forEach(function(city) {
+          citiesData[province].forEach(function (city) {
             var option = $('<option></option>').val(city).text(city);
             if (city === selectedCity) {
               option.prop('selected', true);
@@ -535,7 +567,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
       // Initialize Select2 for province dropdown
       if (window.jQuery) {
         jQuery('.province-select').select2();
-        jQuery('.province-select').on('change', function() { updateCities(''); });
+        jQuery('.province-select').on('change', function () { updateCities(''); });
       }
     </script>
   </body>

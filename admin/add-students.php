@@ -45,58 +45,58 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
     if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
       echo '<script>if(window.showToast) showToast("Invalid Student ID format. Please use the format: 222 - 08410.","warning");</script>';
     } else {
-      
-    $sql = "SELECT StuID FROM tblstudent WHERE StuID=:stuid";
-    $query = $dbh->prepare($sql);
-    $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-    $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_OBJ);
-    if ($query->rowCount() > 0) {
-      echo '<script>if(window.showToast) showToast("Student ID already exists. Please try again","warning");</script>';
-    } else {
-      $sql = "INSERT INTO tblstudent(StuID, Password, FamilyName, FirstName, MiddleName, Program, Major, LearnersReferenceNo, DOB, PlaceOfBirth, Gender, CivilStatus, Religion, Height, Weight, Citizenship, FathersName, MothersMaidenName, BuildingHouseNumber, StreetName, Barangay, CityMunicipality, Province, PostalCode, ContactNumber, EmailAddress, EmergencyContactPerson, EmergencyRelationship, EmergencyContactNumber, EmergencyAddress, Category, YearLevel) VALUES(:stuid, :password, :familyname, :firstname, :middlename, :program, :major, :lrn, :dob, :placeofbirth, :gender, :civilstatus, :religion, :height, :weight, :citizenship, :fathersname, :mothersmaidenname, :buildinghouse, :streetname, :barangay, :citymunicipality, :province, :postalcode, :contactnumber, :emailaddress, :emergencycontactperson, :emergencyrelationship, :emergencycontactnumber, :emergencyaddress, :category, :yearlevel)";
+
+      $sql = "SELECT StuID FROM tblstudent WHERE StuID=:stuid";
       $query = $dbh->prepare($sql);
       $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-      $query->bindParam(':password', $password, PDO::PARAM_STR);
-      $query->bindParam(':familyname', $familyname, PDO::PARAM_STR);
-      $query->bindParam(':firstname', $firstname, PDO::PARAM_STR);
-      $query->bindParam(':middlename', $middlename, PDO::PARAM_STR);
-      $query->bindParam(':program', $program, PDO::PARAM_STR);
-      $query->bindParam(':major', $major, PDO::PARAM_STR);
-      $query->bindParam(':lrn', $lrn, PDO::PARAM_STR);
-      $query->bindParam(':dob', $dob, PDO::PARAM_STR);
-      $query->bindParam(':placeofbirth', $placeofbirth, PDO::PARAM_STR);
-      $query->bindParam(':gender', $gender, PDO::PARAM_STR);
-      $query->bindParam(':civilstatus', $civilstatus, PDO::PARAM_STR);
-      $query->bindParam(':religion', $religion, PDO::PARAM_STR);
-      $query->bindParam(':height', $height, PDO::PARAM_STR);
-      $query->bindParam(':weight', $weight, PDO::PARAM_STR);
-      $query->bindParam(':citizenship', $citizenship, PDO::PARAM_STR);
-      $query->bindParam(':fathersname', $fathersname, PDO::PARAM_STR);
-      $query->bindParam(':mothersmaidenname', $mothersmaidenname, PDO::PARAM_STR);
-      $query->bindParam(':buildinghouse', $buildinghouse, PDO::PARAM_STR);
-      $query->bindParam(':streetname', $streetname, PDO::PARAM_STR);
-      $query->bindParam(':barangay', $barangay, PDO::PARAM_STR);
-      $query->bindParam(':citymunicipality', $citymunicipality, PDO::PARAM_STR);
-      $query->bindParam(':province', $province, PDO::PARAM_STR);
-      $query->bindParam(':postalcode', $postalcode, PDO::PARAM_STR);
-      $query->bindParam(':contactnumber', $contactnumber, PDO::PARAM_STR);
-      $query->bindParam(':emailaddress', $emailaddress, PDO::PARAM_STR);
-      $query->bindParam(':emergencycontactperson', $emergencycontactperson, PDO::PARAM_STR);
-      $query->bindParam(':emergencyrelationship', $emergencyrelationship, PDO::PARAM_STR);
-      $query->bindParam(':emergencycontactnumber', $emergencycontactnumber, PDO::PARAM_STR);
-      $query->bindParam(':emergencyaddress', $emergencyaddress, PDO::PARAM_STR);
-      $query->bindParam(':category', $category, PDO::PARAM_STR);
-      $query->bindParam(':yearlevel', $yearlevel, PDO::PARAM_STR);
       $query->execute();
-      $LastInsertId = $dbh->lastInsertId();
-      if ($LastInsertId > 0) {
-        echo '<script>if(window.showToast) showToast("Student has been added.","success");</script>';
-        echo "<script>window.location.href ='manage-students.php'</script>";
+      $results = $query->fetchAll(PDO::FETCH_OBJ);
+      if ($query->rowCount() > 0) {
+        echo '<script>if(window.showToast) showToast("Student ID already exists. Please try again","warning");</script>';
       } else {
-        echo '<script>if(window.showToast) showToast("Something Went Wrong. Please try again","danger");</script>';
+        $sql = "INSERT INTO tblstudent(StuID, Password, FamilyName, FirstName, MiddleName, Program, Major, LearnersReferenceNo, DOB, PlaceOfBirth, Gender, CivilStatus, Religion, Height, Weight, Citizenship, FathersName, MothersMaidenName, BuildingHouseNumber, StreetName, Barangay, CityMunicipality, Province, PostalCode, ContactNumber, EmailAddress, EmergencyContactPerson, EmergencyRelationship, EmergencyContactNumber, EmergencyAddress, Category, YearLevel) VALUES(:stuid, :password, :familyname, :firstname, :middlename, :program, :major, :lrn, :dob, :placeofbirth, :gender, :civilstatus, :religion, :height, :weight, :citizenship, :fathersname, :mothersmaidenname, :buildinghouse, :streetname, :barangay, :citymunicipality, :province, :postalcode, :contactnumber, :emailaddress, :emergencycontactperson, :emergencyrelationship, :emergencycontactnumber, :emergencyaddress, :category, :yearlevel)";
+        $query = $dbh->prepare($sql);
+        $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+        $query->bindParam(':password', $password, PDO::PARAM_STR);
+        $query->bindParam(':familyname', $familyname, PDO::PARAM_STR);
+        $query->bindParam(':firstname', $firstname, PDO::PARAM_STR);
+        $query->bindParam(':middlename', $middlename, PDO::PARAM_STR);
+        $query->bindParam(':program', $program, PDO::PARAM_STR);
+        $query->bindParam(':major', $major, PDO::PARAM_STR);
+        $query->bindParam(':lrn', $lrn, PDO::PARAM_STR);
+        $query->bindParam(':dob', $dob, PDO::PARAM_STR);
+        $query->bindParam(':placeofbirth', $placeofbirth, PDO::PARAM_STR);
+        $query->bindParam(':gender', $gender, PDO::PARAM_STR);
+        $query->bindParam(':civilstatus', $civilstatus, PDO::PARAM_STR);
+        $query->bindParam(':religion', $religion, PDO::PARAM_STR);
+        $query->bindParam(':height', $height, PDO::PARAM_STR);
+        $query->bindParam(':weight', $weight, PDO::PARAM_STR);
+        $query->bindParam(':citizenship', $citizenship, PDO::PARAM_STR);
+        $query->bindParam(':fathersname', $fathersname, PDO::PARAM_STR);
+        $query->bindParam(':mothersmaidenname', $mothersmaidenname, PDO::PARAM_STR);
+        $query->bindParam(':buildinghouse', $buildinghouse, PDO::PARAM_STR);
+        $query->bindParam(':streetname', $streetname, PDO::PARAM_STR);
+        $query->bindParam(':barangay', $barangay, PDO::PARAM_STR);
+        $query->bindParam(':citymunicipality', $citymunicipality, PDO::PARAM_STR);
+        $query->bindParam(':province', $province, PDO::PARAM_STR);
+        $query->bindParam(':postalcode', $postalcode, PDO::PARAM_STR);
+        $query->bindParam(':contactnumber', $contactnumber, PDO::PARAM_STR);
+        $query->bindParam(':emailaddress', $emailaddress, PDO::PARAM_STR);
+        $query->bindParam(':emergencycontactperson', $emergencycontactperson, PDO::PARAM_STR);
+        $query->bindParam(':emergencyrelationship', $emergencyrelationship, PDO::PARAM_STR);
+        $query->bindParam(':emergencycontactnumber', $emergencycontactnumber, PDO::PARAM_STR);
+        $query->bindParam(':emergencyaddress', $emergencyaddress, PDO::PARAM_STR);
+        $query->bindParam(':category', $category, PDO::PARAM_STR);
+        $query->bindParam(':yearlevel', $yearlevel, PDO::PARAM_STR);
+        $query->execute();
+        $LastInsertId = $dbh->lastInsertId();
+        if ($LastInsertId > 0) {
+          echo '<script>if(window.showToast) showToast("Student has been added.","success");</script>';
+          echo "<script>window.location.href ='manage-students.php'</script>";
+        } else {
+          echo '<script>if(window.showToast) showToast("Something Went Wrong. Please try again","danger");</script>';
+        }
       }
-    }
     }
   }
   ?>
@@ -142,40 +142,51 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                           <hr />
                           <div class="form-group">
                             <label>Student ID</label>
-                            <input type="text" name="stuid" value="" class="form-control" required placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410" style="text-transform: capitalize;">
+                            <input type="text" name="stuid" value="" class="form-control" required
+                              placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}"
+                              title="The format must be: 222 - 08410" style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Family Name</label>
-                            <input type="text" name="familyname" value="" class="form-control" required style="text-transform: capitalize;">
+                            <input type="text" name="familyname" value="" class="form-control" required
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>First Name</label>
-                            <input type="text" name="firstname" value="" class="form-control" required style="text-transform: capitalize;">
+                            <input type="text" name="firstname" value="" class="form-control" required
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Middle Name</label>
-                            <input type="text" name="middlename" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="middlename" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Program</label>
                             <select name="program" id="program" class="form-control" required onchange="updateMajors()">
                               <option value="">Select Program</option>
-                              <option value="Bachelor of Elementary Education (BEEd)">Bachelor of Elementary Education (BEEd)</option>
-                              <option value="Bachelor of Secondary Education (BSEd)">Bachelor of Secondary Education (BSEd)</option>
-                              <option value="Bachelor of Science in Business Administration (BSBA)">Bachelor of Science in Business Administration (BSBA)</option>
-                              <option value="Bachelor of Industrial Technology (BindTech)">Bachelor of Industrial Technology (BindTech)</option>
-                              <option value="Bachelor of Science in Information Technology (BSIT)">Bachelor of Science in Information Technology (BSIT)</option>
+                              <option value="Bachelor of Elementary Education (BEEd)">Bachelor of Elementary Education
+                                (BEEd)</option>
+                              <option value="Bachelor of Secondary Education (BSEd)">Bachelor of Secondary Education
+                                (BSEd)</option>
+                              <option value="Bachelor of Science in Business Administration (BSBA)">Bachelor of Science in
+                                Business Administration (BSBA)</option>
+                              <option value="Bachelor of Industrial Technology (BindTech)">Bachelor of Industrial
+                                Technology (BindTech)</option>
+                              <option value="Bachelor of Science in Information Technology (BSIT)">Bachelor of Science in
+                                Information Technology (BSIT)</option>
                             </select>
                           </div>
                           <div class="form-group">
                             <label>Major</label>
                             <select name="major" id="major" class="form-control" style="text-transform: capitalize;">
-                               <option value="">Select Major</option>
+                              <option value="">Select Major</option>
                             </select>
                           </div>
                           <div class="form-group">
                             <label>Learner's Reference No.</label>
-                            <input type="text" name="lrn" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="lrn" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Date of Birth</label>
@@ -183,7 +194,8 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                           </div>
                           <div class="form-group">
                             <label>Place of Birth</label>
-                            <input type="text" name="placeofbirth" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="placeofbirth" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Gender</label>
@@ -197,7 +209,8 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                           </div>
                           <div class="form-group" id="otherGenderInput" style="display: none;">
                             <label>Please Specify</label>
-                            <input type="text" name="otherGender" id="otherGender" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="otherGender" id="otherGender" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
 
                           <div class="form-group">
@@ -213,7 +226,8 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                           </div>
                           <div class="form-group">
                             <label>Religion</label>
-                            <input type="text" name="religion" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="religion" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Height (cm)</label>
@@ -225,7 +239,8 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                           </div>
                           <div class="form-group">
                             <label>Citizenship</label>
-                            <input type="text" name="citizenship" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="citizenship" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Password</label>
@@ -237,40 +252,47 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                           <hr />
                           <div class="form-group">
                             <label>Father's Name</label>
-                            <input type="text" name="fathersname" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="fathersname" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Mother's Maiden Name</label>
-                            <input type="text" name="mothersmaidenname" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="mothersmaidenname" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Building/House Number</label>
-                            <input type="text" name="buildinghouse" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="buildinghouse" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Street Name</label>
-                            <input type="text" name="streetname" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="streetname" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Barangay</label>
-                            <input type="text" name="barangay" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="barangay" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>City/Municipality</label>
                             <div id="city-municipality-container">
-                              <input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control" style="text-transform: capitalize;">
+                              <input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control"
+                                style="text-transform: capitalize;">
                             </div>
                           </div>
                           <div class="form-group">
                             <label>Province</label>
-                            <select name="province" class="form-control province-select" style="text-transform: capitalize;">
+                            <select name="province" class="form-control province-select"
+                              style="text-transform: capitalize;">
                               <option value="">Select Province</option>
                               <?php
                               $provincesJson = file_get_contents('../data/provinces.json');
                               $provinces = json_decode($provincesJson, true);
                               if (is_array($provinces)) {
                                 foreach ($provinces as $province) {
-                                    echo "<option value=\"" . htmlspecialchars($province) . "\">" . htmlspecialchars($province) . "</option>";
+                                  echo "<option value=\"" . htmlspecialchars($province) . "\">" . htmlspecialchars($province) . "</option>";
                                 }
                               }
                               ?>
@@ -290,11 +312,13 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                           </div>
                           <div class="form-group">
                             <label>Emergency Contact Person</label>
-                            <input type="text" name="emergencycontactperson" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="emergencycontactperson" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Emergency Relationship</label>
-                            <input type="text" name="emergencyrelationship" value="" class="form-control" style="text-transform: capitalize;">
+                            <input type="text" name="emergencyrelationship" value="" class="form-control"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Emergency Contact Number</label>
@@ -302,7 +326,8 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                           </div>
                           <div class="form-group">
                             <label>Emergency Address</label>
-                            <textarea name="emergencyaddress" class="form-control" style="text-transform: capitalize;"></textarea>
+                            <textarea name="emergencyaddress" class="form-control"
+                              style="text-transform: capitalize;"></textarea>
                           </div>
                           <div class="form-group">
                             <label>Category</label>
@@ -344,6 +369,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="vendors/select2/select2.min.js"></script>
     <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
+    <script src="js/toast.js"></script>
     <script>
       var provincesWithCities = { "Cebu": ["Bogo City", "Carcar City", "Danao City", "Naga City", "Talisay City", "Toledo City", "Cebu City", "Lapu-Lapu City", "Mandaue City", "Alcantara", "Alcoy", "Alegria", "Aloguinsan", "Argao", "Asturias", "Badian", "Balamban", "Bantayan", "Barili", "Boljoon", "Borbon", "Carmen", "Catmon", "Compostela", "Consolacion", "Cordoba", "Daanbantayan", "Dalaguete", "Dumanjug", "Ginatilan", "Liloan", "Madridejos", "Malabuyoc", "Medellin", "Minglanilla", "Moalboal", "Oslob", "Pilar", "Pinamungahan", "Poro", "Ronda", "Samboan", "San Fernando", "San Francisco", "San Remigio", "Santa Fe", "Santander", "Sibonga", "Sogod", "Tabogon", "Tabuelan", "Tuburan", "Tudela"] };
     </script>
@@ -369,34 +395,34 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
         majorSelect.innerHTML = '<option value="">Select Major</option>';
 
         const majors = {
-            "Bachelor of Elementary Education (BEEd)": [
-                "Major in General Content"
-            ],
-            "Bachelor of Secondary Education (BSEd)": [
-                "Major in English",
-                "Major in Filipino",
-                "Major in Mathematics"
-            ],
-            "Bachelor of Science in Business Administration (BSBA)": [
-                "Major in Human Resource Management",
-                "Major in Marketing Management"
-            ],
-            "Bachelor of Industrial Technology (BindTech)": [
-                "Major in Computer Technology",
-                "Major in Electronics Technology"
-            ],
-            "Bachelor of Science in Information Technology (BSIT)": [
-                "Major in information technology"
-            ]
+          "Bachelor of Elementary Education (BEEd)": [
+            "Major in General Content"
+          ],
+          "Bachelor of Secondary Education (BSEd)": [
+            "Major in English",
+            "Major in Filipino",
+            "Major in Mathematics"
+          ],
+          "Bachelor of Science in Business Administration (BSBA)": [
+            "Major in Human Resource Management",
+            "Major in Marketing Management"
+          ],
+          "Bachelor of Industrial Technology (BindTech)": [
+            "Major in Computer Technology",
+            "Major in Electronics Technology"
+          ],
+          "Bachelor of Science in Information Technology (BSIT)": [
+            "Major in information technology"
+          ]
         };
 
         if (majors[selectedProgram]) {
-            majors[selectedProgram].forEach(function(major) {
-                const option = document.createElement('option');
-                option.value = major;
-                option.textContent = major;
-                majorSelect.appendChild(option);
-            });
+          majors[selectedProgram].forEach(function (major) {
+            const option = document.createElement('option');
+            option.value = major;
+            option.textContent = major;
+            majorSelect.appendChild(option);
+          });
         }
       }
 
@@ -404,8 +430,8 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
       fetch('../data/cities.json')
         .then(response => response.json())
         .then(data => {
-            citiesData = data;
-            updateCities(''); // Initial call
+          citiesData = data;
+          updateCities(''); // Initial call
         })
         .catch(error => console.error('Error loading cities:', error));
 
@@ -417,7 +443,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
         if (citiesData[province]) {
           var select = $('<select name="citymunicipality" id="citymunicipality-select" class="form-control" style="text-transform: capitalize;"></select>');
           select.append('<option value="">Select City/Municipality</option>');
-          citiesData[province].forEach(function(city) {
+          citiesData[province].forEach(function (city) {
             var option = $('<option></option>').val(city).text(city);
             if (city === selectedCity) {
               option.prop('selected', true);
@@ -437,7 +463,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
       // Initialize Select2 for province dropdown
       if (window.jQuery) {
         jQuery('.province-select').select2();
-        jQuery('.province-select').on('change', function() { updateCities(''); });
+        jQuery('.province-select').on('change', function () { updateCities(''); });
       }
     </script>
   </body>

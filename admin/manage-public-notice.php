@@ -100,7 +100,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Manage Public Notice</h3>
-              <button type="button" class="add-btn" data-toggle="modal" data-target="#addPublicModal" style="margin-right: 20px;">
+              <button type="button" class="add-btn" data-toggle="modal" data-target="#addPublicModal"
+                style="margin-right: 20px;">
                 + Add New Public Notice
               </button>
             </div>
@@ -263,73 +264,28 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/manage-public-notice.js"></script>
+
+    <!-- Inline initialization data for external script -->
     <script>
-      <?php if (isset($delete_message)): ?>
-        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-        toastr.success(<?php echo json_encode($delete_message); ?>);
-      <?php endif; ?>
-      <?php if (!empty($add_success_message)): ?>
-        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-        toastr.success(<?php echo json_encode($add_success_message); ?>);
-      <?php endif; ?>
-      <?php if (!empty($add_error_message)): ?>
-        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-        toastr.error(<?php echo json_encode($add_error_message); ?>);
-      <?php endif; ?>
-      <?php if (!empty($edit_success_message)): ?>
-        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-        toastr.success(<?php echo json_encode($edit_success_message); ?>);
-      <?php endif; ?>
-      <?php if (!empty($edit_error_message)): ?>
-        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-        toastr.error(<?php echo json_encode($edit_error_message); ?>);
-      <?php endif; ?>
-
-      document.addEventListener('DOMContentLoaded', function () {
-        // if add validation failed, open add modal
-        <?php if (!empty($add_error_message)): ?>
-          if (window.$) { $('#addPublicModal').modal('show'); } else if (typeof bootstrap !== "undefined") { new bootstrap.Modal(document.getElementById('addPublicModal')).show(); }
-        <?php endif; ?>
-
-        // if edit validation failed after POST, reopen edit modal with posted values
-        <?php if ($openEditModal && !empty($_POST)): ?>
-          if (window.$) {
-            $('#editPublicModal').modal('show');
-            $('#edit_id_public_modal').val(<?php echo json_encode($_POST['edit_id'] ?? ''); ?>);
-            $('#edit_nottitle_public_modal').val(<?php echo json_encode($_POST['edit_nottitle'] ?? ''); ?>);
-            $('#edit_notmsg_public_modal').val(<?php echo json_encode($_POST['edit_notmsg'] ?? ''); ?>);
-          } else if (typeof bootstrap !== "undefined") {
-            document.getElementById('edit_id_public_modal').value = <?php echo json_encode($_POST['edit_id'] ?? ''); ?>;
-            document.getElementById('edit_nottitle_public_modal').value = <?php echo json_encode($_POST['edit_nottitle'] ?? ''); ?>;
-            document.getElementById('edit_notmsg_public_modal').value = <?php echo json_encode($_POST['edit_notmsg'] ?? ''); ?>;
-            new bootstrap.Modal(document.getElementById('editPublicModal')).show();
-          }
-        <?php endif; ?>
-
-        // wire edit buttons to populate modal
-        var editButtons = document.querySelectorAll('.btn-edit-public');
-        editButtons.forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            var id = this.getAttribute('data-id');
-            var title = this.getAttribute('data-title');
-            var msg = this.getAttribute('data-msg');
-
-            document.getElementById('edit_id_public_modal').value = id;
-            document.getElementById('edit_nottitle_public_modal').value = title;
-            // decode HTML entities back if needed
-            try {
-              var decoded = msg.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&amp;/g, '&');
-              document.getElementById('edit_notmsg_public_modal').value = decoded;
-            } catch (e) {
-              document.getElementById('edit_notmsg_public_modal').value = msg;
-            }
-
-            if (window.$) { $('#editPublicModal').modal('show'); } else if (typeof bootstrap !== "undefined") { new bootstrap.Modal(document.getElementById('editPublicModal')).show(); }
-          });
-        });
-      });
+      window.ppnData = {
+        delete_message: <?php echo json_encode($delete_message ?? null); ?>,
+        add_success_message: <?php echo json_encode($add_success_message ?? ''); ?>,
+        add_error_message: <?php echo json_encode($add_error_message ?? ''); ?>,
+        edit_success_message: <?php echo json_encode($edit_success_message ?? ''); ?>,
+        edit_error_message: <?php echo json_encode($edit_error_message ?? ''); ?>,
+        openEditModal: <?php echo $openEditModal ? 'true' : 'false'; ?>,
+        openAddModal: <?php echo !empty($add_error_message) ? 'true' : 'false'; ?>,
+        editPost: {
+          id: <?php echo json_encode($_POST['edit_id'] ?? ''); ?>,
+          title: <?php echo json_encode($_POST['edit_nottitle'] ?? ''); ?>,
+          msg: <?php echo json_encode($_POST['edit_notmsg'] ?? ''); ?>
+        }
+      };
     </script>
+
   </body>
 
   </html>

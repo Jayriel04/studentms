@@ -237,6 +237,7 @@ if (isset($_POST['import'])) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script src="js/toast.js"></script>
 </body>
 
 </html>

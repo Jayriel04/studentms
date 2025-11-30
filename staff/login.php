@@ -61,7 +61,8 @@ if (isset($_POST['login'])) {
             <div class="welcome-content">
                 <h1>WELCOME STAFF</h1>
                 <p class="headline">Student Profiling System</p>
-                <p>Sign in to access student records, manage class information, and utilize other staff-specific tools and resources.</p>
+                <p>Sign in to access student records, manage class information, and utilize other staff-specific tools
+                    and resources.</p>
             </div>
             <div class="circle-decoration"></div>
         </div>
@@ -71,7 +72,9 @@ if (isset($_POST['login'])) {
             <p class="subtitle">Enter your credentials to access the staff dashboard.</p>
 
             <?php if (isset($login_error)): ?>
-                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?php echo $login_error; ?></div>
+                <div class="alert alert-danger"
+                    style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
+                    <?php echo $login_error; ?></div>
             <?php endif; ?>
 
             <form id="login" method="post" name="login">
@@ -108,6 +111,7 @@ if (isset($_POST['login'])) {
     </div>
 
     <script src="js/login-new.js"></script>
+    <script src="js/toast.js"></script>
 </body>
 
 </html>

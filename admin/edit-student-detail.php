@@ -461,6 +461,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="vendors/select2/select2.min.js"></script>
     <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
+    <script src="js/toast.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script>

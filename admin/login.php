@@ -102,6 +102,7 @@ if (isset($_POST['login'])) {
     </div>
 
     <script src="js/login-new.js"></script>
+    <script src="js/toast.js"></script>
 </body>
 
 </html>

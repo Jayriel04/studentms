@@ -269,7 +269,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="js/toast.js"></script>
     <script>
       // Display toast notification for status updates
       if (typeof statusMessage !== 'undefined' && statusMessage) {

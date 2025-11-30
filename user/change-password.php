@@ -192,6 +192,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <script src="js/script.js"></script>
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
+    <script src="js/toast.js"></script>
     <?php
     if (isset($_SESSION['toast_message'])) {
       $toast = $_SESSION['toast_message'];

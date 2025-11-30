@@ -352,118 +352,30 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/manage-staff.js"></script>
+    <script src="js/toast.js"></script>
+
+    <!-- Inline initialization data for external script -->
     <script>
-      // Display toast notification for status updates
-      if (typeof statusMessage !== 'undefined' && statusMessage) {
-        toastr.success(statusMessage);
-      }
-
-      // Show add staff messages
-      <?php if (!empty($add_success_message)): ?>
-        toastr.success("<?php echo addslashes($add_success_message); ?>");
-      <?php endif; ?>
-      <?php if (!empty($add_error_message)): ?>
-        toastr.error("<?php echo addslashes($add_error_message); ?>");
-      <?php endif; ?>
-
-      // Show edit messages
-      <?php if (!empty($edit_success_message)): ?>
-        toastr.success("<?php echo addslashes($edit_success_message); ?>");
-      <?php endif; ?>
-      <?php if (!empty($edit_error_message)): ?>
-        toastr.error("<?php echo addslashes($edit_error_message); ?>");
-      <?php endif; ?>
-
-      // If there was an error adding staff, open the add modal
-      <?php if ($openAddModal): ?>
-        window.addEventListener('DOMContentLoaded', function () {
-          if (window.$) { $('#addStaffModal').modal('show'); }
-          else if (typeof bootstrap !== "undefined") {
-            var modalEl = document.getElementById('addStaffModal');
-            var modal = new bootstrap.Modal(modalEl);
-            modal.show();
-          }
-        });
-      <?php endif; ?>
-
-      // If edit failed validation, reopen edit modal and populate with posted values
-      <?php if ($openEditModal && !empty($_POST)): ?>
-        window.addEventListener('DOMContentLoaded', function () {
-          var modalEl = document.getElementById('editStaffModal');
-          if (modalEl && typeof bootstrap !== "undefined") {
-            document.getElementById('edit_id').value = "<?php echo addslashes($_POST['edit_id'] ?? ''); ?>";
-            document.getElementById('edit_name').value = "<?php echo addslashes($_POST['edit_name'] ?? ''); ?>";
-            document.getElementById('edit_username').value = "<?php echo addslashes($_POST['edit_username'] ?? ''); ?>";
-            document.getElementById('edit_email').value = "<?php echo addslashes($_POST['edit_email'] ?? ''); ?>";
-            document.getElementById('edit_regdate').value = "<?php echo addslashes($_POST['edit_regdate'] ?? ''); ?>";
-            var modal = new bootstrap.Modal(modalEl);
-            modal.show();
-          }
-        });
-      <?php endif; ?>
-
-        // Toggle password visibility for add modal
-        (function () {
-          var toggle = document.getElementById('toggleAddPassword');
-          var pwd = document.getElementById('add_password');
-          if (!toggle || !pwd) return;
-          toggle.addEventListener('click', function () {
-            if (pwd.type === 'password') {
-              pwd.type = 'text';
-              toggle.classList.add('active');
-            } else {
-              pwd.type = 'password';
-              toggle.classList.remove('active');
-            }
-          });
-        })();
-
-      // Toggle password visibility for edit modal
-      (function () {
-        var toggle = document.getElementById('toggleEditPassword');
-        var pwd = document.getElementById('edit_password');
-        if (!toggle || !pwd) return;
-        toggle.addEventListener('click', function () {
-          if (pwd.type === 'password') {
-            pwd.type = 'text';
-            toggle.classList.add('active');
-          } else {
-            pwd.type = 'password';
-            toggle.classList.remove('active');
-          }
-        });
-      })();
-
-      // Populate edit modal when edit button clicked
-      document.addEventListener('DOMContentLoaded', function () {
-        var editButtons = document.querySelectorAll('.btn-edit');
-        editButtons.forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            var id = this.getAttribute('data-id');
-            var name = this.getAttribute('data-name');
-            var username = this.getAttribute('data-username');
-            var email = this.getAttribute('data-email');
-            var regdate = this.getAttribute('data-regdate');
-
-            document.getElementById('edit_id').value = id;
-            document.getElementById('edit_name').value = name;
-            document.getElementById('edit_username').value = username;
-            document.getElementById('edit_email').value = email;
-            document.getElementById('edit_regdate').value = regdate;
-            document.getElementById('edit_password').value = '';
-
-            if (window.$) {
-              $('#editStaffModal').modal('show');
-            } else if (typeof bootstrap !== "undefined") {
-              var modalEl = document.getElementById('editStaffModal');
-              var modal = new bootstrap.Modal(modalEl);
-              modal.show();
-            }
-          });
-        });
-      });
+      window.msData = {
+        statusMessage: <?php echo isset($statusMessage) ? json_encode($statusMessage) : 'null'; ?>,
+        add_success_message: <?php echo json_encode($add_success_message); ?>,
+        add_error_message: <?php echo json_encode($add_error_message); ?>,
+        edit_success_message: <?php echo json_encode($edit_success_message); ?>,
+        edit_error_message: <?php echo json_encode($edit_error_message); ?>,
+        openAddModal: <?php echo $openAddModal ? 'true' : 'false'; ?>,
+        openEditModal: <?php echo $openEditModal ? 'true' : 'false'; ?>,
+        editPost: {
+          id: <?php echo json_encode($_POST['edit_id'] ?? ''); ?>,
+          name: <?php echo json_encode($_POST['edit_name'] ?? ''); ?>,
+          username: <?php echo json_encode($_POST['edit_username'] ?? ''); ?>,
+          email: <?php echo json_encode($_POST['edit_email'] ?? ''); ?>,
+          regdate: <?php echo json_encode($_POST['edit_regdate'] ?? ''); ?>
+        }
+      };
     </script>
+
   </body>
 
   </html>

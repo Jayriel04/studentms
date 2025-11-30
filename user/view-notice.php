@@ -136,6 +136,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <script src="js/misc.js"></script>
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
+    <script src="js/toast.js"></script>
     <script>
       function showNoticeDetail(title, date, msg) {
         const modal = document.getElementById('noticeModal');

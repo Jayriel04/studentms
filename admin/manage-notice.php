@@ -311,76 +311,29 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="js/misc.js"></script>
     <script src="vendors/select2/select2.min.js"></script>
     <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/script.js"></script>
     <script src="js/mention.js"></script>
+
+    <!-- Inline initialization data for external script -->
     <script>
-      // Toasts
-      <?php if (isset($delete_message)): ?>
-        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-        toastr.success(<?php echo json_encode($delete_message); ?>);
-      <?php endif; ?>
-      <?php if (!empty($add_success_message)): ?>
-        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-        toastr.success(<?php echo json_encode($add_success_message); ?>);
-      <?php endif; ?>
-      <?php if (!empty($add_error_message)): ?>
-        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-        toastr.error(<?php echo json_encode($add_error_message); ?>);
-      <?php endif; ?>
-      <?php if (!empty($edit_success_message)): ?>
-        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-        toastr.success(<?php echo json_encode($edit_success_message); ?>);
-      <?php endif; ?>
-      <?php if (!empty($edit_error_message)): ?>
-        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-        toastr.error(<?php echo json_encode($edit_error_message); ?>);
-      <?php endif; ?>
-
-      document.addEventListener('DOMContentLoaded', function () {
-        // initialize mention in modals
-        var addMsg = document.getElementById('notmsg_modal');
-        if (addMsg && typeof initializeMention === 'function') initializeMention(addMsg, 'search.php?mention_suggest=1');
-        var editMsg = document.getElementById('edit_notmsg_modal');
-        if (editMsg && typeof initializeMention === 'function') initializeMention(editMsg, 'search.php?mention_suggest=1');
-
-        // Open add modal if error
-        <?php if (!empty($add_error_message)): ?>
-          if (window.$) { $('#addNoticeModal').modal('show'); } else if (typeof bootstrap !== "undefined") { new bootstrap.Modal(document.getElementById('addNoticeModal')).show(); }
-        <?php endif; ?>
-
-        // Open edit modal if server-side validation failed after POST
-        <?php if ($openEditModal && !empty($_POST)): ?>
-          if (window.$) {
-            $('#editNoticeModal').modal('show');
-            $('#edit_id_modal').val(<?php echo json_encode($_POST['edit_id'] ?? ''); ?>);
-            $('#edit_nottitle_modal').val(<?php echo json_encode($_POST['edit_nottitle'] ?? ''); ?>);
-            $('#edit_notmsg_modal').val(<?php echo json_encode($_POST['edit_notmsg'] ?? ''); ?>);
-          } else if (typeof bootstrap !== "undefined") {
-            document.getElementById('edit_id_modal').value = <?php echo json_encode($_POST['edit_id'] ?? ''); ?>;
-            document.getElementById('edit_nottitle_modal').value = <?php echo json_encode($_POST['edit_nottitle'] ?? ''); ?>;
-            document.getElementById('edit_notmsg_modal').value = <?php echo json_encode($_POST['edit_notmsg'] ?? ''); ?>;
-            new bootstrap.Modal(document.getElementById('editNoticeModal')).show();
-          }
-        <?php endif; ?>
-
-        // Wire edit buttons
-        var editButtons = document.querySelectorAll('.btn-edit-notice');
-        editButtons.forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            var id = this.getAttribute('data-id');
-            var title = this.getAttribute('data-title');
-            var msg = this.getAttribute('data-msg');
-
-            document.getElementById('edit_id_modal').value = id;
-            document.getElementById('edit_nottitle_modal').value = title;
-            document.getElementById('edit_notmsg_modal').value = msg;
-
-            if (window.$) { $('#editNoticeModal').modal('show'); }
-            else if (typeof bootstrap !== "undefined") { new bootstrap.Modal(document.getElementById('editNoticeModal')).show(); }
-          });
-        });
-      });
+      window.mnData = {
+        delete_message: <?php echo json_encode($delete_message ?? null); ?>,
+        add_success_message: <?php echo json_encode($add_success_message ?? ''); ?>,
+        add_error_message: <?php echo json_encode($add_error_message ?? ''); ?>,
+        edit_success_message: <?php echo json_encode($edit_success_message ?? ''); ?>,
+        edit_error_message: <?php echo json_encode($edit_error_message ?? ''); ?>,
+        openEditModal: <?php echo $openEditModal ? 'true' : 'false'; ?>,
+        openAddModal: <?php echo !empty($add_error_message) ? 'true' : 'false'; ?>,
+        editPost: {
+          id: <?php echo json_encode($_POST['edit_id'] ?? ''); ?>,
+          title: <?php echo json_encode($_POST['edit_nottitle'] ?? ''); ?>,
+          msg: <?php echo json_encode($_POST['edit_notmsg'] ?? ''); ?>
+        }
+      };
     </script>
+
+    <script src="js/manage-notice.js"></script>
   </body>
 
   </html>

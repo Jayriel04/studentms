@@ -170,6 +170,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="vendors/chart.js/Chart.min.js"></script>
     <script src="js/chart.js"></script>
     <script src="js/off-canvas.js"></script>
+    <script src="js/toast.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/script.js"></script>
     <script>

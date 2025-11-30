@@ -378,6 +378,7 @@ if (isset($_POST['add_achievement'])) {
   <script src="vendors/js/vendor.bundle.base.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
+  <script src="js/toast.js"></script>
   <script>
     (function ($) {
       function debounce(fn, wait) { var t; return function () { var ctx = this, args = arguments; clearTimeout(t); t = setTimeout(function () { fn.apply(ctx, args); }, wait); }; }

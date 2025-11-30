@@ -13,61 +13,61 @@ if (isset($_POST['login'])) {
   } else {
 
 
-  // Fetch stored password and status for this student
-  $sql = "SELECT StuID, ID, Password, Status FROM tblstudent WHERE StuID=:stuid";
-  $query = $dbh->prepare($sql);
-  $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-  $query->execute();
-  $result = $query->fetch(PDO::FETCH_OBJ);
+    // Fetch stored password and status for this student
+    $sql = "SELECT StuID, ID, Password, Status FROM tblstudent WHERE StuID=:stuid";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+    $query->execute();
+    $result = $query->fetch(PDO::FETCH_OBJ);
 
-  $authenticated = false;
-  if ($result) {
-    $stored = $result->Password;
-    // Prefer password_verify for modern hashes
-    if (password_verify($password, $stored)) {
-      $authenticated = true;
-    } else {
-      // Fallback for legacy md5 hashes
-      if (md5($password) === $stored) {
+    $authenticated = false;
+    if ($result) {
+      $stored = $result->Password;
+      // Prefer password_verify for modern hashes
+      if (password_verify($password, $stored)) {
         $authenticated = true;
-        // Upgrade to stronger hash
-        $newHash = password_hash($password, PASSWORD_DEFAULT);
-        $upd = $dbh->prepare("UPDATE tblstudent SET Password=:p WHERE StuID=:stuid");
-        $upd->bindParam(':p', $newHash, PDO::PARAM_STR);
-        $upd->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-        $upd->execute();
-      }
-    }
-  }
-
-  if ($authenticated) {
-    // Check account status: 1 => active, 0 => inactive
-    if (isset($result->Status) && intval($result->Status) !== 1) {
-      // Don't log in; show inactive-account toast
-      $error = 'Your account is inactive. Please contact the administrator.';
-    } else {
-      $_SESSION['sturecmsstuid'] = $result->StuID;
-      $_SESSION['sturecmsuid'] = $result->ID;
-
-      if (!empty($_POST["remember"])) {
-        setcookie("user_login", $_POST["stuid"], time() + (10 * 365 * 24 * 60 * 60));
-        setcookie("userpassword", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
       } else {
-        if (isset($_COOKIE["user_login"])) {
-          setcookie("user_login", "");
-        }
-        if (isset($_COOKIE["userpassword"])) {
-          setcookie("userpassword", "");
+        // Fallback for legacy md5 hashes
+        if (md5($password) === $stored) {
+          $authenticated = true;
+          // Upgrade to stronger hash
+          $newHash = password_hash($password, PASSWORD_DEFAULT);
+          $upd = $dbh->prepare("UPDATE tblstudent SET Password=:p WHERE StuID=:stuid");
+          $upd->bindParam(':p', $newHash, PDO::PARAM_STR);
+          $upd->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+          $upd->execute();
         }
       }
-
-      $_SESSION['login'] = $_POST['stuid'];
-      echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
     }
-  } else {
-    // Use a non-blocking toast message instead of alert()
-    $error = 'Invalid Student ID or Password';
-  }
+
+    if ($authenticated) {
+      // Check account status: 1 => active, 0 => inactive
+      if (isset($result->Status) && intval($result->Status) !== 1) {
+        // Don't log in; show inactive-account toast
+        $error = 'Your account is inactive. Please contact the administrator.';
+      } else {
+        $_SESSION['sturecmsstuid'] = $result->StuID;
+        $_SESSION['sturecmsuid'] = $result->ID;
+
+        if (!empty($_POST["remember"])) {
+          setcookie("user_login", $_POST["stuid"], time() + (10 * 365 * 24 * 60 * 60));
+          setcookie("userpassword", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
+        } else {
+          if (isset($_COOKIE["user_login"])) {
+            setcookie("user_login", "");
+          }
+          if (isset($_COOKIE["userpassword"])) {
+            setcookie("userpassword", "");
+          }
+        }
+
+        $_SESSION['login'] = $_POST['stuid'];
+        echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+      }
+    } else {
+      // Use a non-blocking toast message instead of alert()
+      $error = 'Invalid Student ID or Password';
+    }
   }
 }
 ?>
@@ -88,7 +88,8 @@ if (isset($_POST['login'])) {
       <div class="welcome-content">
         <h1>WELCOME STUDENT</h1>
         <p class="headline">Student Profiling System</p>
-        <p>Sign in to view your academic records, check class schedules, and access your personal profile and other student resources.</p>
+        <p>Sign in to view your academic records, check class schedules, and access your personal profile and other
+          student resources.</p>
       </div>
       <div class="circle-decoration"></div>
     </div>
@@ -98,28 +99,38 @@ if (isset($_POST['login'])) {
       <p class="subtitle">Enter your credentials to access the student portal.</p>
 
       <?php if (isset($error) && !empty($error)): ?>
-          <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?= htmlspecialchars($error) ?></div>
+        <div class="alert alert-danger"
+          style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
+          <?= htmlspecialchars($error) ?></div>
       <?php endif; ?>
 
       <form id="login" method="post" name="login">
         <div class="input-group">
           <div class="input-wrapper">
             <span class="icon">🆔</span>
-            <input type="text" name="stuid" placeholder="e.g., 222 - 08410" required="true" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410" value="<?php if (isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>">
+            <input type="text" name="stuid" placeholder="e.g., 222 - 08410" required="true" pattern="\d{3} - \d{5}"
+              title="The format must be: 222 - 08410"
+              value="<?php if (isset($_COOKIE["user_login"])) {
+                echo $_COOKIE["user_login"];
+              } ?>">
           </div>
         </div>
 
         <div class="input-group">
           <div class="input-wrapper">
             <span class="icon">🔒</span>
-            <input type="password" id="password" name="password" placeholder="Enter your Password" required="true" value="<?php if (isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
+            <input type="password" id="password" name="password" placeholder="Enter your Password" required="true"
+              value="<?php if (isset($_COOKIE["userpassword"])) {
+                echo $_COOKIE["userpassword"];
+              } ?>">
             <button type="button" class="toggle-password" onclick="togglePassword()">SHOW</button>
           </div>
         </div>
 
         <div class="form-options">
           <label class="remember-me">
-            <input type="checkbox" id="remember" name="remember" <?php if (isset($_COOKIE["user_login"])) { ?> checked <?php } ?>>
+            <input type="checkbox" id="remember" name="remember" <?php if (isset($_COOKIE["user_login"])) { ?> checked
+              <?php } ?>>
             <span>Remember me</span>
           </label>
           <a href="forgot-process.php" class="forgot-password">Forgot Password?</a>
@@ -135,6 +146,7 @@ if (isset($_POST['login'])) {
     </div>
   </div>
   <script src="js/login-new.js"></script>
+  <script src="js/toast.js"></script>
 </body>
 
 </html>

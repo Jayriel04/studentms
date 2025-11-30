@@ -103,7 +103,8 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Manage Public Notice</h3>
-              <button type="button" class="add-btn" data-toggle="modal" data-target="#addPublicModal" style="margin-right: 20px;">+ Add New Public
+              <button type="button" class="add-btn" data-toggle="modal" data-target="#addPublicModal"
+                style="margin-right: 20px;">+ Add New Public
                 Notice</button>
             </div>
 
@@ -263,7 +264,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="js/toast.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {

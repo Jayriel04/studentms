@@ -267,42 +267,57 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Family Name</label>
                             <input type="text" name="familyname" class="form-control"
-                              value="<?php echo isset($row->FamilyName) ? htmlentities($row->FamilyName) : ''; ?>" required style="text-transform: capitalize;">
+                              value="<?php echo isset($row->FamilyName) ? htmlentities($row->FamilyName) : ''; ?>"
+                              required style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>First Name</label>
                             <input type="text" name="firstname" class="form-control"
-                              value="<?php echo isset($row->FirstName) ? htmlentities($row->FirstName) : ''; ?>" required style="text-transform: capitalize;">
+                              value="<?php echo isset($row->FirstName) ? htmlentities($row->FirstName) : ''; ?>" required
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Middle Name</label>
                             <input type="text" name="middlename" class="form-control"
-                              value="<?php echo isset($row->MiddleName) ? htmlentities($row->MiddleName) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->MiddleName) ? htmlentities($row->MiddleName) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Program</label>
                             <select name="program" id="program" class="form-control" required onchange="updateMajors()">
                               <option value="">Select Program</option>
-                              <option value="Bachelor of Elementary Education (BEEd)" <?php if (isset($row->Program) && $row->Program == 'Bachelor of Elementary Education (BEEd)') echo 'selected'; ?>>Bachelor of Elementary Education (BEEd)</option>
-                              <option value="Bachelor of Secondary Education (BSEd)" <?php if (isset($row->Program) && $row->Program == 'Bachelor of Secondary Education (BSEd)') echo 'selected'; ?>>Bachelor of Secondary Education (BSEd)</option>
-                              <option value="Bachelor of Science in Business Administration (BSBA)" <?php if (isset($row->Program) && $row->Program == 'Bachelor of Science in Business Administration (BSBA)') echo 'selected'; ?>>Bachelor of Science in Business Administration (BSBA)</option>
-                              <option value="Bachelor of Industrial Technology (BindTech)" <?php if (isset($row->Program) && $row->Program == 'Bachelor of Industrial Technology (BindTech)') echo 'selected'; ?>>Bachelor of Industrial Technology (BindTech)</option>
-                              <option value="Bachelor of Science in Information Technology (BSIT)" <?php if (isset($row->Program) && $row->Program == 'Bachelor of Science in Information Technology (BSIT)') echo 'selected'; ?>>Bachelor of Science in Information Technology (BSIT)</option>
-                              <?php if (isset($row->Program) && !in_array($row->Program, [
+                              <option value="Bachelor of Elementary Education (BEEd)" <?php if (isset($row->Program) && $row->Program == 'Bachelor of Elementary Education (BEEd)')
+                                echo 'selected'; ?>>Bachelor of
+                                Elementary Education (BEEd)</option>
+                              <option value="Bachelor of Secondary Education (BSEd)" <?php if (isset($row->Program) && $row->Program == 'Bachelor of Secondary Education (BSEd)')
+                                echo 'selected'; ?>>Bachelor of
+                                Secondary Education (BSEd)</option>
+                              <option value="Bachelor of Science in Business Administration (BSBA)" <?php if (isset($row->Program) && $row->Program == 'Bachelor of Science in Business Administration (BSBA)')
+                                echo 'selected'; ?>>Bachelor of Science in Business Administration (BSBA)
+                              </option>
+                              <option value="Bachelor of Industrial Technology (BindTech)" <?php if (isset($row->Program) && $row->Program == 'Bachelor of Industrial Technology (BindTech)')
+                                echo 'selected'; ?>>
+                                Bachelor of Industrial Technology (BindTech)</option>
+                              <option value="Bachelor of Science in Information Technology (BSIT)" <?php if (isset($row->Program) && $row->Program == 'Bachelor of Science in Information Technology (BSIT)')
+                                echo 'selected'; ?>>Bachelor of Science in Information Technology (BSIT)</option>
+                              <?php if (
+                                isset($row->Program) && !in_array($row->Program, [
                                   'Bachelor of Elementary Education (BEEd)',
                                   'Bachelor of Secondary Education (BSEd)',
                                   'Bachelor of Science in Business Administration (BSBA)',
                                   'Bachelor of Industrial Technology (BindTech)',
                                   'Bachelor of Science in Information Technology (BSIT)'
-                              ]) && !empty($row->Program)): ?>
-                                <option value="<?php echo htmlentities($row->Program); ?>" selected><?php echo htmlentities($row->Program); ?></option>
+                                ]) && !empty($row->Program)
+                              ): ?>
+                                <option value="<?php echo htmlentities($row->Program); ?>" selected>
+                                  <?php echo htmlentities($row->Program); ?></option>
                               <?php endif; ?>
                             </select>
                           </div>
                           <div class="form-group">
                             <label>Major</label>
                             <select name="major" id="major" class="form-control" style="text-transform: capitalize;">
-                               <option value="">Select Major</option>
+                              <option value="">Select Major</option>
                             </select>
                           </div>
                           <div class="form-group">
@@ -318,7 +333,8 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Place of Birth</label>
                             <input type="text" name="pob" class="form-control"
-                              value="<?php echo isset($row->PlaceOfBirth) ? htmlentities($row->PlaceOfBirth) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->PlaceOfBirth) ? htmlentities($row->PlaceOfBirth) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Gender</label>
@@ -340,22 +356,29 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                             <label>Civil Status</label>
                             <select name="civilstatus" class="form-control">
                               <option value="">Select Status</option>
-                              <option value="Single" <?php if (isset($row->CivilStatus) && $row->CivilStatus == 'Single') echo 'selected'; ?>>Single</option>
-                              <option value="Married" <?php if (isset($row->CivilStatus) && $row->CivilStatus == 'Married') echo 'selected'; ?>>Married</option>
-                              <option value="Divorced" <?php if (isset($row->CivilStatus) && $row->CivilStatus == 'Divorced') echo 'selected'; ?>>Divorced</option>
-                              <option value="Widowed" <?php if (isset($row->CivilStatus) && $row->CivilStatus == 'Widowed') echo 'selected'; ?>>Widowed</option>
-                              <option value="Separated" <?php if (isset($row->CivilStatus) && $row->CivilStatus == 'Separated') echo 'selected'; ?>>Separated</option>
+                              <option value="Single" <?php if (isset($row->CivilStatus) && $row->CivilStatus == 'Single')
+                                echo 'selected'; ?>>Single</option>
+                              <option value="Married" <?php if (isset($row->CivilStatus) && $row->CivilStatus == 'Married')
+                                echo 'selected'; ?>>Married</option>
+                              <option value="Divorced" <?php if (isset($row->CivilStatus) && $row->CivilStatus == 'Divorced')
+                                echo 'selected'; ?>>Divorced</option>
+                              <option value="Widowed" <?php if (isset($row->CivilStatus) && $row->CivilStatus == 'Widowed')
+                                echo 'selected'; ?>>Widowed</option>
+                              <option value="Separated" <?php if (isset($row->CivilStatus) && $row->CivilStatus == 'Separated')
+                                echo 'selected'; ?>>Separated</option>
                               <?php
                               $standard_statuses = ['Single', 'Married', 'Divorced', 'Widowed', 'Separated'];
                               if (isset($row->CivilStatus) && !in_array($row->CivilStatus, $standard_statuses) && !empty($row->CivilStatus)): ?>
-                                <option value="<?php echo htmlentities($row->CivilStatus); ?>" selected><?php echo htmlentities($row->CivilStatus); ?> (Custom)</option>
+                                <option value="<?php echo htmlentities($row->CivilStatus); ?>" selected>
+                                  <?php echo htmlentities($row->CivilStatus); ?> (Custom)</option>
                               <?php endif; ?>
                             </select>
                           </div>
                           <div class="form-group">
                             <label>Religion</label>
                             <input type="text" name="religion" class="form-control"
-                              value="<?php echo isset($row->Religion) ? htmlentities($row->Religion) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->Religion) ? htmlentities($row->Religion) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Height</label>
@@ -370,7 +393,8 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Citizenship</label>
                             <input type="text" name="citizenship" class="form-control"
-                              value="<?php echo isset($row->Citizenship) ? htmlentities($row->Citizenship) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->Citizenship) ? htmlentities($row->Citizenship) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Profile Image</label>
@@ -390,37 +414,45 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Father's Name</label>
                             <input type="text" name="fathersname" class="form-control"
-                              value="<?php echo isset($row->FathersName) ? htmlentities($row->FathersName) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->FathersName) ? htmlentities($row->FathersName) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Mother's Maiden Name</label>
                             <input type="text" name="mothersmaidenname" class="form-control"
-                              value="<?php echo isset($row->MothersMaidenName) ? htmlentities($row->MothersMaidenName) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->MothersMaidenName) ? htmlentities($row->MothersMaidenName) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Building/House Number</label>
                             <input type="text" name="buildinghouse" class="form-control"
-                              value="<?php echo isset($row->BuildingHouseNumber) ? htmlentities($row->BuildingHouseNumber) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->BuildingHouseNumber) ? htmlentities($row->BuildingHouseNumber) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Street Name</label>
                             <input type="text" name="streetname" class="form-control"
-                              value="<?php echo isset($row->StreetName) ? htmlentities($row->StreetName) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->StreetName) ? htmlentities($row->StreetName) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Barangay</label>
                             <input type="text" name="barangay" class="form-control"
-                              value="<?php echo isset($row->Barangay) ? htmlentities($row->Barangay) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->Barangay) ? htmlentities($row->Barangay) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>City/Municipality</label>
                             <div id="city-municipality-container">
-                              <input type="text" name="citymunicipality" id="citymunicipality-text" value="<?php echo isset($row->CityMunicipality) ? htmlentities($row->CityMunicipality) : ''; ?>" class="form-control" style="text-transform: capitalize;">
+                              <input type="text" name="citymunicipality" id="citymunicipality-text"
+                                value="<?php echo isset($row->CityMunicipality) ? htmlentities($row->CityMunicipality) : ''; ?>"
+                                class="form-control" style="text-transform: capitalize;">
                             </div>
                           </div>
                           <div class="form-group">
                             <label>Province</label>
-                            <select name="province" class="form-control province-select" style="text-transform: capitalize;">
+                            <select name="province" class="form-control province-select"
+                              style="text-transform: capitalize;">
                               <option value="">Select Province</option>
                               <?php
                               $provincesJson = file_get_contents('../data/provinces.json');
@@ -428,12 +460,12 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                               if (is_array($provinces)) {
                                 $current_province = isset($row->Province) ? htmlentities($row->Province) : '';
                                 foreach ($provinces as $province) {
-                                    $selected = ($current_province == $province) ? 'selected' : '';
-                                    echo "<option value=\"" . htmlspecialchars($province) . "\" $selected>" . htmlspecialchars($province) . "</option>";
+                                  $selected = ($current_province == $province) ? 'selected' : '';
+                                  echo "<option value=\"" . htmlspecialchars($province) . "\" $selected>" . htmlspecialchars($province) . "</option>";
                                 }
                                 // Add the current value as an option if it's not in the standard list
                                 if (!in_array($current_province, $provinces) && !empty($current_province)) {
-                                    echo "<option value=\"$current_province\" selected>$current_province (Custom)</option>";
+                                  echo "<option value=\"$current_province\" selected>$current_province (Custom)</option>";
                                 }
                               }
                               ?>
@@ -457,12 +489,14 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Emergency Contact Person</label>
                             <input type="text" name="emergencycontactperson" class="form-control"
-                              value="<?php echo isset($row->EmergencyContactPerson) ? htmlentities($row->EmergencyContactPerson) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->EmergencyContactPerson) ? htmlentities($row->EmergencyContactPerson) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Emergency Relationship</label>
                             <input type="text" name="emergencyrelationship" class="form-control"
-                              value="<?php echo isset($row->EmergencyRelationship) ? htmlentities($row->EmergencyRelationship) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->EmergencyRelationship) ? htmlentities($row->EmergencyRelationship) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label>Emergency Contact Number</label>
@@ -472,7 +506,8 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                           <div class="form-group">
                             <label>Emergency Address</label>
                             <input type="text" name="emergencyaddress" class="form-control"
-                              value="<?php echo isset($row->EmergencyAddress) ? htmlentities($row->EmergencyAddress) : ''; ?>" style="text-transform: capitalize;">
+                              value="<?php echo isset($row->EmergencyAddress) ? htmlentities($row->EmergencyAddress) : ''; ?>"
+                              style="text-transform: capitalize;">
                           </div>
                           <div class="form-group">
                             <label for="category">Category</label>
@@ -525,98 +560,99 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/toast.js"></script>
     <script>
-        function updateMajors(currentMajor) {
-            const programSelect = document.getElementById('program');
-            const majorSelect = document.getElementById('major');
-            const selectedProgram = programSelect.value;
+      function updateMajors(currentMajor) {
+        const programSelect = document.getElementById('program');
+        const majorSelect = document.getElementById('major');
+        const selectedProgram = programSelect.value;
 
-            // Clear existing options
-            majorSelect.innerHTML = '<option value="">Select Major</option>';
+        // Clear existing options
+        majorSelect.innerHTML = '<option value="">Select Major</option>';
 
-            const majors = {
-                "Bachelor of Elementary Education (BEEd)": [
-                    "Major in General Content"
-                ],
-                "Bachelor of Secondary Education (BSEd)": [
-                    "Major in English",
-                    "Major in Filipino",
-                    "Major in Mathematics"
-                ],
-                "Bachelor of Science in Business Administration (BSBA)": [
-                    "Major in Human Resource Management",
-                    "Major in Marketing Management"
-                ],
-                "Bachelor of Industrial Technology (BindTech)": [
-                    "Major in Computer Technology",
-                    "Major in Electronics Technology"
-                ],
-                "Bachelor of Science in Information Technology (BSIT)": [
-                    "Major in information technology"
-                ]
-            };
+        const majors = {
+          "Bachelor of Elementary Education (BEEd)": [
+            "Major in General Content"
+          ],
+          "Bachelor of Secondary Education (BSEd)": [
+            "Major in English",
+            "Major in Filipino",
+            "Major in Mathematics"
+          ],
+          "Bachelor of Science in Business Administration (BSBA)": [
+            "Major in Human Resource Management",
+            "Major in Marketing Management"
+          ],
+          "Bachelor of Industrial Technology (BindTech)": [
+            "Major in Computer Technology",
+            "Major in Electronics Technology"
+          ],
+          "Bachelor of Science in Information Technology (BSIT)": [
+            "Major in information technology"
+          ]
+        };
 
-            if (majors[selectedProgram]) {
-                majors[selectedProgram].forEach(function(major) {
-                    const option = document.createElement('option');
-                    option.value = major;
-                    option.textContent = major;
-                    if (major === currentMajor) {
-                        option.selected = true;
-                    }
-                    majorSelect.appendChild(option);
-                });
+        if (majors[selectedProgram]) {
+          majors[selectedProgram].forEach(function (major) {
+            const option = document.createElement('option');
+            option.value = major;
+            option.textContent = major;
+            if (major === currentMajor) {
+              option.selected = true;
             }
+            majorSelect.appendChild(option);
+          });
         }
+      }
 
-        // Trigger on page load to set initial state
-        window.addEventListener('DOMContentLoaded', function () {
-            // For gender toggle
-            var genderSelect = document.getElementById("gender");
-            var otherGenderInput = document.getElementById("otherGenderInput");
-            if (genderSelect.value === "Other") { otherGenderInput.style.display = "block"; }
-            // For major dropdown
-            updateMajors("<?php echo isset($row->Major) ? htmlentities($row->Major, ENT_QUOTES) : ''; ?>");
-            
-            var currentCity = "<?php echo isset($row->CityMunicipality) ? htmlentities($row->CityMunicipality, ENT_QUOTES) : ''; ?>";
-            fetch('../data/cities.json')
-              .then(response => response.json())
-              .then(data => {
-                  citiesData = data;
-                  updateCities(currentCity);
-              })
-              .catch(error => console.error('Error loading cities:', error));
+      // Trigger on page load to set initial state
+      window.addEventListener('DOMContentLoaded', function () {
+        // For gender toggle
+        var genderSelect = document.getElementById("gender");
+        var otherGenderInput = document.getElementById("otherGenderInput");
+        if (genderSelect.value === "Other") { otherGenderInput.style.display = "block"; }
+        // For major dropdown
+        updateMajors("<?php echo isset($row->Major) ? htmlentities($row->Major, ENT_QUOTES) : ''; ?>");
 
-            // Initialize Select2 for province dropdown
-            if (window.jQuery) {
-              jQuery('.province-select').select2();
-              jQuery('.province-select').on('change', function() { updateCities(''); });
+        var currentCity = "<?php echo isset($row->CityMunicipality) ? htmlentities($row->CityMunicipality, ENT_QUOTES) : ''; ?>";
+        fetch('../data/cities.json')
+          .then(response => response.json())
+          .then(data => {
+            citiesData = data;
+            updateCities(currentCity);
+          })
+          .catch(error => console.error('Error loading cities:', error));
+
+        // Initialize Select2 for province dropdown
+        if (window.jQuery) {
+          jQuery('.province-select').select2();
+          jQuery('.province-select').on('change', function () { updateCities(''); });
+        }
+      });
+
+      var citiesData = {};
+      function updateCities(selectedCity) {
+        var province = $('.province-select').val();
+        var container = $('#city-municipality-container');
+        container.empty();
+
+        if (citiesData[province]) {
+          var select = $('<select name="citymunicipality" id="citymunicipality-select" class="form-control" style="text-transform: capitalize;"></select>');
+          select.append('<option value="">Select City/Municipality</option>');
+          citiesData[province].forEach(function (city) {
+            var option = $('<option></option>').val(city).text(city);
+            if (city === selectedCity) {
+              option.prop('selected', true);
             }
-        });
-
-        var citiesData = {};
-        function updateCities(selectedCity) {
-          var province = $('.province-select').val();
-          var container = $('#city-municipality-container');
-          container.empty();
-
-          if (citiesData[province]) {
-            var select = $('<select name="citymunicipality" id="citymunicipality-select" class="form-control" style="text-transform: capitalize;"></select>');
-            select.append('<option value="">Select City/Municipality</option>');
-            citiesData[province].forEach(function(city) {
-              var option = $('<option></option>').val(city).text(city);
-              if (city === selectedCity) {
-                option.prop('selected', true);
-              }
-              select.append(option);
-            });
-            container.append(select);
-            $('#citymunicipality-select').select2();
-          } else {
-            var input = $('<input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control" style="text-transform: capitalize;">').val(selectedCity);
-            container.append(input);
-          }
+            select.append(option);
+          });
+          container.append(select);
+          $('#citymunicipality-select').select2();
+        } else {
+          var input = $('<input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control" style="text-transform: capitalize;">').val(selectedCity);
+          container.append(input);
         }
+      }
     </script>
   </body>
 

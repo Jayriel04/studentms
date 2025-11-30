@@ -47,50 +47,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newpassword']) && iss
 </head>
 
 <body>
-    <div class="container">
-        <div class="welcome-section">
-            <div class="welcome-content">
-                <h1>SET NEW PASSWORD</h1>
-                <p class="headline">Student Profiling System</p>
-                <p>Create a new, secure password for your account. Make sure it's strong and something you can remember.</p>
-            </div>
-            <div class="circle-decoration"></div>
-        </div>
-
-        <div class="form-section">
-            <h2>Reset Your Password</h2>
-            <p class="subtitle">Set a new password for
-              <strong><?php echo htmlentities($_SESSION['staff_fp_reset_email']); ?></strong>.
-            </p>
-
-            <?php if (!empty($error)): ?>
-                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?php echo htmlentities($error); ?></div>
-            <?php endif; ?>
-
-            <form method="post" onsubmit="return valid();">
-                <div class="input-group">
-                    <div class="input-wrapper">
-                        <span class="icon">🔒</span>
-                        <input id="newpassword" type="password" name="newpassword" placeholder="New Password" required autofocus>
-                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility(this, 'newpassword')">SHOW</button>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <div class="input-wrapper">
-                        <span class="icon">🔒</span>
-                        <input id="confirmpassword" type="password" name="confirmpassword" placeholder="Confirm Password" required>
-                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility(this, 'confirmpassword')">SHOW</button>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Change Password</button>
-                <a href="login.php" class="btn btn-secondary">Back to Sign In</a>
-
-            </form>
-        </div>
+  <div class="container">
+    <div class="welcome-section">
+      <div class="welcome-content">
+        <h1>SET NEW PASSWORD</h1>
+        <p class="headline">Student Profiling System</p>
+        <p>Create a new, secure password for your account. Make sure it's strong and something you can remember.</p>
+      </div>
+      <div class="circle-decoration"></div>
     </div>
+
+    <div class="form-section">
+      <h2>Reset Your Password</h2>
+      <p class="subtitle">Set a new password for
+        <strong><?php echo htmlentities($_SESSION['staff_fp_reset_email']); ?></strong>.
+      </p>
+
+      <?php if (!empty($error)): ?>
+        <div class="alert alert-danger"
+          style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
+          <?php echo htmlentities($error); ?></div>
+      <?php endif; ?>
+
+      <form method="post" onsubmit="return valid();">
+        <div class="input-group">
+          <div class="input-wrapper">
+            <span class="icon">🔒</span>
+            <input id="newpassword" type="password" name="newpassword" placeholder="New Password" required autofocus>
+            <button type="button" class="toggle-password"
+              onclick="togglePasswordVisibility(this, 'newpassword')">SHOW</button>
+          </div>
+        </div>
+        <div class="input-group">
+          <div class="input-wrapper">
+            <span class="icon">🔒</span>
+            <input id="confirmpassword" type="password" name="confirmpassword" placeholder="Confirm Password" required>
+            <button type="button" class="toggle-password"
+              onclick="togglePasswordVisibility(this, 'confirmpassword')">SHOW</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Change Password</button>
+        <a href="login.php" class="btn btn-secondary">Back to Sign In</a>
+
+      </form>
+    </div>
+  </div>
   <script src="js/auth-forms.js"></script>
   <script src="js/script.js"></script>
+  <script src="js/toast.js"></script>
 </body>
 
 </html>

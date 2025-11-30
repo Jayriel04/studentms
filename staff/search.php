@@ -198,7 +198,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
         <div class="content-wrapper">
           <div class="page-header">
             <h3 class="page-title">Search Students</h3>
-            <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal" style="margin-right: 20px;">+ Add
+            <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal"
+              style="margin-right: 20px;">+ Add
               Notice</button>
           </div>
           <div class="row">
@@ -568,7 +569,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
   </div>
 
   <script src="vendors/js/vendor.bundle.base.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="js/toast.js"></script>
   <script src="js/script.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>

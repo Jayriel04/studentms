@@ -205,7 +205,8 @@ if (true) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Search Students</h3>
-              <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal" style="margin-right: 20px;">
+              <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal"
+                style="margin-right: 20px;">
                 + Add Notice
               </button>
             </div>
@@ -604,36 +605,20 @@ if (true) {
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="js/toast.js"></script>
     <script src="js/script.js"></script>
     <script src="js/mention.js"></script>
+    <script src="js/search.js"></script>
+
     <script>
-      // Handle message modal
-      document.addEventListener('DOMContentLoaded', function () {
-        var messageButtons = document.querySelectorAll('.message-btn');
-        messageButtons.forEach(function (button) {
-          button.addEventListener('click', function () {
-            document.getElementById('studentEmail').value = this.getAttribute('data-email');
-            document.getElementById('studentStuID').value = this.getAttribute('data-stuid');
-            document.getElementById('studentName').innerText = this.getAttribute('data-name');
-          });
-        });
-
-        // Initialize mention functionality on the notice message textarea
-        const notemsgTextarea = document.getElementById('notmsg');
-        if (notemsgTextarea) {
-          initializeMention(notemsgTextarea, 'search.php?mention_suggest=1');
-        }
-
-        <?php if (isset($_SESSION['flash_message'])): ?>
-          toastr.success('<?php echo addslashes($_SESSION['flash_message']); ?>');
-          <?php unset($_SESSION['flash_message']); ?>
-        <?php endif; ?>
-        <?php if (isset($_SESSION['flash_message_error'])): ?>
-          toastr.error('<?php echo addslashes($_SESSION['flash_message_error']); ?>');
-          <?php unset($_SESSION['flash_message_error']); ?>
-        <?php endif; ?>
-      });
+      window.srData = {
+        flash_message: <?php echo isset($_SESSION['flash_message']) ? json_encode($_SESSION['flash_message']) : 'null'; ?>,
+        flash_message_error: <?php echo isset($_SESSION['flash_message_error']) ? json_encode($_SESSION['flash_message_error']) : 'null'; ?>
+      };
+      <?php if (isset($_SESSION['flash_message']))
+        unset($_SESSION['flash_message']); ?>
+      <?php if (isset($_SESSION['flash_message_error']))
+        unset($_SESSION['flash_message_error']); ?>
     </script>
   </body>
 

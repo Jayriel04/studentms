@@ -121,6 +121,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <script src="js/script.js"></script>
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
+    <script src="js/toast.js"></script>
     <?php if (isset($toast_msg) && $toast_msg): ?>
       <script>
         document.addEventListener('DOMContentLoaded', function () { if (window.showToast) showToast(<?php echo json_encode($toast_msg); ?>, <?php echo json_encode($toast_type); ?>); });

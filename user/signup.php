@@ -18,7 +18,7 @@ if (isset($_POST['signup'])) {
         $firstname = $_POST['firstname'] ?? '';
         $middlename = $_POST['middlename'] ?? '';
         $email = $_POST['email'] ?? '';
-        
+
         // Validate required fields
         if (empty($familyname) || empty($firstname) || empty($email) || empty($_POST['password'])) { // Add this check
             $message = 'Please fill in all required fields.';
@@ -47,7 +47,7 @@ if (isset($_POST['signup'])) {
                 if (!empty($_FILES['profilepic']['name'])) {
                     $profilepic_name = basename($_FILES['profilepic']['name']);
                     $sanitized_pic_name = time() . '_' . preg_replace("/[^a-zA-Z0-9._-]/", "_", $profilepic_name);
-                    
+
                     $images_dir = "../admin/images/";
                     if (!is_dir($images_dir)) {
                         mkdir($images_dir, 0755, true);
@@ -93,6 +93,7 @@ if (isset($_POST['signup'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -100,13 +101,15 @@ if (isset($_POST['signup'])) {
     <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="css/login-new.css">
 </head>
+
 <body>
     <div class="container">
         <div class="welcome-section">
             <div class="welcome-content">
                 <h1>JOIN US</h1>
                 <p class="headline">Student Profiling System</p>
-                <p>Create your account to get started. Access your profile, grades, and class information all in one place.</p>
+                <p>Create your account to get started. Access your profile, grades, and class information all in one
+                    place.</p>
             </div>
             <div class="circle-decoration"></div>
         </div>
@@ -116,32 +119,38 @@ if (isset($_POST['signup'])) {
             <p class="subtitle">Fill out the form below to register.</p>
 
             <?php if (!empty($message)): ?>
-                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?= htmlspecialchars($message) ?></div>
+                <div class="alert alert-danger"
+                    style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
+                    <?= htmlspecialchars($message) ?></div>
             <?php endif; ?>
 
             <form id="signup" method="post" name="signup" enctype="multipart/form-data">
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">🆔</span>
-                        <input type="text" name="stuid" placeholder="e.g., 222 - 08410" required="true" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410">
+                        <input type="text" name="stuid" placeholder="e.g., 222 - 08410" required="true"
+                            pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410">
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">👤</span>
-                        <input type="text" name="familyname" placeholder="Family Name" required="true" style="text-transform: capitalize;">
+                        <input type="text" name="familyname" placeholder="Family Name" required="true"
+                            style="text-transform: capitalize;">
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">👤</span>
-                        <input type="text" name="firstname" placeholder="First Name" required="true" style="text-transform: capitalize;">
+                        <input type="text" name="firstname" placeholder="First Name" required="true"
+                            style="text-transform: capitalize;">
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">👤</span>
-                        <input type="text" name="middlename" placeholder="Middle Name" style="text-transform: capitalize;">
+                        <input type="text" name="middlename" placeholder="Middle Name"
+                            style="text-transform: capitalize;">
                     </div>
                 </div>
                 <div class="input-group">
@@ -159,8 +168,10 @@ if (isset($_POST['signup'])) {
                     <div id="password-strength" style="margin-top: 5px; font-size: 12px; text-align: left;"></div>
                 </div>
                 <div class="input-group">
-                    <label for="profilepic" style="font-weight: 500; font-size: 13px; color: #333;">Profile Picture</label>
-                    <input type="file" name="profilepic" id="profilepic" class="form-control" accept="image/*" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: #f8f8f8;">
+                    <label for="profilepic" style="font-weight: 500; font-size: 13px; color: #333;">Profile
+                        Picture</label>
+                    <input type="file" name="profilepic" id="profilepic" class="form-control" accept="image/*"
+                        style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: #f8f8f8;">
                 </div>
 
                 <button class="btn btn-primary" name="signup" type="submit">Sign Up</button>
@@ -173,12 +184,13 @@ if (isset($_POST['signup'])) {
         </div>
     </div>
     <script src="js/login-new.js"></script>
+    <script src="js/toast.js"></script>
     <script>
         const passwordInput = document.getElementById('password');
         const passwordStrengthDiv = document.getElementById('password-strength');
         const signupButton = document.querySelector('button[name="signup"]');
 
-        passwordInput.addEventListener('input', function() {
+        passwordInput.addEventListener('input', function () {
             const password = passwordInput.value;
             if (password.length === 0) {
                 passwordStrengthDiv.innerHTML = '';
@@ -193,4 +205,5 @@ if (isset($_POST['signup'])) {
         });
     </script>
 </body>
+
 </html>
