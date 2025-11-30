@@ -16,7 +16,6 @@
     </a>
     <div class="collapse <?php echo in_array($current_page, ['add-students.php', 'manage-students.php', 'validate-achievements.php']) ? 'show' : ''; ?>" id="students-menu">
       <div class="sub-menu">
-        <a href="add-students.php" class="menu-item sub-item <?php echo ($current_page == 'add-students.php') ? 'active' : ''; ?>">Add Student</a>
         <a href="manage-students.php" class="menu-item sub-item <?php echo ($current_page == 'manage-students.php') ? 'active' : ''; ?>">Manage Students</a>
         <a href="validate-achievements.php" class="menu-item sub-item <?php echo ($current_page == 'validate-achievements.php') ? 'active' : ''; ?>">Validate Achievements</a>
       </div>

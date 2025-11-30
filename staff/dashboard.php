@@ -119,6 +119,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                 <div class="cards-section">
                   <div class="cards-header">
                     <h2 class="card-title">Recent Notices</h2>
+                    <a href="manage-notice.php" class="see-all-link">See all</a>
                   </div>
                   <?php
                   // Fetch recent notices
@@ -149,9 +150,6 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                     echo '</ul>';
                   }
                   ?>
-                  <div class="mt-3 text-center">
-                    <a href="manage-notice.php" class="btn btn-outline-primary btn-sm">View All Notices</a>
-                  </div>
                 </div>
               </div>
             </div>

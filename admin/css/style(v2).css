@@ -606,21 +606,25 @@ body {
 
 /* --- SUB-MENU STYLES FOR NEW UI --- */
 .sidebar .sub-menu {
-  padding: 0 0 10px 30px; /* Indent sub-menu */
+  padding: 0 0 10px 30px;
+  /* Indent sub-menu */
   background: transparent;
-  margin-top: -12px; /* Pull up under parent */
+  margin-top: 1px;
+  /* Pull up under parent */
 }
 
 .sidebar .sub-menu .sub-item {
   padding: 12px 20px;
   margin-bottom: 8px;
-  font-size: 14px; /* Slightly smaller font for sub-items */
+  font-size: 14px;
+  /* Slightly smaller font for sub-items */
   border-width: 1px;
   border-color: #F5F5F5;
 }
 
 .sidebar .sub-menu .sub-item:hover {
-  transform: translateX(4px); /* Smaller transform for sub-items */
+  transform: translateX(4px);
+  /* Smaller transform for sub-items */
 }
 
 /* Ensure the active parent item remains styled when a child is active */
@@ -632,8 +636,8 @@ body {
 
 /* --- MODERN DASHBOARD STYLES (FROM EXAMPLE) --- */
 .dashboard-container {
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: 1600px; /* Reduced max-width for a more compact layout */
+  margin: 0 auto; /* Center the container */
 }
 
 .stats-grid {
@@ -657,6 +661,7 @@ body {
 .stat-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  text-decoration: none; /* Add this to remove the underline on hover */
 }
 
 .stat-header {
@@ -739,7 +744,7 @@ body {
 
 .content-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: 1.5fr 1fr; /* Make the chart wider than the recent notices */
   gap: 24px;
 }
 
@@ -809,7 +814,7 @@ body {
 .chart-container {
   position: relative;
   height: 320px;
-  margin-top: 20px;
+  margin-top: -50px;
 }
 
 .cards-header {
@@ -817,6 +822,19 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+}
+
+.see-all-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: #3b82f6;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.see-all-link:hover {
+  color: #2563eb;
+  text-decoration: underline;
 }
 
 @media (max-width: 1200px) {
@@ -1156,4 +1174,22 @@ body {
 .pagination-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+#addNoticeModal .modal-dialog {
+  /* Position the modal on the right side of the screen */
+  position: fixed;
+  top: 20px;
+  /* Adjust top position freely */
+  right: 20px;
+  /* Adjust right position freely */
+  margin: 0;
+  width: 500px;
+  /* Or any width you prefer */
+  max-width: calc(100% - 40px);
+}
+
+#addNoticeModal .modal-content {
+  height: calc(70vh - 40px);
+  /* Example: make it almost full height */
 }

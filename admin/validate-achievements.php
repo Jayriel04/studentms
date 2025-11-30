@@ -229,12 +229,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
         <div class="content-wrapper">
           <div class="page-header">
             <h3 class="page-title"> Pending Achievements </h3>
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page"> Validate Achievements</li>
-              </ol>
-            </nav>
           </div>
 
           <div class="row">
@@ -257,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
                           echo 'selected'; ?>>
                           Non-Academic</option>
                       </select>
-                      <button type="submit" class="filter-btn">🔍 Search</button>
+                      <button type="submit" class="filter-btn" style="width: 40vh;">🔍 Search</button>
                     </form>
                   </div>
                   </div>

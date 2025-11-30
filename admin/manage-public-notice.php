@@ -100,12 +100,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Manage Public Notice</h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Manage Public Notice</li>
-                </ol>
-              </nav>
+              <button type="button" class="add-btn" data-toggle="modal" data-target="#addPublicModal" style="margin-right: 20px;">
+                + Add New Public Notice
+              </button>
             </div>
 
             <div class="row">
@@ -117,141 +114,143 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       <form method="post" class="d-flex" style="gap: 12px;">
                         <input type="text" name="searchdata" class="form-control" placeholder="Search by Notice Title"
                           value="<?php echo htmlentities($searchdata); ?>">
-                        <button type="submit" name="search" class="filter-btn">🔍 Search</button>
+                        <button type="submit" name="search" class="filter-btn" style="width: 25vh;">🔍 Search</button>
                       </form>
-                      <button type="button" class="add-btn" data-toggle="modal" data-target="#addPublicModal">
-                        + Add New Public Notice
-                      </button>
                     </div>
                   </div>
 
-                    <!-- Add Public Notice Modal -->
-                    <div class="modal fade" id="addPublicModal" tabindex="-1" role="dialog" aria-labelledby="addPublicModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                          <form method="post" id="addPublicForm">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="addPublicModalLabel">Add Public Notice</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                            </div>
-                            <div class="modal-body">
-                              <?php if (!empty($add_success_message)): ?>
-                                <div class="alert alert-success"><?php echo htmlentities($add_success_message); ?></div>
-                              <?php endif; ?>
-                              <?php if (!empty($add_error_message)): ?>
-                                <div class="alert alert-danger"><?php echo htmlentities($add_error_message); ?></div>
-                              <?php endif; ?>
+                  <!-- Add Public Notice Modal -->
+                  <div class="modal fade" id="addPublicModal" tabindex="-1" role="dialog"
+                    aria-labelledby="addPublicModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                        <form method="post" id="addPublicForm">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="addPublicModalLabel">Add Public Notice</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <?php if (!empty($add_success_message)): ?>
+                              <div class="alert alert-success"><?php echo htmlentities($add_success_message); ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($add_error_message)): ?>
+                              <div class="alert alert-danger"><?php echo htmlentities($add_error_message); ?></div>
+                            <?php endif; ?>
 
-                              <div class="form-group">
-                                <label for="nottitle_public_modal">Notice Title</label>
-                                <input type="text" name="nottitle" id="nottitle_public_modal" class="form-control" required>
-                              </div>
+                            <div class="form-group">
+                              <label for="nottitle_public_modal">Notice Title</label>
+                              <input type="text" name="nottitle" id="nottitle_public_modal" class="form-control" required>
+                            </div>
 
-                              <div class="form-group">
-                                <label for="notmsg_public_modal">Notice Message</label>
-                                <textarea name="notmsg" id="notmsg_public_modal" class="form-control" style="height: 30vh;" required></textarea>
-                              </div>
+                            <div class="form-group">
+                              <label for="notmsg_public_modal">Notice Message</label>
+                              <textarea name="notmsg" id="notmsg_public_modal" class="form-control" style="height: 30vh;"
+                                required></textarea>
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary" name="add_public_notice">Add</button>
-                            </div>
-                          </form>
-                        </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="add_public_notice">Add</button>
+                          </div>
+                        </form>
                       </div>
                     </div>
+                  </div>
 
-                    <!-- Edit Public Notice Modal -->
-                    <div class="modal fade" id="editPublicModal" tabindex="-1" role="dialog" aria-labelledby="editPublicModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                          <form method="post" id="editPublicForm">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="editPublicModalLabel">Edit Public Notice</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                            </div>
-                            <div class="modal-body">
-                              <?php if (!empty($edit_success_message)): ?>
-                                <div class="alert alert-success"><?php echo htmlentities($edit_success_message); ?></div>
-                              <?php endif; ?>
-                              <?php if (!empty($edit_error_message)): ?>
-                                <div class="alert alert-danger"><?php echo htmlentities($edit_error_message); ?></div>
-                              <?php endif; ?>
+                  <!-- Edit Public Notice Modal -->
+                  <div class="modal fade" id="editPublicModal" tabindex="-1" role="dialog"
+                    aria-labelledby="editPublicModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                        <form method="post" id="editPublicForm">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="editPublicModalLabel">Edit Public Notice</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <?php if (!empty($edit_success_message)): ?>
+                              <div class="alert alert-success"><?php echo htmlentities($edit_success_message); ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($edit_error_message)): ?>
+                              <div class="alert alert-danger"><?php echo htmlentities($edit_error_message); ?></div>
+                            <?php endif; ?>
 
-                              <input type="hidden" name="edit_id" id="edit_id_public_modal">
-                              <div class="form-group">
-                                <label for="edit_nottitle_public_modal">Notice Title</label>
-                                <input type="text" name="edit_nottitle" id="edit_nottitle_public_modal" class="form-control" required>
-                              </div>
+                            <input type="hidden" name="edit_id" id="edit_id_public_modal">
+                            <div class="form-group">
+                              <label for="edit_nottitle_public_modal">Notice Title</label>
+                              <input type="text" name="edit_nottitle" id="edit_nottitle_public_modal" class="form-control"
+                                required>
+                            </div>
 
-                              <div class="form-group">
-                                <label for="edit_notmsg_public_modal">Notice Message</label>
-                                <textarea name="edit_notmsg" id="edit_notmsg_public_modal" class="form-control" style="height: 30vh;" required></textarea>
-                              </div>
+                            <div class="form-group">
+                              <label for="edit_notmsg_public_modal">Notice Message</label>
+                              <textarea name="edit_notmsg" id="edit_notmsg_public_modal" class="form-control"
+                                style="height: 30vh;" required></textarea>
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary" name="edit_public_notice">Save changes</button>
-                            </div>
-                          </form>
-                        </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="edit_public_notice">Save changes</button>
+                          </div>
+                        </form>
                       </div>
                     </div>
+                  </div>
 
-                    <div class="table-wrapper">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>Notice Title</th>
-                            <th>Notice Date</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php
-                          $sql = "SELECT ID, NoticeTitle, CreationDate, NoticeMessage FROM tblpublicnotice";
-                          if (!empty($searchdata)) {
-                            $sql .= " WHERE NoticeTitle LIKE :searchdata";
-                          }
-                          $sql .= " ORDER BY CreationDate DESC";
-                          $query = $dbh->prepare($sql);
-                          if (!empty($searchdata)) {
-                            $query->bindValue(':searchdata', '%' . $searchdata . '%', PDO::PARAM_STR);
-                          }
-                          $query->execute();
-                          $results = $query->fetchAll(PDO::FETCH_OBJ);
-                          if ($query->rowCount() > 0) {
-                            foreach ($results as $row) { ?>
-                              <tr>
-                                <td><?php echo htmlentities($row->NoticeTitle); ?></td>
-                                <td><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
-                                <td>
-                                  <div class="action-buttons">
-                                    <button type="button" class="action-btn edit btn-edit-public" title="Edit"
-                                      data-id="<?php echo htmlentities($row->ID); ?>"
-                                      data-title="<?php echo htmlentities($row->NoticeTitle); ?>"
-                                      data-msg="<?php echo htmlspecialchars($row->NoticeMessage, ENT_QUOTES); ?>">✏️</button>
-                                    <a href="manage-public-notice.php?delid=<?php echo htmlentities($row->ID); ?>"
-                                      onclick="return confirm('Do you really want to Delete ?');" class="action-btn"
-                                      style="background: #fee2e2; color: #ef4444;" title="Delete">🗑️</a>
-                                  </div>
-                                </td>
-                              </tr>
-                              <?php }
-                          } else { ?>
+                  <div class="table-wrapper">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Notice Title</th>
+                          <th>Notice Date</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php
+                        $sql = "SELECT ID, NoticeTitle, CreationDate, NoticeMessage FROM tblpublicnotice";
+                        if (!empty($searchdata)) {
+                          $sql .= " WHERE NoticeTitle LIKE :searchdata";
+                        }
+                        $sql .= " ORDER BY CreationDate DESC";
+                        $query = $dbh->prepare($sql);
+                        if (!empty($searchdata)) {
+                          $query->bindValue(':searchdata', '%' . $searchdata . '%', PDO::PARAM_STR);
+                        }
+                        $query->execute();
+                        $results = $query->fetchAll(PDO::FETCH_OBJ);
+                        if ($query->rowCount() > 0) {
+                          foreach ($results as $row) { ?>
                             <tr>
-                              <td colspan="3" style="text-align: center; color: red;">No Record Found</td>
+                              <td><?php echo htmlentities($row->NoticeTitle); ?></td>
+                              <td><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
+                              <td>
+                                <div class="action-buttons">
+                                  <button type="button" class="action-btn edit btn-edit-public" title="Edit"
+                                    data-id="<?php echo htmlentities($row->ID); ?>"
+                                    data-title="<?php echo htmlentities($row->NoticeTitle); ?>"
+                                    data-msg="<?php echo htmlspecialchars($row->NoticeMessage, ENT_QUOTES); ?>">✏️</button>
+                                  <a href="manage-public-notice.php?delid=<?php echo htmlentities($row->ID); ?>"
+                                    onclick="return confirm('Do you really want to Delete ?');" class="action-btn"
+                                    style="background: #fee2e2; color: #ef4444;" title="Delete">🗑️</a>
+                                </div>
+                              </td>
                             </tr>
-                          <?php } ?>
-                        </tbody>
-                      </table>
-                    </div>
-
+                          <?php }
+                        } else { ?>
+                          <tr>
+                            <td colspan="3" style="text-align: center; color: red;">No Record Found</td>
+                          </tr>
+                        <?php } ?>
+                      </tbody>
+                    </table>
                   </div>
+
+                </div>
               </div>
             </div>
 

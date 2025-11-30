@@ -103,12 +103,8 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Manage Public Notice</h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Manage Public Notice</li>
-                </ol>
-              </nav>
+              <button type="button" class="add-btn" data-toggle="modal" data-target="#addPublicModal" style="margin-right: 20px;">+ Add New Public
+                Notice</button>
             </div>
 
             <div class="row">
@@ -118,120 +114,143 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                     <h2 class="table-title">Manage Public Notices</h2>
                     <div class="table-actions">
                       <form method="post" class="d-flex" style="gap: 12px;">
-                        <input type="text" name="searchdata" class="form-control" placeholder="Search by Notice Title" value="<?php echo htmlentities($searchdata); ?>">
-                        <button type="submit" name="search" class="filter-btn">🔍 Search</button>
+                        <input type="text" name="searchdata" class="form-control" placeholder="Search by Notice Title"
+                          value="<?php echo htmlentities($searchdata); ?>">
+                        <button type="submit" name="search" class="filter-btn" style="width: 20vh;">🔍 Search</button>
                       </form>
-                      <button type="button" class="add-btn" data-toggle="modal" data-target="#addPublicModal">+ Add New Public Notice</button>
                     </div>
                   </div>
 
-                    <!-- Add Public Notice Modal -->
-                    <!-- ... (modal content remains the same) ... -->
-                    <div class="modal fade" id="addPublicModal" tabindex="-1" role="dialog" aria-labelledby="addPublicModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                          <form method="post" id="addPublicForm">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="addPublicModalLabel">Add Public Notice</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                              <?php if (!empty($add_success_message)): ?><div class="alert alert-success"><?php echo htmlentities($add_success_message); ?></div><?php endif; ?>
-                              <?php if (!empty($add_error_message)): ?><div class="alert alert-danger"><?php echo htmlentities($add_error_message); ?></div><?php endif; ?>
+                  <!-- Add Public Notice Modal -->
+                  <!-- ... (modal content remains the same) ... -->
+                  <div class="modal fade" id="addPublicModal" tabindex="-1" role="dialog"
+                    aria-labelledby="addPublicModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                        <form method="post" id="addPublicForm">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="addPublicModalLabel">Add Public Notice</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                          </div>
+                          <div class="modal-body">
+                            <?php if (!empty($add_success_message)): ?>
+                              <div class="alert alert-success"><?php echo htmlentities($add_success_message); ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($add_error_message)): ?>
+                              <div class="alert alert-danger"><?php echo htmlentities($add_error_message); ?></div>
+                            <?php endif; ?>
 
-                              <div class="form-group">
-                                <label>Notice Title</label>
-                                <input type="text" name="nottitle" id="nottitle_public_modal" class="form-control" required>
-                              </div>
+                            <div class="form-group">
+                              <label>Notice Title</label>
+                              <input type="text" name="nottitle" id="nottitle_public_modal" class="form-control" required>
+                            </div>
 
-                              <div class="form-group">
-                                <label>Notice Message</label>
-                                <textarea name="notmsg" id="notmsg_public_modal" class="form-control" style="height:30vh;" required></textarea>
-                              </div>
+                            <div class="form-group">
+                              <label>Notice Message</label>
+                              <textarea name="notmsg" id="notmsg_public_modal" class="form-control" style="height:30vh;"
+                                required></textarea>
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary" name="add_public_notice">Add</button>
-                            </div>
-                          </form>
-                        </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="add_public_notice">Add</button>
+                          </div>
+                        </form>
                       </div>
                     </div>
+                  </div>
 
-                    <!-- Edit Public Notice Modal -->
-                    <div class="modal fade" id="editPublicModal" tabindex="-1" role="dialog" aria-labelledby="editPublicModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                          <form method="post" id="editPublicForm">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="editPublicModalLabel">Edit Public Notice</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                              <?php if (!empty($edit_success_message)): ?><div class="alert alert-success"><?php echo htmlentities($edit_success_message); ?></div><?php endif; ?>
-                              <?php if (!empty($edit_error_message)): ?><div class="alert alert-danger"><?php echo htmlentities($edit_error_message); ?></div><?php endif; ?>
+                  <!-- Edit Public Notice Modal -->
+                  <div class="modal fade" id="editPublicModal" tabindex="-1" role="dialog"
+                    aria-labelledby="editPublicModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                        <form method="post" id="editPublicForm">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="editPublicModalLabel">Edit Public Notice</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                          </div>
+                          <div class="modal-body">
+                            <?php if (!empty($edit_success_message)): ?>
+                              <div class="alert alert-success"><?php echo htmlentities($edit_success_message); ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($edit_error_message)): ?>
+                              <div class="alert alert-danger"><?php echo htmlentities($edit_error_message); ?></div>
+                            <?php endif; ?>
 
-                              <input type="hidden" name="edit_id" id="edit_id_public_modal">
-                              <div class="form-group">
-                                <label>Notice Title</label>
-                                <input type="text" name="edit_nottitle" id="edit_nottitle_public_modal" class="form-control" required>
-                              </div>
+                            <input type="hidden" name="edit_id" id="edit_id_public_modal">
+                            <div class="form-group">
+                              <label>Notice Title</label>
+                              <input type="text" name="edit_nottitle" id="edit_nottitle_public_modal" class="form-control"
+                                required>
+                            </div>
 
-                              <div class="form-group">
-                                <label>Notice Message</label>
-                                <textarea name="edit_notmsg" id="edit_notmsg_public_modal" class="form-control" style="height:30vh;" required></textarea>
-                              </div>
+                            <div class="form-group">
+                              <label>Notice Message</label>
+                              <textarea name="edit_notmsg" id="edit_notmsg_public_modal" class="form-control"
+                                style="height:30vh;" required></textarea>
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary" name="edit_public_notice">Save changes</button>
-                            </div>
-                          </form>
-                        </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="edit_public_notice">Save changes</button>
+                          </div>
+                        </form>
                       </div>
                     </div>
+                  </div>
 
-                    <div class="table-wrapper">
-                      <table class="table">
-                        <thead>
+                  <div class="table-wrapper">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="font-weight-bold">Notice Title</th>
+                          <th class="font-weight-bold">Notice Date</th>
+                          <th class="font-weight-bold">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php
+                        $sql = "SELECT ID, NoticeTitle, CreationDate, NoticeMessage FROM tblpublicnotice";
+                        if (!empty($searchdata)) {
+                          $sql .= " WHERE NoticeTitle LIKE :searchdata";
+                        }
+                        $sql .= " ORDER BY CreationDate DESC";
+                        $query = $dbh->prepare($sql);
+                        if (!empty($searchdata)) {
+                          $query->bindValue(':searchdata', '%' . $searchdata . '%', PDO::PARAM_STR);
+                        }
+                        $query->execute();
+                        $results = $query->fetchAll(PDO::FETCH_OBJ);
+                        if ($query->rowCount() > 0) {
+                          foreach ($results as $row) { ?>
+                            <tr>
+                              <td><?php echo htmlentities($row->NoticeTitle); ?></td>
+                              <td><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
+                              <td>
+                                <div class="action-buttons">
+                                  <button type="button" class="action-btn edit btn-edit-public" title="Edit"
+                                    data-id="<?php echo htmlentities($row->ID); ?>"
+                                    data-title="<?php echo htmlentities($row->NoticeTitle); ?>"
+                                    data-msg="<?php echo htmlspecialchars($row->NoticeMessage, ENT_QUOTES); ?>">✏️</button>
+                                  <a href="manage-public-notice.php?delid=<?php echo htmlentities($row->ID); ?>"
+                                    onclick="return confirm('Do you really want to Delete ?');" class="action-btn"
+                                    style="background: #fee2e2; color: #ef4444;" title="Delete">🗑️</a>
+                                </div>
+                              </td>
+                            </tr>
+                          <?php }
+                        } else { ?>
                           <tr>
-                            <th class="font-weight-bold">Notice Title</th>
-                            <th class="font-weight-bold">Notice Date</th>
-                            <th class="font-weight-bold">Action</th>
+                            <td colspan="4" style="text-align:center;color:red;">No Record Found</td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          <?php
-                          $sql = "SELECT ID, NoticeTitle, CreationDate, NoticeMessage FROM tblpublicnotice";
-                          if (!empty($searchdata)) { $sql .= " WHERE NoticeTitle LIKE :searchdata"; }
-                          $sql .= " ORDER BY CreationDate DESC";
-                          $query = $dbh->prepare($sql);
-                          if (!empty($searchdata)) { $query->bindValue(':searchdata', '%' . $searchdata . '%', PDO::PARAM_STR); }
-                          $query->execute();
-                          $results = $query->fetchAll(PDO::FETCH_OBJ);
-                          if ($query->rowCount() > 0) {
-                            foreach ($results as $row) { ?>
-                              <tr>
-                                <td><?php echo htmlentities($row->NoticeTitle); ?></td>
-                                <td><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
-                                <td>
-                                  <div class="action-buttons">
-                                    <button type="button" class="action-btn edit btn-edit-public" title="Edit"
-                                      data-id="<?php echo htmlentities($row->ID); ?>"
-                                      data-title="<?php echo htmlentities($row->NoticeTitle); ?>"
-                                      data-msg="<?php echo htmlspecialchars($row->NoticeMessage, ENT_QUOTES); ?>">✏️</button>
-                                    <a href="manage-public-notice.php?delid=<?php echo htmlentities($row->ID); ?>" onclick="return confirm('Do you really want to Delete ?');" class="action-btn" style="background: #fee2e2; color: #ef4444;" title="Delete">🗑️</a>
-                                  </div>
-                                </td>
-                              </tr>
-                              <?php }
-                          } else { ?>
-                            <tr><td colspan="4" style="text-align:center;color:red;">No Record Found</td></tr>
-                          <?php } ?>
-                        </tbody>
-                      </table>
-                    </div>
+                        <?php } ?>
+                      </tbody>
+                    </table>
                   </div>
+                </div>
               </div>
             </div>
 
@@ -256,7 +275,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
         <?php if (!empty($add_success_message)): ?>
           toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
           toastr.success(<?php echo json_encode($add_success_message); ?>);
-          if (window.$) $('#addPublicModal').modal('hide'); else if (typeof bootstrap !== "undefined") try { new bootstrap.Modal(document.getElementById('addPublicModal')).hide(); } catch(e){}
+          if (window.$) $('#addPublicModal').modal('hide'); else if (typeof bootstrap !== "undefined") try { new bootstrap.Modal(document.getElementById('addPublicModal')).hide(); } catch (e) { }
         <?php endif; ?>
 
         <?php if (!empty($add_error_message)): ?>
@@ -272,7 +291,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
         <?php if (!empty($edit_success_message)): ?>
           toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
           toastr.success(<?php echo json_encode($edit_success_message); ?>);
-          if (window.$) $('#editPublicModal').modal('hide'); else if (typeof bootstrap !== "undefined") try { new bootstrap.Modal(document.getElementById('editPublicModal')).hide(); } catch(e){}
+          if (window.$) $('#editPublicModal').modal('hide'); else if (typeof bootstrap !== "undefined") try { new bootstrap.Modal(document.getElementById('editPublicModal')).hide(); } catch (e) { }
         <?php endif; ?>
 
         <?php if (!empty($edit_error_message)): ?>
@@ -282,30 +301,30 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
         <?php endif; ?>
 
         <?php if ($openEditModal && !empty($_POST)): ?>
-          (function(){
-            var id = <?php echo json_encode($_POST['edit_id'] ?? ''); ?>;
-            var title = <?php echo json_encode($_POST['edit_nottitle'] ?? ''); ?>;
-            var msg = <?php echo json_encode($_POST['edit_notmsg'] ?? ''); ?>;
-            if (document.getElementById('edit_id_public_modal')) document.getElementById('edit_id_public_modal').value = id;
-            if (document.getElementById('edit_nottitle_public_modal')) document.getElementById('edit_nottitle_public_modal').value = title;
-            if (document.getElementById('edit_notmsg_public_modal')) document.getElementById('edit_notmsg_public_modal').value = msg;
-            if (window.$) $('#editPublicModal').modal('show'); else if (typeof bootstrap !== "undefined") new bootstrap.Modal(document.getElementById('editPublicModal')).show();
-          })();
+            (function () {
+              var id = <?php echo json_encode($_POST['edit_id'] ?? ''); ?>;
+              var title = <?php echo json_encode($_POST['edit_nottitle'] ?? ''); ?>;
+              var msg = <?php echo json_encode($_POST['edit_notmsg'] ?? ''); ?>;
+              if (document.getElementById('edit_id_public_modal')) document.getElementById('edit_id_public_modal').value = id;
+              if (document.getElementById('edit_nottitle_public_modal')) document.getElementById('edit_nottitle_public_modal').value = title;
+              if (document.getElementById('edit_notmsg_public_modal')) document.getElementById('edit_notmsg_public_modal').value = msg;
+              if (window.$) $('#editPublicModal').modal('show'); else if (typeof bootstrap !== "undefined") new bootstrap.Modal(document.getElementById('editPublicModal')).show();
+            })();
         <?php endif; ?>
 
         // wire edit buttons
         var editButtons = document.querySelectorAll('.btn-edit-public');
-        editButtons.forEach(function(btn){
-          btn.addEventListener('click', function(){
+        editButtons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
             var id = this.getAttribute('data-id');
             var title = this.getAttribute('data-title');
             var msg = this.getAttribute('data-msg');
             document.getElementById('edit_id_public_modal').value = id;
             document.getElementById('edit_nottitle_public_modal').value = title;
             try {
-              var decoded = msg.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#039;/g,"'").replace(/&amp;/g,'&');
+              var decoded = msg.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&amp;/g, '&');
               document.getElementById('edit_notmsg_public_modal').value = decoded;
-            } catch(e) {
+            } catch (e) {
               document.getElementById('edit_notmsg_public_modal').value = msg;
             }
             if (window.$) $('#editPublicModal').modal('show'); else if (typeof bootstrap !== "undefined") new bootstrap.Modal(document.getElementById('editPublicModal')).show();

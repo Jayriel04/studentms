@@ -83,12 +83,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                     <div class="content-wrapper">
                         <div class="page-header">
                             <h3 class="page-title">Manage Students</h3>
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Manage Students</li>
-                                </ol>
-                            </nav>
+                            <a href="add-students.php" class="add-btn" style="text-decoration: none;">+ Add New Student</a>
                         </div>
                         <div class="row">
                             <div class="col-md-12 grid-margin stretch-card">

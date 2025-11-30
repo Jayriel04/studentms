@@ -151,12 +151,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                     <div class="content-wrapper">
                         <div class="page-header">
                             <h3 class="page-title"> Manage Notice </h3>
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page"> Manage Notice</li>
-                                </ol>
-                            </nav>
+                            <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal" style="margin-right: 20px;">+ Add New Notice</button>
                         </div>
                         <div class="row">
                             <div class="col-md-12 grid-margin stretch-card">
@@ -170,9 +165,6 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                     value="<?php echo htmlentities($searchdata); ?>">
                                                 <button type="submit" name="search" class="filter-btn">🔍 Search</button>
                                             </form>
-                                            <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal">
-                                                + Add New Notice
-                                            </button>
                                         </div>
                                     </div>
 

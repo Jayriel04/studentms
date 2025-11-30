@@ -44,7 +44,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         preg_match_all('/@([A-Za-z]+)\s+([A-Za-z]+)/', $notmsg, $matches, PREG_SET_ORDER);
         if (!empty($matches)) {
           foreach ($matches as $match) {
-            $firstName = trim($match[1]); $familyName = trim($match[2]);
+            $firstName = trim($match[1]);
+            $familyName = trim($match[2]);
             $studentStmt = $dbh->prepare("SELECT StuID FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
             $studentStmt->bindValue(':fname', $firstName, PDO::PARAM_STR);
             $studentStmt->bindValue(':lname', $familyName, PDO::PARAM_STR);
@@ -92,7 +93,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         preg_match_all('/@([A-Za-z]+)\s+([A-Za-z]+)/', $edit_msg, $matches, PREG_SET_ORDER);
         if (!empty($matches)) {
           foreach ($matches as $match) {
-            $firstName = trim($match[1]); $familyName = trim($match[2]);
+            $firstName = trim($match[1]);
+            $familyName = trim($match[2]);
             $studentStmt = $dbh->prepare("SELECT StuID FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
             $studentStmt->bindValue(':fname', $firstName, PDO::PARAM_STR);
             $studentStmt->bindValue(':lname', $familyName, PDO::PARAM_STR);
@@ -126,6 +128,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   ?>
   <!DOCTYPE html>
   <html lang="en">
+
   <head>
     <title>Student Profiling System || Manage Notice</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -137,6 +140,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   </head>
+
   <body>
     <div class="container-scroller">
       <?php include_once('includes/header.php'); ?>
@@ -146,12 +150,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Manage Notice</h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Manage Notice</li>
-                </ol>
-              </nav>
+              <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal" style="margin-right: 20px;">+ Add New
+                Notice</button>
             </div>
 
             <div class="row">
@@ -161,121 +161,142 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                     <h2 class="table-title">Manage Notices</h2>
                     <div class="table-actions">
                       <form method="post" class="d-flex" style="gap: 12px;">
-                        <input type="text" name="searchdata" class="search-box" placeholder="Search by Notice Title" value="<?php echo htmlentities($searchdata); ?>">
+                        <input type="text" name="searchdata" class="search-box" placeholder="Search by Notice Title"
+                          value="<?php echo htmlentities($searchdata); ?>">
                         <button type="submit" name="search" class="filter-btn">🔍 Search</button>
                       </form>
-                      <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal">+ Add New Notice</button>
                     </div>
                   </div>
 
-                    <!-- Add Notice Modal -->
-                    <!-- ... (modal content remains the same) ... -->
-                    <div class="modal fade" id="addNoticeModal" tabindex="-1" role="dialog" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                          <form method="post" id="addNoticeForm">
-                            <div class="modal-header">
-                              <h5 class="modal-title">Add Notice</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                              <?php if (!empty($add_success_message)): ?><div class="alert alert-success"><?php echo htmlentities($add_success_message); ?></div><?php endif; ?>
-                              <?php if (!empty($add_error_message)): ?><div class="alert alert-danger"><?php echo htmlentities($add_error_message); ?></div><?php endif; ?>
+                  <!-- Add Notice Modal -->
+                  <!-- ... (modal content remains the same) ... -->
+                  <div class="modal fade" id="addNoticeModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                        <form method="post" id="addNoticeForm">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Add Notice</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                          </div>
+                          <div class="modal-body">
+                            <?php if (!empty($add_success_message)): ?>
+                              <div class="alert alert-success"><?php echo htmlentities($add_success_message); ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($add_error_message)): ?>
+                              <div class="alert alert-danger"><?php echo htmlentities($add_error_message); ?></div>
+                            <?php endif; ?>
 
-                              <div class="form-group">
-                                <label>Notice Title</label>
-                                <input type="text" name="nottitle" id="nottitle_modal" class="form-control" required>
-                              </div>
-                              <div class="form-group">
-                                <label>Notice Message</label>
-                                <textarea name="notmsg" id="notmsg_modal" class="form-control" style="height:30vh;" required></textarea>
-                                <small class="text-muted">Use @FirstName LastName to mention students.</small>
-                              </div>
+                            <div class="form-group">
+                              <label>Notice Title</label>
+                              <input type="text" name="nottitle" id="nottitle_modal" class="form-control" required>
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary" name="add_notice">Add</button>
+                            <div class="form-group">
+                              <label>Notice Message</label>
+                              <textarea name="notmsg" id="notmsg_modal" class="form-control" style="height:30vh;"
+                                required></textarea>
+                              <small class="text-muted">Use @FirstName LastName to mention students.</small>
                             </div>
-                          </form>
-                        </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="add_notice">Add</button>
+                          </div>
+                        </form>
                       </div>
                     </div>
+                  </div>
 
-                    <!-- Edit Notice Modal -->
-                    <div class="modal fade" id="editNoticeModal" tabindex="-1" role="dialog" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                          <form method="post" id="editNoticeForm">
-                            <div class="modal-header">
-                              <h5 class="modal-title">Edit Notice</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                              <?php if (!empty($edit_success_message)): ?><div class="alert alert-success"><?php echo htmlentities($edit_success_message); ?></div><?php endif; ?>
-                              <?php if (!empty($edit_error_message)): ?><div class="alert alert-danger"><?php echo htmlentities($edit_error_message); ?></div><?php endif; ?>
+                  <!-- Edit Notice Modal -->
+                  <div class="modal fade" id="editNoticeModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                        <form method="post" id="editNoticeForm">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Edit Notice</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                          </div>
+                          <div class="modal-body">
+                            <?php if (!empty($edit_success_message)): ?>
+                              <div class="alert alert-success"><?php echo htmlentities($edit_success_message); ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($edit_error_message)): ?>
+                              <div class="alert alert-danger"><?php echo htmlentities($edit_error_message); ?></div>
+                            <?php endif; ?>
 
-                              <input type="hidden" name="edit_id" id="edit_id_modal">
-                              <div class="form-group">
-                                <label>Notice Title</label>
-                                <input type="text" name="edit_nottitle" id="edit_nottitle_modal" class="form-control" required>
-                              </div>
-                              <div class="form-group">
-                                <label>Notice Message</label>
-                                <textarea name="edit_notmsg" id="edit_notmsg_modal" class="form-control" style="height:30vh;" required></textarea>
-                                <small class="text-muted">Use @FirstName LastName to mention students.</small>
-                              </div>
+                            <input type="hidden" name="edit_id" id="edit_id_modal">
+                            <div class="form-group">
+                              <label>Notice Title</label>
+                              <input type="text" name="edit_nottitle" id="edit_nottitle_modal" class="form-control"
+                                required>
                             </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary" name="edit_notice">Save changes</button>
+                            <div class="form-group">
+                              <label>Notice Message</label>
+                              <textarea name="edit_notmsg" id="edit_notmsg_modal" class="form-control"
+                                style="height:30vh;" required></textarea>
+                              <small class="text-muted">Use @FirstName LastName to mention students.</small>
                             </div>
-                          </form>
-                        </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="edit_notice">Save changes</button>
+                          </div>
+                        </form>
                       </div>
                     </div>
+                  </div>
 
-                    <div class="table-wrapper">
-                      <table class="table">
-                        <thead>
+                  <div class="table-wrapper">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Notice Title</th>
+                          <th>Notice Date</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php
+                        $sql = "SELECT NoticeTitle, CreationDate, ID as nid, NoticeMsg FROM tblnotice";
+                        if (!empty($searchdata)) {
+                          $sql .= " WHERE NoticeTitle LIKE :searchdata";
+                        }
+                        $sql .= " ORDER BY CreationDate DESC";
+                        $query = $dbh->prepare($sql);
+                        if (!empty($searchdata)) {
+                          $query->bindValue(':searchdata', '%' . $searchdata . '%', PDO::PARAM_STR);
+                        }
+                        $query->execute();
+                        $results = $query->fetchAll(PDO::FETCH_OBJ);
+                        if ($query->rowCount() > 0) {
+                          foreach ($results as $row) { ?>
+                            <tr>
+                              <td><?php echo htmlentities($row->NoticeTitle); ?></td>
+                              <td><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
+                              <td>
+                                <div class="action-buttons">
+                                  <button type="button" class="action-btn edit btn-edit-notice" title="Edit"
+                                    data-id="<?php echo htmlentities($row->nid); ?>"
+                                    data-title="<?php echo htmlentities($row->NoticeTitle); ?>"
+                                    data-msg="<?php echo htmlentities($row->NoticeMsg); ?>">✏️</button>
+                                  <a href="manage-notice.php?delid=<?php echo htmlentities($row->nid); ?>"
+                                    onclick="return confirm('Do you really want to Delete ?');" class="action-btn"
+                                    style="background: #fee2e2; color: #ef4444;" title="Delete">🗑️</a>
+                                </div>
+                              </td>
+                            </tr>
+                          <?php }
+                        } else { ?>
                           <tr>
-                            <th>Notice Title</th>
-                            <th>Notice Date</th>
-                            <th>Action</th>
+                            <td colspan="4" style="text-align:center;color:red;">No Record Found</td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          <?php
-                          $sql = "SELECT NoticeTitle, CreationDate, ID as nid, NoticeMsg FROM tblnotice";
-                          if (!empty($searchdata)) { $sql .= " WHERE NoticeTitle LIKE :searchdata"; }
-                          $sql .= " ORDER BY CreationDate DESC";
-                          $query = $dbh->prepare($sql);
-                          if (!empty($searchdata)) { $query->bindValue(':searchdata', '%' . $searchdata . '%', PDO::PARAM_STR); }
-                          $query->execute();
-                          $results = $query->fetchAll(PDO::FETCH_OBJ);
-                          if ($query->rowCount() > 0) {
-                            foreach ($results as $row) { ?>
-                              <tr>
-                                <td><?php echo htmlentities($row->NoticeTitle); ?></td>
-                                <td><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
-                                <td>
-                                  <div class="action-buttons">
-                                    <button type="button" class="action-btn edit btn-edit-notice" title="Edit"
-                                      data-id="<?php echo htmlentities($row->nid); ?>"
-                                      data-title="<?php echo htmlentities($row->NoticeTitle); ?>"
-                                      data-msg="<?php echo htmlentities($row->NoticeMsg); ?>">✏️</button>
-                                    <a href="manage-notice.php?delid=<?php echo htmlentities($row->nid); ?>" onclick="return confirm('Do you really want to Delete ?');" class="action-btn" style="background: #fee2e2; color: #ef4444;" title="Delete">🗑️</a>
-                                  </div>
-                                </td>
-                              </tr>
-                              <?php }
-                          } else { ?>
-                            <tr><td colspan="4" style="text-align:center;color:red;">No Record Found</td></tr>
-                          <?php } ?>
-                        </tbody>
-                      </table>
-                    </div>
-
+                        <?php } ?>
+                      </tbody>
+                    </table>
                   </div>
+
+                </div>
               </div>
             </div>
 
@@ -295,23 +316,23 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script>
       // Toasts
       <?php if (isset($delete_message)): ?>
-        toastr.options = {"positionClass":"toast-top-right","closeButton":true};
+        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
         toastr.success(<?php echo json_encode($delete_message); ?>);
       <?php endif; ?>
       <?php if (!empty($add_success_message)): ?>
-        toastr.options = {"positionClass":"toast-top-right","closeButton":true};
+        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
         toastr.success(<?php echo json_encode($add_success_message); ?>);
       <?php endif; ?>
       <?php if (!empty($add_error_message)): ?>
-        toastr.options = {"positionClass":"toast-top-right","closeButton":true};
+        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
         toastr.error(<?php echo json_encode($add_error_message); ?>);
       <?php endif; ?>
       <?php if (!empty($edit_success_message)): ?>
-        toastr.options = {"positionClass":"toast-top-right","closeButton":true};
+        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
         toastr.success(<?php echo json_encode($edit_success_message); ?>);
       <?php endif; ?>
       <?php if (!empty($edit_error_message)): ?>
-        toastr.options = {"positionClass":"toast-top-right","closeButton":true};
+        toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
         toastr.error(<?php echo json_encode($edit_error_message); ?>);
       <?php endif; ?>
 
@@ -361,5 +382,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
       });
     </script>
   </body>
+
   </html>
 <?php } ?>

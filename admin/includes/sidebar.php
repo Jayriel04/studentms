@@ -20,9 +20,8 @@
     </a>
     <div class="collapse <?php echo in_array($current_page, ['add-students.php', 'manage-students.php', 'validate-achievements.php', 'edit-student-detail.php', 'view-student-profile.php']) ? 'show' : ''; ?>" id="students-menu">
       <div class="sub-menu">
-        <a href="add-students.php" class="menu-item sub-item <?php echo ($current_page == 'add-students.php') ? 'active' : ''; ?>">Add Student</a>
         <a href="manage-students.php" class="menu-item sub-item <?php echo ($current_page == 'manage-students.php' || $current_page == 'edit-student-detail.php' || $current_page == 'view-student-profile.php') ? 'active' : ''; ?>">Manage Students</a>
-        <a href="validate-achievements.php" class="menu-item sub-item <?php echo ($current_page == 'validate-achievements.php') ? 'active' : ''; ?>">Validate Achievements</a>
+        <a href="validate-achievements.php" class="menu-item sub-item <?php echo ($current_page == 'validate-achievements.php') ? 'active' : ''; ?>">Validate</a>
       </div>
     </div>
 

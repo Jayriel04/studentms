@@ -194,31 +194,6 @@ if (true) {
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <style>
-      #addNoticeModal .modal-dialog {
-        /* Position the modal on the right side of the screen */
-        position: fixed;
-        top: 20px;
-        /* Adjust top position freely */
-        right: 20px;
-        /* Adjust right position freely */
-        margin: 0;
-        width: 500px;
-        /* Or any width you prefer */
-        max-width: calc(100% - 40px);
-      }
-
-      #addNoticeModal .modal-content {
-        height: calc(70vh - 40px);
-        /* Example: make it almost full height */
-      }
-
-      .sidebar .menu-item.active {
-        background: #2196F3;
-        color: white;
-        border-color: #2196F3;
-      }
-    </style>
   </head>
 
   <body>
@@ -230,12 +205,9 @@ if (true) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Search Students</h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Search Students</li>
-                </ol>
-              </nav>
+              <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal" style="margin-right: 20px;">
+                + Add Notice
+              </button>
             </div>
             <div class="row">
               <div class="col-md-12 grid-margin stretch-card">
@@ -249,9 +221,6 @@ if (true) {
                           value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
                         <button type="submit" class="filter-btn" id="submit">🔍 Search</button>
                       </form>
-                      <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal">
-                        + Add Notice
-                      </button>
                     </div>
                   </div>
 
