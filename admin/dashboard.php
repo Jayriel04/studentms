@@ -32,155 +32,153 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         <?php include_once('includes/sidebar.php'); ?>
         <div class="main-panel">
           <div class="content-wrapper">
-            <div class="row">
-              <div class="col-md-12 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="d-sm-flex align-items-baseline report-summary-header">
-                          <h5 class="font-weight-semibold">Report Summary</h5> <span class="ml-auto">Updated Report</span>
-                          <button class="btn btn-icons border-0 p-2" onclick="location.reload();"><i class="icon-refresh"></i></button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <!-- Total Students -->
-                      <div class="col-6 col-md-6 col-xl-3 grid-margin stretch-card">
-                        <div class="card report-card bg-c-danger">
-                          <?php
-                          $sql_students = "SELECT COUNT(ID) FROM tblstudent";
-                          $q_students = $dbh->query($sql_students);
-                          $totstu = $q_students->fetchColumn();
-                          ?>
-                          <p class="card-title">Total Students</p>
-                          <h2 class="card-value"><?php echo htmlentities($totstu); ?></h2>
-                          <a class="card-link" href="manage-students.php">View Students <i class="icon-arrow-right"></i></a>
-                        </div>
-                      </div>
+            <div class="dashboard-container">
+              <!-- Stats Grid -->
+              <div class="stats-grid">
+                <!-- Total Students -->
+                <a href="manage-students.php" class="stat-card">
+                  <div class="stat-header">
+                    <div class="stat-icon">👥</div>
+                    <div class="menu-dots"></div>
+                  </div>
+                  <div class="stat-label">Total Students</div>
+                  <div class="stat-value-row">
+                    <?php
+                    $sql_students = "SELECT COUNT(ID) FROM tblstudent";
+                    $q_students = $dbh->query($sql_students);
+                    $totstu = $q_students->fetchColumn();
+                    ?>
+                    <div class="stat-value"><?php echo htmlentities($totstu); ?></div>
+                  </div>
+                </a>
 
-                      <!-- Total Public Notices -->
-                      <div class="col-6 col-md-6 col-xl-3 grid-margin stretch-card">
-                        <div class="card report-card bg-c-primary">
-                          <?php
-                          $sql_notices = "SELECT COUNT(ID) FROM tblpublicnotice";
-                          $q_notices = $dbh->query($sql_notices);
-                          $totpublicnotice = $q_notices->fetchColumn();
-                          ?>
-                          <p class="card-title">Public Notices</p>
-                          <h2 class="card-value"><?php echo htmlentities($totpublicnotice); ?></h2>
-                          <a class="card-link" href="manage-public-notice.php">View Notices <i class="icon-arrow-right"></i></a>
-                        </div>
-                      </div>
+                <!-- Total Public Notices -->
+                <a href="manage-public-notice.php" class="stat-card">
+                  <div class="stat-header">
+                    <div class="stat-icon">📢</div>
+                    <div class="menu-dots"></div>
+                  </div>
+                  <div class="stat-label">Public Notices</div>
+                  <div class="stat-value-row">
+                    <?php
+                    $sql_notices = "SELECT COUNT(ID) FROM tblpublicnotice";
+                    $q_notices = $dbh->query($sql_notices);
+                    $totpublicnotice = $q_notices->fetchColumn();
+                    ?>
+                    <div class="stat-value"><?php echo htmlentities($totpublicnotice); ?></div>
+                  </div>
+                </a>
 
-                      <!-- Total Staff -->
-                      <div class="col-6 col-md-6 col-xl-3 grid-margin stretch-card">
-                        <div class="card report-card bg-c-success">
-                          <?php
-                          $sql_staff = "SELECT COUNT(ID) FROM tblstaff";
-                          $q_staff = $dbh->query($sql_staff);
-                          $totstaff = $q_staff->fetchColumn();
-                          ?>
-                          <p class="card-title">Total Staff</p>
-                          <h2 class="card-value"><?php echo htmlentities($totstaff); ?></h2>
-                          <a class="card-link" href="manage-staff.php">View Staff <i class="icon-arrow-right"></i></a>
-                        </div>
-                      </div>
+                <!-- Total Staff -->
+                <a href="manage-staff.php" class="stat-card">
+                  <div class="stat-header">
+                    <div class="stat-icon">👨‍🏫</div>
+                    <div class="menu-dots"></div>
+                  </div>
+                  <div class="stat-label">Total Staff</div>
+                  <div class="stat-value-row">
+                    <?php
+                    $sql_staff = "SELECT COUNT(ID) FROM tblstaff";
+                    $q_staff = $dbh->query($sql_staff);
+                    $totstaff = $q_staff->fetchColumn();
+                    ?>
+                    <div class="stat-value"><?php echo htmlentities($totstaff); ?></div>
+                  </div>
+                </a>
 
-                      <!-- Pending Validations -->
-                      <div class="col-6 col-md-6 col-xl-3 grid-margin stretch-card">
-                        <div class="card report-card bg-c-warning">
-                          <?php
-                          $sqlPending = "SELECT COUNT(*) FROM student_achievements WHERE status = 'pending'";
-                          $qPending = $dbh->prepare($sqlPending);
-                          $qPending->execute();
-                          $pendingCount = (int) $qPending->fetchColumn();
-                          ?>
-                          <p class="card-title">Pending Validations</p>
-                          <h2 class="card-value"><?php echo htmlentities($pendingCount); ?></h2>
-                          <a class="card-link" href="validate-achievements.php">Review Pending <i class="icon-arrow-right"></i></a>
-                        </div>
-                      </div>
-                    </div>
+                <!-- Pending Validations -->
+                <a href="validate-achievements.php" class="stat-card">
+                  <div class="stat-header">
+                    <div class="stat-icon">⏳</div>
+                    <div class="menu-dots"></div>
+                  </div>
+                  <div class="stat-label">Pending Validations</div>
+                  <div class="stat-value-row">
+                    <?php
+                    $sqlPending = "SELECT COUNT(*) FROM student_achievements WHERE status = 'pending'";
+                    $qPending = $dbh->prepare($sqlPending);
+                    $qPending->execute();
+                    $pendingCount = (int) $qPending->fetchColumn();
+                    ?>
+                    <div class="stat-value"><?php echo htmlentities($pendingCount); ?></div>
+                  </div>
+                </a>
+              </div>
 
+              <!-- Content Grid -->
+              <div class="content-grid">
+                <!-- Analytics Card -->
+                <div class="analytics-card">
+                  <div class="card-header">
+                    <h2 class="card-title">Student Population</h2>
+                  </div>
+                  <div class="chart-container">
+                    <?php
+                    // Count students per year level
+                    $sqlYearLevels = "SELECT YearLevel, COUNT(ID) as student_count FROM tblstudent WHERE YearLevel IN ('1', '2', '3', '4') GROUP BY YearLevel ORDER BY YearLevel ASC";
+                    $queryYearLevels = $dbh->prepare($sqlYearLevels);
+                    $queryYearLevels->execute();
+                    $yearLevelResults = $queryYearLevels->fetchAll(PDO::FETCH_OBJ);
+
+                    $yearCounts = ['1' => 0, '2' => 0, '3' => 0, '4' => 0];
+                    foreach ($yearLevelResults as $row) {
+                      if (isset($yearCounts[$row->YearLevel])) {
+                        $yearCounts[$row->YearLevel] = (int) $row->student_count;
+                      }
+                    }
+
+                    $yearLevelData = [
+                      ['name' => '1st Year', 'student_count' => $yearCounts['1']],
+                      ['name' => '2nd Year', 'student_count' => $yearCounts['2']],
+                      ['name' => '3rd Year', 'student_count' => $yearCounts['3']],
+                      ['name' => '4th Year', 'student_count' => $yearCounts['4']],
+                    ];
+                    ?>
+                    <canvas id="yearLevelChart" data-year-levels='<?php echo json_encode($yearLevelData); ?>'></canvas>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <div class="row">
-              <div class="col-md-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-lg-7 chart-container">
-                        <?php
-                        // Count students per year level
-                        $sqlYearLevels = "SELECT YearLevel, COUNT(ID) as student_count FROM tblstudent WHERE YearLevel IN ('1', '2', '3', '4') GROUP BY YearLevel ORDER BY YearLevel ASC";
-                        $queryYearLevels = $dbh->prepare($sqlYearLevels);
-                        $queryYearLevels->execute();
-                        $yearLevelResults = $queryYearLevels->fetchAll(PDO::FETCH_OBJ);
-                        
-                        $yearCounts = ['1' => 0, '2' => 0, '3' => 0, '4' => 0];
-                        foreach ($yearLevelResults as $row) {
-                            if (isset($yearCounts[$row->YearLevel])) {
-                                $yearCounts[$row->YearLevel] = (int)$row->student_count;
-                            }
-                        }
-                        
-                        $yearLevelData = [
-                            ['name' => '1st Year', 'student_count' => $yearCounts['1']],
-                            ['name' => '2nd Year', 'student_count' => $yearCounts['2']],
-                            ['name' => '3rd Year', 'student_count' => $yearCounts['3']],
-                            ['name' => '4th Year', 'student_count' => $yearCounts['4']],
-                        ];
-                        ?>
-                        <canvas id="yearLevelChart" data-year-levels='<?php echo json_encode($yearLevelData); ?>'></canvas>
-                      </div>
-                      <div class="col-lg-5">
-                        <div class="notice-list-container">
-                          <h4 class="card-title">Recent Notices</h4>
-                          <?php
-                          // Fetch recent notices
-                          $sql = "SELECT NoticeTitle, CreationDate, NoticeMsg FROM tblnotice ORDER BY CreationDate DESC LIMIT 5";
-                          $query = $dbh->prepare($sql);
-                          $query->execute();
-                          $notices = $query->fetchAll(PDO::FETCH_OBJ);
+                <!-- Recent Notices Section -->
+                <div class="cards-section">
+                  <div class="cards-header">
+                    <h2 class="card-title">Recent Notices</h2>
+                  </div>
+                  <?php
+                  // Fetch recent notices
+                  $sql = "SELECT NoticeTitle, CreationDate, NoticeMsg FROM tblnotice ORDER BY CreationDate DESC LIMIT 4";
+                  $query = $dbh->prepare($sql);
+                  $query->execute();
+                  $notices = $query->fetchAll(PDO::FETCH_OBJ);
 
-                          if (empty($notices)) {
-                            echo '<p>No recent notices found.</p>';
-                          } else {
-                            echo '<ul class="list-group list-group-flush">';
-                            foreach ($notices as $notice) {
-                              $title = htmlentities($notice->NoticeTitle);
-                              $date = date('M j, Y', strtotime($notice->CreationDate));
-                              $msg = nl2br(htmlentities($notice->NoticeMsg));
-                              $full_date = htmlentities($notice->CreationDate);
-                              ?>
-                              <li class="list-group-item notice-list-item"
-                                onclick="showNoticeDetail('<?php echo $title; ?>', '<?php echo $full_date; ?>', '<?php echo str_replace(array("\r", "\n", "'"), array(" ", "\\n", "\\'"), $msg); ?>')">
-                                <div class="d-flex w-100 justify-content-between">
-                                  <h6 class="mb-1"><?php echo $title; ?></h6>
-                                  <small><?php echo $date; ?></small>
-                                </div>
-                              </li>
-                              <?php
-                            }
-                            echo '</ul>';
-                          }
-                          ?>
-                          <div class="mt-3">
-                            <a href="manage-notice.php" class="btn btn-outline-primary btn-sm">View All Notices</a>
-                          </div>
+                  if (empty($notices)) {
+                    echo '<p>No recent notices found.</p>';
+                  } else {
+                    echo '<ul class="list-group list-group-flush">';
+                    foreach ($notices as $notice) {
+                      $title = htmlentities($notice->NoticeTitle);
+                      $date = date('M j, Y', strtotime($notice->CreationDate));
+                      $msg = nl2br(htmlentities($notice->NoticeMsg));
+                      $full_date = htmlentities($notice->CreationDate);
+                      ?>
+                      <li class="list-group-item notice-list-item"
+                        onclick="showNoticeDetail('<?php echo $title; ?>', '<?php echo $full_date; ?>', '<?php echo str_replace(array("\r", "\n", "'"), array(" ", "\\n", "\\'"), $msg); ?>')">
+                        <div class="d-flex w-100 justify-content-between">
+                          <h6 class="mb-1"><?php echo $title; ?></h6>
+                          <small><?php echo $date; ?></small>
                         </div>
-                      </div>
-                    </div>
+                      </li>
+                      <?php
+                    }
+                    echo '</ul>';
+                  }
+                  ?>
+                  <div class="mt-3 text-center">
+                    <a href="manage-notice.php" class="btn btn-outline-primary btn-sm">View All Notices</a>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <?php include_once('includes/footer.php'); ?>
         </div>
       </div>
     </div>
