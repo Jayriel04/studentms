@@ -245,7 +245,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
   </head>
 
   <body>
-    <div class="container-scroller">
+    <div class="container-scroller" data-current-major="<?php echo isset($row->Major) ? htmlentities($row->Major, ENT_QUOTES) : ''; ?>" data-current-city="<?php echo isset($row->CityMunicipality) ? htmlentities($row->CityMunicipality, ENT_QUOTES) : ''; ?>">
       <?php include_once('includes/header.php'); ?>
       <div class="container-fluid page-body-wrapper">
         <?php include_once('includes/sidebar.php'); ?>
@@ -561,99 +561,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <script src="js/misc.js"></script>
     <script src="js/script.js"></script>
     <script src="js/toast.js"></script>
-    <script>
-      function updateMajors(currentMajor) {
-        const programSelect = document.getElementById('program');
-        const majorSelect = document.getElementById('major');
-        const selectedProgram = programSelect.value;
-
-        // Clear existing options
-        majorSelect.innerHTML = '<option value="">Select Major</option>';
-
-        const majors = {
-          "Bachelor of Elementary Education (BEEd)": [
-            "Major in General Content"
-          ],
-          "Bachelor of Secondary Education (BSEd)": [
-            "Major in English",
-            "Major in Filipino",
-            "Major in Mathematics"
-          ],
-          "Bachelor of Science in Business Administration (BSBA)": [
-            "Major in Human Resource Management",
-            "Major in Marketing Management"
-          ],
-          "Bachelor of Industrial Technology (BindTech)": [
-            "Major in Computer Technology",
-            "Major in Electronics Technology"
-          ],
-          "Bachelor of Science in Information Technology (BSIT)": [
-            "Major in information technology"
-          ]
-        };
-
-        if (majors[selectedProgram]) {
-          majors[selectedProgram].forEach(function (major) {
-            const option = document.createElement('option');
-            option.value = major;
-            option.textContent = major;
-            if (major === currentMajor) {
-              option.selected = true;
-            }
-            majorSelect.appendChild(option);
-          });
-        }
-      }
-
-      // Trigger on page load to set initial state
-      window.addEventListener('DOMContentLoaded', function () {
-        // For gender toggle
-        var genderSelect = document.getElementById("gender");
-        var otherGenderInput = document.getElementById("otherGenderInput");
-        if (genderSelect.value === "Other") { otherGenderInput.style.display = "block"; }
-        // For major dropdown
-        updateMajors("<?php echo isset($row->Major) ? htmlentities($row->Major, ENT_QUOTES) : ''; ?>");
-
-        var currentCity = "<?php echo isset($row->CityMunicipality) ? htmlentities($row->CityMunicipality, ENT_QUOTES) : ''; ?>";
-        fetch('../data/cities.json')
-          .then(response => response.json())
-          .then(data => {
-            citiesData = data;
-            updateCities(currentCity);
-          })
-          .catch(error => console.error('Error loading cities:', error));
-
-        // Initialize Select2 for province dropdown
-        if (window.jQuery) {
-          jQuery('.province-select').select2();
-          jQuery('.province-select').on('change', function () { updateCities(''); });
-        }
-      });
-
-      var citiesData = {};
-      function updateCities(selectedCity) {
-        var province = $('.province-select').val();
-        var container = $('#city-municipality-container');
-        container.empty();
-
-        if (citiesData[province]) {
-          var select = $('<select name="citymunicipality" id="citymunicipality-select" class="form-control" style="text-transform: capitalize;"></select>');
-          select.append('<option value="">Select City/Municipality</option>');
-          citiesData[province].forEach(function (city) {
-            var option = $('<option></option>').val(city).text(city);
-            if (city === selectedCity) {
-              option.prop('selected', true);
-            }
-            select.append(option);
-          });
-          container.append(select);
-          $('#citymunicipality-select').select2();
-        } else {
-          var input = $('<input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control" style="text-transform: capitalize;">').val(selectedCity);
-          container.append(input);
-        }
-      }
-    </script>
+    <script src="js/profile.js"></script>
   </body>
 
   </html>

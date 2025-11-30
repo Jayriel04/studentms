@@ -185,25 +185,6 @@ if (isset($_POST['signup'])) {
     </div>
     <script src="js/login-new.js"></script>
     <script src="js/toast.js"></script>
-    <script>
-        const passwordInput = document.getElementById('password');
-        const passwordStrengthDiv = document.getElementById('password-strength');
-        const signupButton = document.querySelector('button[name="signup"]');
-
-        passwordInput.addEventListener('input', function () {
-            const password = passwordInput.value;
-            if (password.length === 0) {
-                passwordStrengthDiv.innerHTML = '';
-                signupButton.disabled = false;
-            } else if (password.length < 5) {
-                passwordStrengthDiv.innerHTML = '<span style="color: red;">Weak: Password must be at least 5 characters.</span>';
-                signupButton.disabled = true;
-            } else {
-                passwordStrengthDiv.innerHTML = '<span style="color: green;">Strong</span>';
-                signupButton.disabled = false;
-            }
-        });
-    </script>
-</body>
+  </body>
 
 </html>

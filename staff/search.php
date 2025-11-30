@@ -574,27 +574,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
   <script src="js/mention.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var messageButtons = document.querySelectorAll('.message-btn');
-      messageButtons.forEach(function (button) {
-        button.addEventListener('click', function () {
-          document.getElementById('studentEmail').value = this.getAttribute('data-email');
-          document.getElementById('studentName').innerText = this.getAttribute('data-name');
-          document.getElementById('studentStuID').value = this.getAttribute('data-stuid');
-        });
-      });
 
-      // Initialize mention functionality on the notice message textarea
-      const notemsgTextarea = document.getElementById('notmsg');
-      if (notemsgTextarea) {
-        initializeMention(notemsgTextarea, 'search.php?mention_suggest=1');
-      }
+  <!-- Hidden data attributes for flash messages -->
+  <?php if (isset($_SESSION['flash_message'])): ?>
+    <div data-flash-message="<?php echo htmlentities($_SESSION['flash_message']); ?>" style="display: none;"></div>
+    <?php unset($_SESSION['flash_message']); ?>
+  <?php endif; ?>
+  <?php if (isset($_SESSION['flash_message_error'])): ?>
+    <div data-flash-error="<?php echo htmlentities($_SESSION['flash_message_error']); ?>" style="display: none;"></div>
+    <?php unset($_SESSION['flash_message_error']); ?>
+  <?php endif; ?>
 
-          <?php if (isset($_SESSION['flash_message'])): ?> toastr.success('<?php echo $_SESSION['flash_message']; ?>'); <?php unset($_SESSION['flash_message']); endif; ?>
-          <?php if (isset($_SESSION['flash_message_error'])): ?> toastr.error('<?php echo $_SESSION['flash_message_error']; ?>'); <?php unset($_SESSION['flash_message_error']); endif; ?>
-    });
-  </script>
+  <script src="js/search.js"></script>
 </body>
 
 </html>

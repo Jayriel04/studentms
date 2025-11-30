@@ -173,58 +173,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="js/toast.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/script.js"></script>
-    <script>
-      function showNoticeDetail(title, date, msg) {
-        const modal = document.getElementById('noticeModal');
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalDate').innerText = date;
-        document.getElementById('modalMsg').innerHTML = msg.replace(/\\n/g, '<br>');
-        modal.style.display = 'block';
-      }
-      function closeModal() {
-        document.getElementById('noticeModal').style.display = 'none';
-      }
-
-      // Render the skills chart as a bar chart
-      document.addEventListener('DOMContentLoaded', function () {
-        var yearLevelChartCanvas = document.getElementById('yearLevelChart');
-        if (yearLevelChartCanvas) {
-          var yearLevelData = JSON.parse(yearLevelChartCanvas.getAttribute('data-year-levels'));
-          var labels = yearLevelData.map(function (item) { return item.name; });
-          var data = yearLevelData.map(function (item) { return item.student_count; });
-
-          new Chart(yearLevelChartCanvas, {
-            type: 'bar',
-            data: {
-              labels: labels,
-              datasets: [{
-                label: 'Number of Students',
-                data: data,
-                backgroundColor: [
-                  'rgba(75, 192, 192, 0.6)',
-                  'rgba(54, 162, 235, 0.6)',
-                  'rgba(255, 206, 86, 0.6)',
-                  'rgba(255, 99, 132, 0.6)'
-                ],
-                borderColor: [
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 206, 86, 1)'
-                ],
-                borderWidth: 1
-              }]
-            },
-            options: {
-              responsive: true,
-              plugins: { legend: { display: false }, title: { display: true, text: 'Student Distribution by Year Level' } },
-              scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1 } }
-              }
-            }
-          });
-        }
-      });
-    </script>
+    <script src="js/dashboard.js"></script>
   </body>
 
   </html>

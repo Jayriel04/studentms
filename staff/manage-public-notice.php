@@ -91,7 +91,6 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   </head>
 
   <body>
@@ -265,74 +264,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/toast.js"></script>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        <?php if (isset($delete_message)): ?>
-          toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-          toastr.success(<?php echo json_encode($delete_message); ?>);
-        <?php endif; ?>
-
-        <?php if (!empty($add_success_message)): ?>
-          toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-          toastr.success(<?php echo json_encode($add_success_message); ?>);
-          if (window.$) $('#addPublicModal').modal('hide'); else if (typeof bootstrap !== "undefined") try { new bootstrap.Modal(document.getElementById('addPublicModal')).hide(); } catch (e) { }
-        <?php endif; ?>
-
-        <?php if (!empty($add_error_message)): ?>
-          toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-          toastr.error(<?php echo json_encode($add_error_message); ?>);
-          if (window.$) $('#addPublicModal').modal('show'); else if (typeof bootstrap !== "undefined") new bootstrap.Modal(document.getElementById('addPublicModal')).show();
-        <?php endif; ?>
-
-        <?php if ($openAddModal): ?>
-          if (window.$) $('#addPublicModal').modal('show'); else if (typeof bootstrap !== "undefined") new bootstrap.Modal(document.getElementById('addPublicModal')).show();
-        <?php endif; ?>
-
-        <?php if (!empty($edit_success_message)): ?>
-          toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-          toastr.success(<?php echo json_encode($edit_success_message); ?>);
-          if (window.$) $('#editPublicModal').modal('hide'); else if (typeof bootstrap !== "undefined") try { new bootstrap.Modal(document.getElementById('editPublicModal')).hide(); } catch (e) { }
-        <?php endif; ?>
-
-        <?php if (!empty($edit_error_message)): ?>
-          toastr.options = { "positionClass": "toast-top-right", "closeButton": true };
-          toastr.error(<?php echo json_encode($edit_error_message); ?>);
-          if (window.$) $('#editPublicModal').modal('show'); else if (typeof bootstrap !== "undefined") new bootstrap.Modal(document.getElementById('editPublicModal')).show();
-        <?php endif; ?>
-
-        <?php if ($openEditModal && !empty($_POST)): ?>
-            (function () {
-              var id = <?php echo json_encode($_POST['edit_id'] ?? ''); ?>;
-              var title = <?php echo json_encode($_POST['edit_nottitle'] ?? ''); ?>;
-              var msg = <?php echo json_encode($_POST['edit_notmsg'] ?? ''); ?>;
-              if (document.getElementById('edit_id_public_modal')) document.getElementById('edit_id_public_modal').value = id;
-              if (document.getElementById('edit_nottitle_public_modal')) document.getElementById('edit_nottitle_public_modal').value = title;
-              if (document.getElementById('edit_notmsg_public_modal')) document.getElementById('edit_notmsg_public_modal').value = msg;
-              if (window.$) $('#editPublicModal').modal('show'); else if (typeof bootstrap !== "undefined") new bootstrap.Modal(document.getElementById('editPublicModal')).show();
-            })();
-        <?php endif; ?>
-
-        // wire edit buttons
-        var editButtons = document.querySelectorAll('.btn-edit-public');
-        editButtons.forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            var id = this.getAttribute('data-id');
-            var title = this.getAttribute('data-title');
-            var msg = this.getAttribute('data-msg');
-            document.getElementById('edit_id_public_modal').value = id;
-            document.getElementById('edit_nottitle_public_modal').value = title;
-            try {
-              var decoded = msg.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&amp;/g, '&');
-              document.getElementById('edit_notmsg_public_modal').value = decoded;
-            } catch (e) {
-              document.getElementById('edit_notmsg_public_modal').value = msg;
-            }
-            if (window.$) $('#editPublicModal').modal('show'); else if (typeof bootstrap !== "undefined") new bootstrap.Modal(document.getElementById('editPublicModal')).show();
-          });
-        });
-      });
-    </script>
+    <script src="js/manage-public-notice.js"></script>
   </body>
 
   </html>

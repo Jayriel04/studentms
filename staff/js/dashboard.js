@@ -148,3 +148,76 @@
         })
   });
 })(jQuery);
+
+(function () {
+  'use strict';
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Modal functionality for notice details
+    function showNoticeDetail(title, date, msg) {
+      const modal = document.getElementById('noticeModal');
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalDate').innerText = date;
+      document.getElementById('modalMsg').innerHTML = msg.replace(/\\n/g, '<br>');
+      modal.style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('noticeModal').style.display = 'none';
+    }
+
+    // Expose functions to global scope for onclick handlers
+    window.showNoticeDetail = showNoticeDetail;
+    window.closeModal = closeModal;
+
+    // Close modal when clicking outside of it
+    window.addEventListener('click', function (event) {
+      const modal = document.getElementById('noticeModal');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Render the year level chart
+    var yearLevelChartCanvas = document.getElementById('yearLevelChart');
+    if (yearLevelChartCanvas && typeof Chart !== 'undefined') {
+      var yearLevelData = JSON.parse(yearLevelChartCanvas.getAttribute('data-year-levels'));
+      var labels = yearLevelData.map(function (item) { return item.name; });
+      var data = yearLevelData.map(function (item) { return item.student_count; });
+
+      new Chart(yearLevelChartCanvas, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Number of Students',
+            data: data,
+            backgroundColor: [
+              'rgba(75, 192, 192, 0.6)',
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+              'rgba(255, 99, 132, 0.6)'
+            ],
+            borderColor: [
+              'rgba(75, 192, 192, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Student Distribution by Year Level' }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+          }
+        }
+      });
+    }
+  });
+})();
