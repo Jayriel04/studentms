@@ -168,6 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
   <link rel="stylesheet" href="./vendors/chartist/chartist.min.css">
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <link rel="stylesheet" href="css/modal.css">
   <link rel="stylesheet" href="./css/style(v2).css">
   <style>
     #addNoticeModal .modal-dialog {
@@ -505,30 +506,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
   </div>
 
   <!-- Add Notice Modal -->
-  <div class="modal fade" id="addNoticeModal" tabindex="-1" role="dialog" aria-labelledby="addNoticeModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addNoticeModalLabel">Add New Notice</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+  <div class="new-modal-overlay" id="addNoticeModalOverlay">
+    <div class="new-modal">
+      <div class="new-modal-header">
+        <h2 class="new-modal-title">Add New Notice</h2>
+        <button type="button" class="new-close-btn">&times;</button>
+      </div>
         <form method="post">
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="nottitle">Notice Title</label>
-              <input type="text" class="form-control" id="nottitle" name="nottitle" required>
-            </div>
-            <div class="form-group">
-              <label for="notmsg">Notice Message</label>
-              <textarea class="form-control" id="notmsg" name="notmsg" rows="5" required></textarea>
-            </div>
+          <div class="new-form-group">
+            <label for="nottitle" class="new-form-label">Notice Title</label>
+            <input type="text" class="new-form-input" id="nottitle" name="nottitle" required placeholder="Enter notice title">
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" name="add_notice" class="btn btn-primary">Add Notice</button>
+          <div class="new-form-group">
+            <label for="notmsg" class="new-form-label">Notice Message</label>
+            <textarea class="new-form-textarea" id="notmsg" name="notmsg" rows="5" required placeholder="Enter notice details..."></textarea>
+            <small class="text-muted">Use @FirstName LastName to mention students.</small>
+          </div>
+          <div class="new-modal-footer">
+            <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+            <button type="submit" name="add_notice" class="new-btn new-btn-submit">Add Notice</button>
           </div>
         </form>
       </div>
@@ -536,37 +532,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
   </div>
 
   <!-- Message Modal -->
-  <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="messageModalLabel">Send Message to <span id="studentName"></span></h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+  <div class="new-modal-overlay" id="messageModalOverlay">
+    <div class="new-modal">
+      <div class="new-modal-header">
+        <h2 class="new-modal-title">Send Message to <span id="studentName"></span></h2>
+        <button type="button" class="new-close-btn">&times;</button>
+      </div>
         <form method="post">
-          <div class="modal-body">
+          <div class="new-modal-body">
             <input type="hidden" name="student_email" id="studentEmail">
             <input type="hidden" name="student_stuid" id="studentStuID">
-            <div class="form-group">
-              <label for="subject">Subject</label>
-              <input type="text" class="form-control" id="subject" name="subject" required>
+            <div class="new-form-group">
+              <label for="subject" class="new-form-label">Subject</label>
+              <input type="text" class="new-form-input" id="subject" name="subject" required placeholder="Enter subject">
             </div>
-            <div class="form-group">
-              <label for="message">Message</label>
-              <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+            <div class="new-form-group">
+              <label for="message" class="new-form-label">Message</label>
+              <textarea class="new-form-textarea" id="message" name="message" rows="5" required placeholder="Enter your message..."></textarea>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" name="send_message" class="btn btn-primary">Send Message</button>
+          <div class="new-modal-footer">
+            <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+            <button type="submit" name="send_message" class="new-btn new-btn-submit">Send Message</button>
           </div>
         </form>
       </div>
     </div>
-  </div>
 
   <script src="vendors/js/vendor.bundle.base.js"></script>
   <script src="js/toast.js"></script>

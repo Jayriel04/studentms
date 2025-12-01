@@ -1,5 +1,18 @@
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
+    // Helpers for new modal
+    function openModal(modalId) {
+      var overlay = document.getElementById(modalId);
+      if (overlay) overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+      var overlay = document.getElementById(modalId);
+      if (overlay) overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
     // Initialize mention for add modal textarea
     var notmsg = document.getElementById('notmsg_modal');
     if (notmsg && typeof initializeMention === 'function') {
@@ -36,11 +49,8 @@
       } else if (typeof bootstrap !== 'undefined') {
         new bootstrap.Toast(addErrorToast).show();
       }
-      if (window.$) {
-        $('#addNoticeModal').modal('show');
-      } else if (typeof bootstrap !== 'undefined') {
-        new bootstrap.Modal(document.getElementById('addNoticeModal')).show();
-      }
+      // Open the new custom modal on error
+      openModal('addNoticeModalOverlay');
     }
 
     var editSuccessToast = document.getElementById('editSuccessToast');
@@ -66,11 +76,8 @@
       } else if (typeof bootstrap !== 'undefined') {
         new bootstrap.Toast(editErrorToast).show();
       }
-      if (window.$) {
-        $('#editNoticeModal').modal('show');
-      } else if (typeof bootstrap !== 'undefined') {
-        new bootstrap.Modal(document.getElementById('editNoticeModal')).show();
-      }
+      // Open the new custom modal on error
+      openModal('editNoticeModalOverlay');
     }
 
     // Wire edit buttons to populate modal
@@ -97,12 +104,33 @@
           document.getElementById('edit_notmsg_modal').value = msg;
         }
 
-        if (window.$) {
-          $('#editNoticeModal').modal('show');
-        } else if (typeof bootstrap !== 'undefined') {
-          new bootstrap.Modal(document.getElementById('editNoticeModal')).show();
-        }
+        openModal('editNoticeModalOverlay');
       });
     });
+
+    // Event listeners for the new add notice modal
+    var openAddBtn = document.querySelector('[data-target="#addNoticeModal"]');
+    if (openAddBtn) {
+      openAddBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        openModal('addNoticeModalOverlay');
+      });
+    }
+
+    var closeBtns = document.querySelectorAll('#addNoticeModalOverlay .new-close-btn, #addNoticeModalOverlay .new-btn-cancel');
+    closeBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        closeModal('addNoticeModalOverlay');
+      });
+    });
+
+    // Event listeners for the new edit notice modal
+    var closeEditBtns = document.querySelectorAll('#editNoticeModalOverlay .new-close-btn, #editNoticeModalOverlay .new-btn-cancel');
+    closeEditBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        closeModal('editNoticeModalOverlay');
+      });
+    });
+
   });
 })();

@@ -1,5 +1,18 @@
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
+    // Helpers for new modal
+    function openModal(modalId) {
+      var overlay = document.getElementById(modalId);
+      if (overlay) overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+      var overlay = document.getElementById(modalId);
+      if (overlay) overlay.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
     // Show toastr notifications if messages exist
     if (typeof toastr !== 'undefined') {
       toastr.options = { positionClass: 'toast-top-right', closeButton: true };
@@ -14,6 +27,11 @@
       if (addErrorMsg) {
         var msg = addErrorMsg.innerText;
         if (msg) toastr.error(msg);
+        // If there was an error adding, reopen the new modal
+        var addModal = document.getElementById('addPublicModal');
+        if (addModal) {
+          openModal('addPublicModalOverlay');
+        }
       }
     }
 
@@ -36,12 +54,31 @@
         } catch (e) { /* ignore */ }
 
         // Show edit modal
-        if (window.$) {
-          $('#editPublicModal').modal('show');
-        } else if (typeof bootstrap !== 'undefined') {
-          var modal = new bootstrap.Modal(document.getElementById('editPublicModal'));
-          modal.show();
-        }
+        openModal('editPublicModalOverlay');
+      });
+    });
+
+    // Event listeners for the new add public notice modal
+    var openAddBtn = document.querySelector('[data-target="#addPublicModal"]');
+    if (openAddBtn) {
+      openAddBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        openModal('addPublicModalOverlay');
+      });
+    }
+
+    var closeBtns = document.querySelectorAll('#addPublicModalOverlay .new-close-btn, #addPublicModalOverlay .new-btn-cancel');
+    closeBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        closeModal('addPublicModalOverlay');
+      });
+    });
+
+    // Event listeners for the new edit public notice modal
+    var closeEditBtns = document.querySelectorAll('#editPublicModalOverlay .new-close-btn, #editPublicModalOverlay .new-btn-cancel');
+    closeEditBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        closeModal('editPublicModalOverlay');
       });
     });
   });
