@@ -263,10 +263,17 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                       </div>
                     <?php } ?>
                     <form method="post" enctype="multipart/form-data">
-                      <div class="form-sections">
-                        <!-- Personal & Academic Section -->
-                        <div class="form-section">
-                          <h2 class="section-title">Personal Information</h2>
+                      <div class="form-tabs-container">
+                        <div class="form-tabs" role="tablist">
+                          <div class="form-tab active" data-target="personal" role="tab">Personal</div>
+                          <div class="form-tab" data-target="academic" role="tab">Academic</div>
+                          <div class="form-tab" data-target="contact" role="tab">Contact</div>
+                          <div class="form-tab" data-target="family" role="tab">Family</div>
+                        </div>
+
+                        <!-- Personal Information Tab -->
+                        <div id="personal" class="form-tab-content active" role="tabpanel">
+                          <div class="form-grid">
                           <div class="form-group">
                             <label class="form-label">Family Name</label>
                             <input type="text" name="familyname" class="form-control"
@@ -375,10 +382,11 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                             <label class="form-label">Update Profile Image</label>
                             <input type="file" name="profilepic" class="form-control">
                           </div>
+                          </div>
                         </div>
-                        <!-- Contact & Address Section -->
-                        <div class="form-section">
-                          <h2 class="section-title">Academic Details</h2>
+                        <!-- Academic Tab -->
+                        <div id="academic" class="form-tab-content" role="tabpanel">
+                          <div class="form-grid">
                           <div class="form-group">
                             <label class="form-label">Program</label>
                             <select name="program" id="program" class="form-control" required onchange="updateMajors()">
@@ -431,8 +439,11 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                               <option value="Irregular" <?php if (isset($row->Category) && $row->Category == 'Irregular') echo 'selected'; ?>>Irregular</option>
                             </select>
                           </div>
-
-                          <h2 class="section-title" style="margin-top: 40px;">Contact & Address</h2>
+                          </div>
+                        </div>
+                        <!-- Contact Tab -->
+                        <div id="contact" class="form-tab-content" role="tabpanel">
+                          <div class="form-grid">
                           <div class="form-group">
                             <label class="form-label">Email Address</label>
                             <input type="email" name="emailaddress" class="form-control"
@@ -495,8 +506,11 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                             <input type="text" name="postalcode" class="form-control"
                               value="<?php echo isset($row->PostalCode) ? htmlentities($row->PostalCode) : ''; ?>">
                           </div>
-
-                          <h2 class="section-title" style="margin-top: 40px;">Emergency Contact</h2>
+                          </div>
+                        </div>
+                        <!-- Family/Emergency Tab -->
+                        <div id="family" class="form-tab-content" role="tabpanel">
+                          <div class="form-grid">
                           <div class="form-group">
                             <label class="form-label">Father's Name</label>
                             <input type="text" name="fathersname" class="form-control"
@@ -532,11 +546,13 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                               value="<?php echo isset($row->EmergencyAddress) ? htmlentities($row->EmergencyAddress) : ''; ?>"
                               style="text-transform: capitalize;">
                           </div>
+                          </div>
                         </div>
                       </div>
-                      <div class="form-actions">
-                        <a href="student-profile.php" class="btn btn-cancel" style="text-decoration: none; text-align: center;">Back</a>
-                        <button type="submit" name="update" class="btn btn-submit">Update Profile</button>
+                      <div class="form-navigation">
+                        <button type="button" class="btn btn-light" id="prevBtn" style="display: none;">Previous</button>
+                        <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+                        <button type="submit" name="update" class="btn btn-submit" style="display: none;">Update Profile</button>
                       </div>
                     </form>
                   </div>

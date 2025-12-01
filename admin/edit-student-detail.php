@@ -198,17 +198,18 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       $results = $query->fetchAll(PDO::FETCH_OBJ);
                       if ($query->rowCount() > 0) {
                         foreach ($results as $row) { ?>
-                          <div class="form-sections">
-                            <!-- Personal Information Section -->
-                            <div class="form-section">
-                              <h2 class="section-title">Personal Information</h2>
-                              <div class="form-group">
-                                <label class="form-label">Student ID</label>
-                                <input type="text" name="stuid"
-                                  value="<?php echo htmlentities($row->StuID); ?>" class="form-control" required style="text-transform: capitalize;"
-                                  placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}"
-                                  title="The format must be: 222 - 08410">
-                              </div>
+                          <div class="form-tabs-container">
+                            <div class="form-tabs" role="tablist">
+                              <div class="form-tab active" data-target="personal" role="tab">Personal</div>
+                              <div class="form-tab" data-target="academic" role="tab">Academic</div>
+                              <div class="form-tab" data-target="contact" role="tab">Contact</div>
+                              <div class="form-tab" data-target="family" role="tab">Family</div>
+                              <div class="form-tab" data-target="account" role="tab">Account</div>
+                            </div>
+
+                            <!-- Personal Information Tab -->
+                            <div id="personal" class="form-tab-content active" role="tabpanel">
+                              <div class="form-grid">
                               <div class="form-group">
                                 <label class="form-label">Family Name</label>
                                 <input type="text" name="familyname" value="<?php echo htmlentities($row->FamilyName); ?>"
@@ -288,15 +289,11 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                 <input type="text" name="citizenship" value="<?php echo htmlentities($row->Citizenship); ?>"
                                   class="form-control" style="text-transform: capitalize;">
                               </div>
-                              <div class="form-group">
-                                <label class="form-label">Password</label>
-                                <input type="password" name="password" value="" class="form-control" placeholder="Leave blank to keep unchanged">
                               </div>
                             </div>
-
-                            <!-- Academic & Contact Section -->
-                            <div class="form-section">
-                              <h2 class="section-title">Academic Details</h2>
+                            <!-- Academic Tab -->
+                            <div id="academic" class="form-tab-content" role="tabpanel">
+                              <div class="form-grid">
                               <div class="form-group">
                                 <label class="form-label">Program</label>
                                 <select name="program" id="program" class="form-control" required onchange="updateMajors()">
@@ -354,8 +351,11 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                   <option value="Irregular">Irregular</option>
                                 </select>
                               </div>
-
-                              <h2 class="section-title" style="margin-top: 40px;">Contact & Address</h2>
+                              </div>
+                            </div>
+                            <!-- Contact Tab -->
+                            <div id="contact" class="form-tab-content" role="tabpanel">
+                              <div class="form-grid">
                               <div class="form-group">
                                 <label class="form-label">Email Address</label>
                                 <input type="email" name="emailaddress"
@@ -412,8 +412,11 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                 <input type="text" name="postalcode" value="<?php echo htmlentities($row->PostalCode); ?>"
                                   class="form-control">
                               </div>
-
-                              <h2 class="section-title" style="margin-top: 40px;">Emergency Contact</h2>
+                              </div>
+                            </div>
+                            <!-- Family/Emergency Tab -->
+                            <div id="family" class="form-tab-content" role="tabpanel">
+                              <div class="form-grid">
                               <div class="form-group">
                                 <label class="form-label">Father's Name</label>
                                 <input type="text" name="fathersname" value="<?php echo htmlentities($row->FathersName); ?>"
@@ -444,12 +447,28 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                 <textarea name="emergencyaddress"
                                   class="form-control" style="text-transform: capitalize;"><?php echo htmlentities($row->EmergencyAddress); ?></textarea>
                               </div>
+                              </div>
+                            </div>
+                            <!-- Account Tab -->
+                            <div id="account" class="form-tab-content" role="tabpanel">
+                              <div class="form-grid">
+                                <div class="form-group">
+                                  <label class="form-label">Student ID</label>
+                                  <input type="text" name="stuid" value="<?php echo htmlentities($row->StuID); ?>" class="form-control" required placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410">
+                                </div>
+                                <div class="form-group">
+                                  <label class="form-label">Password</label>
+                                  <input type="password" name="password" value="" class="form-control" placeholder="Leave blank to keep unchanged">
+                                </div>
+                              </div>
                             </div>
                           </div>
-                          <div class="form-actions">
-                            <a href="manage-students.php" class="btn btn-cancel" style="text-decoration: none; text-align: center;">Cancel</a>
-                            <button type="submit" class="btn btn-submit" name="submit">Update Student</button>
+                          <div class="form-navigation">
+                            <button type="button" class="btn btn-light" id="prevBtn">Previous</button>
+                            <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+                            <button type="submit" class="btn btn-submit" name="submit" style="display: none;">Update Student</button>
                           </div>
+
                         <?php }
                       } ?>
                     </form>
@@ -468,6 +487,42 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/manage-student.js"></script>
+    <script>
+      (function () {
+        const tabs = Array.from(document.querySelectorAll('.form-tab'));
+        const contents = Array.from(document.querySelectorAll('.form-tab-content'));
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const submitBtn = document.querySelector('button[name="submit"]');
+        let idx = 0;
+
+        function activate(i) {
+          idx = i;
+          tabs.forEach((t, ti) => t.classList.toggle('active', ti === i));
+          contents.forEach((c, ci) => c.classList.toggle('active', ci === i));
+          prevBtn.style.display = i === 0 ? 'none' : 'inline-block';
+          nextBtn.style.display = i === tabs.length - 1 ? 'none' : 'inline-block';
+          submitBtn.style.display = i === tabs.length - 1 ? 'inline-block' : 'none';
+        }
+
+        tabs.forEach((tab, i) => tab.addEventListener('click', () => activate(i)));
+
+        nextBtn.addEventListener('click', () => {
+          if (idx < tabs.length - 1) {
+            activate(idx + 1);
+          }
+        });
+
+        prevBtn.addEventListener('click', () => {
+          if (idx > 0) {
+            activate(idx - 1);
+          }
+        });
+
+        // Initialize
+        activate(0);
+      })();
+    </script>
   </body>
 
   </html>

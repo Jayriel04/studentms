@@ -178,11 +178,22 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                       $query->execute();
                       $results = $query->fetchAll(PDO::FETCH_OBJ);
                       if ($query->rowCount() > 0) {
-                        foreach ($results as $row) { ?>
-                          <div class="form-sections">
-                            <!-- Personal Information Section -->
-                            <div class="form-section">
-                              <h2 class="section-title">Personal Information</h2>
+                        foreach ($results as $row) {
+                          $current_major = htmlentities($row->Major, ENT_QUOTES);
+                          $current_city = htmlentities($row->CityMunicipality, ENT_QUOTES);
+                          ?>
+                          <div class="form-tabs-container">
+                            <div class="form-tabs" role="tablist">
+                              <div class="form-tab active" data-target="personal" role="tab">Personal</div>
+                              <div class="form-tab" data-target="academic" role="tab">Academic</div>
+                              <div class="form-tab" data-target="contact" role="tab">Contact</div>
+                              <div class="form-tab" data-target="family" role="tab">Family</div>
+                              <div class="form-tab" data-target="account" role="tab">Account</div>
+                            </div>
+
+                            <!-- Personal Information Tab -->
+                            <div id="personal" class="form-tab-content active" role="tabpanel">
+                              <div class="form-grid">
                               <div class="form-group">
                                 <label class="form-label">Student ID</label>
                                 <input type="text" name="stuid" value="<?php echo htmlentities($row->StuID); ?>"
@@ -280,11 +291,11 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                 <input type="text" name="citizenship" value="<?php echo htmlentities($row->Citizenship); ?>"
                                   class="form-control" style="text-transform: capitalize;">
                               </div>
+                              </div>
                             </div>
-
-                            <!-- Academic & Contact Section -->
-                            <div class="form-section">
-                              <h2 class="section-title">Academic Details</h2>
+                            <!-- Academic Tab -->
+                            <div id="academic" class="form-tab-content" role="tabpanel">
+                              <div class="form-grid">
                               <div class="form-group">
                                 <label class="form-label">Program</label>
                                 <select name="program" id="program" class="form-control" required onchange="updateMajors()">
@@ -354,8 +365,11 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                   <option value="Irregular">Irregular</option>
                                 </select>
                               </div>
-
-                              <h2 class="section-title" style="margin-top: 40px;">Contact & Address</h2>
+                              </div>
+                            </div>
+                            <!-- Contact Tab -->
+                            <div id="contact" class="form-tab-content" role="tabpanel">
+                              <div class="form-grid">
                               <div class="form-group">
                                 <label class="form-label">Email Address</label>
                                 <input type="email" name="emailaddress"
@@ -416,8 +430,11 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                 <input type="text" name="postalcode" value="<?php echo htmlentities($row->PostalCode); ?>"
                                   class="form-control">
                               </div>
-
-                              <h2 class="section-title" style="margin-top: 40px;">Emergency Contact</h2>
+                              </div>
+                            </div>
+                            <!-- Family/Emergency Tab -->
+                            <div id="family" class="form-tab-content" role="tabpanel">
+                              <div class="form-grid">
                               <div class="form-group">
                                 <label class="form-label">Father's Name</label>
                                 <input type="text" name="fathersname" value="<?php echo htmlentities($row->FathersName); ?>"
@@ -451,11 +468,22 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                 <textarea name="emergencyaddress" class="form-control"
                                   style="text-transform: capitalize;"><?php echo htmlentities($row->EmergencyAddress); ?></textarea>
                               </div>
+                              </div>
+                            </div>
+                            <!-- Account Tab -->
+                            <div id="account" class="form-tab-content" role="tabpanel">
+                              <div class="form-grid">
+                                <div class="form-group">
+                                  <label class="form-label">Password</label>
+                                  <input type="password" name="password" value="" class="form-control" placeholder="Leave blank to keep unchanged">
+                                </div>
+                              </div>
                             </div>
                           </div>
-                          <div class="form-actions">
-                            <a href="manage-students.php" class="btn btn-cancel" style="text-decoration: none; text-align: center;">Cancel</a>
-                            <button type="submit" class="btn btn-submit" name="submit">Update Student</button>
+                          <div class="form-navigation">
+                            <button type="button" class="btn btn-light" id="prevBtn">Previous</button>
+                            <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+                            <button type="submit" class="btn btn-submit" name="submit" style="display: none;">Update Student</button>
                           </div>
                         <?php }
                       } ?>

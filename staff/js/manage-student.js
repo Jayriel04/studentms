@@ -156,3 +156,39 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+
+// Tabbed form logic for edit-student-detail.php
+document.addEventListener('DOMContentLoaded', function () {
+    const tabs = Array.from(document.querySelectorAll('.form-tab'));
+    const contents = Array.from(document.querySelectorAll('.form-tab-content'));
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const submitBtn = document.querySelector('button[name="submit"]');
+    let idx = 0;
+
+    function activate(i) {
+        idx = i;
+        tabs.forEach((t, ti) => t.classList.toggle('active', ti === i));
+        contents.forEach((c, ci) => c.classList.toggle('active', ci === i));
+        prevBtn.style.display = i === 0 ? 'none' : 'inline-block';
+        nextBtn.style.display = i === tabs.length - 1 ? 'none' : 'inline-block';
+        submitBtn.style.display = i === tabs.length - 1 ? 'inline-block' : 'none';
+    }
+
+    tabs.forEach((tab, i) => tab.addEventListener('click', () => activate(i)));
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (idx < tabs.length - 1) {
+                activate(idx + 1);
+            }
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (idx > 0) activate(idx - 1);
+        });
+    }
+    activate(0); // Initialize the first tab as active
+});

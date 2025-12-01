@@ -177,4 +177,82 @@
     }
 }
 
+/* --- Tabbed Form Styles for Update Profile Page --- */
+.form-tabs-container {
+    width: 100%;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+}
 
+.form-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    background: #f1f6fb;
+    border-radius: 10px;
+    margin-bottom: 24px;
+}
+
+.form-tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.25s;
+    color: #556;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.form-tab:hover {
+    background: #eaf6ff;
+}
+
+.form-tab.active {
+    background: #ffffff;
+    color: #1378d6;
+    box-shadow: 0 6px 18px rgba(20, 120, 210, 0.08);
+    border: 1px solid rgba(19, 120, 214, 0.08);
+    font-weight: 700;
+}
+
+.form-tab-content {
+    display: none;
+    animation: fade 0.35s ease;
+}
+
+.form-tab-content.active {
+    display: block;
+}
+
+@keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-navigation {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #f1f5f9;
+    justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-tabs {
+        flex-direction: column;
+    }
+}
