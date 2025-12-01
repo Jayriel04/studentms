@@ -96,7 +96,10 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Manage Students</h3>
-              <a href="add-students.php" class="add-btn" style="text-decoration: none;">+ Add New Student</a>
+              <div class="d-flex">
+                <a href="validate-achievements.php" class="add-btn" style="text-decoration: none; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); margin-right: 10px;">✓ Validate</a>
+                <a href="add-students.php" class="add-btn" style="text-decoration: none; margin-right: 20px;">+ Add Student</a>
+              </div>
             </div>
             <div class="row">
               <div class="col-md-12 grid-margin stretch-card">
@@ -261,7 +264,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                 </div>
               </div>
             </div>
-            <?php include_once('includes/footer.php'); ?>
           </div>
         </div>
       </div>

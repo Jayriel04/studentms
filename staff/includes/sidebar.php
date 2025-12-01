@@ -10,16 +10,10 @@
       <span class="menu-item-text">Dashboard</span>
     </a>
 
-    <a href="#students-menu" class="menu-item <?php echo in_array($current_page, ['add-students.php', 'manage-students.php', 'validate-achievements.php']) ? 'active' : ''; ?>" data-toggle="collapse" aria-expanded="<?php echo in_array($current_page, ['add-students.php', 'manage-students.php', 'validate-achievements.php']) ? 'true' : 'false'; ?>">
+    <a href="manage-students.php" class="menu-item <?php echo in_array($current_page, ['add-students.php', 'manage-students.php', 'validate-achievements.php']) ? 'active' : ''; ?>">
       <span class="menu-item-icon">🎓</span>
       <span class="menu-item-text">Students</span>
     </a>
-    <div class="collapse <?php echo in_array($current_page, ['add-students.php', 'manage-students.php', 'validate-achievements.php']) ? 'show' : ''; ?>" id="students-menu">
-      <div class="sub-menu">
-        <a href="manage-students.php" class="menu-item sub-item <?php echo ($current_page == 'manage-students.php') ? 'active' : ''; ?>">Manage Students</a>
-        <a href="validate-achievements.php" class="menu-item sub-item <?php echo ($current_page == 'validate-achievements.php') ? 'active' : ''; ?>">Validate Achievements</a>
-      </div>
-    </div>
 
     <a href="manage-notice.php" class="menu-item <?php echo ($current_page == 'manage-notice.php') ? 'active' : ''; ?>">
       <span class="menu-item-icon">📢</span>

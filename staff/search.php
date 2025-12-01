@@ -500,7 +500,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
           </div>
         </div>
       </div>
-      <?php include_once('includes/footer.php'); ?>
     </div>
   </div>
   </div>

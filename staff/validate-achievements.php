@@ -292,6 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
         <div class="content-wrapper">
           <div class="page-header">
             <h3 class="page-title"> Pending Achievements </h3>
+            <a href="manage-students.php" class="add-btn" style="text-decoration: none; margin-right: 20px;">↩ Back</a>
           </div>
 
           <div class="row">

@@ -135,7 +135,6 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
               </div>
             </div>
           </div>
-          <?php include_once('includes/footer.php'); ?>
         </div>
       </div>
     </div>

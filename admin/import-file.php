@@ -207,13 +207,6 @@ if (isset($_POST['import'])) {
                 <div class="content-wrapper">
                     <div class="page-header">
                         <h3 class="page-title"> Import Students </h3>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                                <li class="breadcrumb-item"><a href="manage-students.php">Manage Students</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"> Import Students</li>
-                            </ol>
-                        </nav>
                     </div>
                     <div class="row">
                         <div class="col-md-8 mx-auto">

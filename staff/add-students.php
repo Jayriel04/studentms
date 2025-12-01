@@ -130,20 +130,18 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title"> Add Students </h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> Add Students</li>
-                </ol>
-              </nav>
+              <a href="manage-students.php" class="add-btn" style="text-decoration: none; margin-right: 20px;">↩ Back</a>
             </div>
             <div class="row">
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                      <h4 class="card-title">Add Students Details</h4>
-                      <a href="import-file.php" class="btn btn-primary">Import</a>
+                      <h4 class="card-title">Add Students Details</h4>\
+                      <a href="import-file.php" class="add-btn"
+                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none;">
+                        <span style="font-size: 18px; margin-top: -2px;">📥</span> Import
+                      </a>
                     </div>
                     <hr />
                     <?php if ($success_message): ?>

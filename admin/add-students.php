@@ -125,6 +125,7 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title"> Add Students </h3>
+              <a href="manage-students.php" class="add-btn" style="text-decoration: none; margin-right: 20px;">↩ Back</a>
             </div>
             <div class="row">
               <div class="col-12 grid-margin stretch-card">
@@ -132,7 +133,10 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                       <h4 class="card-title">Add Students Details</h4>
-                      <a href="import-file.php" class="btn btn-primary">Import</a>
+                      <a href="import-file.php" class="add-btn"
+                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none;">
+                        <span style="font-size: 18px; margin-top: -2px;">📥</span> Import
+                      </a>
                     </div>
                     <hr />
                     <form class="forms-sample" method="post">
