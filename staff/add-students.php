@@ -118,6 +118,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <link rel="stylesheet" href="vendors/select2/select2.min.css">
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/modal.css" />
     <link rel="stylesheet" href="./css/style(v2).css">
   </head>
 
@@ -135,286 +136,120 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
             <div class="row">
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <h4 class="card-title">Add Students Details</h4>\
-                      <a href="import-file.php" class="add-btn"
-                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none;">
-                        <span style="font-size: 18px; margin-top: -2px;">📥</span> Import
-                      </a>
-                    </div>
-                    <hr />
-                    <?php if ($success_message): ?>
-                      <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 40px;">
-                        <div class="toast" id="successToast"
-                          style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;" data-delay="3000"
-                          data-autohide="true">
-                          <div class="toast-header bg-success text-white">
-                            <strong class="mr-auto">Success</strong>
-                            <small>Now</small>
-                            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast"
-                              aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="toast-body"><?php echo $success_message; ?></div>
+                  <form class="forms-sample" method="post" id="addStudentForm">
+                    <div class="add-student-form-container">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <h2>Student Registration Form</h2>
+                      </div>
+                      <p class="form-description">Fill the form below to add a new student.</p>
+
+                      <!-- Progress Bar -->
+                      <div class="add-student-progress-bar">
+                        <div class="step active" data-step="1"><div class="step-icon">1</div><div class="step-label">Personal</div></div>
+                        <div class="step" data-step="2"><div class="step-icon">2</div><div class="step-label">Academic</div></div>
+                        <div class="step" data-step="3"><div class="step-icon">3</div><div class="step-label">Contact</div></div>
+                        <div class="step" data-step="4"><div class="step-icon">4</div><div class="step-label">Emergency</div></div>
+                        <div class="step" data-step="5"><div class="step-icon">5</div><div class="step-label">Account</div></div>
+                      </div>
+
+                      <!-- Step 1: Personal Information -->
+                      <div class="form-step active" data-step="1">
+                        <div class="add-student-section-title">Personal Information</div>
+                        <div class="add-student-form-grid">
+                          <div class="add-student-input-group"><label>Student ID</label><div class="add-student-input-wrapper"><input type="text" name="stuid" required placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410"></div></div>
+                          <div class="add-student-input-group"><label>Family Name</label><div class="add-student-input-wrapper"><input type="text" name="familyname" required></div></div>
+                          <div class="add-student-input-group"><label>First Name</label><div class="add-student-input-wrapper"><input type="text" name="firstname" required></div></div>
+                          <div class="add-student-input-group"><label>Middle Name</label><div class="add-student-input-wrapper"><input type="text" name="middlename"></div></div>
+                          <div class="add-student-input-group"><label>Date of Birth</label><div class="add-student-input-wrapper"><input type="date" name="dob" required></div></div>
+                          <div class="add-student-input-group"><label>Place of Birth</label><div class="add-student-input-wrapper"><input type="text" name="placeofbirth"></div></div>
+                          <div class="add-student-input-group"><label>Gender</label><div class="add-student-input-wrapper"><select name="gender" id="gender" required onchange="toggleOtherGenderInput()"><option value="">Select Gender</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div></div>
+                          <div class="add-student-input-group" id="otherGenderInput" style="display: none;"><label>Please Specify Gender</label><div class="add-student-input-wrapper"><input type="text" name="otherGender" id="otherGender"></div></div>
+                          <div class="add-student-input-group"><label>Civil Status</label><div class="add-student-input-wrapper"><select name="civilstatus"><option value="">Select Status</option><option value="Single">Single</option><option value="Married">Married</option><option value="Divorced">Divorced</option><option value="Widowed">Widowed</option><option value="Separated">Separated</option></select></div></div>
+                          <div class="add-student-input-group"><label>Religion</label><div class="add-student-input-wrapper"><input type="text" name="religion"></div></div>
+                          <div class="add-student-input-group"><label>Height (cm)</label><div class="add-student-input-wrapper"><input type="text" name="height"></div></div>
+                          <div class="add-student-input-group"><label>Weight (kg)</label><div class="add-student-input-wrapper"><input type="text" name="weight"></div></div>
+                          <div class="add-student-input-group"><label>Citizenship</label><div class="add-student-input-wrapper"><input type="text" name="citizenship"></div></div>
+                          <div class="add-student-input-group"><label>Father's Name</label><div class="add-student-input-wrapper"><input type="text" name="fathersname"></div></div>
+                          <div class="add-student-input-group"><label>Mother's Maiden Name</label><div class="add-student-input-wrapper"><input type="text" name="mothersmaidenname"></div></div>
                         </div>
                       </div>
-                      <script>
-                        window.addEventListener('DOMContentLoaded', function () {
-                          var toastEl = document.getElementById('successToast');
-                          if (toastEl && window.$) {
-                            $(toastEl).toast('show');
-                          } else if (toastEl && typeof bootstrap !== "undefined") {
-                            var toast = new bootstrap.Toast(toastEl);
-                            toast.show();
-                          }
-                        });
-                      </script>
-                    <?php elseif ($error_message): ?>
-                      <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 40px;">
-                        <div class="toast" id="errorToast"
-                          style="position: absolute; top: 0; right: 0; min-width: 250px; z-index: 1050;" data-delay="4000"
-                          data-autohide="true">
-                          <div class="toast-header bg-danger text-white">
-                            <strong class="mr-auto">Error</strong>
-                            <small>Now</small>
-                            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast"
-                              aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="toast-body"><?php echo $error_message; ?></div>
+
+                      <!-- Step 2: Academic Details -->
+                      <div class="form-step" data-step="2">
+                        <div class="add-student-section-title">Academic Details</div>
+                        <div class="add-student-form-grid">
+                          <div class="add-student-input-group"><label>Program</label><div class="add-student-input-wrapper"><select name="program" id="program" required onchange="updateMajors()"><option value="">Select Program</option><option value="Bachelor of Elementary Education (BEEd)">Bachelor of Elementary Education (BEEd)</option><option value="Bachelor of Secondary Education (BSEd)">Bachelor of Secondary Education (BSEd)</option><option value="Bachelor of Science in Business Administration (BSBA)">Bachelor of Science in Business Administration (BSBA)</option><option value="Bachelor of Industrial Technology (BindTech)">Bachelor of Industrial Technology (BindTech)</option><option value="Bachelor of Science in Information Technology (BSIT)">Bachelor of Science in Information Technology (BSIT)</option></select></div></div>
+                          <div class="add-student-input-group"><label>Major</label><div class="add-student-input-wrapper"><select name="major" id="major"><option value="">Select Major</option></select></div></div>
+                          <div class="add-student-input-group"><label>Year Level</label><div class="add-student-input-wrapper"><select name="yearlevel" required><option value="">Select Year Level</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div></div>
+                          <div class="add-student-input-group"><label>Learner's Reference No. (LRN)</label><div class="add-student-input-wrapper"><input type="text" name="lrn"></div></div>
+                          <div class="add-student-input-group"><label>Category</label><div class="add-student-input-wrapper"><select name="category" required><option value="">Select Category</option><option value="New Freshman">New Freshman</option><option value="Continuing/Returnee">Continuing/Returnee</option><option value="Shiftee">Shiftee</option><option value="Second Degree">Second Degree</option><option value="Regular">Regular</option><option value="Irregular">Irregular</option></select></div></div>
                         </div>
                       </div>
-                      <script>
-                        window.addEventListener('DOMContentLoaded', function () {
-                          var toastEl = document.getElementById('errorToast');
-                          if (toastEl && window.$) {
-                            $(toastEl).toast('show');
-                          } else if (toastEl && typeof bootstrap !== "undefined") {
-                            var toast = new bootstrap.Toast(toastEl);
-                            toast.show();
-                          }
-                        });
-                      </script>
-                    <?php endif; ?>
-                    <form class="forms-sample" method="post">
-                      <div class="row">
-                        <div class="col-6">
-                          <h4>Student Details</h4>
-                          <hr />
-                          <div class="form-group">
-                            <label for="stuid">Student ID</label>
-                            <input type="text" name="stuid" class="form-control" required placeholder="e.g., 222 - 08410"
-                              pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410"
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="familyname">Family Name</label>
-                            <input type="text" name="familyname" class="form-control" required
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="firstname">First Name</label>
-                            <input type="text" name="firstname" class="form-control" required
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="middlename">Middle Name</label>
-                            <input type="text" name="middlename" class="form-control" style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="program">Program</label>
-                            <select name="program" id="program" class="form-control" required onchange="updateMajors()">
-                              <option value="">Select Program</option>
-                              <option value="Bachelor of Elementary Education (BEEd)">Bachelor of Elementary Education
-                                (BEEd)</option>
-                              <option value="Bachelor of Secondary Education (BSEd)">Bachelor of Secondary Education
-                                (BSEd)</option>
-                              <option value="Bachelor of Science in Business Administration (BSBA)">Bachelor of Science in
-                                Business Administration (BSBA)</option>
-                              <option value="Bachelor of Industrial Technology (BindTech)">Bachelor of Industrial
-                                Technology (BindTech)</option>
-                              <option value="Bachelor of Science in Information Technology (BSIT)">Bachelor of Science in
-                                Information Technology (BSIT)</option>
-                            </select>
-                          </div>
-                          <div class="form-group">
-                            <label for="major">Major</label>
-                            <select name="major" id="major" class="form-control" style="text-transform: capitalize;">
-                              <option value="">Select Major</option>
-                            </select>
-                          </div>
-                          <div class="form-group">
-                            <label for="lrn">Learner's Reference No.</label>
-                            <input type="text" name="lrn" class="form-control">
-                          </div>
-                          <div class="form-group">
-                            <label for="dob">Date of Birth</label>
-                            <input type="date" name="dob" class="form-control" required>
-                          </div>
-                          <div class="form-group">
-                            <label for="placeofbirth">Place of Birth</label>
-                            <input type="text" name="placeofbirth" class="form-control"
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="gender">Gender</label>
-                            <select name="gender" id="gender" class="form-control" required
-                              onchange="toggleOtherGenderInput()">
-                              <option value="">Select Gender</option>
-                              <option value="Male">Male</option>
-                              <option value="Female">Female</option>
-                              <option value="Other">Other</option>
-                            </select>
-                          </div>
-                          <div class="form-group" id="otherGenderInput" style="display: none;">
-                            <label>Please Specify</label>
-                            <input type="text" name="otherGender" id="otherGender" class="form-control"
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="civilstatus">Civil Status</label>
-                            <select name="civilstatus" class="form-control">
-                              <option value="">Select Status</option>
-                              <option value="Single">Single</option>
-                              <option value="Married">Married</option>
-                              <option value="Divorced">Divorced</option>
-                              <option value="Widowed">Widowed</option>
-                              <option value="Separated">Separated</option>
-                            </select>
-                          </div>
-                          <div class="form-group">
-                            <label for="religion">Religion</label>
-                            <input type="text" name="religion" class="form-control" style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="height">Height</label>
-                            <input type="number" name="height" class="form-control">
-                          </div>
-                          <div class="form-group">
-                            <label for="weight">Weight (kg)</label>
-                            <input type="text" name="weight" class="form-control">
-                          </div>
-                          <div class="form-group">
-                            <label for="citizenship">Citizenship</label>
-                            <input type="text" name="citizenship" class="form-control">
-                          </div>
-                        </div>
-                        <div class="col-6">
-                          <h4>Contact Details</h4>
-                          <hr />
-                          <div class="form-group">
-                            <label for="fathersname">Father's Name</label>
-                            <input type="text" name="fathersname" class="form-control"
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="mothersmaidenname">Mother's Maiden Name</label>
-                            <input type="text" name="mothersmaidenname" class="form-control"
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="buildinghouse">Building/House Number</label>
-                            <input type="text" name="buildinghouse" class="form-control"
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="streetname">Street Name</label>
-                            <input type="text" name="streetname" class="form-control" style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="barangay">Barangay</label>
-                            <input type="text" name="barangay" class="form-control" style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="citymunicipality">City/Municipality</label>
-                            <div id="city-municipality-container">
-                              <input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control"
-                                style="text-transform: capitalize;">
+
+                      <!-- Step 3: Contact & Address -->
+                      <div class="form-step" data-step="3">
+                        <div class="add-student-section-title">Contact & Address</div>
+                        <div class="add-student-form-grid">
+                          <div class="add-student-input-group"><label>Email Address</label><div class="add-student-input-wrapper"><input type="email" name="emailaddress" required></div></div>
+                          <div class="add-student-input-group"><label>Contact Number</label><div class="add-student-input-wrapper"><input type="text" name="contactnumber" required></div></div>
+                          <div class="add-student-input-group"><label>Building/House Number</label><div class="add-student-input-wrapper"><input type="text" name="buildinghouse"></div></div>
+                          <div class="add-student-input-group"><label>Street Name</label><div class="add-student-input-wrapper"><input type="text" name="streetname"></div></div>
+                          <div class="add-student-input-group"><label>Barangay</label><div class="add-student-input-wrapper"><input type="text" name="barangay"></div></div>
+                          <div class="add-student-input-group">
+                            <label>Province</label>
+                            <div class="add-student-input-wrapper">
+                              <select name="province" class="province-select">
+                                  <option value="">Select Province</option>
+                                  <?php
+                                  $provincesJson = file_get_contents('../data/provinces.json');
+                                  $provinces = json_decode($provincesJson, true);
+                                  if (is_array($provinces)) {
+                                      foreach ($provinces as $province) {
+                                          echo "<option value=\"" . htmlspecialchars($province) . "\">" . htmlspecialchars($province) . "</option>";
+                                      }
+                                  }
+                                  ?>
+                              </select>
                             </div>
                           </div>
-                          <div class="form-group">
-                            <label for="province">Province</label>
-                            <select name="province" class="form-control province-select"
-                              style="text-transform: capitalize;">
-                              <option value="">Select Province</option>
-                              <?php
-                              $provincesJson = file_get_contents('../data/provinces.json');
-                              $provinces = json_decode($provincesJson, true);
-                              if (is_array($provinces)) {
-                                foreach ($provinces as $province) {
-                                  echo "<option value=\"" . htmlspecialchars($province) . "\">" . htmlspecialchars($province) . "</option>";
-                                }
-                              }
-                              ?>
-                            </select>
+                          <div class="add-student-input-group">
+                              <label>City/Municipality</label>
+                              <div class="add-student-input-wrapper" id="city-municipality-container">
+                                  <input type="text" name="citymunicipality" id="citymunicipality-text">
+                              </div>
                           </div>
-                          <div class="form-group">
-                            <label for="postalcode">Postal Code</label>
-                            <input type="text" name="postalcode" class="form-control">
-                          </div>
-                          <div class="form-group">
-                            <label for="contactnumber">Contact Number</label>
-                            <input type="text" name="contactnumber" class="form-control" required>
-                          </div>
-                          <div class="form-group">
-                            <label for="emailaddress">Email Address</label>
-                            <input type="email" name="emailaddress" class="form-control" required>
-                          </div>
-                          <div class="form-group">
-                            <label for="emergencycontactperson">Emergency Contact Person</label>
-                            <input type="text" name="emergencycontactperson" class="form-control"
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="emergencyrelationship">Emergency Relationship</label>
-                            <input type="text" name="emergencyrelationship" class="form-control"
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="emergencycontactnumber">Emergency Contact Number</label>
-                            <input type="text" name="emergencycontactnumber" class="form-control"
-                              style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label for="emergencyaddress">Emergency Address</label>
-                            <textarea name="emergencyaddress" class="form-control"
-                              style="text-transform: capitalize;"></textarea>
-                          </div>
-                          <div class="form-group">
-                            <label for="category">Category</label>
-                            <select name="category" class="form-control" required>
-                              <option value="">Select Category</option>
-                              <option value="New Freshman">New Freshman</option>
-                              <option value="Continuing/Returnee">Continuing/Returnee</option>
-                              <option value="Shiftee">Shiftee</option>
-                              <option value="Second Degree">Second Degree</option>
-                              <option value="Regular">Regular</option>
-                              <option value="Irregular">Irregular</option>
-                            </select>
-                          </div>
-                          <div class="form-group">
-                            <label for="yearlevel">Year Level</label>
-                            <select name="yearlevel" class="form-control" required>
-                              <option value="">Select Year Level</option>
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                            </select>
-                          </div>
-                          <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" name="password" class="form-control" required>
-                          </div>
+                          <div class="add-student-input-group"><label>Postal Code</label><div class="add-student-input-wrapper"><input type="text" name="postalcode"></div></div>
                         </div>
                       </div>
-                      <button type="submit" class="btn btn-primary" name="submit">Add Student</button>
-                      <a href="manage-students.php" class="btn btn-light">Back</a>
-                    </form>
-                  </div>
+
+                      <!-- Step 4: Emergency Contact -->
+                      <div class="form-step" data-step="4">
+                        <div class="add-student-section-title">Emergency Contact</div>
+                        <div class="add-student-form-grid">
+                          <div class="add-student-input-group"><label>Full Name</label><div class="add-student-input-wrapper"><input type="text" name="emergencycontactperson"></div></div>
+                          <div class="add-student-input-group"><label>Relationship</label><div class="add-student-input-wrapper"><input type="text" name="emergencyrelationship"></div></div>
+                          <div class="add-student-input-group"><label>Phone Number</label><div class="add-student-input-wrapper"><input type="text" name="emergencycontactnumber"></div></div>
+                          <div class="add-student-input-group"><label>Address</label><div class="add-student-input-wrapper"><textarea name="emergencyaddress"></textarea></div></div>
+                        </div>
+                      </div>
+
+                      <!-- Step 5: Account -->
+                      <div class="form-step" data-step="5">
+                        <div class="add-student-section-title">Account</div>
+                        <div class="add-student-form-grid">
+                          <div class="add-student-input-group"><label>Password</label><div class="add-student-input-wrapper"><input type="password" name="password" required></div></div>
+                        </div>
+                      </div>
+
+                      <!-- Navigation Buttons -->
+                      <div class="form-navigation-buttons">
+                        <button type="button" class="btn btn-light btn-prev" style="display: none;">Previous</button>
+                        <button type="button" class="btn btn-primary btn-next">Next</button>
+                        <button type="submit" class="add-student-btn-submit" name="submit" style="display: none;">Add Student</button>
+                      </div>
+
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -428,6 +263,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/toast.js"></script>
+    <script src="js/manage-student.js"></script>
     <script src="js/manage-student.js"></script>
   </body>
 

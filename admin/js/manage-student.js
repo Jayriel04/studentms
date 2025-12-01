@@ -103,3 +103,57 @@ if (window.jQuery) {
         updateMajors(currentMajor || '');
     });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const multiStepForm = document.querySelector('#addStudentForm');
+    if (!multiStepForm) return;
+
+    const steps = Array.from(multiStepForm.querySelectorAll('.form-step'));
+    const progressBarSteps = Array.from(multiStepForm.querySelectorAll('.add-student-progress-bar .step'));
+    const nextBtn = multiStepForm.querySelector('.btn-next');
+    const prevBtn = multiStepForm.querySelector('.btn-prev');
+    const submitBtn = multiStepForm.querySelector('.add-student-btn-submit');
+
+    let currentStep = 1;
+
+    const updateFormSteps = () => {
+        steps.forEach(step => {
+            step.classList.toggle('active', parseInt(step.dataset.step) === currentStep);
+        });
+    };
+
+    const updateProgressBar = () => {
+        progressBarSteps.forEach((step, index) => {
+            if (index < currentStep) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        });
+    };
+
+    const updateButtons = () => {
+        prevBtn.style.display = currentStep > 1 ? 'inline-block' : 'none';
+        nextBtn.style.display = currentStep < steps.length ? 'inline-block' : 'none';
+        submitBtn.style.display = currentStep === steps.length ? 'inline-block' : 'none';
+    };
+
+    nextBtn.addEventListener('click', () => {
+        if (currentStep < steps.length) {
+            currentStep++;
+            updateFormSteps();
+            updateProgressBar();
+            updateButtons();
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+            currentStep--;
+            updateFormSteps();
+            updateProgressBar();
+            updateButtons();
+        }
+    });
+
+});

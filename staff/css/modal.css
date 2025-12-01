@@ -372,3 +372,175 @@
 div.nicEdit-main {
     background-color: white !important;
 }
+
+/* Styles for Add Student Page */
+.add-student-form-container {
+    width: 100%;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+}
+
+.add-student-form-container h2 {
+    font-weight: 300;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.add-student-form-container p.form-description {
+    margin-top: 0;
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.add-student-section-title {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #999;
+    font-weight: 600;
+}
+
+.add-student-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.add-student-input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-student-input-group label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.add-student-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    background: #fafafa;
+    padding: 10px 12px;
+    transition: all 0.2s ease-in-out;
+}
+
+.add-student-input-wrapper:hover,
+.add-student-input-wrapper:focus-within {
+    border-color: #37a9ff;
+    background: #f0f8ff;
+}
+
+.add-student-input-wrapper input,
+.add-student-input-wrapper select,
+.add-student-input-wrapper textarea {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+    font-size: 14px;
+    color: #444;
+}
+
+.add-student-input-wrapper textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.add-student-btn-submit {
+    display: block;
+    width: 200px;
+    margin-top: 40px;
+    padding: 12px;
+    background: #37a9ff;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s ease-in-out;
+}
+
+.add-student-btn-submit:hover {
+    background: #208be0;
+}
+
+/* Multi-step form progress bar */
+.add-student-progress-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.add-student-progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 4px;
+    width: 100%;
+    background-color: #d8d8d8;
+    z-index: 1;
+}
+
+.add-student-progress-bar .step {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    width: 150px; /* Adjust as needed */
+}
+
+.add-student-progress-bar .step .step-icon {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: #d8d8d8;
+    margin: 0 auto 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.add-student-progress-bar .step.active .step-icon {
+    background-color: #37a9ff;
+}
+
+.add-student-progress-bar .step.active {
+    color: #37a9ff;
+    font-weight: 600;
+}
+
+/* Form step styling */
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.form-navigation-buttons {
+    margin-top: 40px;
+    text-align: right;
+}
