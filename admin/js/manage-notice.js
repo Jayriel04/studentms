@@ -11,14 +11,17 @@
     if (data.edit_error_message) toastr.error(data.edit_error_message);
   }
 
-  function showModalById(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    if (window.$) { $('#' + id).modal('show'); }
-    else if (typeof bootstrap !== "undefined") {
-      var modal = new bootstrap.Modal(el);
-      modal.show();
-    }
+  // Helpers for new modal
+  function openModal(modalId) {
+    var overlay = document.getElementById(modalId);
+    if (overlay) overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(modalId) {
+    var overlay = document.getElementById(modalId);
+    if (overlay) overlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -32,7 +35,7 @@
 
     // Open add modal if server reported add error
     if (data.openAddModal) {
-      showModalById('addNoticeModal');
+      openModal('addNoticeModalOverlay');
     }
 
     // Reopen edit modal and populate fields if server requested it
@@ -42,7 +45,7 @@
         document.getElementById('edit_nottitle_modal').value = data.editPost.title || '';
         document.getElementById('edit_notmsg_modal').value = data.editPost.msg || '';
       } catch (e) { /* ignore */ }
-      showModalById('editNoticeModal');
+      openModal('editNoticeModalOverlay');
     }
 
     // Wire edit buttons to populate and open modal
@@ -59,7 +62,31 @@
           document.getElementById('edit_notmsg_modal').value = msg;
         } catch (e) { /* ignore */ }
 
-        showModalById('editNoticeModal');
+        openModal('editNoticeModalOverlay');
+      });
+    });
+
+    // Event listeners for the new add notice modal
+    var openAddBtn = document.querySelector('[data-target="#addNoticeModal"]');
+    if (openAddBtn) {
+      openAddBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        openModal('addNoticeModalOverlay');
+      });
+    }
+
+    var closeBtns = document.querySelectorAll('#addNoticeModalOverlay .new-close-btn, #addNoticeModalOverlay .new-btn-cancel');
+    closeBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        closeModal('addNoticeModalOverlay');
+      });
+    });
+
+    // Event listeners for the new edit notice modal
+    var closeEditBtns = document.querySelectorAll('#editNoticeModalOverlay .new-close-btn, #editNoticeModalOverlay .new-btn-cancel');
+    closeEditBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        closeModal('editNoticeModalOverlay');
       });
     });
   });

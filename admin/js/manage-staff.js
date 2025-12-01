@@ -13,20 +13,22 @@
   }
 
   // Helpers to show bootstrap/jQuery modal
-  function showModalById(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    if (window.$) { $('#' + id).modal('show'); }
-    else if (typeof bootstrap !== "undefined") {
-      var modal = new bootstrap.Modal(el);
-      modal.show();
-    }
+  function openModal(modalId) {
+    var overlay = document.getElementById(modalId);
+    if (overlay) overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(modalId) {
+    var overlay = document.getElementById(modalId);
+    if (overlay) overlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
   }
 
   // If there was an error adding staff, open the add modal
   if (data.openAddModal) {
     window.addEventListener('DOMContentLoaded', function () {
-      showModalById('addStaffModal');
+      openModal('addStaffModalOverlay');
     });
   }
 
@@ -38,11 +40,11 @@
         try {
           document.getElementById('edit_id').value = data.editPost.id || '';
           document.getElementById('edit_name').value = data.editPost.name || '';
-          document.getElementById('edit_username').value = data.editPost.username || '';
+          document.getElementById('edit_username').value = data.editPost.username || ''; // This ID is correct
           document.getElementById('edit_email').value = data.editPost.email || '';
           document.getElementById('edit_regdate').value = data.editPost.regdate || '';
         } catch (e) { /* ignore missing fields */ }
-        showModalById('editStaffModal');
+        $('#editStaffModal').modal('show'); // Keep bootstrap for edit modal
       } else {
         // attempt jQuery fallback
         if (window.$) {
@@ -50,7 +52,7 @@
             $('#edit_id').val(data.editPost.id || '');
             $('#edit_name').val(data.editPost.name || '');
             $('#edit_username').val(data.editPost.username || '');
-            $('#edit_email').val(data.editPost.email || '');
+            $('#edit_email').val(data.editPost.email || ''); // This ID is correct
             $('#edit_regdate').val(data.editPost.regdate || '');
             $('#editStaffModal').modal('show');
           } catch (e) { /* ignore */ }
@@ -61,7 +63,7 @@
 
   // Toggle password visibility for add modal
   (function () {
-    var toggle = document.getElementById('toggleAddPassword');
+    var toggle = document.querySelector('#toggleAddPassword');
     var pwd = document.getElementById('add_password');
     if (!toggle || !pwd) return;
     toggle.addEventListener('click', function () {
@@ -77,7 +79,7 @@
 
   // Toggle password visibility for edit modal
   (function () {
-    var toggle = document.getElementById('toggleEditPassword');
+    var toggle = document.querySelector('#toggleEditPassword');
     var pwd = document.getElementById('edit_password');
     if (!toggle || !pwd) return;
     toggle.addEventListener('click', function () {
@@ -109,15 +111,36 @@
           document.getElementById('edit_email').value = email;
           document.getElementById('edit_regdate').value = regdate;
           document.getElementById('edit_password').value = '';
-        } catch (e) { /* ignore */ }
+        } catch (e) { /* ignore */ }        openModal('editStaffModalOverlay');
+      });
+    });
+  });
 
-        if (window.$) {
-          $('#' + 'editStaffModal').modal('show');
-        } else if (typeof bootstrap !== "undefined") {
-          var modalEl = document.getElementById('editStaffModal');
-          var modal = new bootstrap.Modal(modalEl);
-          modal.show();
-        }
+  // Event listeners for the new add modal
+  document.addEventListener('DOMContentLoaded', function () {
+    var addModalOverlay = document.getElementById('addStaffModalOverlay');
+    var openAddBtn = document.querySelector('[data-target="#addStaffModal"]');
+    var closeBtns = document.querySelectorAll('.new-close-btn, .new-btn-cancel');
+
+    if (openAddBtn) {
+      openAddBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        openModal('addStaffModalOverlay');
+      });
+    }
+
+    closeBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        closeModal('addStaffModalOverlay');
+      });
+    });
+  });
+  // Event listeners for the new edit modal
+  document.addEventListener('DOMContentLoaded', function () {
+    var closeBtns = document.querySelectorAll('#editStaffModalOverlay .new-close-btn, #editStaffModalOverlay .new-btn-cancel');
+    closeBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        closeModal('editStaffModalOverlay');
       });
     });
   });

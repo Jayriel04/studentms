@@ -136,6 +136,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="./css/modal.css">
   </head>
 
   <body>
@@ -147,7 +148,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Manage Staff</h3>
-              <button type="button" class="add-btn" data-toggle="modal" data-target="#addStaffModal">
+              <button type="button" class="add-btn" data-target="#addStaffModal">
                 + Add New Staff
               </button>
             </div>
@@ -174,93 +175,81 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   </div>
 
                   <!-- Add Staff Modal -->
-                  <div class="modal fade" id="addStaffModal" tabindex="-1" role="dialog"
-                    aria-labelledby="addStaffModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <form method="post" id="addStaffForm">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="addStaffModalLabel">Add Staff</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                            <div class="form-group">
-                              <label for="staffname">Staff Name</label>
-                              <input type="text" name="staffname" class="form-control" required='true'
-                                style="text-transform: capitalize;">
-                            </div>
-                            <div class="form-group">
-                              <label for="username">User Name</label>
-                              <input type="text" name="username" class="form-control" required='true'>
-                            </div>
-                            <div class="form-group">
-                              <label for="email">Email</label>
-                              <input type="email" name="email" class="form-control" required='true'>
-                            </div>
-                            <div class="form-group" style="position: relative;">
-                              <label for="password">Password</label>
-                              <input type="password" id="add_password" name="password" class="form-control"
-                                required='true'>
-                              <i class="icon-eye" id="toggleAddPassword"
-                                style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
-                            </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" name="add_staff">Add</button>
-                          </div>
-                        </form>
+                  <div class="new-modal-overlay" id="addStaffModalOverlay"> <div class="new-modal">
+                      <div class="new-modal-header">
+                          <h2 class="new-modal-title">Add New Staff</h2>
+                          <button type="button" class="new-close-btn">&times;</button>
                       </div>
-                    </div>
-                  </div>
+                      <form method="post" id="addStaffForm">
+                          <div class="new-form-group">
+                              <label for="staffname" class="new-form-label">Staff Name</label>
+                              <input type="text" name="staffname" class="new-form-input" required='true'
+                                  style="text-transform: capitalize;" placeholder="Enter staff name">
+                          </div>
+                          <div class="new-form-group">
+                              <label for="username" class="new-form-label">User Name</label>
+                              <input type="text" name="username" class="new-form-input" required='true' placeholder="Enter username">
+                          </div>
+                          <div class="new-form-group">
+                              <label for="email" class="new-form-label">Email</label>
+                              <input type="email" name="email" class="new-form-input" required='true' placeholder="example@email.com">
+                          </div>
+                          <div class="new-form-group">
+                              <label for="password" class="new-form-label">Password</label>
+                              <div class="new-form-input-wrapper">
+                                  <input type="password" id="add_password" name="password" class="new-form-input"
+                                      required='true' placeholder="Enter password">
+                                  <i class="icon-eye" id="toggleAddPassword"></i>
+                              </div>
+                          </div>
 
-                  <!-- Edit Staff Modal -->
-                  <div class="modal fade" id="editStaffModal" tabindex="-1" role="dialog"
-                    aria-labelledby="editStaffModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <form method="post" id="editStaffForm">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="editStaffModalLabel">Edit Staff</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
+                          <div class="new-modal-footer">
+                              <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+                              <button type="submit" class="new-btn new-btn-submit" name="add_staff">Add Staff</button>
                           </div>
-                          <div class="modal-body">
+                      </form>
+                  </div> </div>
+                  <!-- Edit Staff Modal -->
+                  <div class="new-modal-overlay" id="editStaffModalOverlay">
+                    <div class="new-modal">
+                        <div class="new-modal-header">
+                            <h2 class="new-modal-title">Edit Staff</h2>
+                            <button type="button" class="new-close-btn">&times;</button>
+                        </div>
+                        <form method="post" id="editStaffForm">
+                          <div class="new-modal-body">
                             <input type="hidden" name="edit_id" id="edit_id">
-                            <div class="form-group">
-                              <label for="edit_name">Staff Name</label>
-                              <input type="text" name="edit_name" id="edit_name" class="form-control" required
+                            <div class="new-form-group">
+                              <label for="edit_name" class="new-form-label">Staff Name</label>
+                              <input type="text" name="edit_name" id="edit_name" class="new-form-input" required
                                 style="text-transform: capitalize;">
                             </div>
-                            <div class="form-group">
-                              <label for="edit_username">User Name</label>
-                              <input type="text" name="edit_username" id="edit_username" class="form-control" required>
+                            <div class="new-form-group">
+                              <label for="edit_username" class="new-form-label">User Name</label>
+                              <input type="text" name="edit_username" id="edit_username" class="new-form-input" required>
                             </div>
-                            <div class="form-group">
-                              <label for="edit_email">Email</label>
-                              <input type="email" name="edit_email" id="edit_email" class="form-control" required>
+                            <div class="new-form-group">
+                              <label for="edit_email" class="new-form-label">Email</label>
+                              <input type="email" name="edit_email" id="edit_email" class="new-form-input" required>
                             </div>
-                            <div class="form-group" style="position: relative;">
-                              <label for="edit_password">Change Password</label>
-                              <input type="password" id="edit_password" name="edit_password" class="form-control"
+                            <div class="new-form-group">
+                              <label for="edit_password" class="new-form-label">Change Password</label>
+                              <div class="new-form-input-wrapper">
+                              <input type="password" id="edit_password" name="edit_password" class="new-form-input"
                                 placeholder="Leave blank to keep unchanged">
-                              <i class="icon-eye" id="toggleEditPassword"
-                                style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
+                                <i class="icon-eye" id="toggleEditPassword"></i>
+                              </div>
                             </div>
-                            <div class="form-group">
-                              <label for="edit_regdate">Staff Regdate</label>
-                              <input type="text" id="edit_regdate" class="form-control" readonly>
+                            <div class="new-form-group">
+                              <label for="edit_regdate" class="new-form-label">Staff Regdate</label>
+                              <input type="text" id="edit_regdate" class="new-form-input" readonly>
                             </div>
                           </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" name="edit_staff">Save changes</button>
+                          <div class="new-modal-footer">
+                            <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+                            <button type="submit" class="new-btn new-btn-submit" name="edit_staff">Save Changes</button>
                           </div>
                         </form>
-                      </div>
                     </div>
                   </div>
 

@@ -138,6 +138,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
+    <link rel="stylesheet" href="./css/modal.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   </head>
 
@@ -149,8 +150,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title">Manage Notice</h3>
-              <button type="button" class="add-btn" data-toggle="modal" data-target="#addNoticeModal" style="margin-right: 20px;">+ Add New
+              <h3 class="page-title">Manage Notice</h3> <button type="button" class="add-btn" data-target="#addNoticeModalOverlay" style="margin-right: 20px;">+ Add New
                 Notice</button>
             </div>
 
@@ -169,81 +169,59 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   </div>
 
                   <!-- Add Notice Modal -->
-                  <!-- ... (modal content remains the same) ... -->
-                  <div class="modal fade" id="addNoticeModal" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                      <div class="modal-content">
-                        <form method="post" id="addNoticeForm">
-                          <div class="modal-header">
-                            <h5 class="modal-title">Add Notice</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                          </div>
-                          <div class="modal-body">
-                            <?php if (!empty($add_success_message)): ?>
-                              <div class="alert alert-success"><?php echo htmlentities($add_success_message); ?></div>
-                            <?php endif; ?>
-                            <?php if (!empty($add_error_message)): ?>
-                              <div class="alert alert-danger"><?php echo htmlentities($add_error_message); ?></div>
-                            <?php endif; ?>
-
-                            <div class="form-group">
-                              <label>Notice Title</label>
-                              <input type="text" name="nottitle" id="nottitle_modal" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                              <label>Notice Message</label>
-                              <textarea name="notmsg" id="notmsg_modal" class="form-control" style="height:30vh;"
-                                required></textarea>
-                              <small class="text-muted">Use @FirstName LastName to mention students.</small>
-                            </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" name="add_notice">Add</button>
-                          </div>
-                        </form>
+                  <div class="new-modal-overlay" id="addNoticeModalOverlay">
+                    <div class="new-modal">
+                      <div class="new-modal-header">
+                        <h2 class="new-modal-title">Add New Notice</h2>
+                        <button type="button" class="new-close-btn">&times;</button>
                       </div>
+                      <form method="post" id="addNoticeForm">
+                        <div class="new-form-group">
+                          <label for="nottitle_modal" class="new-form-label">Notice Title</label>
+                          <input type="text" name="nottitle" id="nottitle_modal" class="new-form-input" required
+                            placeholder="Enter notice title">
+                        </div>
+                        <div class="new-form-group">
+                          <label for="notmsg_modal" class="new-form-label">Notice Message</label>
+                          <textarea name="notmsg" id="notmsg_modal" class="new-form-textarea" required
+                            placeholder="Enter notice details..."></textarea>
+                          <small class="text-muted">Use @FirstName LastName to mention students.</small>
+                        </div>
+
+                        <div class="new-modal-footer">
+                          <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+                          <button type="submit" class="new-btn new-btn-submit" name="add_notice">Add Notice</button>
+                        </div>
+                      </form>
                     </div>
                   </div>
 
                   <!-- Edit Notice Modal -->
-                  <div class="modal fade" id="editNoticeModal" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                      <div class="modal-content">
-                        <form method="post" id="editNoticeForm">
-                          <div class="modal-header">
-                            <h5 class="modal-title">Edit Notice</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                          </div>
-                          <div class="modal-body">
-                            <?php if (!empty($edit_success_message)): ?>
-                              <div class="alert alert-success"><?php echo htmlentities($edit_success_message); ?></div>
-                            <?php endif; ?>
-                            <?php if (!empty($edit_error_message)): ?>
-                              <div class="alert alert-danger"><?php echo htmlentities($edit_error_message); ?></div>
-                            <?php endif; ?>
-
-                            <input type="hidden" name="edit_id" id="edit_id_modal">
-                            <div class="form-group">
-                              <label>Notice Title</label>
-                              <input type="text" name="edit_nottitle" id="edit_nottitle_modal" class="form-control"
-                                required>
-                            </div>
-                            <div class="form-group">
-                              <label>Notice Message</label>
-                              <textarea name="edit_notmsg" id="edit_notmsg_modal" class="form-control"
-                                style="height:30vh;" required></textarea>
-                              <small class="text-muted">Use @FirstName LastName to mention students.</small>
-                            </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" name="edit_notice">Save changes</button>
-                          </div>
-                        </form>
+                  <div class="new-modal-overlay" id="editNoticeModalOverlay">
+                    <div class="new-modal">
+                      <div class="new-modal-header">
+                        <h2 class="new-modal-title">Edit Notice</h2>
+                        <button type="button" class="new-close-btn">&times;</button>
                       </div>
+                      <form method="post" id="editNoticeForm">
+                        <input type="hidden" name="edit_id" id="edit_id_modal">
+                        <div class="new-form-group">
+                          <label for="edit_nottitle_modal" class="new-form-label">Notice Title</label>
+                          <input type="text" name="edit_nottitle" id="edit_nottitle_modal" class="new-form-input" required
+                            placeholder="Enter notice title">
+                        </div>
+                        <div class="new-form-group">
+                          <label for="edit_notmsg_modal" class="new-form-label">Notice Message</label>
+                          <textarea name="edit_notmsg" id="edit_notmsg_modal" class="new-form-textarea" required
+                            placeholder="Enter notice details..."></textarea>
+                          <small class="text-muted">Use @FirstName LastName to mention students.</small>
+                        </div>
+
+                        <div class="new-modal-footer">
+                          <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+                          <button type="submit" class="new-btn new-btn-submit" name="edit_notice">Save Changes</button>
+                        </div>
+                      </form>
                     </div>
                   </div>
 
@@ -331,6 +309,22 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
           msg: <?php echo json_encode($_POST['edit_notmsg'] ?? ''); ?>
         }
       };
+    </script>
+
+    <script>
+      (function(){
+        const openBtn = document.querySelector('.add-btn');
+        const overlay = document.getElementById('addNoticeModalOverlay');
+        if (!overlay) return;
+        if (openBtn) openBtn.addEventListener('click', ()=> overlay.classList.add('active'));
+        const closeBtn = overlay.querySelector('.new-close-btn');
+        const cancelBtn = overlay.querySelector('.new-btn-cancel');
+        if (closeBtn) closeBtn.addEventListener('click', ()=> overlay.classList.remove('active'));
+        if (cancelBtn) cancelBtn.addEventListener('click', ()=> overlay.classList.remove('active'));
+        overlay.addEventListener('click', (e)=> { if (e.target === overlay) overlay.classList.remove('active'); });
+        // If server-side validation set openAddModal, open it on page load
+        if (window.mnData && window.mnData.openAddModal) overlay.classList.add('active');
+      })();
     </script>
 
     <script src="js/manage-notice.js"></script>
