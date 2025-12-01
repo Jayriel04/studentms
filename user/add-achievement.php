@@ -234,13 +234,6 @@ if (isset($_POST['add_achievement'])) {
         <div class="content-wrapper">
           <div class="page-header">
             <h3 class="page-title"> Add Achievement </h3>
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="../user/update-profile.php">My Profile</a></li>
-                <li class="breadcrumb-item active" aria-current="page"> Add Achievement</li>
-              </ol>
-            </nav>
           </div>
 
           <div class="row">
@@ -369,7 +362,6 @@ if (isset($_POST['add_achievement'])) {
             </div>
           </div>
         </div>
-        <?php include_once('includes/footer.php'); ?>
 
       </div>
     </div>

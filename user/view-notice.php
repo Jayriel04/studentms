@@ -30,12 +30,6 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">View Notice</h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">View Notice</li>
-                </ol>
-              </nav>
             </div>
             <div class="calendar-container">
               <div class="calendar-header">
@@ -125,7 +119,6 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
               </div>
             </div>
           </div>
-          <?php include_once('includes/footer.php'); ?>
         </div>
       </div>
     </div>

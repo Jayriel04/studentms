@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <a href="search.php" class="menu-item">
+    <a href="search.php" class="menu-item <?php echo ($current_page == 'search.php') ? 'active' : ''; ?>">
       <span class="menu-item-icon">🔍</span>
       <span class="menu-item-text">Search</span>
     </a>

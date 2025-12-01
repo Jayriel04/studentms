@@ -29,6 +29,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <link rel="stylesheet" href="vendors/select2/select2.min.css">
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="./css/modal.css" />
     <link rel="stylesheet" href="./css/style(v2).css">
     <script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
     <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
@@ -43,42 +44,32 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">Update About Us</h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Update About Us</li>
-                </ol>
-              </nav>
             </div>
             <div class="row">
-              <div class="col-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title" style="text-align: center;">Update About Us</h4>
-                    <form class="forms-sample" method="post">
+              <div class="col-12">
+                <div class="form-card">
+                  <h1 class="form-title">Update About Us</h1>
+                    <form method="post">
                       <?php
                       $sql = "SELECT * FROM tblpage WHERE PageType='aboutus'";
                       $query = $dbh->prepare($sql);
                       $query->execute();
                       $results = $query->fetchAll(PDO::FETCH_OBJ);
                       if ($query->rowCount() > 0) {
-                        foreach ($results as $row) {
-                          ?>
+                        foreach ($results as $row) { ?>
                           <div class="form-group">
-                            <label for="exampleInputName1">Page Title:</label>
-                            <input type="text" name="pagetitle" value="<?php echo $row->PageTitle; ?>" class="form-control"
+                            <label class="form-label">Page Title:</label>
+                            <input type="text" name="pagetitle" value="<?php echo htmlentities($row->PageTitle); ?>" class="form-input"
                               required='true'>
                           </div>
                           <div class="form-group">
-                            <label for="exampleInputName1">Page Description:</label>
-                            <textarea type="text" name="pagedes" class="form-control"
-                              required='true'><?php echo $row->PageDescription; ?></textarea>
+                            <label class="form-label">Page Description:</label>
+                            <textarea name="pagedes" class="form-textarea" required='true' style="width: 100%;"><?php echo htmlentities($row->PageDescription); ?></textarea>
                           </div>
                         <?php }
                       } ?>
-                      <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
+                      <button type="submit" class="submit-btn" name="submit">Update</button>
                     </form>
-                  </div>
                 </div>
               </div>
             </div>

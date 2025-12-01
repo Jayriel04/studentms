@@ -5,17 +5,34 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
   header('location:logout.php');
 } else {
+  $success_message = '';
+  $error_message = '';
+
   if (isset($_POST['submit'])) {
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $address = $_POST['address'];
-    $sql = "UPDATE tblpage SET Email=:email, Phone=:phone, Address=:address WHERE PageType='contactus'";
+    $pagetitle = $_POST['pagetitle'] ?? '';
+    $pagedes = $_POST['pagedes'] ?? '';
+    $mobnum = $_POST['mobnum'] ?? '';
+    $email = $_POST['email'] ?? '';
+
+    // Only update the first found contact us page (by id)
+    $sql = "SELECT id FROM tblpage WHERE PageType='contactus' ORDER BY id ASC LIMIT 1";
     $query = $dbh->prepare($sql);
-    $query->bindParam(':email', $email, PDO::PARAM_STR);
-    $query->bindParam(':phone', $phone, PDO::PARAM_STR);
-    $query->bindParam(':address', $address, PDO::PARAM_STR);
     $query->execute();
-    echo '<script>if(window.showToast) showToast("Contact Us has been updated successfully.","success");</script>';
+    $result = $query->fetch(PDO::FETCH_OBJ);
+    if ($result) {
+      $contactus_id = $result->id;
+      $update_sql = "UPDATE tblpage SET PageTitle=:pagetitle, PageDescription=:pagedes, Email=:email, MobileNumber=:mobnum WHERE id=:id";
+      $update_query = $dbh->prepare($update_sql);
+      $update_query->bindParam(':pagetitle', $pagetitle, PDO::PARAM_STR);
+      $update_query->bindParam(':pagedes', $pagedes, PDO::PARAM_STR);
+      $update_query->bindParam(':email', $email, PDO::PARAM_STR);
+      $update_query->bindParam(':mobnum', $mobnum, PDO::PARAM_STR);
+      $update_query->bindParam(':id', $contactus_id, PDO::PARAM_INT);
+      $update_query->execute();
+      $success_message = "Contact us page has been updated successfully.";
+    } else {
+      $error_message = "No 'Contact Us' page found to update!";
+    }
   }
   ?>
   <!DOCTYPE html>
@@ -31,7 +48,10 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <link rel="stylesheet" href="vendors/select2/select2.min.css">
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="../admin/css/modal.css">
     <link rel="stylesheet" href="./css/style(v2).css">
+    <script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
+    <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
   </head>
 
   <body>
@@ -42,46 +62,53 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title">Update Contact Us</h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Update Contact Us</li>
-                </ol>
-              </nav>
+              <h3 class="page-title"> Update Contact Us </h3>
             </div>
             <div class="row">
-              <div class="col-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title" style="text-align: center;">Update Contact Us</h4>
-                    <form class="forms-sample" method="post">
-                      <?php
-                      $sql = "SELECT * FROM tblpage WHERE PageType='contactus'";
-                      $query = $dbh->prepare($sql);
-                      $query->execute();
-                      $results = $query->fetchAll(PDO::FETCH_OBJ);
-                      if ($query->rowCount() > 0) {
-                        foreach ($results as $row) {
-                          ?>
-                          <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" name="email" value="<?php echo htmlentities($row->Email); ?>"
-                              class="form-control" required='true'>
-                          </div>
-                          <div class="form-group">
-                            <label for="phone">Phone:</label>
-                            <input type="text" name="phone" value="<?php echo htmlentities($row->Phone); ?>"
-                              class="form-control" required='true'>
-                          </div>
-                          <div class="form-group">
-                            <label for="address">Address:</label>
-                            <textarea name="address" class="form-control"
-                              required='true'><?php echo htmlentities($row->Address); ?></textarea>
-                          </div>
-                        <?php }
-                      } ?>
-                      <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
+              <div class="col-12">
+                <div class="form-card">
+                  <?php if (!empty($success_message)): ?>
+                    <div class="alert alert-success">
+                      <?php echo htmlentities($success_message); ?>
+                    </div>
+                  <?php endif; ?>
+                  <?php if (!empty($error_message)): ?>
+                    <div class="alert alert-danger"><?php echo htmlentities($error_message); ?></div>
+                  <?php endif; ?>
+                  <h1 class="form-title">Update Contact Us</h1>
+                  <form method="post">
+                    <?php
+                    // Only fetch the first found contact us page (by id)
+                    $sql = "SELECT * FROM tblpage WHERE PageType='contactus' ORDER BY id ASC LIMIT 1";
+                    $query = $dbh->prepare($sql);
+                    $query->execute();
+                    $row = $query->fetch(PDO::FETCH_OBJ);
+                    if ($row) { ?>
+                      <div class="form-group">
+                        <label class="form-label">Page Title:</label>
+                        <input type="text" name="pagetitle" value="<?php echo htmlspecialchars($row->PageTitle); ?>"
+                          class="form-input" required>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Page Description:</label>
+                        <textarea name="pagedes" class="form-textarea"
+                          required><?php echo htmlspecialchars($row->PageDescription); ?></textarea>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Email:</label>
+                        <input type="text" name="email" id="email" required
+                          value="<?php echo htmlspecialchars($row->Email); ?>" class="form-input">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Mobile Number:</label>
+                        <input type="text" name="mobnum" id="mobnum" required
+                          value="<?php echo htmlspecialchars($row->MobileNumber); ?>" class="form-input" maxlength="10"
+                          pattern="[0-9]+">
+                      </div>
+                    <?php } else { ?>
+                      <div class="alert alert-warning">No Contact Us page found!</div>
+                    <?php } ?>
+                    <button type="submit" class="submit-btn" name="submit">Update</button>
                     </form>
                   </div>
                 </div>
@@ -96,10 +123,9 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script src="js/toast.js"></script>
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
-    <script src="js/toast.js"></script>
   </body>
 
-  </html>
-<?php } ?>
+  </html><?php } ?>

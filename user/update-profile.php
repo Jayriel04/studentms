@@ -549,8 +549,6 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
               </div>
             </div>
           </div>
-          <!-- Achievement is now a separate page: user/add-achievement.php -->
-          <?php include_once('includes/footer.php'); ?>
         </div>
       </div>
     </div>

@@ -46,6 +46,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="vendors/select2/select2.min.css">
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="./css/modal.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
     <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
@@ -60,59 +61,52 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title"> Update Contact Us </h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> Update Contact Us</li>
-                </ol>
-              </nav>
             </div>
             <div class="row">
-              <div class="col-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <?php if (!empty($success_message)): ?>
-                      <div class="alert alert-success">
-                        <?php echo htmlentities($success_message); ?>
+              <div class="col-12">
+                <div class="form-card">
+                  <?php if (!empty($success_message)): ?>
+                    <div class="alert alert-success">
+                      <?php echo htmlentities($success_message); ?>
+                    </div>
+                  <?php endif; ?>
+                  <?php if (!empty($error_message)): ?>
+                    <div class="alert alert-danger"><?php echo htmlentities($error_message); ?></div>
+                  <?php endif; ?>
+                  <h1 class="form-title">Update Contact Us</h1>
+                  <form method="post">
+                    <?php
+                    // Only fetch the first found contact us page (by id)
+                    $sql = "SELECT * FROM tblpage WHERE PageType='contactus' ORDER BY id ASC LIMIT 1";
+                    $query = $dbh->prepare($sql);
+                    $query->execute();
+                    $row = $query->fetch(PDO::FETCH_OBJ);
+                    if ($row) { ?>
+                      <div class="form-group">
+                        <label class="form-label">Page Title:</label>
+                        <input type="text" name="pagetitle" value="<?php echo htmlspecialchars($row->PageTitle); ?>"
+                          class="form-input" required>
                       </div>
-                    <?php endif; ?>
-                    <?php if (!empty($error_message)): ?>
-                      <div class="alert alert-danger"><?php echo htmlentities($error_message); ?></div>
-                    <?php endif; ?>
-                    <h4 class="card-title" style="text-align: center;">Update Contact Us</h4>
-                    <form class="forms-sample" method="post">
-                      <?php
-                      // Only fetch the first found contact us page (by id)
-                      $sql = "SELECT * FROM tblpage WHERE PageType='contactus' ORDER BY id ASC LIMIT 1";
-                      $query = $dbh->prepare($sql);
-                      $query->execute();
-                      $row = $query->fetch(PDO::FETCH_OBJ);
-                      if ($row) { ?>
-                        <div class="form-group">
-                          <label for="exampleInputName1">Page Title:</label>
-                          <input type="text" name="pagetitle" value="<?php echo htmlspecialchars($row->PageTitle); ?>"
-                            class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                          <label for="exampleInputName1">Page Description:</label>
-                          <textarea name="pagedes" class="form-control"
-                            required><?php echo htmlspecialchars($row->PageDescription); ?></textarea>
-                        </div>
-                        <div class="form-group">
-                          <label for="exampleInputName1">Email:</label>
-                          <input type="text" name="email" id="email" required
-                            value="<?php echo htmlspecialchars($row->Email); ?>" class="form-control">
-                        </div>
-                        <div class="form-group">
-                          <label for="exampleInputName1">Mobile Number:</label>
-                          <input type="text" name="mobnum" id="mobnum" required
-                            value="<?php echo htmlspecialchars($row->MobileNumber); ?>" class="form-control" maxlength="10"
-                            pattern="[0-9]+">
-                        </div>
-                      <?php } else { ?>
-                        <div class="alert alert-warning">No Contact Us page found!</div>
-                      <?php } ?>
-                      <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
+                      <div class="form-group">
+                        <label class="form-label">Page Description:</label>
+                        <textarea name="pagedes" class="form-textarea"
+                          required><?php echo htmlspecialchars($row->PageDescription); ?></textarea>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Email:</label>
+                        <input type="text" name="email" id="email" required
+                          value="<?php echo htmlspecialchars($row->Email); ?>" class="form-input">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Mobile Number:</label>
+                        <input type="text" name="mobnum" id="mobnum" required
+                          value="<?php echo htmlspecialchars($row->MobileNumber); ?>" class="form-input" maxlength="10"
+                          pattern="[0-9]+">
+                      </div>
+                    <?php } else { ?>
+                      <div class="alert alert-warning">No Contact Us page found!</div>
+                    <?php } ?>
+                    <button type="submit" class="submit-btn" name="submit">Update</button>
                     </form>
                   </div>
                 </div>

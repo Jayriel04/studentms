@@ -218,3 +218,157 @@
     cursor: pointer;
     color: #64748b;
 }
+
+/* Styles for About Us page update form */
+.form-card {
+    background: white !important;
+    border-radius: 20px !important;
+    padding: 40px !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+.form-title {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    margin-bottom: 32px !important;
+    text-align: center !important;
+}
+
+.form-group {
+    margin-bottom: 28px !important;
+}
+
+.form-label {
+    display: block !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    margin-bottom: 10px !important;
+}
+
+.form-input {
+    width: 100% !important;
+    padding: 14px 18px !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    font-size: 15px !important;
+    color: #1e293b !important;
+    background: #f8fafc !important;
+    transition: all 0.3s ease !important;
+    font-family: inherit !important;
+}
+
+.form-input:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    background: white !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+}
+
+.form-textarea {
+    width: 100% !important;
+    min-height: 200px !important;
+    padding: 18px !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    font-size: 15px !important;
+    color: #1e293b !important;
+    background: white !important;
+    resize: vertical !important;
+    font-family: inherit !important;
+    line-height: 1.6 !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-textarea:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1) !important;
+}
+
+.submit-btn {
+    padding: 16px 48px !important;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3) !important;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4) !important;
+}
+
+.submit-btn:active {
+    transform: translateY(0) !important;
+}
+
+/* Overwrite nicEdit styles */
+.nicEdit-main {
+    min-height: 200px !important;
+    padding: 18px !important;
+    border: 2px solid #e2e8f0 !important;
+    border-top: none !important;
+    border-radius: 0 0 12px 12px !important;
+    font-size: 15px !important;
+    color: #1e293b !important;
+    background: white !important;
+    resize: vertical !important;
+    font-family: inherit !important;
+    line-height: 1.6 !important;
+    transition: all 0.3s ease !important;
+}
+
+.nicEdit-main:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1) !important;
+}
+
+.nicEdit-panel {
+    display: flex !important;
+    gap: 4px !important;
+    padding: 12px !important;
+    background: #f8fafc !important;
+    border: 2px solid #e2e8f0 !important;
+    border-bottom: none !important;
+    border-radius: 12px 12px 0 0 !important;
+    flex-wrap: wrap !important;
+}
+
+.nicEdit-button-hover {
+    background-color: #3b82f6 !important;
+}
+
+.nicEdit-select {
+    padding: 8px 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    background: white !important;
+    font-size: 13px !important;
+    color: #64748b !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.nicEdit-select:hover {
+    border-color: #3b82f6 !important;
+}
+
+.nicEdit-select-hover {
+    background-color: transparent !important;
+}
+
+.nicEdit-button {
+    background-image: url('https://js.nicedit.com/nicEditorIcons.gif') !important;
+}
+
+div.nicEdit-main {
+    background-color: white !important;
+}
