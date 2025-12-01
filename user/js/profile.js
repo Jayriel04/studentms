@@ -71,14 +71,16 @@
   function togglePasswordVisibility() {
     const passwordInput = document.getElementById('password');
     const toggleIcon = document.getElementById('togglePassword');
-    if (!passwordInput || !toggleIcon) return;
-    
+    if (!passwordInput || !toggleIcon) return; // Exit if elements don't exist
+
     if (passwordInput.type === 'password') {
       passwordInput.type = 'text';
-      toggleIcon.classList.add('active');
+      toggleIcon.classList.remove('icon-eye');
+      toggleIcon.classList.add('icon-eye-slash'); // Assuming you have an eye-slash icon
     } else {
       passwordInput.type = 'password';
-      toggleIcon.classList.remove('active');
+      toggleIcon.classList.remove('icon-eye-slash');
+      toggleIcon.classList.add('icon-eye');
     }
   }
 
@@ -92,18 +94,18 @@
     // Gender toggle
     var genderSelect = document.getElementById('gender');
     var otherGenderInput = document.getElementById('otherGenderInput');
-    
-    if (genderSelect) {
+
+    function handleGenderChange() {
       if (genderSelect.value === 'Other') {
         otherGenderInput.style.display = 'block';
+      } else {
+        otherGenderInput.style.display = 'none';
       }
-      genderSelect.addEventListener('change', function () {
-        if (this.value === 'Other') {
-          otherGenderInput.style.display = 'block';
-        } else {
-          otherGenderInput.style.display = 'none';
-        }
-      });
+    }
+
+    if (genderSelect) {
+      handleGenderChange(); // Set initial state
+      genderSelect.addEventListener('change', handleGenderChange);
     }
 
     // Set initial major

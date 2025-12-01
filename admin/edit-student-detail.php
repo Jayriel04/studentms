@@ -178,9 +178,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
             <div class="row">
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title" style="text-align: center;">Update Students Details</h4>
-                    <hr />
+                  <div class="form-card">
                     <?php if (!empty($success_message)): ?>
                         <div class="alert alert-success"><?php echo htmlentities($success_message); ?></div>
                     <?php endif; ?>
@@ -189,7 +187,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             <?php echo htmlentities($error_message); ?>
                         </div>
                     <?php endif; ?>
-                    <form class="forms-sample" method="post">
+
+                    <form method="post">
                       <?php
                       $eid = $_GET['editid'];
                       $sql = "SELECT * FROM tblstudent WHERE ID=:eid";
@@ -199,33 +198,107 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       $results = $query->fetchAll(PDO::FETCH_OBJ);
                       if ($query->rowCount() > 0) {
                         foreach ($results as $row) { ?>
-                          <div class="row">
-                            <div class="col-6">
-                              <h4>Student Details</h4>
-                              <hr />
+                          <div class="form-sections">
+                            <!-- Personal Information Section -->
+                            <div class="form-section">
+                              <h2 class="section-title">Personal Information</h2>
                               <div class="form-group">
-                                <label>Student ID</label> <input type="text" name="stuid"
+                                <label class="form-label">Student ID</label>
+                                <input type="text" name="stuid"
                                   value="<?php echo htmlentities($row->StuID); ?>" class="form-control" required style="text-transform: capitalize;"
                                   placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}"
                                   title="The format must be: 222 - 08410">
                               </div>
                               <div class="form-group">
-                                <label>Family Name</label>
+                                <label class="form-label">Family Name</label>
                                 <input type="text" name="familyname" value="<?php echo htmlentities($row->FamilyName); ?>"
                                   class="form-control" required style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
-                                <label>First Name</label>
+                                <label class="form-label">First Name</label>
                                 <input type="text" name="firstname" value="<?php echo htmlentities($row->FirstName); ?>"
                                   class="form-control" required style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
-                                <label>Middle Name</label>
+                                <label class="form-label">Middle Name</label>
                                 <input type="text" name="middlename" value="<?php echo htmlentities($row->MiddleName); ?>"
                                   class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
-                                <label>Program</label>
+                                <label class="form-label">Date of Birth</label>
+                                <input type="date" name="dob" value="<?php echo htmlentities($row->DOB); ?>"
+                                  class="form-control" required>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Place of Birth</label>
+                                <input type="text" name="placeofbirth" value="<?php echo htmlentities($row->PlaceOfBirth); ?>"
+                                  class="form-control" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Gender</label>
+                                <select name="gender" id="gender" class="form-control" required
+                                  onchange="toggleOtherGenderInput()">
+                                  <option value="Male" <?php if ($row->Gender == 'Male')
+                                    echo 'selected'; ?>>Male</option>
+                                  <option value="Female" <?php if ($row->Gender == 'Female')
+                                    echo 'selected'; ?>>Female</option>
+                                  <option value="Other" <?php if (!in_array($row->Gender, ['Male', 'Female']))
+                                    echo 'selected'; ?>>Other</option>
+                                </select>
+                              </div>
+                              <div class="form-group" id="otherGenderInput"
+                                style="display: <?php echo (!in_array($row->Gender, ['Male', 'Female']) && $row->Gender != '') ? 'block' : 'none'; ?>;">
+                                <label class="form-label">Please Specify</label>
+                                <input type="text" name="otherGender" id="otherGender" class="form-control" value="<?php if (!in_array($row->Gender, ['Male', 'Female']))
+                                  echo htmlentities($row->Gender); ?>" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Civil Status</label>
+                                <select name="civilstatus" class="form-control">
+                                  <option value="">Select Status</option>
+                                  <option value="Single" <?php if ($row->CivilStatus == 'Single') echo 'selected'; ?>>Single</option>
+                                  <option value="Married" <?php if ($row->CivilStatus == 'Married') echo 'selected'; ?>>Married</option>
+                                  <option value="Divorced" <?php if ($row->CivilStatus == 'Divorced') echo 'selected'; ?>>Divorced</option>
+                                  <option value="Widowed" <?php if ($row->CivilStatus == 'Widowed') echo 'selected'; ?>>Widowed</option>
+                                  <option value="Separated" <?php if ($row->CivilStatus == 'Separated') echo 'selected'; ?>>Separated</option>
+                                  <?php
+                                  $standard_statuses = ['Single', 'Married', 'Divorced', 'Widowed', 'Separated'];
+                                  if (!in_array($row->CivilStatus, $standard_statuses) && !empty($row->CivilStatus)): ?>
+                                    <option value="<?php echo htmlentities($row->CivilStatus); ?>" selected><?php echo htmlentities($row->CivilStatus); ?> (Custom)</option>
+                                  <?php endif; ?>
+                                </select>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Religion</label>
+                                <input type="text" name="religion" value="<?php echo htmlentities($row->Religion); ?>"
+                                  class="form-control" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Height (cm)</label>
+                                <input type="text" name="height" value="<?php echo htmlentities($row->Height); ?>"
+                                  class="form-control">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Weight (kg)</label>
+                                <input type="text" name="weight" value="<?php echo htmlentities($row->Weight); ?>"
+                                  class="form-control">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Citizenship</label>
+                                <input type="text" name="citizenship" value="<?php echo htmlentities($row->Citizenship); ?>"
+                                  class="form-control" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" value="" class="form-control" placeholder="Leave blank to keep unchanged">
+                              </div>
+                            </div>
+
+                            <!-- Academic & Contact Section -->
+                            <div class="form-section">
+                              <h2 class="section-title">Academic Details</h2>
+                              <div class="form-group">
+                                <label class="form-label">Program</label>
                                 <select name="program" id="program" class="form-control" required onchange="updateMajors()">
                                   <option value="">Select Program</option>
                                   <option value="Bachelor of Elementary Education (BEEd)" <?php if ($row->Program == 'Bachelor of Elementary Education (BEEd)') echo 'selected'; ?>>Bachelor of Elementary Education (BEEd)</option>
@@ -245,177 +318,30 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                 </select>
                               </div>
                               <div class="form-group">
-                                <label>Major</label>
+                                <label class="form-label">Major</label>
                                 <select name="major" id="major" class="form-control" style="text-transform: capitalize;">
                                      <option value="">Select Major</option>
                                  </select>
                               </div>
                               <div class="form-group">
-                                <label>Learner's Reference No.</label>
+                                <label class="form-label">Learner's Reference No.</label>
                                 <input type="text" name="lrn" value="<?php echo htmlentities($row->LearnersReferenceNo); ?>"
                                   class="form-control" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
-                                <label>Date of Birth</label>
-                                <input type="date" name="dob" value="<?php echo htmlentities($row->DOB); ?>"
-                                  class="form-control" required>
-                              </div>
-                              <div class="form-group">
-                                <label>Place of Birth</label>
-                                <input type="text" name="placeofbirth" value="<?php echo htmlentities($row->PlaceOfBirth); ?>"
-                                  class="form-control" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>Gender</label>
-                                <select name="gender" id="gender" class="form-control" required
-                                  onchange="toggleOtherGenderInput()">
-                                  <option value="Male" <?php if ($row->Gender == 'Male')
-                                    echo 'selected'; ?>>Male</option>
-                                  <option value="Female" <?php if ($row->Gender == 'Female')
-                                    echo 'selected'; ?>>Female</option>
-                                  <option value="Other" <?php if (!in_array($row->Gender, ['Male', 'Female']))
-                                    echo 'selected'; ?>>Other</option>
-                                </select>
-                              </div>
-                              <div class="form-group" id="otherGenderInput"
-                                style="display: <?php echo (!in_array($row->Gender, ['Male', 'Female']) && $row->Gender != '') ? 'block' : 'none'; ?>;">
-                                <label>Please Specify</label>
-                                <input type="text" name="otherGender" id="otherGender" class="form-control" value="<?php if (!in_array($row->Gender, ['Male', 'Female']))
-                                  echo htmlentities($row->Gender); ?>" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>Civil Status</label>
-                                <select name="civilstatus" class="form-control">
-                                  <option value="">Select Status</option>
-                                  <option value="Single" <?php if ($row->CivilStatus == 'Single') echo 'selected'; ?>>Single</option>
-                                  <option value="Married" <?php if ($row->CivilStatus == 'Married') echo 'selected'; ?>>Married</option>
-                                  <option value="Divorced" <?php if ($row->CivilStatus == 'Divorced') echo 'selected'; ?>>Divorced</option>
-                                  <option value="Widowed" <?php if ($row->CivilStatus == 'Widowed') echo 'selected'; ?>>Widowed</option>
-                                  <option value="Separated" <?php if ($row->CivilStatus == 'Separated') echo 'selected'; ?>>Separated</option>
-                                  <?php
-                                  $standard_statuses = ['Single', 'Married', 'Divorced', 'Widowed', 'Separated'];
-                                  if (!in_array($row->CivilStatus, $standard_statuses) && !empty($row->CivilStatus)): ?>
-                                    <option value="<?php echo htmlentities($row->CivilStatus); ?>" selected><?php echo htmlentities($row->CivilStatus); ?> (Custom)</option>
-                                  <?php endif; ?>
+                                <label class="form-label">Year Level</label>
+                                <select name="yearlevel" class="form-control" required>
+                                  <option value="<?php echo htmlentities($row->YearLevel); ?>">
+                                    <?php echo htmlentities($row->YearLevel); ?>
+                                  </option>
+                                  <option value="1">1</option>
+                                  <option value="2">2</option>
+                                  <option value="3">3</option>
+                                  <option value="4">4</option>
                                 </select>
                               </div>
                               <div class="form-group">
-                                <label>Religion</label>
-                                <input type="text" name="religion" value="<?php echo htmlentities($row->Religion); ?>"
-                                  class="form-control" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>Height (cm)</label>
-                                <input type="text" name="height" value="<?php echo htmlentities($row->Height); ?>"
-                                  class="form-control">
-                              </div>
-                              <div class="form-group">
-                                <label>Weight (kg)</label>
-                                <input type="text" name="weight" value="<?php echo htmlentities($row->Weight); ?>"
-                                  class="form-control">
-                              </div>
-                              <div class="form-group">
-                                <label>Citizenship</label>
-                                <input type="text" name="citizenship" value="<?php echo htmlentities($row->Citizenship); ?>"
-                                  class="form-control" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" name="password" value="" class="form-control">
-                              </div>
-                            </div>
-                            <div class="col-6">
-                              <h4>Contact Details</h4>
-                              <hr />
-                              <div class="form-group">
-                                <label>Father's Name</label>
-                                <input type="text" name="fathersname" value="<?php echo htmlentities($row->FathersName); ?>"
-                                  class="form-control" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>Mother's Maiden Name</label>
-                                <input type="text" name="mothersmaidenname"
-                                  value="<?php echo htmlentities($row->MothersMaidenName); ?>" class="form-control" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>Building/House Number</label>
-                                <input type="text" name="buildinghouse"
-                                  value="<?php echo htmlentities($row->BuildingHouseNumber); ?>" class="form-control" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>Street Name</label>
-                                <input type="text" name="streetname" value="<?php echo htmlentities($row->StreetName); ?>"
-                                  class="form-control" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>Barangay</label>
-                                <input type="text" name="barangay" value="<?php echo htmlentities($row->Barangay); ?>"
-                                  class="form-control" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>City/Municipality</label>
-                                <div id="city-municipality-container">
-                                   <input type="text" name="citymunicipality" id="citymunicipality-text" value="<?php echo htmlentities($row->CityMunicipality); ?>" class="form-control" style="text-transform: capitalize;">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label>Province</label>
-                                <select name="province" class="form-control province-select" style="text-transform: capitalize;">
-                                  <option value="">Select Province</option>
-                                  <?php
-                                  $provincesJson = file_get_contents('../data/provinces.json');
-                                  $provinces = json_decode($provincesJson, true);
-                                  if (is_array($provinces)) {
-                                    $current_province = htmlentities($row->Province);
-                                    foreach ($provinces as $province) {
-                                        $selected = ($current_province == $province) ? 'selected' : '';
-                                        echo "<option value=\"" . htmlspecialchars($province) . "\" $selected>" . htmlspecialchars($province) . "</option>";
-                                    }
-                                    // Add the current value as an option if it's not in the standard list
-                                    if (!in_array($current_province, $provinces) && !empty($current_province)) {
-                                        echo "<option value=\"$current_province\" selected>$current_province (Custom)</option>";
-                                    }
-                                  }
-                                  ?>
-                                </select>
-                              </div>
-                              <div class="form-group">
-                                <label>Postal Code</label>
-                                <input type="text" name="postalcode" value="<?php echo htmlentities($row->PostalCode); ?>"
-                                  class="form-control">
-                              </div>
-                              <div class="form-group">
-                                <label>Contact Number</label>
-                                <input type="text" name="contactnumber"
-                                  value="<?php echo htmlentities($row->ContactNumber); ?>" class="form-control" required>
-                              </div>
-                              <div class="form-group">
-                                <label>Email Address</label>
-                                <input type="email" name="emailaddress"
-                                  value="<?php echo htmlentities($row->EmailAddress); ?>" class="form-control" required>
-                              </div>
-                              <div class="form-group">
-                                <label>Emergency Contact Person</label>
-                                <input type="text" name="emergencycontactperson"
-                                  value="<?php echo htmlentities($row->EmergencyContactPerson); ?>" class="form-control" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>Emergency Relationship</label>
-                                <input type="text" name="emergencyrelationship"
-                                  value="<?php echo htmlentities($row->EmergencyRelationship); ?>" class="form-control" style="text-transform: capitalize;">
-                              </div>
-                              <div class="form-group">
-                                <label>Emergency Contact Number</label>
-                                <input type="text" name="emergencycontactnumber"
-                                  value="<?php echo htmlentities($row->EmergencyContactNumber); ?>" class="form-control">
-                              </div>
-                              <div class="form-group">
-                                <label>Emergency Address</label>
-                                <textarea name="emergencyaddress"
-                                  class="form-control" style="text-transform: capitalize;"><?php echo htmlentities($row->EmergencyAddress); ?></textarea>
-                              </div>
-                              <div class="form-group">
-                                <label>Category</label>
+                                <label class="form-label">Category</label>
                                 <select name="category" class="form-control" required>
                                   <option value="<?php echo htmlentities($row->Category); ?>">
                                     <?php echo htmlentities($row->Category); ?>
@@ -428,22 +354,102 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                   <option value="Irregular">Irregular</option>
                                 </select>
                               </div>
+
+                              <h2 class="section-title" style="margin-top: 40px;">Contact & Address</h2>
                               <div class="form-group">
-                                <label>Year Level</label>
-                                <select name="yearlevel" class="form-control" required>
-                                  <option value="<?php echo htmlentities($row->YearLevel); ?>">
-                                    <?php echo htmlentities($row->YearLevel); ?>
-                                  </option>
-                                  <option value="1">1</option>
-                                  <option value="2">2</option>
-                                  <option value="3">3</option>
-                                  <option value="4">4</option>
+                                <label class="form-label">Email Address</label>
+                                <input type="email" name="emailaddress"
+                                  value="<?php echo htmlentities($row->EmailAddress); ?>" class="form-control" required>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Contact Number</label>
+                                <input type="text" name="contactnumber"
+                                  value="<?php echo htmlentities($row->ContactNumber); ?>" class="form-control" required>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Building/House Number</label>
+                                <input type="text" name="buildinghouse"
+                                  value="<?php echo htmlentities($row->BuildingHouseNumber); ?>" class="form-control" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Street Name</label>
+                                <input type="text" name="streetname" value="<?php echo htmlentities($row->StreetName); ?>"
+                                  class="form-control" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Barangay</label>
+                                <input type="text" name="barangay" value="<?php echo htmlentities($row->Barangay); ?>"
+                                  class="form-control" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Province</label>
+                                <select name="province" class="form-control province-select" style="text-transform: capitalize;">
+                                  <option value="">Select Province</option>
+                                  <?php
+                                  $provincesJson = file_get_contents('../data/provinces.json');
+                                  $provinces = json_decode($provincesJson, true);
+                                  if (is_array($provinces)) {
+                                    $current_province = htmlentities($row->Province);
+                                    foreach ($provinces as $province) {
+                                        $selected = ($current_province == $province) ? 'selected' : '';
+                                        echo "<option value=\"" . htmlspecialchars($province) . "\" $selected>" . htmlspecialchars($province) . "</option>";
+                                    }
+                                    if (!in_array($current_province, $provinces) && !empty($current_province)) {
+                                        echo "<option value=\"$current_province\" selected>$current_province (Custom)</option>";
+                                    }
+                                  }
+                                  ?>
                                 </select>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">City/Municipality</label>
+                                <div id="city-municipality-container">
+                                   <input type="text" name="citymunicipality" id="citymunicipality-text" value="<?php echo htmlentities($row->CityMunicipality); ?>" class="form-control" style="text-transform: capitalize;">
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Postal Code</label>
+                                <input type="text" name="postalcode" value="<?php echo htmlentities($row->PostalCode); ?>"
+                                  class="form-control">
+                              </div>
+
+                              <h2 class="section-title" style="margin-top: 40px;">Emergency Contact</h2>
+                              <div class="form-group">
+                                <label class="form-label">Father's Name</label>
+                                <input type="text" name="fathersname" value="<?php echo htmlentities($row->FathersName); ?>"
+                                  class="form-control" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Mother's Maiden Name</label>
+                                <input type="text" name="mothersmaidenname"
+                                  value="<?php echo htmlentities($row->MothersMaidenName); ?>" class="form-control" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Emergency Contact Person</label>
+                                <input type="text" name="emergencycontactperson"
+                                  value="<?php echo htmlentities($row->EmergencyContactPerson); ?>" class="form-control" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Emergency Relationship</label>
+                                <input type="text" name="emergencyrelationship"
+                                  value="<?php echo htmlentities($row->EmergencyRelationship); ?>" class="form-control" style="text-transform: capitalize;">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Emergency Contact Number</label>
+                                <input type="text" name="emergencycontactnumber"
+                                  value="<?php echo htmlentities($row->EmergencyContactNumber); ?>" class="form-control">
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label">Emergency Address</label>
+                                <textarea name="emergencyaddress"
+                                  class="form-control" style="text-transform: capitalize;"><?php echo htmlentities($row->EmergencyAddress); ?></textarea>
                               </div>
                             </div>
                           </div>
-                          <button type="submit" class="btn btn-primary" name="submit">Update</button>
-                          <a href="manage-students.php" class="btn btn-light">Back</a>
+                          <div class="form-actions">
+                            <a href="manage-students.php" class="btn btn-cancel" style="text-decoration: none; text-align: center;">Cancel</a>
+                            <button type="submit" class="btn btn-submit" name="submit">Update Student</button>
+                          </div>
                         <?php }
                       } ?>
                     </form>
