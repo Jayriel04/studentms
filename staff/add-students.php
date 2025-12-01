@@ -419,7 +419,6 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
               </div>
             </div>
           </div>
-          <?php include_once('includes/footer.php'); ?>
         </div>
       </div>
     </div>
@@ -429,97 +428,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/toast.js"></script>
-    <script>
-      function toggleOtherGenderInput() {
-        var genderSelect = document.getElementById("gender");
-        var otherGenderInput = document.getElementById("otherGenderInput");
-        if (genderSelect.value === "Other") {
-          otherGenderInput.style.display = "block";
-        } else {
-          otherGenderInput.style.display = "none";
-        }
-      }
-
-      function updateMajors() {
-        const programSelect = document.getElementById('program');
-        const majorSelect = document.getElementById('major');
-        const selectedProgram = programSelect.value;
-
-        // Clear existing options
-        majorSelect.innerHTML = '<option value="">Select Major</option>';
-
-        const majors = {
-          "Bachelor of Elementary Education (BEEd)": [
-            "Major in General Content"
-          ],
-          "Bachelor of Secondary Education (BSEd)": [
-            "Major in English",
-            "Major in Filipino",
-            "Major in Mathematics"
-          ],
-          "Bachelor of Science in Business Administration (BSBA)": [
-            "Major in Human Resource Management",
-            "Major in Marketing Management"
-          ],
-          "Bachelor of Industrial Technology (BindTech)": [
-            "Major in Computer Technology",
-            "Major in Electronics Technology"
-          ],
-          "Bachelor of Science in Information Technology (BSIT)": [
-            "Major in information technology"
-          ]
-        };
-
-        if (majors[selectedProgram]) {
-          majors[selectedProgram].forEach(function (major) {
-            const option = document.createElement('option');
-            option.value = major;
-            option.textContent = major;
-            majorSelect.appendChild(option);
-          });
-        }
-      }
-
-      var citiesData = {};
-      fetch('../data/cities.json')
-        .then(response => response.json())
-        .then(data => {
-          citiesData = data;
-          updateCities(''); // Initial call
-        })
-        .catch(error => console.error('Error loading cities:', error));
-
-      function updateCities(selectedCity) {
-        var province = $('.province-select').val();
-        var container = $('#city-municipality-container');
-        container.empty();
-
-        if (citiesData[province]) {
-          var select = $('<select name="citymunicipality" id="citymunicipality-select" class="form-control" style="text-transform: capitalize;"></select>');
-          select.append('<option value="">Select City/Municipality</option>');
-          citiesData[province].forEach(function (city) {
-            var option = $('<option></option>').val(city).text(city);
-            if (city === selectedCity) {
-              option.prop('selected', true);
-            }
-            select.append(option);
-          });
-          container.append(select);
-          $('#citymunicipality-select').select2();
-        } else {
-          var input = $('<input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control" style="text-transform: capitalize;">');
-          if (selectedCity) {
-            input.val(selectedCity);
-          }
-          container.append(input);
-        }
-      }
-      // Initialize Select2 for province dropdown
-      if (window.jQuery) {
-        jQuery('.province-select').select2();
-        jQuery('.province-select').on('change', function () { updateCities(''); });
-      }
-    </script>
+    <script src="js/manage-student.js"></script>
   </body>
 
   </html>

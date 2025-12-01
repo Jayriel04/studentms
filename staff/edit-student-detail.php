@@ -151,7 +151,10 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
   </head>
 
   <body>
-    <div class="container-scroller">
+    <div class="container-scroller"
+      data-current-major="<?php echo isset($row->Major) ? htmlentities($row->Major, ENT_QUOTES) : ''; ?>"
+      data-current-city="<?php echo isset($row->CityMunicipality) ? htmlentities($row->CityMunicipality, ENT_QUOTES) : ''; ?>">
+
       <?php include_once('includes/header.php'); ?>
       <div class="container-fluid page-body-wrapper">
         <?php include_once('includes/sidebar.php'); ?>
@@ -159,12 +162,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title"> Update Students </h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"> Update Students Details</li>
-                </ol>
-              </nav>
+              <a href="manage-students.php" class="add-btn" style="text-decoration: none; margin-right: 20px;">↩ Back</a>
             </div>
             <div class="row">
               <div class="col-12 grid-margin stretch-card">
@@ -234,7 +232,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                     ]) && !empty($row->Program)
                                   ): ?>
                                     <option value="<?php echo htmlentities($row->Program); ?>" selected>
-                                      <?php echo htmlentities($row->Program); ?></option>
+                                      <?php echo htmlentities($row->Program); ?>
+                                    </option>
                                   <?php endif; ?>
                                 </select>
                               </div>
@@ -300,7 +299,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                   $standard_statuses = ['Single', 'Married', 'Divorced', 'Widowed', 'Separated'];
                                   if (!in_array($row->CivilStatus, $standard_statuses) && !empty($row->CivilStatus)): ?>
                                     <option value="<?php echo htmlentities($row->CivilStatus); ?>" selected>
-                                      <?php echo htmlentities($row->CivilStatus); ?> (Custom)</option>
+                                      <?php echo htmlentities($row->CivilStatus); ?> (Custom)
+                                    </option>
                                   <?php endif; ?>
                                 </select>
                               </div>
@@ -469,106 +469,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/toast.js"></script>
-    <script>
-      function toggleOtherGenderInput() {
-        var genderSelect = document.getElementById("gender");
-        var otherGenderInput = document.getElementById("otherGenderInput");
-        if (genderSelect.value === "Other") {
-          otherGenderInput.style.display = "block";
-        } else {
-          otherGenderInput.style.display = "none";
-        }
-      }
-
-      function updateMajors(currentMajor) {
-        const programSelect = document.getElementById('program');
-        const majorSelect = document.getElementById('major');
-        const selectedProgram = programSelect.value;
-
-        // Clear existing options
-        majorSelect.innerHTML = '<option value="">Select Major</option>';
-
-        const majors = {
-          "Bachelor of Elementary Education (BEEd)": [
-            "Major in General Content"
-          ],
-          "Bachelor of Secondary Education (BSEd)": [
-            "Major in English",
-            "Major in Filipino",
-            "Major in Mathematics"
-          ],
-          "Bachelor of Science in Business Administration (BSBA)": [
-            "Major in Human Resource Management",
-            "Major in Marketing Management"
-          ],
-          "Bachelor of Industrial Technology (BindTech)": [
-            "Major in Computer Technology",
-            "Major in Electronics Technology"
-          ],
-          "Bachelor of Science in Information Technology (BSIT)": [
-            "Major in information technology"
-          ]
-        };
-
-        if (majors[selectedProgram]) {
-          majors[selectedProgram].forEach(function (major) {
-            const option = document.createElement('option');
-            option.value = major;
-            option.textContent = major;
-            if (major === currentMajor) {
-              option.selected = true;
-            }
-            majorSelect.appendChild(option);
-          });
-        }
-      }
-
-      // Trigger on page load to set initial state
-      window.addEventListener('DOMContentLoaded', function () {
-        toggleOtherGenderInput();
-        // Pass the current major to pre-select it
-        var currentMajor = "<?php echo htmlentities($row->Major, ENT_QUOTES); ?>";
-        updateMajors(currentMajor);
-
-        var currentCity = "<?php echo htmlentities($row->CityMunicipality, ENT_QUOTES); ?>";
-        fetch('../data/cities.json')
-          .then(response => response.json())
-          .then(data => {
-            citiesData = data;
-            updateCities(currentCity);
-          })
-          .catch(error => console.error('Error loading cities:', error));
-      });
-
-      var citiesData = {};
-      function updateCities(selectedCity) {
-        var province = $('.province-select').val();
-        var container = $('#city-municipality-container');
-        container.empty();
-
-        if (citiesData[province]) {
-          var select = $('<select name="citymunicipality" id="citymunicipality-select" class="form-control" style="text-transform: capitalize;"></select>');
-          select.append('<option value="">Select City/Municipality</option>');
-          citiesData[province].forEach(function (city) {
-            var option = $('<option></option>').val(city).text(city);
-            if (city === selectedCity) {
-              option.prop('selected', true);
-            }
-            select.append(option);
-          });
-          container.append(select);
-          $('#citymunicipality-select').select2();
-        } else {
-          var input = $('<input type="text" name="citymunicipality" id="citymunicipality-text" class="form-control" style="text-transform: capitalize;">').val(selectedCity);
-          container.append(input);
-        }
-      }
-      // Initialize Select2 for province dropdown
-      if (window.jQuery) {
-        jQuery('.province-select').select2();
-        jQuery('.province-select').on('change', function () { updateCities(''); });
-      }
-    </script>
+    <script src="js/manage-student.js"></script>
   </body>
 
   </html>
