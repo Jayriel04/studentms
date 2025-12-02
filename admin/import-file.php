@@ -196,6 +196,7 @@ if (isset($_POST['import'])) {
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style(v2).css">
     <link rel="stylesheet" href="./css/style(v2).css">
+    <link rel="stylesheet" href="./css/modal.css">
 </head>
 
 <body>
@@ -210,48 +211,69 @@ if (isset($_POST['import'])) {
                     </div>
                     <div class="row">
                         <div class="col-md-8 mx-auto">
-                            <div class="card auth-form-light">
-                                <div class="card-body">
-                                    <h4 class="card-title text-center mb-4">Import Students from File</h4>
-
-                                    <?php if (isset($_SESSION['import_status_success'])): ?>
-                                        <div class="alert alert-success" role="alert">
-                                            <?php echo $_SESSION['import_status_success'];
-                                            unset($_SESSION['import_status_success']); ?>
-                                        </div>
-                                    <?php endif; ?>
-
-                                    <?php if (isset($_SESSION['import_status_error'])): ?>
-                                        <div class="alert alert-danger" role="alert">
-                                            <?php echo $_SESSION['import_status_error'];
-                                            unset($_SESSION['import_status_error']); ?>
-                                        </div>
-                                    <?php endif; ?>
-
-                                    <form class="forms-sample" method="POST" enctype="multipart/form-data">
-                                        <div class="form-group">
-                                            <label for="import_file">Select File</label>
-                                            <p class="card-description">Upload a CSV or Excel file to import student
-                                                data.</p>
-                                            <input type="file" name="import_file" id="import_file"
-                                                class="form-control-file" required
-                                                accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-                                        </div>
-                                        <div class="mt-3">
-                                            <button type="submit"
-                                                class="btn btn-block btn-success btn-lg font-weight-medium auth-form-btn loginbtn"
-                                                name="import">Import Students</button>
-                                        </div>
-                                        <div class="text-center mt-4 font-weight-light">
-                                            <a href="manage-students.php" class="btn btn-light">Back</a>
-                                        </div>
-                                    </form>
+                            <?php if (isset($_SESSION['import_status_success'])): ?>
+                                <div class="alert alert-success" role="alert">
+                                    <?php echo $_SESSION['import_status_success'];
+                                    unset($_SESSION['import_status_success']); ?>
                                 </div>
+                            <?php endif; ?>
+
+                            <?php if (isset($_SESSION['import_status_error'])): ?>
+                                <div class="alert alert-danger" role="alert">
+                                    <?php echo $_SESSION['import_status_error'];
+                                    unset($_SESSION['import_status_error']); ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <div class="import-card">
+                                <h1 class="import-card-title">Import Students From File</h1>
+                                <form method="POST" enctype="multipart/form-data">
+                                    <div class="file-section">
+                                        <div class="section-label">Select File</div>
+                                        <div class="section-description">Upload a CSV or Excel file to import student data.</div>
+
+                                        <div class="file-upload-area" id="uploadArea">
+                                            <div class="upload-icon">📁</div>
+                                            <div class="upload-text">Click to browse or drag and drop</div>
+                                            <div class="upload-subtext">CSV, XLS, XLSX files accepted</div>
+                                        </div>
+
+                                        <input type="file" 
+                                               id="fileInput" 
+                                               name="import_file"
+                                               class="file-input" 
+                                               required
+                                               accept=".csv,.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                               onchange="handleFileSelect(event)">
+
+                                        <div class="file-info" id="fileInfo">
+                                            <div class="file-icon">📄</div>
+                                            <div class="file-details">
+                                                <div class="file-name" id="fileName">students.csv</div>
+                                                <div class="file-size" id="fileSize">125 KB</div>
+                                            </div>
+                                            <button type="button" class="remove-file" onclick="removeFile()">×</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="supported-formats">
+                                        <div class="formats-label">Supported Formats</div>
+                                        <div class="format-badges">
+                                            <span class="format-badge">CSV</span>
+                                            <span class="format-badge">XLS</span>
+                                            <span class="format-badge">XLSX</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="button-group">
+                                        <a href="manage-students.php" class="btn btn-back">Back</a>
+                                        <button type="submit" class="btn btn-import" name="import" id="importBtn" disabled>Import Students</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-                <?php include_once('includes/footer.php'); ?>
             </div>
         </div>
     </div>
@@ -259,6 +281,77 @@ if (isset($_POST['import'])) {
     <script src="js/toast.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const importBtn = document.getElementById('importBtn');
+        let selectedFile = null;
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFile(files[0]);
+            }
+        });
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            const validTypes = ['.csv', '.xls', '.xlsx', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+            
+            if (!validTypes.includes(fileExtension) && !validTypes.includes(file.type)) {
+                alert('Please select a valid file format (CSV, XLS, or XLSX)');
+                removeFile();
+                return;
+            }
+
+            selectedFile = file;
+            
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
+            fileInfo.classList.add('show');
+            
+            importBtn.disabled = false;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function removeFile() {
+            selectedFile = null;
+            fileInput.value = '';
+            fileInfo.classList.remove('show');
+            importBtn.disabled = true;
+        }
+    </script>
 </body>
 
 </html>

@@ -1,119 +1,132 @@
 (function ($) {
   'use strict';
 
-  function debounce(fn, wait) {
-    var t;
-    return function () {
-      var ctx = this, args = arguments;
-      clearTimeout(t);
-      t = setTimeout(function () { fn.apply(ctx, args); }, wait);
-    };
-  }
+  // --- DOM Elements ---
+  let selectedTag = null;
+  const searchInput = document.getElementById('searchInput');
+  const tagsContainer = document.getElementById('tagsContainer');
+  const fileInput = document.getElementById('fileInput');
+  const filePreview = document.getElementById('filePreview');
+  const fileNameEl = document.getElementById('fileName');
+  const fileSizeEl = document.getElementById('fileSize');
+  const removeFileBtn = document.getElementById('removeFileBtn');
+  const skillsHiddenInput = document.getElementById('skillsHidden');
+  const skillsIdHiddenInput = document.getElementById('skillsIdHidden');
+  const achCategorySelect = document.getElementById('ach_category');
+  const loadMoreBtn = document.getElementById('loadMoreTags');
+  const showLessBtn = document.getElementById('showLessTags');
 
-  function escapeHtml(text) {
-    return $('<div>').text(text).html();
-  }
-
-  var allSuggestions = [];
-  $('#skillSuggestionsList .skill-item').each(function () {
-    allSuggestions.push({
-      id: $(this).data('id'),
-      name: $(this).data('name'),
-      category: $(this).data('category')
-    });
+  // --- Tag Selection & Filtering ---
+  $(tagsContainer).on('click', '.tag-chip', function() {
+    $('.tag-chip').removeClass('selected');
+    $(this).addClass('selected');
+    selectedTag = this;
+    const name = $(this).data('name');
+    const id = $(this).data('id');
+    const category = $(this).data('category');
+    
+    if (skillsHiddenInput) skillsHiddenInput.value = name;
+    if (skillsIdHiddenInput) skillsIdHiddenInput.value = id;
+    if (achCategorySelect) achCategorySelect.value = category;
   });
 
-  var pageSize = 10, currentPage = 1, currentQuery = '';
+  // --- Tag Pagination Logic ---
+  const allTags = Array.from(tagsContainer.children);
+  const pageSize = 10;
+  let currentPage = 1;
 
-  function renderSuggestions(resetPage) {
-    if (resetPage) currentPage = 1;
-    var filtered = allSuggestions.filter(function (s) {
-      if (!currentQuery) return true;
-      return s.name.toLowerCase().indexOf(currentQuery) !== -1;
-    });
-    var start = (currentPage - 1) * pageSize;
-    var page = filtered.slice(start, start + pageSize);
-    var $list = $('#skillSuggestionsList').empty();
-    if (page.length === 0) {
-      $list.append('<div class="text-muted">No suggestions.</div>');
-    } else {
-      page.forEach(function (s) {
-        var $item = $('<div class="skill-item" data-name="' + escapeHtml(s.name) + '" data-id="' + s.id + '" data-category="' + escapeHtml(s.category) + '"></div>');
-        var $btn = $('<button type="button" class="btn btn-sm btn-outline-success skill-sugg">' + escapeHtml(s.name) + ' <small class="text-muted">(' + escapeHtml(s.category) + ')</small></button>');
-        $item.append($btn);
-        $list.append($item);
-      });
-    }
-    var hasMore = filtered.length > start + pageSize;
-    $('#loadMoreTags').toggle(hasMore);
-    $('#loadBackTags').toggle(!hasMore && currentPage > 1);
+  function renderTags() {
+    const searchValue = $(searchInput).val().toLowerCase();
+    const filteredTags = allTags.filter(tag => tag.textContent.toLowerCase().includes(searchValue));
+
+    allTags.forEach(tag => $(tag).hide());
+
+    const tagsToShow = filteredTags.slice(0, currentPage * pageSize);
+    tagsToShow.forEach(tag => $(tag).show());
+
+    $(loadMoreBtn).toggle(tagsToShow.length < filteredTags.length);
+    $(showLessBtn).toggle(currentPage > 1);
   }
 
-  $('#skillSearch').on('input', debounce(function () {
-    currentQuery = $(this).val().toLowerCase().trim();
-    renderSuggestions(true);
-  }, 250));
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', function() {
+      currentPage++;
+      renderTags();
+    });
+  }
 
-  $('#clearSkillSearch').on('click', function () {
-    $('#skillSearch').val('');
-    currentQuery = '';
-    renderSuggestions(true);
+  if (showLessBtn) {
+    showLessBtn.addEventListener('click', function() {
+      currentPage = 1;
+      renderTags();
+    });
+  }
+
+  $(searchInput).on('input', function() {
+    currentPage = 1; // Reset to first page on search
+    renderTags();
   });
 
-  $('#loadBackTags').on('click', function () {
+  $('#clearSkillSearch').on('click', function() {
+    $(searchInput).val('');
     currentPage = 1;
-    renderSuggestions(true);
+    renderTags();
   });
 
-  $('#loadMoreTags').on('click', function () {
-    currentPage++;
-    renderSuggestions(false);
-  });
+  // Initial render on page load
+  renderTags();
 
-  $('#skillSuggestionsList').on('click', '.skill-sugg', function () {
-    var $item = $(this).closest('.skill-item');
-    var name = $item.data('name');
-    var category = $item.data('category');
-    var id = $item.data('id');
-    selectTag(name, id, category);
-  });
+  // --- File Handling ---
+  if (fileInput) {
+    fileInput.addEventListener('change', handleFileSelect);
+  }
+  if(removeFileBtn) {
+    removeFileBtn.addEventListener('click', removeFile);
+  }
 
-  function selectTag(name, id, category) {
-    $('#skillsContainer').empty();
-    var $chip = $(
-      '<span class="badge badge-pill badge-success mr-2">' + escapeHtml(name) +
-      ' <a href="#" class="text-white ml-1 remove-skill" style="text-decoration:none;">&times;</a></span>'
-    );
-    $('#skillsContainer').append($chip);
-    $('#skillsHidden').val(name);
-    if (typeof id !== 'undefined') $('#skillsIdHidden').val(id);
-    else $('#skillsIdHidden').val('');
-    if (typeof category !== 'undefined' && category) {
-      $('#ach_category').val(category);
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file && fileNameEl && fileSizeEl && filePreview) {
+      fileNameEl.textContent = file.name;
+      fileSizeEl.textContent = formatFileSize(file.size);
+      filePreview.classList.add('show');
     }
   }
 
-  $('#skillsContainer').on('click', '.remove-skill', function (e) {
-    e.preventDefault();
-    $('#skillsContainer').empty();
-    $('#skillsHidden').val('');
+  function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  function removeFile() {
+    if (fileInput) fileInput.value = '';
+    if (filePreview) filePreview.classList.remove('show');
+  }
+
+  // --- Form Submission ---
+  $('#addAchievementForm').on('submit', function(event) {
+    if (!selectedTag) {
+      alert('Please select a skill/tag first');
+      event.preventDefault();
+      return;
+    }
   });
 
-  window.prepareSkills = function () {
-    /* hidden input already set by selectTag */
-  };
-
-  // Add tag via AJAX
+  // --- Original AJAX Logic for Adding Tags ---
   $('#saveTagBtn').on('click', function (e) {
     e.preventDefault();
     var $btn = $(this);
     var name = $('#tagName').val().trim();
     var category = $('#tagCategory').val();
     if (!name) {
-      alert('Please enter a tag name');
+      alert('Please enter a tag name.');
       return;
     }
     $btn.prop('disabled', true);
+
     $.post(window.location.href, {
       add_tag_ajax: 1,
       tag_name: name,
@@ -121,29 +134,30 @@
     }, function (res) {
       $btn.prop('disabled', false);
       if (res && res.success) {
-        allSuggestions.unshift({
-          id: res.tblskill_id || res.skill_id || res.id,
-          name: res.name,
-          category: res.category
-        });
-        if (typeof $().modal === 'function') {
-          $('#addTagModal').modal('hide');
-        } else {
-          $('#addTagModal').hide();
-        }
+        // Create and prepend the new tag chip
+        const newTag = `
+          <div class="tag-chip" data-id="${res.tblskill_id}" data-name="${res.name}" data-category="${res.category}">
+            <span>${res.name}</span>
+            <span class="tag-category">${res.category}</span>
+          </div>
+        `;
+        $(tagsContainer).prepend(newTag);
+
+        // Auto-select the new tag
+        const newChip = $(tagsContainer).find('.tag-chip:first-child');
+        newChip.trigger('click');
+
+        // Close modal
+        $('#addTagModal').modal('hide');
         $('#tagName').val('');
         $('#tagCategory').val('Non-Academic');
-        renderSuggestions(true);
-        selectTag(res.name, res.tblskill_id || res.skill_id || res.id);
       } else {
-        alert((res && res.msg) ? res.msg : 'Error adding tag');
+        alert((res && res.msg) ? res.msg : 'Error adding tag.');
       }
     }, 'json').fail(function () {
       $btn.prop('disabled', false);
-      alert('Request failed');
+      alert('Request failed. Please try again.');
     });
   });
 
-  // Initial render
-  renderSuggestions(true);
 })(jQuery);

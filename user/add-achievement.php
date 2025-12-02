@@ -205,6 +205,7 @@ if (isset($_POST['add_achievement'])) {
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/style(v2).css">
+  <link rel="stylesheet" href="css/profile.css">
   <style>
     /* Make suggestion buttons and selected tag text black */
     .skill-sugg {
@@ -232,138 +233,130 @@ if (isset($_POST['add_achievement'])) {
       <?php include_once('includes/sidebar.php'); ?>
       <div class="main-panel">
         <div class="content-wrapper">
-          <div class="page-header">
-            <h3 class="page-title"> Add Achievement </h3>
-          </div>
-
           <div class="row">
-            <div class="col-md-8 mx-auto">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title text-center mb-4">Add Achievement / Skill</h4>
-                  <?php if ($ach_success): ?>
-                    <div class="alert alert-success">Achievement submitted and pending validation.</div>
-                  <?php endif; ?>
-                  <?php if (!empty($ach_error)): ?>
-                    <div class="alert alert-danger"><?php echo htmlentities($ach_error); ?></div>
-                  <?php endif; ?>
+            <div class="col-12">
+                <div class="form-card">
+                    <h1 class="form-title">Add Achievement / Skill</h1>
 
-                  <form id="addAchievementForm" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                      <label for="skillSearch">Skill / Tag</label>
-                      <p class="card-description">Select one tag. Click a suggestion to choose it or add a custom tag.
-                      </p>
-                      <div style="margin-bottom:8px;">
-                        <div class="input-group mb-2">
-                          <input id="skillSearch" type="search" class="form-control form-control-sm"
-                            placeholder="Search tags (type to filter)">
-                          <div class="input-group-append">
-                            <button type="button" id="clearSkillSearch"
-                              class="btn btn-sm btn-outline-secondary">Clear</button>
-                          </div>
-                        </div>
-                        <div id="skillSuggestionsList" class="d-flex flex-wrap" style="gap:6px;min-height:40px;">
-                          <?php if (!empty($skillSuggestions)): ?>
-                            <?php foreach ($skillSuggestions as $sugg): ?>
-                              <div class="skill-item" data-name="<?php echo htmlentities($sugg['name']); ?>"
-                                data-id="<?php echo htmlentities($sugg['id']); ?>"
-                                data-category="<?php echo htmlentities($sugg['category']); ?>">
-                                <button type="button" class="btn btn-sm btn-outline-success skill-sugg">
-                                  <?php echo htmlentities($sugg['name']); ?> <small
-                                    class="text-muted">(<?php echo htmlentities($sugg['category']); ?>)</small>
-                                </button>
-                              </div>
-                            <?php endforeach; ?>
-                          <?php else: ?>
-                            <div class="text-muted">No suggestions available.</div>
-                          <?php endif; ?>
-                        </div>
-                        <div class="mt-2">
-                          <button type="button" id="loadMoreTags" class="btn btn-sm btn-outline-info"
-                            style="display: none;">Load more</button>
-                          <button type="button" id="loadBackTags" class="btn btn-sm btn-outline-info"
-                            style="display: none;">Show Recent</button>
-                          <button type="button" id="addCustomTag" class="btn btn-sm btn-outline-primary"
-                            data-toggle="modal" data-target="#addTagModal">Add Tag</button>
-                        </div>
-                      </div>
-                      <div id="skillsContainer" style="margin-top:8px;"></div>
-                      <input type="hidden" name="skills" id="skillsHidden">
-                      <input type="hidden" name="skills_id" id="skillsIdHidden">
-                    </div>
-                    <div class="form-group">
-                      <label>Category</label>
-                      <select name="ach_category" id="ach_category" class="form-control">
-                        <option value="Non-Academic">Non-Academic</option>
-                        <option value="Academic">Academic</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label>Achievement Level</label>
-                      <select name="ach_level" class="form-control">
-                        <option>Hobby</option>
-                        <option>School</option>
-                        <option>City</option>
-                        <option>Provincial</option>
-                        <option>Regional</option>
-                        <option>National</option>
-                        <option>International</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label>Proof Image (optional)</label>
-                      <input type="file" name="proof" class="form-control">
-                      <small class="form-text text-muted">Upload an image as proof (jpg/png). Staff/Admin will
-                        validate.</small>
-                    </div>
-                    <div class="mt-3">
-                      <button type="submit" name="add_achievement" class="btn btn-success"
-                        onclick="prepareSkills()">Submit Achievement</button>
-                      <a href="update-profile.php" class="btn btn-light">Back</a>
-                    </div>
-                  </form>
+                    <?php if ($ach_success): ?>
+                        <div class="alert alert-success">Achievement submitted and pending validation.</div>
+                    <?php endif; ?>
+                    <?php if (!empty($ach_error)): ?>
+                        <div class="alert alert-danger"><?php echo htmlentities($ach_error); ?></div>
+                    <?php endif; ?>
 
-                  <!-- Add Tag Modal -->
-                  <div class="modal fade" id="addTagModal" tabindex="-1" role="dialog"
-                    aria-labelledby="addTagModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <form id="addTagForm">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="addTagModalLabel">Add Tag</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                            <div class="form-group">
-                              <label for="tagName">Tag Name</label>
-                              <input type="text" id="tagName" class="form-control" required>
+                    <form id="addAchievementForm" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label class="form-label">Skill / Tag</label>
+                            <p class="form-description">Select one tag. Click a suggestion to choose it or add a custom tag.</p>
+                            
+                            <div class="search-wrapper">
+                                <input type="text" class="search-input" placeholder="Search tags (type to filter)" id="searchInput">
+                                <button type="button" class="clear-btn" id="clearSkillSearch">Clear</button>
                             </div>
-                            <div class="form-group">
-                              <label for="tagCategory">Category</label>
-                              <select id="tagCategory" class="form-control">
-                                <option>Non-Academic</option>
-                                <option>Academic</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" id="saveTagBtn" class="btn btn-primary">Add Tag</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
 
+                            <div class="tags-container" id="tagsContainer">
+                                <?php foreach ($skillSuggestions as $sugg): ?>
+                                    <div class="tag-chip" data-id="<?php echo htmlentities($sugg['id']); ?>" data-name="<?php echo htmlentities($sugg['name']); ?>" data-category="<?php echo htmlentities($sugg['category']); ?>" style="display: none;">
+                                        <span><?php echo htmlentities($sugg['name']); ?></span>
+                                        <span class="tag-category"><?php echo htmlentities($sugg['category']); ?></span>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <div class="tag-actions">
+                                <button type="button" class="load-more-btn" id="loadMoreTags">Load more</button>
+                                <button type="button" class="load-more-btn" id="showLessTags" style="display: none;">Show less</button>
+                                <button type="button" class="add-tag-btn" data-toggle="modal" data-target="#addTagModal">Add Tag</button>
+                            </div>
+                            <input type="hidden" name="skills" id="skillsHidden">
+                            <input type="hidden" name="skills_id" id="skillsIdHidden">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select name="ach_category" id="ach_category" class="form-select" required>
+                                <option value="Non-Academic">Non-Academic</option>
+                                <option value="Academic">Academic</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Achievement Level</label>
+                            <select name="ach_level" class="form-select" required>
+                                <option value="Hobby">Hobby</option>
+                                <option value="School">School</option>
+                                <option value="City">City</option>
+                                <option value="Provincial">Provincial</option>
+                                <option value="Regional">Regional</option>
+                                <option value="National">National</option>
+                                <option value="International">International</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Proof Image (optional)</label>
+                            <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                                <div class="upload-icon">🖼️</div>
+                                <div class="upload-text">Click to upload proof image</div>
+                                <div class="upload-hint">Upload an image as proof (jpg/png). Staff/Admin will validate.</div>
+                            </div>
+                            <input type="file" id="fileInput" name="proof" class="file-input" accept="image/jpeg,image/png">
+                            
+                            <div class="file-preview" id="filePreview">
+                                <div class="file-preview-icon">📷</div>
+                                <div class="file-preview-details">
+                                    <div class="file-preview-name" id="fileName">image.jpg</div>
+                                    <div class="file-preview-size" id="fileSize">245 KB</div>
+                                </div>
+                                <button type="button" class="remove-file-btn" id="removeFileBtn">×</button>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="update-profile.php" class="btn btn-back">Back</a>
+                            <button type="submit" name="add_achievement" class="btn btn-submit">Submit Achievement</button>
+                        </div>
+                    </form>
                 </div>
-              </div>
             </div>
           </div>
         </div>
 
       </div>
+    </div>
+
+    <!-- Add Tag Modal -->
+    <div class="modal fade" id="addTagModal" tabindex="-1" role="dialog" aria-labelledby="addTagModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="addTagForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addTagModalLabel">Add Tag</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="tagName">Tag Name</label>
+                            <input type="text" id="tagName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tagCategory">Category</label>
+                            <select id="tagCategory" class="form-control">
+                                <option>Non-Academic</option>
+                                <option>Academic</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="saveTagBtn" class="btn btn-primary">Add Tag</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
   </div>
 
