@@ -99,9 +99,9 @@
                 <p class="font-weight-light text-muted mb-0" style="font-size:0.9rem;"><?php echo htmlentities($row->EmailAddress); ?></p>
               </div>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="student-profile.php"><i class="dropdown-item-icon icon-user text-primary"></i> My Profile</a>
-              <a class="dropdown-item" href="change-password.php"><i class="dropdown-item-icon icon-energy text-primary"></i> Change Password</a>
-              <a class="dropdown-item" href="logout.php"><i class="dropdown-item-icon icon-power text-primary"></i>Sign Out</a>
+              <a class="dropdown-item" href="student-profile.php"><span class="dropdown-item-icon">👤</span> My Profile</a>
+              <a class="dropdown-item" href="change-password.php"><span class="dropdown-item-icon">🔑</span> Change Password</a>
+              <a class="dropdown-item" href="logout.php"><span class="dropdown-item-icon">🚪</span> Sign Out</a>
             </div>
           </li>
         </ul>

@@ -41,9 +41,9 @@
             <p class="mb-1 mt-3"><?php echo htmlentities($adminName); ?></p>
             <p class="font-weight-light text-muted mb-0"><?php echo htmlentities($adminEmail); ?></p>
           </div>
-          <a class="dropdown-item" href="profile.php"><i class="dropdown-item-icon icon-user text-primary"></i> My Profile</a>
-          <a class="dropdown-item" href="change-password.php"><i class="dropdown-item-icon icon-energy text-primary"></i> Change Password</a>
-          <a class="dropdown-item" href="logout.php"><i class="dropdown-item-icon icon-power text-primary"></i>Sign Out</a>
+          <a class="dropdown-item" href="profile.php"><span class="dropdown-item-icon">👤</span> My Profile</a>
+          <a class="dropdown-item" href="change-password.php"><span class="dropdown-item-icon">🔑</span> Change Password</a>
+          <a class="dropdown-item" href="logout.php"><span class="dropdown-item-icon">🚪</span>Sign Out</a>
         </div>
       </li>
     </ul>
