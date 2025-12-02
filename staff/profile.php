@@ -52,11 +52,9 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-    <link rel="stylesheet" href="vendors/select2/select2.min.css">
-    <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+    <link rel="stylesheet" href="css/profile.css">
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="./css/style(v2).css">
-
+    <link rel="stylesheet" href="css/style(v2).css" />
   </head>
 
   <body>
@@ -65,73 +63,87 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
       <div class="container-fluid page-body-wrapper">
         <?php include_once('includes/sidebar.php'); ?>
         <div class="main-panel">
-          <div class="content-wrapper">
-            <div class="page-header">
-              <h3 class="page-title"> Staff Profile </h3>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Staff Profile</li>
-                </ol>
-              </nav>
-            </div>
-            <div class="row">
+          <div class="content-wrapper" style="background: #ecf0f4; padding: 40px;">
+            <div class="container">
+              <div class="profile-card">
+                <h1 class="profile-title">Staff Profile</h1>
 
-              <div class="col-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title" style="text-align: center;">Staff Profile</h4>
+                <form method="post" enctype="multipart/form-data">
+                  <?php
+                  $staffid = $_SESSION['sturecmsstaffid'];
+                  $sql = "SELECT * FROM tblstaff WHERE ID=:staffid";
+                  $query = $dbh->prepare($sql);
+                  $query->bindParam(':staffid', $staffid, PDO::PARAM_STR);
+                  $query->execute();
+                  $results = $query->fetchAll(PDO::FETCH_OBJ);
+                  if ($query->rowCount() > 0) {
+                    foreach ($results as $row) {
+                      $profileImage = !empty($row->Image) ? '../admin/images/' . htmlentities($row->Image) : 'images/faces/face8.jpg';
+                      ?>
+                      <div class="form-group">
+                        <label class="form-label">Staff Name</label>
+                        <input type="text" name="staffname" class="form-input"
+                          value="<?php echo htmlentities($row->StaffName); ?>" required>
+                      </div>
 
-                    <form class="forms-sample" method="post" enctype="multipart/form-data">
-                      <?php
-                      $staffid = $_SESSION['sturecmsstaffid'];
-                      $sql = "SELECT * FROM tblstaff WHERE ID=:staffid";
-                      $query = $dbh->prepare($sql);
-                      $query->bindParam(':staffid', $staffid, PDO::PARAM_STR);
-                      $query->execute();
-                      $results = $query->fetchAll(PDO::FETCH_OBJ);
-                      if ($query->rowCount() > 0) {
-                        foreach ($results as $row) { ?>
-                          <div class="form-group">
-                            <label for="exampleInputName1">Staff Name</label>
-                            <input type="text" name="staffname" value="<?php echo htmlentities($row->StaffName); ?>"
-                              class="form-control" required='true'>
+                      <div class="form-group">
+                        <label class="form-label">User Name</label>
+                        <input type="text" class="form-input" value="<?php echo htmlentities($row->UserName); ?>" readonly>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-input" value="<?php echo htmlentities($row->Email); ?>"
+                          required>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Staff Registration Date</label>
+                        <input type="text" class="form-input" value="<?php echo htmlentities($row->StaffRegdate); ?>"
+                          readonly>
+                      </div>
+
+                      <div class="profile-image-section">
+                        <label class="form-label">Current Profile Image</label>
+                        <div class="current-image-wrapper">
+                          <img src="<?php echo $profileImage; ?>" alt="Profile" class="profile-image" id="currentImage">
+                          <div class="image-info">
+                            <div class="image-label">
+                              <?php echo htmlentities($row->StaffName); ?>
+                            </div>
+                            <div class="image-description">Current profile picture</div>
                           </div>
-                          <div class="form-group">
-                            <label for="exampleInputEmail3">User Name</label>
-                            <input type="text" name="username" value="<?php echo htmlentities($row->UserName); ?>"
-                              class="form-control" readonly>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Update Profile Image</label>
+                        <div class="file-upload-wrapper">
+                          <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                            <div class="upload-icon">📷</div>
+                            <div class="upload-text">Click to choose a new profile image</div>
                           </div>
-                          <div class="form-group">
-                            <label for="exampleInputCity1">Email</label>
-                            <input type="email" name="email" value="<?php echo htmlentities($row->Email); ?>"
-                              class="form-control" required='true'>
+                          <input type="file" name="profilepic" id="fileInput" class="file-input"
+                            accept="image/jpeg,image/png,image/jpg" onchange="handleFileSelect(event)">
+
+                          <div class="file-preview" id="filePreview">
+                            <div class="file-preview-icon">📁</div>
+                            <div class="file-preview-details">
+                              <div class="file-preview-name" id="fileName">image.jpg</div>
+                              <div class="file-preview-size" id="fileSize">245 KB</div>
+                            </div>
+                            <button type="button" class="remove-file-btn" onclick="removeFile()">×</button>
                           </div>
-                          <div class="form-group">
-                            <label for="exampleInputCity1">Staff Registration Date</label>
-                            <input type="text" name="" value="<?php echo htmlentities($row->StaffRegdate); ?>" readonly=""
-                              class="form-control">
-                          </div>
-                          <div class="form-group">
-                            <label>Current Profile Image</label>
-                            <br>
-                            <?php if (!empty($row->Image)): ?>
-                              <img src="../admin/images/<?php echo $row->Image; ?>" width="100" height="100">
-                            <?php else: ?>
-                              <p>No image available</p>
-                            <?php endif; ?>
-                          </div>
-                          <div class="form-group">
-                            <label>Update Profile Image</label>
-                            <input type="file" name="profilepic" class="form-control">
-                          </div>
-                        <?php }
-                      } ?>
-                      <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
-                      <a href="dashboard.php" class="btn btn-light">Back</a>
-                    </form>
-                  </div>
-                </div>
+                        </div>
+                      </div>
+
+                      <div class="form-actions">
+                        <a href="dashboard.php" class="btn btn-back">Back</a>
+                        <button type="submit" name="submit" class="btn btn-update">Update</button>
+                      </div>
+                    <?php }
+                  } ?>
+                </form>
               </div>
             </div>
           </div>
@@ -139,13 +151,48 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
       </div>
     </div>
     <script src="vendors/js/vendor.bundle.base.js"></script>
-    <script src="vendors/select2/select2.min.js"></script>
-    <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <script src="js/typeahead.js"></script>
-    <script src="js/select2.js"></script>
     <script src="js/toast.js"></script>
+    <script>
+      const defaultImage = "<?php echo $profileImage; ?>";
+
+      function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+          if (!validTypes.includes(file.type)) {
+            alert('Please select a valid image file (JPG, PNG, or GIF)');
+            event.target.value = '';
+            return;
+          }
+
+          document.getElementById('fileName').textContent = file.name;
+          document.getElementById('fileSize').textContent = formatFileSize(file.size);
+          document.getElementById('filePreview').classList.add('show');
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById('currentImage').src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      function removeFile() {
+        document.getElementById('fileInput').value = '';
+        document.getElementById('filePreview').classList.remove('show');
+        document.getElementById('currentImage').src = defaultImage;
+      }
+    </script>
   </body>
 
   </html>

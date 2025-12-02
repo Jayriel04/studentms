@@ -52,119 +52,144 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-    <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-    <link rel="stylesheet" href="vendors/select2/select2.min.css">
-    <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="./css/style(v2).css">
-    <style>
-      #appToast {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 2000;
-      }
-    </style>
-
+    <link rel="stylesheet" href="./css/profile.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style(v2).css">
   </head>
 
   <body>
-    <div id="appToast"></div>
     <div class="container-scroller">
       <?php include_once('includes/header.php'); ?>
       <div class="container-fluid page-body-wrapper">
         <?php include_once('includes/sidebar.php'); ?>
         <div class="main-panel">
-          <div class="content-wrapper">
-            <div class="page-header">
-              <h3 class="page-title"> Admin Profile </h3>
-            </div>
-            <div class="row">
+          <div class="content-wrapper" style="background: #ecf0f4; padding: 40px;">
+            <div class="container">
+              <div class="profile-card">
+                <h1 class="profile-title">Admin Profile</h1>
 
-              <div class="col-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title" style="text-align: center;">Admin Profile</h4>
+                <form method="post" enctype="multipart/form-data">
+                  <?php
+                  $adminid = $_SESSION['sturecmsaid'];
+                  $sql = "SELECT * from tbladmin where ID=:aid";
+                  $query = $dbh->prepare($sql);
+                  $query->bindParam(':aid', $adminid, PDO::PARAM_STR);
+                  $query->execute();
+                  $results = $query->fetchAll(PDO::FETCH_OBJ);
+                  if ($query->rowCount() > 0) {
+                    foreach ($results as $row) {
+                      $profileImage = !empty($row->Image) ? 'images/' . htmlentities($row->Image) : 'images/faces/face8.jpg';
+                      ?>
+                      <div class="form-group">
+                        <label class="form-label">Admin Name</label>
+                        <input type="text" name="adminname" class="form-input" value="<?php echo htmlentities($row->AdminName); ?>" required>
+                      </div>
 
-                    <form class="forms-sample" method="post" enctype="multipart/form-data">
-                      <?php
-                      $adminid = $_SESSION['sturecmsaid'];
-                      $sql = "SELECT * from tbladmin where ID=:aid";
-                      $query = $dbh->prepare($sql);
-                      $query->bindParam(':aid', $adminid, PDO::PARAM_STR);
-                      $query->execute();
-                      $results = $query->fetchAll(PDO::FETCH_OBJ);
-                      $cnt = 1;
-                      if ($query->rowCount() > 0) {
-                        foreach ($results as $row) { ?>
-                          <div class="form-group">
-                            <label for="exampleInputName1">Admin Name</label>
-                            <input type="text" name="adminname" value="<?php echo $row->AdminName; ?>" class="form-control"
-                              required='true'>
-                          </div>
-                          <div class="form-group">
-                            <label for="exampleInputEmail3">User Name</label>
-                            <input type="text" name="username" value="<?php echo $row->UserName; ?>" class="form-control"
-                              readonly="">
-                          </div>
-                          <div class="form-group">
-                            <label for="exampleInputCity1">Email</label>
-                            <input type="email" name="email" value="<?php echo $row->Email; ?>" class="form-control"
-                              required='true'>
-                          </div>
-                          <div class="form-group">
-                            <label for="exampleInputCity1">Admin Registration Date</label>
-                            <input type="text" name="" value="<?php echo $row->AdminRegdate; ?>" readonly=""
-                              class="form-control">
-                          </div>
-                          <div class="form-group">
-                            <label>Current Profile Image</label>
-                            <br>
-                            <img src="images/<?php echo !empty($row->Image) ? $row->Image : 'faces/face8.jpg'; ?>" width="100"
-                              height="100">
-                          </div>
-                          <div class="form-group">
-                            <label>Update Profile Image</label>
-                            <input type="file" name="profilepic" class="form-control">
-                          </div>
-                          <?php $cnt = $cnt + 1;
-                        }
-                      } ?>
-                      <button type="submit" class="btn btn-primary mr-2" name="submit">Update</button>
-                      <a href="dashboard.php" class="btn btn-light">Back</a>
+                      <div class="form-group">
+                        <label class="form-label">User Name</label>
+                        <input type="text" class="form-input" value="<?php echo htmlentities($row->UserName); ?>" readonly>
+                      </div>
 
-                    </form>
-                  </div>
-                </div>
+                      <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-input" value="<?php echo htmlentities($row->Email); ?>" required>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Admin Registration Date</label>
+                        <input type="text" class="form-input" value="<?php echo htmlentities($row->AdminRegdate); ?>" readonly>
+                      </div>
+
+                      <div class="profile-image-section">
+                        <label class="form-label">Current Profile Image</label>
+                        <div class="current-image-wrapper">
+                          <img src="<?php echo $profileImage; ?>" alt="Profile" class="profile-image" id="currentImage">
+                          <div class="image-info">
+                            <div class="image-label">
+                              <?php echo htmlentities($row->AdminName); ?>
+                            </div>
+                            <div class="image-description">Current profile picture</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Update Profile Image</label>
+                        <div class="file-upload-wrapper">
+                          <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                            <div class="upload-icon">📷</div>
+                            <div class="upload-text">Click to choose a new profile image</div>
+                          </div>
+                          <input type="file" name="profilepic" id="fileInput" class="file-input" accept="image/jpeg,image/png,image/jpg" onchange="handleFileSelect(event)">
+
+                          <div class="file-preview" id="filePreview">
+                            <div class="file-preview-icon">📁</div>
+                            <div class="file-preview-details">
+                              <div class="file-preview-name" id="fileName">image.jpg</div>
+                              <div class="file-preview-size" id="fileSize">245 KB</div>
+                            </div>
+                            <button type="button" class="remove-file-btn" onclick="removeFile()">×</button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-actions">
+                        <a href="dashboard.php" class="btn btn-back">Back</a>
+                        <button type="submit" name="submit" class="btn btn-update">Update</button>
+                      </div>
+                    <?php }
+                  } ?>
+                </form>
               </div>
             </div>
           </div>
+          <?php include_once('includes/footer.php'); ?>
         </div>
       </div>
     </div>
     <script src="vendors/js/vendor.bundle.base.js"></script>
-    <script src="vendors/select2/select2.min.js"></script>
-    <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
-    <script src="js/typeahead.js"></script>
-    <script src="js/select2.js"></script>
     <script src="js/toast.js"></script>
     <script>
-      function showToast(message, type) {
-        type = type || 'info';
-        var toast = document.createElement('div');
-        toast.className = 'toast show bg-' + (type === 'success' ? 'success' : 'danger') + ' text-white';
-        toast.setAttribute('role', 'alert');
-        toast.innerHTML = '<div class="toast-header bg-success text-white"><strong class="mr-auto">' + (type === 'success' ? 'Success' : 'Notice') + '</strong><button type="button" class="ml-2 mb-1 close" data-dismiss="toast" style="color: #fff;">&times;</button></div><div class="toast-body">' + message + '</div>';
-        var container = document.getElementById('appToast');
-        container.appendChild(toast);
-        // Auto remove after 3s
-        setTimeout(function () { try { $(toast).toast('hide'); } catch (e) { toast.remove(); } }, 3000);
+      const defaultImage = "<?php echo $profileImage; ?>";
+
+      function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+          if (!validTypes.includes(file.type)) {
+            alert('Please select a valid image file (JPG, PNG, or GIF)');
+            event.target.value = '';
+            return;
+          }
+
+          document.getElementById('fileName').textContent = file.name;
+          document.getElementById('fileSize').textContent = formatFileSize(file.size);
+          document.getElementById('filePreview').classList.add('show');
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById('currentImage').src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
       }
-      // Delegate close buttons
-      document.addEventListener('click', function (e) { if (e.target && e.target.getAttribute && e.target.getAttribute('data-dismiss') === 'toast') { var t = e.target.closest('.toast'); if (t) t.remove(); } });
+
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      function removeFile() {
+        document.getElementById('fileInput').value = '';
+        document.getElementById('filePreview').classList.remove('show');
+        document.getElementById('currentImage').src = defaultImage;
+      }
     </script>
     <?php if (isset($toast_msg) && $toast_msg): ?>
       <script>document.addEventListener('DOMContentLoaded', function () { showToast(<?php echo json_encode($toast_msg); ?>, 'success'); });</script>

@@ -5,14 +5,14 @@ include('includes/dbconnection.php');
 error_reporting(0);
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
-} else {
+} else {  
   // Simple password change: verify current password and update directly
   if (isset($_POST['change_password'])) {
     $adminid = $_SESSION['sturecmsaid'];
     $current = isset($_POST['currentpassword']) ? trim($_POST['currentpassword']) : '';
     $new = isset($_POST['newpassword']) ? trim($_POST['newpassword']) : '';
     $confirm = isset($_POST['confirmpassword']) ? trim($_POST['confirmpassword']) : '';
-
+    
     if ($new === '' || $confirm === '') {
       $toast_msg = 'New password cannot be empty';
       $toast_type = 'error';
@@ -62,20 +62,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="vendors/select2/select2.min.css">
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="./css/style(v2).css">
-    <style>
-      #appToast {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 2000;
-      }
-    </style>
+    <link rel="stylesheet" href="css/style.css" /> <!-- Default styles -->
+    <link rel="stylesheet" href="css/profile.css"> <!-- New UI styles -->
+    <link rel="stylesheet" href="./css/style(v2).css"> <!-- Additional styles -->
   </head>
 
   <body>
-    <div id="appToast"></div>
     <div class="container-scroller">
       <?php include_once('includes/header.php'); ?>
       <div class="container-fluid page-body-wrapper">
@@ -83,44 +75,74 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title"> Change Password </h3>
-              <nav aria-label="breadcrumb">
+              <h3 class="page-title">Change Password</h3>
             </div>
-            <div class="row">
+            <div class="password-card">
+              <h1 class="card-title">Change Password</h1>
 
-              <div class="col-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title" style="text-align: center;">Change Password</h4>
-
-                    <form class="forms-sample" name="changepassword" method="post" onsubmit="return checkpass();">
-
-                      <div class="form-group" style="position: relative;">
-                        <label for="exampleInputName1">Current Password</label>
-                        <input type="password" name="currentpassword" id="currentpassword" class="form-control"
-                          required="true">
-                        <i class="icon-eye" id="toggleCurrentPassword"
-                          style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
-                      </div>
-                      <div class="form-group" style="position: relative;">
-                        <label for="exampleInputEmail3">New Password</label>
-                        <input type="password" name="newpassword" id="newpassword" class="form-control" required="true">
-                        <i class="icon-eye" id="toggleNewPassword"
-                          style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
-                      </div>
-                      <div class="form-group" style="position: relative;">
-                        <label for="exampleInputPassword4">Confirm Password</label>
-                        <input type="password" name="confirmpassword" id="confirmpassword" value="" class="form-control"
-                          required="true">
-                        <i class="icon-eye" id="toggleConfirmPassword"
-                          style="position: absolute; right: 15px; top: 70%; transform: translateY(-50%); cursor: pointer;"></i>
-                      </div>
-
-                      <button type="submit" class="btn btn-primary mr-2" name="change_password">Change Password</button>
-                      <a href="dashboard.php" class="btn btn-light">Back</a>
-                    </form>
+              <form method="post" name="changepassword" onsubmit="return handleSubmit(event);">
+                <div class="form-group">
+                  <label class="form-label">Current Password</label>
+                  <div class="password-input-wrapper">
+                    <input type="password" class="form-input" id="currentpassword" name="currentpassword" required>
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('currentpassword', this)">
+                      <i class="icon-eye"></i>
+                    </button>
                   </div>
                 </div>
+
+                <div class="form-group">
+                  <label class="form-label">New Password</label>
+                  <div class="password-input-wrapper">
+                    <input type="password" class="form-input" id="newpassword" name="newpassword" oninput="checkPasswordStrength()" onfocus="showRequirements()" required>
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('newpassword', this)">
+                      <i class="icon-eye"></i>
+                    </button>
+                  </div>
+
+                  <div class="password-strength" id="passwordStrength">
+                    <div class="strength-bar">
+                      <div class="strength-fill" id="strengthFill"></div>
+                    </div>
+                    <div class="strength-text" id="strengthText"></div>
+                  </div>
+
+                  <div class="password-requirements" id="requirements">
+                    <div class="requirement" id="req-length">
+                      <span class="requirement-icon">○</span>
+                      <span>At least 8 characters</span>
+                    </div>
+                    <div class="requirement" id="req-lowercase">
+                      <span class="requirement-icon">○</span>
+                      <span>One lowercase letter</span>
+                    </div>
+                    <div class="requirement" id="req-number">
+                      <span class="requirement-icon">○</span>
+                      <span>One number</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Confirm Password</label>
+                  <div class="password-input-wrapper">
+                    <input type="password" class="form-input" id="confirmpassword" name="confirmpassword" oninput="checkPasswordMatch()" required>
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirmpassword', this)">
+                      <i class="icon-eye"></i>
+                    </button>
+                  </div>
+                  <div class="error-message" id="matchError">Passwords do not match</div>
+                </div>
+
+                <div class="form-actions">
+                  <a href="dashboard.php" class="btn btn-back">Back</a>
+                  <button type="submit" class="btn btn-submit" name="change_password">Change Password</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="row">
+              <div class="col-12 grid-margin stretch-card">
               </div>
             </div>
           </div>
@@ -133,11 +155,108 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="js/off-canvas.js"></script>
     <script src="js/toast.js"></script>
     <script src="js/misc.js"></script>
-    <script src="js/script.js"></script>
 
     <?php if (isset($toast_msg) && $toast_msg): ?>
       <script>document.addEventListener('DOMContentLoaded', function () { showToast(<?php echo json_encode($toast_msg); ?>, <?php echo json_encode(isset($toast_type) ? $toast_type : 'info'); ?>); });</script>
     <?php endif; ?>
+
+    <script>
+      function togglePasswordVisibility(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.remove('icon-eye');
+          icon.classList.add('icon-eye-slash'); // Assuming you have a slash icon
+        } else {
+          input.type = 'password';
+          icon.classList.remove('icon-eye-slash');
+          icon.classList.add('icon-eye');
+        }
+      }
+
+      function showRequirements() {
+        document.getElementById('requirements').classList.add('show');
+      }
+
+      function checkPasswordStrength() {
+        const password = document.getElementById('newpassword').value;
+        const strengthFill = document.getElementById('strengthFill');
+        const strengthText = document.getElementById('strengthText');
+        const strengthDiv = document.getElementById('passwordStrength');
+
+        if (password.length === 0) {
+          strengthDiv.classList.remove('show');
+          return;
+        }
+
+        strengthDiv.classList.add('show');
+
+        const hasLength = password.length >= 8;
+        const hasLowercase = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+
+        updateRequirement('req-length', hasLength);
+        updateRequirement('req-lowercase', hasLowercase);
+        updateRequirement('req-number', hasNumber);
+
+        const metRequirements = [hasLength, hasLowercase, hasNumber].filter(Boolean).length;
+
+        strengthFill.className = 'strength-fill';
+        strengthText.className = 'strength-text';
+
+        if (metRequirements <= 2) {
+          strengthFill.classList.add('weak');
+          strengthText.classList.add('weak');
+          strengthText.textContent = 'Weak password';
+        } else if (metRequirements === 2) {
+          strengthFill.classList.add('medium');
+          strengthText.classList.add('medium');
+          strengthText.textContent = 'Medium password';
+        } else {
+          strengthFill.classList.add('strong');
+          strengthText.classList.add('strong');
+          strengthText.textContent = 'Strong password';
+        }
+      }
+
+      function updateRequirement(id, met) {
+        const element = document.getElementById(id);
+        const icon = element.querySelector('.requirement-icon');
+
+        if (met) {
+          element.classList.add('met');
+          icon.textContent = '✓';
+        } else {
+          element.classList.remove('met');
+          icon.textContent = '○';
+        }
+      }
+
+      function checkPasswordMatch() {
+        const newPassword = document.getElementById('newpassword').value;
+        const confirmPassword = document.getElementById('confirmpassword').value;
+        const errorDiv = document.getElementById('matchError');
+
+        if (confirmPassword.length > 0 && newPassword !== confirmPassword) {
+          errorDiv.classList.add('show');
+          return false;
+        } else {
+          errorDiv.classList.remove('show');
+          return true;
+        }
+      }
+
+      function handleSubmit(event) {
+        if (!checkPasswordMatch()) {
+          event.preventDefault();
+          showToast('Passwords do not match!', 'warning');
+          return false;
+        }
+        return true;
+      }
+    </script>
   </body>
 
   </html><?php } ?>
