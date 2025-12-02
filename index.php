@@ -22,6 +22,8 @@ include('includes/dbconnection.php');
     href='https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400italic,400,600,600italic,700,700italic,800,800italic'
     rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="css/default.css" />
+  <link rel="stylesheet" type="text/css" href="css/modal.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
   <link rel="stylesheet" type="text/css" href="css/component.css" />
   <div class="top" id="top"></div>
   <?php include_once('includes/header.php'); ?>
@@ -148,29 +150,22 @@ include('includes/dbconnection.php');
   </div>
 
   <!-- Notice Modal -->
-  <div class="modal fade" id="noticeModal" tabindex="-1" role="dialog" aria-labelledby="noticeModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document" aria-describedby="noticeModalBody">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="noticeModalLabel">
-            <span class="notice-icon" aria-hidden="true"><i class="fas fa-bullhorn"></i></span>
-            <span class="notice-title-text">Loading...</span>
-          </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" title="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+  <div class="new-modal-overlay" id="noticeModalOverlay">
+      <div class="new-modal">
+        <div class="new-modal-header">
+            <h2 class="new-modal-title">
+                <span class="notice-icon" aria-hidden="true"><i class="fas fa-bullhorn"></i></span>
+                <span class="notice-title-text">Loading...</span>
+            </h2>
+            <button type="button" class="new-close-btn">&times;</button>
         </div>
-        <div class="modal-body">
-          <div id="noticeModalBody" class="p-2">
+        <div class="new-modal-body">
             <div class="text-center">Please wait...</div>
-          </div>
         </div>
-        <div class="modal-footer d-flex justify-content-between align-items-center">
-          <small class="notice-meta" id="noticeModalDate"></small>
-          <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Close</button>
+        <div class="new-modal-footer">
+            <small class="notice-meta"></small>
+            <button type="button" class="new-btn new-btn-cancel">Close</button>
         </div>
-      </div>
     </div>
   </div>
 

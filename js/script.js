@@ -39,10 +39,12 @@ jQuery(document).ready(function ($) {
      * This part of the script handles opening the public notice modal
      * and populating it with the correct content from the page.
      */
-    var $modal = $('#noticeModal');
-    var $modalTitle = $('#noticeModalLabel .notice-title-text');
-    var $modalBody = $('#noticeModalBody');
-    var $modalDate = $('#noticeModalDate');
+    var $modalOverlay = $('#noticeModalOverlay');
+    var $modal = $modalOverlay.find('.new-modal');
+    var $modalTitle = $modal.find('.new-modal-title .notice-title-text');
+    var $modalBody = $modal.find('.new-modal-body');
+    var $modalDate = $modal.find('.new-modal-footer .notice-meta');
+    var $closeButtons = $modalOverlay.find('.new-close-btn, .new-btn-cancel');
 
     // Use event delegation for dynamically added or existing notice links
     $(document).on('click', '.modern-notice-link', function (e) {
@@ -67,8 +69,8 @@ jQuery(document).ready(function ($) {
             console.error("Could not find notice content for ID: " + noticeId);
             $modalTitle.text('Error');
             $modalBody.html('<p class="text-danger">Could not load notice content.</p>');
-            $modalDate.text('');
-            $modal.modal('show');
+            $modalDate.text(''); // Clear date on error
+            $modalOverlay.addClass('active');
             return;
         }
 
@@ -81,18 +83,40 @@ jQuery(document).ready(function ($) {
         $modalDate.text('Posted on: ' + date);
 
         // Show the modal
-        // This works for both Bootstrap 3 and 4
-        if (typeof $modal.modal === 'function') {
-            $modal.modal('show');
-        } else {
-            console.error("Bootstrap modal function not found.");
+        $modalOverlay.addClass('active');
+        $('body').css('overflow', 'hidden'); // Prevent background scrolling
+    });
+
+    // Function to close the modal
+    function closeModal() {
+        $modalOverlay.removeClass('active');
+        $('body').css('overflow', 'auto'); // Restore scrolling
+
+        // Reset modal content after a short delay to allow for the closing animation
+        setTimeout(function() {
+            $modalTitle.text('Loading...');
+            $modalBody.html('<div class="text-center">Please wait...</div>');
+            $modalDate.text('');
+        }, 300); // Matches the CSS transition duration
+    }
+
+    // Event listeners for closing the modal
+    $closeButtons.on('click', closeModal);
+    $modalOverlay.on('click', function(e) {
+        if ($(e.target).is($modalOverlay)) {
+            closeModal();
+        }
+    });
+    $(document).on('keydown', function(e) {
+        if (e.key === "Escape" && $modalOverlay.hasClass('active')) {
+            closeModal();
         }
     });
 
-    // Reset modal content when it's closed to avoid showing stale data
-    $modal.on('hidden.bs.modal', function () {
+    // Reset modal content when it's closed to avoid showing stale data - old BS logic removed
+    /* $modal.on('hidden.bs.modal', function () {
         $modalTitle.text('Loading...');
         $modalBody.html('<div class="text-center">Please wait...</div>');
         $modalDate.text('');
-    });
+    }); */
 });
