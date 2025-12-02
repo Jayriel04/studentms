@@ -266,7 +266,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       </thead>
                       <tbody>
                         <?php
-                        $sql = "SELECT ID, StaffName, UserName, Email, StaffRegdate, Status FROM tblstaff WHERE 1=1";
+                        $sql = "SELECT ID, StaffName, UserName, Email, StaffRegdate, Status, Image FROM tblstaff WHERE 1=1";
                         if (!empty($searchdata)) {
                           $sql .= " AND (StaffName LIKE :searchdata OR Email LIKE :searchdata)";
                         }
@@ -288,10 +288,15 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             <tr>
                               <td>
                                 <div class="user-info">
-                                  <div class="user-avatar"
-                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                    <?php echo getInitials($row->StaffName); ?>
-                                  </div>
+                                  <?php if (!empty($row->Image)): ?>
+                                    <img src="images/<?php echo htmlentities($row->Image); ?>" alt="Staff Avatar"
+                                      class="user-avatar-img">
+                                  <?php else: ?>
+                                    <div class="user-avatar"
+                                      style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                      <?php echo getInitials($row->StaffName); ?>
+                                    </div>
+                                  <?php endif; ?>
                                   <div class="user-details">
                                     <span class="user-name"><?php echo htmlentities($row->StaffName); ?></span>
                                     <span class="user-email"><?php echo htmlentities($row->Email); ?></span>

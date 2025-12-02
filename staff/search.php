@@ -268,8 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                         $countStmt->execute();
                         $total_rows = $countStmt->fetchColumn();
                         $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
-
-                        $dataSql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status,
+                        $dataSql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, t.Image,
                     IFNULL(SUM(sa.points),0) as totalPoints
                     FROM tblstudent t
                     JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved'
@@ -290,10 +289,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                             <tr>
                               <td>
                                 <div class="user-info">
-                                  <div class="user-avatar"
-                                    style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                                    <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
-                                  </div>
+                                  <?php if (!empty($row->Image)): ?>
+                                    <img src="../admin/images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar" class="user-avatar-img">
+                                  <?php else: ?>
+                                    <div class="user-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                      <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
+                                    </div>
+                                  <?php endif; ?>
                                   <div class="user-details">
                                     <span
                                       class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
@@ -404,8 +406,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                         $countStmt->execute();
                         $total_rows = (int) $countStmt->fetchColumn();
                         $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
-
-                        $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent " . $whereSQL . " ORDER BY ID DESC LIMIT :offset, :limit";
+                        $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status, Image FROM tblstudent " . $whereSQL . " ORDER BY ID DESC LIMIT :offset, :limit";
                         $query = $dbh->prepare($sql);
                         foreach ($params as $k => $v) {
                           $query->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
@@ -420,10 +421,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                             <tr>
                               <td>
                                 <div class="user-info">
-                                  <div class="user-avatar"
-                                    style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                                    <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
-                                  </div>
+                                  <?php if (!empty($row->Image)): ?>
+                                    <img src="../admin/images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar" class="user-avatar-img">
+                                  <?php else: ?>
+                                    <div class="user-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                      <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
+                                    </div>
+                                  <?php endif; ?>
                                   <div class="user-details">
                                     <span
                                       class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>

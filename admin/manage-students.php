@@ -53,7 +53,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   }
 
   // Pagination setup
-  $limit = 10; // rows per page
+  $limit = 5; // rows per page
   $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
   $offset = ($page - 1) * $limit;
   ?>
@@ -154,6 +154,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             $totalRows = $countStmt->fetchColumn();
 
                             $sql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, IFNULL(SUM(sa.points),0) as totalPoints FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id GROUP BY t.ID ORDER BY totalPoints DESC, t.ID DESC LIMIT :limit OFFSET :offset";
+                            $sql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, t.Image, IFNULL(SUM(sa.points),0) as totalPoints FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id GROUP BY t.ID ORDER BY totalPoints DESC, t.ID DESC LIMIT :limit OFFSET :offset";
                             $params[':skill_id'] = $skill_id;
                           } else {
                             $where = " WHERE 1=1";
@@ -170,7 +171,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             $countQuery->execute();
                             $totalRows = (int) $countQuery->fetchColumn();
 
-                            $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent" . $where . " ORDER BY FamilyName ASC, FirstName ASC LIMIT :limit OFFSET :offset";
+                            $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status, Image FROM tblstudent" . $where . " ORDER BY FamilyName ASC, FirstName ASC LIMIT :limit OFFSET :offset";
                           }
 
                           $totalPages = $totalRows > 0 ? ceil($totalRows / $limit) : 1;
@@ -186,9 +187,15 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                               <tr>
                                 <td>
                                   <div class="user-info">
-                                    <div class="user-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                                      <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
-                                    </div>
+                                    <?php if (!empty($row->Image)): ?>
+                                      <img src="images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar"
+                                        class="user-avatar-img">
+                                    <?php else: ?>
+                                      <div class="user-avatar"
+                                        style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                        <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
+                                      </div>
+                                    <?php endif; ?>
                                     <div class="user-details">
                                       <span class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
                                       <span class="user-email"><?php echo htmlentities($row->EmailAddress); ?></span>

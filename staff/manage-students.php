@@ -25,7 +25,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     $filter = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : 'all';
 
     // Pagination setup
-    $limit = 10; // rows per page
+    $limit = 5; // rows per page
     $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
     $offset = ($page - 1) * $limit;
 
@@ -131,7 +131,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                    $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent WHERE 1=1";
+                                                    $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status, Image FROM tblstudent WHERE 1=1";
                                                     $params = [];
 
                                                     if ($isSkillSearch) {
@@ -141,7 +141,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                         $countStmt->execute();
                                                         $totalRows = $countStmt->fetchColumn();
 
-                                                        $sql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, IFNULL(SUM(sa.points),0) as totalPoints FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id GROUP BY t.ID ORDER BY totalPoints DESC, t.ID DESC LIMIT :limit OFFSET :offset";
+                                                        $sql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, t.Image, IFNULL(SUM(sa.points),0) as totalPoints FROM tblstudent t JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved' JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id WHERE ssk.skill_id = :skill_id GROUP BY t.ID ORDER BY totalPoints DESC, t.ID DESC LIMIT :limit OFFSET :offset";
                                                         $params[':skill_id'] = $skill_id;
                                                     } else {
                                                         $where = " WHERE 1=1";
@@ -160,7 +160,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                         $countQuery->execute();
                                                         $totalRows = (int) $countQuery->fetchColumn();
 
-                                                        $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status FROM tblstudent" . $where . " ORDER BY FamilyName ASC, FirstName ASC LIMIT :limit OFFSET :offset";
+                                                        $sql = "SELECT ID AS sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status, Image FROM tblstudent" . $where . " ORDER BY FamilyName ASC, FirstName ASC LIMIT :limit OFFSET :offset";
                                                     }
 
                                                     $totalPages = $totalRows > 0 ? ceil($totalRows / $limit) : 1;
@@ -178,9 +178,15 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                             <tr>
                                                                 <td>
                                                                     <div class="user-info">
-                                                                        <div class="user-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                                                        <?php if (!empty($row->Image)): ?>
+                                                                          <img src="../admin/images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar"
+                                                                            class="user-avatar-img">
+                                                                        <?php else: ?>
+                                                                          <div class="user-avatar"
+                                                                            style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                                                                             <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
-                                                                        </div>
+                                                                          </div>
+                                                                        <?php endif; ?>
                                                                         <div class="user-details">
                                                                             <span class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
                                                                             <span class="user-email"><?php echo htmlentities($row->EmailAddress); ?></span>

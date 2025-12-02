@@ -8392,7 +8392,6 @@ input[type="button"].btn-block {
   background-color: #fff;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
-  border-radius: 0;
 }
 
 .card>hr {
@@ -15508,6 +15507,7 @@ code {
 .stretch-card>.card {
   width: 100%;
   min-width: 100%;
+  border-radius: 10px;
 }
 
 @media (min-width: 576px) {
