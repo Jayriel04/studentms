@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2025 at 01:44 PM
+-- Generation Time: Dec 03, 2025 at 12:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -49,7 +49,13 @@ INSERT INTO `achievement_approvals` (`id`, `achievement_id`, `approved_by`, `app
 (38, 39, '1', '2025-11-20 12:44:14', NULL),
 (41, 42, '1', '2025-11-20 12:56:34', 'please provide a proff'),
 (42, 43, '1', '2025-11-20 12:59:59', 'please provide a proff'),
-(43, 44, '1', '2025-11-20 13:31:43', 'please provide a proof of achievement and this is non academic!');
+(43, 44, '1', '2025-11-20 13:31:43', 'please provide a proof of achievement and this is non academic!'),
+(44, 48, '1', '2025-12-03 14:55:33', 'no proff'),
+(45, 46, '1', '2025-12-03 14:55:48', NULL),
+(46, 47, '1', '2025-12-03 16:48:54', 'no proof'),
+(47, 45, '1', '2025-12-03 16:54:37', 'no proof'),
+(48, 50, '1', '2025-12-03 18:45:54', 'tertw'),
+(49, 49, '1', '2025-12-03 18:45:58', 'vrg');
 
 -- --------------------------------------------------------
 
@@ -81,7 +87,9 @@ INSERT INTO `skills` (`id`, `name`, `category`, `created_at`) VALUES
 (10, 'Muse', 'Non-Academic', '2025-11-17 19:25:50'),
 (11, 'MOBA', 'Non-Academic', '2025-11-17 19:27:13'),
 (12, 'Mobile Legends', 'Non-Academic', '2025-11-19 11:18:02'),
-(13, 'Best in Presentation', 'Academic', '2025-11-20 11:53:59');
+(13, 'Best in Presentation', 'Academic', '2025-11-20 11:53:59'),
+(14, 'Best in Critical Thinking', 'Academic', '2025-11-30 13:14:08'),
+(15, 'Best in Problem Solving', 'Academic', '2025-11-30 16:42:54');
 
 -- --------------------------------------------------------
 
@@ -118,7 +126,13 @@ INSERT INTO `student_achievements` (`id`, `StuID`, `level`, `category`, `proof_i
 (39, '222 - 08410', 'International', 'Non-Academic', '1763613844_Screenshot__234_.png', 'approved', NULL, 1, 1, '2025-11-20 12:44:14', 100, '2025-11-20 12:44:04'),
 (42, '222 - 08410', 'Hobby', 'Non-Academic', '', 'rejected', 'please provide a proff', 1, 1, '2025-11-20 12:56:34', 1, '2025-11-20 12:56:17'),
 (43, '222 - 08410', 'School', 'Non-Academic', '', 'rejected', 'please provide a proff', 1, 1, '2025-11-20 12:59:59', 10, '2025-11-20 12:59:41'),
-(44, '222 - 08410', 'Regional', 'Academic', '', 'rejected', 'please provide a proof of achievement and this is non academic!', 1, 1, '2025-11-20 13:31:43', 50, '2025-11-20 13:31:02');
+(44, '222 - 08410', 'Regional', 'Academic', '', 'rejected', 'please provide a proof of achievement and this is non academic!', 1, 1, '2025-11-20 13:31:43', 50, '2025-11-20 13:31:02'),
+(45, '222 - 08412', 'Hobby', 'Academic', '', 'rejected', 'no proof', 0, 1, '2025-12-03 16:54:37', 1, '2025-11-30 13:14:08'),
+(46, '222 - 08412', 'School', 'Academic', '1764492174_girl.png', 'approved', NULL, 0, 1, '2025-12-03 14:55:48', 10, '2025-11-30 16:42:54'),
+(47, '222 - 08412', 'Hobby', 'Academic', '', 'rejected', 'no proof', 0, 1, '2025-12-03 16:48:54', 1, '2025-11-30 23:36:54'),
+(48, '222 - 08410', 'Hobby', 'Academic', '', 'rejected', 'no proff', 0, 1, '2025-12-03 14:55:33', 1, '2025-12-02 11:02:37'),
+(49, '222 - 08410', 'Hobby', 'Academic', '', 'rejected', 'vrg', 0, 1, '2025-12-03 18:45:58', 1, '2025-12-03 18:43:27'),
+(50, '222 - 08410', 'Hobby', 'Academic', '', 'rejected', 'tertw', 0, 1, '2025-12-03 18:45:54', 1, '2025-12-03 18:45:41');
 
 -- --------------------------------------------------------
 
@@ -146,7 +160,13 @@ INSERT INTO `student_achievement_skills` (`id`, `achievement_id`, `skill_id`) VA
 (39, 39, 12),
 (42, 42, 11),
 (43, 43, 11),
-(44, 44, 11);
+(44, 44, 11),
+(45, 45, 14),
+(46, 46, 15),
+(47, 47, 15),
+(48, 48, 8),
+(49, 49, 15),
+(50, 50, 15);
 
 -- --------------------------------------------------------
 
@@ -171,7 +191,7 @@ CREATE TABLE `tbladmin` (
 --
 
 INSERT INTO `tbladmin` (`ID`, `AdminName`, `UserName`, `Email`, `Password`, `AdminRegdate`, `Image`, `reset_code`, `reset_code_expires`) VALUES
-(1, 'Admin', 'admin', 'senilla.jayriel.mcc@gmail.com', '$2y$10$TkVBZ5IoU68nQZTYwmxDBukUG58pO4qM1XiO5Ad0G1VkxkMtDlJSm', '2025-01-01 04:36:52', '59f33a9e9f4ba0bf4e68d5c4264d8e6e1763372483.jpg', NULL, NULL);
+(1, 'Admin', 'admin', 'senilla.jayriel.mcc@gmail.com', '$2y$10$eZSNZrqC23Er79WklyhT..eHF.lp/b8mj6tje0eNw0/9lfb5AukEu', '2025-01-01 04:36:52', '59f33a9e9f4ba0bf4e68d5c4264d8e6e1763372483.jpg', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -196,7 +216,24 @@ CREATE TABLE `tblmessages` (
 
 INSERT INTO `tblmessages` (`ID`, `SenderID`, `SenderType`, `RecipientStuID`, `Subject`, `Message`, `IsRead`, `Timestamp`) VALUES
 (6, 1, 'admin', '222 - 08412', 'You were mentioned in a notice: Mobile Legends Choosen Player', 'You were mentioned in the notice titled \'Mobile Legends Choosen Player\'.\n\nContent:\n@Jayriel Senilla ', 0, '2025-11-21 14:31:09'),
-(7, 1, 'admin', '222 - 08412', 'Sample Email Message', 'Sample messaging!!', 0, '2025-11-22 08:03:46');
+(7, 1, 'admin', '222 - 08412', 'Sample Email Message', 'Sample messaging!!', 0, '2025-11-22 08:03:46'),
+(8, 1, 'admin', '222 - 08412', 'You were mentioned in a notice: Basketball Player Selection', 'You were mentioned in the notice titled \'Basketball Player Selection\'.\n\nContent:\n@John Mar Ypil \n@Jayriel Senilla \n@Jezrah Faith Canonio', 0, '2025-11-30 03:57:43'),
+(9, 1, 'admin', '222 - 08412', 'You were mentioned in an updated notice: Mobile Legends Choosen Player', 'You were mentioned in the updated notice titled \'Mobile Legends Choosen Player\'.\n\nContent:\n@Jayriel Senilla \r\n@Jaynard Senilla', 0, '2025-11-30 04:01:37'),
+(10, 1, 'admin', '111 - 11111', 'You were mentioned in an updated notice: Mobile Legends Choosen Player', 'You were mentioned in the updated notice titled \'Mobile Legends Choosen Player\'.\n\nContent:\n@Jayriel Senilla \r\n@Jaynard Senilla', 0, '2025-11-30 04:01:37'),
+(11, 5, 'staff', '222 - 08412', 'You were mentioned in a notice: Volleyball Player Selection', 'You were mentioned in the notice titled \'Volleyball Player Selection\'.\n\nContent:\n@Jayriel Senilla', 0, '2025-11-30 04:15:40'),
+(12, 5, 'staff', '222 - 08412', 'You were mentioned in an updated notice: Volleyball Player Selection', 'You were mentioned in the updated notice titled \'Volleyball Player Selection\'.\n\nContent:\n@Jayriel Senilla\r\n@Jaynard Senilla', 0, '2025-11-30 04:18:11'),
+(13, 5, 'staff', '111 - 11111', 'You were mentioned in an updated notice: Volleyball Player Selection', 'You were mentioned in the updated notice titled \'Volleyball Player Selection\'.\n\nContent:\n@Jayriel Senilla\r\n@Jaynard Senilla', 0, '2025-11-30 04:18:11'),
+(14, 1, 'admin', '222 - 08412', 'You were mentioned in an updated notice: Volleyball Player Selection', 'You were mentioned in the updated notice titled \'Volleyball Player Selection\'.\n\nContent:\n@Jayriel Senilla\r\n@Jaynard Senilla\r\n@John Mar Ypil', 0, '2025-11-30 15:15:37'),
+(15, 1, 'admin', '111 - 11111', 'You were mentioned in an updated notice: Volleyball Player Selection', 'You were mentioned in the updated notice titled \'Volleyball Player Selection\'.\n\nContent:\n@Jayriel Senilla\r\n@Jaynard Senilla\r\n@John Mar Ypil', 0, '2025-11-30 15:15:37'),
+(16, 1, 'admin', '100 - 10000', 'You were mentioned in a notice: Badminton Player selection', 'You were mentioned in the notice titled \'Badminton Player selection\'.\n\nContent:\n@John Mar Ypil \r\n@Carlos Flores', 0, '2025-12-01 06:04:35'),
+(17, 1, 'admin', '100 - 10000', 'You were mentioned in an updated notice: Badminton Player selection', 'You were mentioned in the updated notice titled \'Badminton Player selection\'.\n\nContent:\n@John Mar Ypil \r\n@Carlos Flores\r\n@Jezrah Faith Canonio', 0, '2025-12-01 06:08:39'),
+(18, 1, 'admin', '100 - 10000', 'You were mentioned in an updated notice: Badminton Player selection', 'You were mentioned in the updated notice titled \'Badminton Player selection\'.\n\nContent:\n@John Mar Ypil \n@Carlos Flores\n@Jezrah Faith Canonio', 0, '2025-12-02 04:24:24'),
+(19, 1, 'staff', '100 - 10000', 'You were mentioned in an updated notice: Badminton Player selection', 'You were mentioned in the updated notice titled \'Badminton Player selection\'.\n\nContent:\n@John Mar Ypil \r\n@Carlos Flores\r\n@Jezrah Faith Canonio\r\n@Jayriel Senilla', 0, '2025-12-02 04:25:50'),
+(20, 1, 'staff', '222 - 08412', 'You were mentioned in an updated notice: Badminton Player selection', 'You were mentioned in the updated notice titled \'Badminton Player selection\'.\n\nContent:\n@John Mar Ypil \r\n@Carlos Flores\r\n@Jezrah Faith Canonio\r\n@Jayriel Senilla', 0, '2025-12-02 04:25:50'),
+(21, 1, 'staff', '100 - 10000', 'You were mentioned in an updated notice: Badminton Player selection', 'You were mentioned in the updated notice titled \'Badminton Player selection\'.\n\nContent:\n@John Mar Ypil \r\n@Carlos Flores\r\n@Jayriel Senilla\r\n@Jezrah Faith Canonio', 0, '2025-12-02 04:26:08'),
+(22, 1, 'staff', '222 - 08412', 'You were mentioned in an updated notice: Badminton Player selection', 'You were mentioned in the updated notice titled \'Badminton Player selection\'.\n\nContent:\n@John Mar Ypil \r\n@Carlos Flores\r\n@Jayriel Senilla\r\n@Jezrah Faith Canonio', 0, '2025-12-02 04:26:08'),
+(23, 1, 'admin', '111 - 11111', 'Sample Email Message', 'aray ko', 0, '2025-12-03 08:31:42'),
+(24, 1, 'staff', '111 - 11111', 'cdgs', 'csdgv', 0, '2025-12-03 10:34:33');
 
 -- --------------------------------------------------------
 
@@ -216,15 +253,8 @@ CREATE TABLE `tblnotice` (
 --
 
 INSERT INTO `tblnotice` (`ID`, `NoticeTitle`, `NoticeMsg`, `CreationDate`) VALUES
-(7, 'Test Notice', 'This is the test notice. This is the test notice. This is the test notice. This is the test notice. This is the test notice.', '2025-01-01 06:03:25'),
-(8, 'Test Notice 02', 'Testing notice number 2', '2025-01-04 04:12:07'),
-(9, 'Sample01', 'This is sample post!!', '2025-07-28 05:37:25'),
-(10, 'Sample03', 'this sample 03', '2025-08-26 05:26:30'),
-(11, 'Sample04', 'This is sample 04', '2025-08-26 05:27:00'),
-(12, 'Sample05', 'This is sample 06', '2025-08-26 05:29:03'),
-(13, 'Sample04', 'This is sample notice number 4', '2025-09-29 07:06:13'),
-(14, 'Sample06', 'Idk ngano ni red na', '2025-10-02 09:54:16'),
-(23, 'Mobile Legends Choosen Player', '@Jayriel Senilla ', '2025-11-21 14:31:09');
+(23, 'Mobile Legends Choosen Player', '@Jayriel Senilla \r\n@Jaynard Senilla', '2025-11-21 14:31:09'),
+(24, 'Basketball Player Selection', '@John Mar Ypil \r\n@Jayriel Senilla \r\n@Jezrah Faith Canonio', '2025-11-30 03:57:43');
 
 -- --------------------------------------------------------
 
@@ -247,7 +277,7 @@ CREATE TABLE `tblpage` (
 --
 
 INSERT INTO `tblpage` (`ID`, `PageType`, `PageTitle`, `PageDescription`, `Email`, `MobileNumber`, `UpdationDate`) VALUES
-(1, 'aboutus', 'About Us', '<div style=\"text-align: start;\"><font color=\"#7b8898\" face=\"Mercury SSm A, Mercury SSm B, Georgia, Times, Times New Roman, Microsoft YaHei New, Microsoft Yahei, ????, ??, SimSun, STXihei, ????, serif\"><span style=\"font-size: 26px;\">Student Profiling System Developed for MCC.</span></font><br></div>', NULL, NULL, NULL),
+(1, 'aboutus', 'About Us', '<div style=\"text-align: start;\"><font color=\"#7b8898\" face=\"Mercury SSm A, Mercury SSm B, Georgia, Times, Times New Roman, Microsoft YaHei New, Microsoft Yahei, ????, ??, SimSun, STXihei, ????, serif\"><span style=\"font-size: 26px;\">Student Profiling System Developed for MCC.</span></font></div>', NULL, NULL, NULL),
 (2, 'contactus', 'Contact Us', '<span style=\"color: rgb(8, 8, 9); font-family: &quot;Segoe UI Historic&quot;, &quot;Segoe UI&quot;, Helvetica, Arial, sans-serif; font-size: 15px;\">Mandaue City Cultural and Sports Complex, A. Soriano Ave, Mandaue City, Philippines</span>', 'mcc@mandauecitycollege.com', 322395989, NULL);
 
 -- --------------------------------------------------------
@@ -270,7 +300,9 @@ CREATE TABLE `tblpublicnotice` (
 INSERT INTO `tblpublicnotice` (`ID`, `NoticeTitle`, `NoticeMessage`, `CreationDate`) VALUES
 (3, 'Winter vaction', 'Vacation til 15 Jan', '2025-01-04 04:14:32'),
 (4, 'Summer Vacation', 'Summer vacation for this year.', '2025-08-26 05:12:01'),
-(6, 'Bagyong Tino ', 'No class', '2025-11-16 06:45:25');
+(6, 'Bagyong Tino ', 'No class', '2025-11-16 06:45:25'),
+(7, 'Bagyong Odette', 'sample message', '2025-11-30 04:04:02'),
+(11, 'Bagyong Agoy', 'ahahahha', '2025-12-03 08:17:10');
 
 -- --------------------------------------------------------
 
@@ -359,10 +391,10 @@ CREATE TABLE `tblstaff` (
 
 INSERT INTO `tblstaff` (`ID`, `StaffName`, `UserName`, `Email`, `Image`, `Password`, `StaffRegdate`, `Status`) VALUES
 (1, 'Shiela daniot', 'shiela', 'senillajayriel@gmail.com', '9f29f3f97902866ff4f3ead5d59690c91760437710.png', '$2y$10$B3qul0SK1vX86/QjpYmnduinc.2QiG3OgnA6hfYLIkAizJOGcZVHe', '2025-09-09 06:56:58', 1),
-(3, 'gabi katol', 'gabi', 'gabi@test.com', NULL, 'd1aa72f9cae9ff4a4377fc58a5ae2fe9', '2025-09-12 14:20:55', 0),
-(4, 'saging hinog', 'saging', 'saging@test.com', NULL, '71eb4a6c476caef18ca1c2b5342f357a', '2025-09-12 14:21:16', 0),
-(5, 'Richie Messa', 'richie', 'senilla.jayriel.mcc@gmail.com', NULL, '29353f3b5eb749ae0afb3d88b810f05c', '2025-11-15 08:36:32', 1),
-(6, 'Jezrah Faith Canonio', 'jezrah', 'jezrah@gmail.com', NULL, '$2y$10$I0WwMIDQy4twjg2mZtw4kuAF95yINKiT6v4uxgCnn06FuyCz9lBPi', '2025-11-16 08:48:57', 1);
+(5, 'Richie Messa', 'richie', 'senilla.jayriel.mcc@gmail.com', '6012c65c6e2518e2edc618c2fe145cab1764485389.png', '$2y$10$4/dmT/V42iMSqgisW1Na8eQnpbI.ILY519oeo6OIRzyf25TMZfRga', '2025-11-15 08:36:32', 1),
+(13, 'Jezrah Faith Canonio', 'jezrah', 'canonio.jezrahfaith.mcc@gmail.com', NULL, '29353f3b5eb749ae0afb3d88b810f05c', '2025-11-30 15:36:00', 1),
+(14, 'Jaynard Senilla', 'jaynard', 'jaynardko@gmail.com', NULL, '29353f3b5eb749ae0afb3d88b810f05c', '2025-12-01 06:45:57', 1),
+(19, 'Rodelyn Estrera', 'rodelyn', 'rodelyn@gmail.com', NULL, '$2y$10$OxPPchROqROeZXkKkSi9j.NheVnJ3j4M4n8eMkbzjCGDii6wHLEnq', '2025-12-03 07:54:37', 1);
 
 -- --------------------------------------------------------
 
@@ -415,9 +447,9 @@ CREATE TABLE `tblstudent` (
 --
 
 INSERT INTO `tblstudent` (`ID`, `StuID`, `FamilyName`, `FirstName`, `MiddleName`, `Program`, `Major`, `LearnersReferenceNo`, `DOB`, `PlaceOfBirth`, `Gender`, `CivilStatus`, `Religion`, `Height`, `Weight`, `Citizenship`, `FathersName`, `MothersMaidenName`, `BuildingHouseNumber`, `StreetName`, `Barangay`, `CityMunicipality`, `Province`, `PostalCode`, `ContactNumber`, `EmailAddress`, `EmergencyContactPerson`, `EmergencyRelationship`, `EmergencyContactNumber`, `EmergencyAddress`, `Category`, `YearLevel`, `Password`, `Image`, `Academic`, `NonAcademic`, `Status`) VALUES
-(1, '222 - 08412', 'Senilla', 'Jayriel', 'Longakit', 'BSIT', 'InfoTech', '119323090042', '2004-04-09', 'idk', 'Mechanic', 'single', 'Roman Catholic', '164cm', '57kg', 'Filipino', 'Arnulfo Senilla', 'Jennifer Longakit', '587-A', 'Carnation street', 'Casili', 'Consolacion', 'Cebu', '6014', '09319106644', 'jayriel@test.com', 'jaynard senilla', 'brother', '09238263741', 'idk', 'Regular', '4', '$2y$10$m4ESgI.efyRszHdUes2XiOf9d606./wyvvN7nDoKptDxHWypKqik6', 'pfpjm.jfif', 'Best in Art', 'Mobile Legends', 1),
-(2, '222 - 08410', 'Ypil', 'John Mar', 'Hortilana', 'Bachelor of Science in Information Technology (BSIT)', '', '119323090040', '2002-12-22', 'idk', 'Male', 'Single', 'Roman Catholic', '164cm', '57cm', 'Filipino', 'idk', 'idk', 'idk', 'idk', 'idk', 'Mandaue City', 'Cebu', '6004', '09319106644', 'ypil.johnmar.mcc@gmail.com', 'Denise', 'wife', '09238263740', 'idk', '', '4', '$2y$10$RV2LjH1NklSikQGVOfXIk.jPsI6TRI6NX8lVrIJ4NU6b.uvTlLwki', 'pfpjm.jfif', 'Best in Art', 'Mobile Legends', 1),
-(3, '112233', 'Canonio', 'Jezrah Faith', 'Conde', 'BSIT', 'InfoTech', '119323090041', '2004-05-13', 'idk', 'Female', 'Single', 'Roman Catholic', '164cm', '49kg', 'Filipino', 'EdilJr Canonio', 'Nimfa Conde', 'idk', 'idk', 'idk', 'idk', 'idk', '6004', '09319106639', 'canonio.jezrahfaith.mcc@gmail.com', 'Marissa Canonio', 'Step Mother', '09238263740', 'idk', 'Regular', '4', '$2y$10$7B0fv2araaGH2rbuhL72x.SrdIKlNwGDbjkhFlXE5ZyECsEV5GqzW', 'pfpjez.jfif', NULL, NULL, 1),
+(1, '222 - 08412', 'Senilla', 'Jayriel', 'Longakit', 'BSIT', 'InfoTech', '119323090042', '2004-04-09', 'idk', 'Mechanic', 'single', 'Roman Catholic', '164cm', '57kg', 'Filipino', 'Arnulfo Senilla', 'Jennifer Longakit', '587-A', 'Carnation street', 'Casili', 'Consolacion', 'Cebu', '6014', '09319106644', 'jayriel@test.com', 'jaynard senilla', 'brother', '09238263741', 'idk', 'Regular', '4', '$2y$10$m4ESgI.efyRszHdUes2XiOf9d606./wyvvN7nDoKptDxHWypKqik6', 'pfpjm.jfif', 'Best in Art, Best in Problem Solving', 'Mobile Legends', 1),
+(2, '222 - 08410', 'Ypil', 'John Mar', 'Hortilana', 'Bachelor of Science in Information Technology (BSIT)', '', '119323090040', '2002-12-22', 'idk', 'Male', 'Single', 'Roman Catholic', '164cm', '57cm', 'Filipino', 'idk', 'idk', 'idk', 'idk', 'idk', '', 'Cebu', '6004', '09319106644', 'ypil.johnmar.mcc@gmail.com', 'Denise', 'wife', '09238263740', 'idk', 'Regular', '4', '$2y$10$OZfDiUCGd6ALu3icSuYRDO8CTBxzsaf4e96C4MOeEUO137112EIse', 'pfpjm.jfif', 'Best in Art', 'Mobile Legends', 1),
+(3, '112 - 23311', 'Canonio', 'Jezrah Faith', 'Condes', 'BSIT', '', '119323090041', '2004-05-13', 'idk', 'Bisexual', 'Single', 'Roman Catholic', '164cm', '49kg', 'Filipino', 'EdilJr Canonio', 'Nimfa Conde', 'idk', 'idk', 'idk', '', 'Cebu', '6004', '09319106639', 'canonio.jezrahfaith.mcc@gmail.com', 'Marissa Canonio', 'Step Mother', '09238263740', 'idk', 'Regular', '4', '$2y$10$7B0fv2araaGH2rbuhL72x.SrdIKlNwGDbjkhFlXE5ZyECsEV5GqzW', 'girl.png', NULL, NULL, 1),
 (9, '2025-001', 'Garcia', 'Juan', 'Santos', 'BSIT', 'Software Engineering', 'LRN12345', '2003-05-12', 'Manila', 'Male', 'Single', 'Catholic', '170', '65', 'Filipino', 'Pedro Garcia', 'Maria Santos', '123', 'Mabini St', 'Barangay 1', 'Quezon City', 'Metro Manila', '1100', '09171234567', 'juan.garcia@example.com', 'Ana Garcia', 'Sister', '09181234567', '123 Mabini St, QC', 'Regular', '2', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
 (10, '205 - 00223', 'Reyes', 'Maria', 'Lopez', 'BSBA', '', 'LRN67890', '2002-11-23', 'Cebu', 'Female', 'Single', 'Catholic', '160', '50', 'Filipino', 'Jose Reyes', 'Elena Lopez', '456', 'Rizal Ave', 'Barangay 5', 'Cebu City', 'Cebu', '6000', '09991234567', 'maria.reyes@example.com', 'Jose Reyes', 'Father', '09981234567', '456 Rizal Ave, Cebu', 'Regular', '3', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
 (11, '225 - 00323', 'Cruz', 'Mark', 'Antonio', 'BSCE', '', 'LRN54321', '2001-07-19', 'Davao', 'Male', 'Married', 'Christian', '175', '70', 'Filipino', 'Andres Cruz', 'Luz Antonio', '789', 'Bonifacio St', 'Barangay 10', 'Davao City', 'Davao del Sur', '8000', '09221234567', 'mark.cruz@example.com', 'Anna Cruz', 'Wife', '09281234567', '789 Bonifacio St, Davao', 'Irregular', '2', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
@@ -432,7 +464,9 @@ INSERT INTO `tblstudent` (`ID`, `StuID`, `FamilyName`, `FirstName`, `MiddleName`
 (20, '12345', 'Crazy', 'Rapid', 'Boots', '', NULL, NULL, '0000-00-00', NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'saging@test.com', NULL, NULL, NULL, NULL, '', '1', '$2y$10$3sUTYaeAFwO0ZxbM54afr.2Bn9HeWVpubli/PPnMn8zMRHwOn/5lC', 'anonymous-user.png', NULL, NULL, 1),
 (21, '222-08800', 'Canonio', 'Seg Francis', 'Kiem', '', NULL, NULL, '0000-00-00', NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'canonio.segfrancis.mcc@gmail.com', NULL, NULL, NULL, NULL, '', '1', '$2y$10$PBmGXFQarxtc0i1lOhoN7Otgp1kz9v4wXSLDIAnTIDPl58FWiiHrW', 'Screenshot 2025-02-13 182718.png', NULL, NULL, 1),
 (22, '1111', 'Senilla', 'Senilla', 'Sam', '', NULL, NULL, '0000-00-00', NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'jayriel.senilla@mc-college.online', NULL, NULL, NULL, NULL, '', '1', '$2y$10$NeKFtteePIK5KQITC9w/KuaZHAb2FwSe2I/YMkzvUmdQ0kfU2pi0y', '1763278247_Screenshot__235_.png', NULL, NULL, 1),
-(26, '111 - 11111', 'Senilla', 'Jaynard', 'Longakit', '', NULL, NULL, '0000-00-00', NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'senillajayriel@gmail.com', NULL, NULL, NULL, NULL, '', NULL, '$2y$10$B1q6WTaXxw7/ZLA3t/AoKektMtEKeyaO.XTQBbLiCmZpXfpfiT8iG', NULL, 'Best in Art', 'Mobile Legends', 1);
+(26, '111 - 11111', 'Senilla', 'Jaynard', 'Longakit', '', NULL, NULL, '0000-00-00', NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'senillajayriel@gmail.com', NULL, NULL, NULL, NULL, '', NULL, '$2y$10$B1q6WTaXxw7/ZLA3t/AoKektMtEKeyaO.XTQBbLiCmZpXfpfiT8iG', NULL, 'Best in Art', 'Mobile Legends', 1),
+(27, '222- 08510', 'Crazy', 'Bryson', 'Mendoza', 'Bachelor of Secondary Education (BSEd)', 'Major in English', 'LRN98765', '2004-02-03', 'Iloilo City', 'Male', 'Married', 'Catholic', '172', '72', 'Filipino', 'Mario Garcia', 'Teresa Martinez', '587-A', 'Lopez Jaena St.', 'Barangay West', 'Carcar City', 'Cebu', '6000', '09561234567', 'jezrah@test.com', 'Marissa Canonio', 'brother', '09238263741', 'idk', 'Continuing/Returnee', '3', 'ad6a280417a0f533d8b670c61667e1a0', NULL, NULL, NULL, 1),
+(28, '100-12345', 'Santos', 'Juan', 'Dela Cruz', 'BSIT', 'Software Engineering', 'LRN12345', '2002-05-14', 'Manila', 'Male', 'Single', 'Catholic', '170', '65', 'Filipino', 'Pedro Santos', 'Maria Dela Cruz', '123', 'Rizal St.', 'Barangay 1', 'Quezon City', 'Metro Manila', '1100', '09171234567', 'juan.santos@email.com', 'Ana Santos', 'Mother', '09181234567', '123 Rizal St., QC', 'Regular', '', '$2y$10$l0/RsUccXmz9qcwSUdlC5uHsJwl1ZpjN94YDZBc/B.VwW86PYuGpO', NULL, NULL, NULL, 1);
 
 --
 -- Indexes for dumped tables
@@ -528,25 +562,25 @@ ALTER TABLE `tblstudent`
 -- AUTO_INCREMENT for table `achievement_approvals`
 --
 ALTER TABLE `achievement_approvals`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `skills`
 --
 ALTER TABLE `skills`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `student_achievements`
 --
 ALTER TABLE `student_achievements`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `student_achievement_skills`
 --
 ALTER TABLE `student_achievement_skills`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `tbladmin`
@@ -558,13 +592,13 @@ ALTER TABLE `tbladmin`
 -- AUTO_INCREMENT for table `tblmessages`
 --
 ALTER TABLE `tblmessages`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `tblnotice`
 --
 ALTER TABLE `tblnotice`
-  MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `tblpage`
@@ -576,7 +610,7 @@ ALTER TABLE `tblpage`
 -- AUTO_INCREMENT for table `tblpublicnotice`
 --
 ALTER TABLE `tblpublicnotice`
-  MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `tblskills`
@@ -588,13 +622,13 @@ ALTER TABLE `tblskills`
 -- AUTO_INCREMENT for table `tblstaff`
 --
 ALTER TABLE `tblstaff`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `tblstudent`
 --
 ALTER TABLE `tblstudent`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- Constraints for dumped tables
