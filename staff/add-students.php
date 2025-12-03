@@ -159,20 +159,20 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                         <div class="add-student-section-title">Personal Information</div>
                         <div class="add-student-form-grid">
                           <div class="add-student-input-group"><label>Student ID</label><div class="add-student-input-wrapper"><input type="text" name="stuid" required placeholder="e.g., 123-45678" pattern="\d{3}\s*-\s*\d{5}" title="The format must be: ###-#####"></div></div>
-                          <div class="add-student-input-group"><label>Family Name</label><div class="add-student-input-wrapper"><input type="text" name="familyname" required></div></div>
-                          <div class="add-student-input-group"><label>First Name</label><div class="add-student-input-wrapper"><input type="text" name="firstname" required></div></div>
-                          <div class="add-student-input-group"><label>Middle Name</label><div class="add-student-input-wrapper"><input type="text" name="middlename"></div></div>
+                          <div class="add-student-input-group"><label>Family Name</label><div class="add-student-input-wrapper"><input type="text" name="familyname" required style="text-transform: capitalize;"></div></div>
+                          <div class="add-student-input-group"><label>First Name</label><div class="add-student-input-wrapper"><input type="text" name="firstname" required style="text-transform: capitalize;"></div></div>
+                          <div class="add-student-input-group"><label>Middle Name</label><div class="add-student-input-wrapper"><input type="text" name="middlename" style="text-transform: capitalize;"></div></div>
                           <div class="add-student-input-group"><label>Date of Birth</label><div class="add-student-input-wrapper"><input type="date" name="dob" required></div></div>
-                          <div class="add-student-input-group"><label>Place of Birth</label><div class="add-student-input-wrapper"><input type="text" name="placeofbirth"></div></div>
+                          <div class="add-student-input-group"><label>Place of Birth</label><div class="add-student-input-wrapper"><input type="text" name="placeofbirth" style="text-transform: capitalize;"></div></div>
                           <div class="add-student-input-group"><label>Gender</label><div class="add-student-input-wrapper"><select name="gender" id="gender" required onchange="toggleOtherGenderInput()"><option value="">Select Gender</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div></div>
-                          <div class="add-student-input-group" id="otherGenderInput" style="display: none;"><label>Please Specify Gender</label><div class="add-student-input-wrapper"><input type="text" name="otherGender" id="otherGender"></div></div>
+                          <div class="add-student-input-group" id="otherGenderInput" style="display: none;"><label>Please Specify Gender</label><div class="add-student-input-wrapper"><input type="text" name="otherGender" id="otherGender" style="text-transform: capitalize;"></div></div>
                           <div class="add-student-input-group"><label>Civil Status</label><div class="add-student-input-wrapper"><select name="civilstatus"><option value="">Select Status</option><option value="Single">Single</option><option value="Married">Married</option><option value="Divorced">Divorced</option><option value="Widowed">Widowed</option><option value="Separated">Separated</option></select></div></div>
-                          <div class="add-student-input-group"><label>Religion</label><div class="add-student-input-wrapper"><input type="text" name="religion"></div></div>
+                          <div class="add-student-input-group"><label>Religion</label><div class="add-student-input-wrapper"><input type="text" name="religion" style="text-transform: capitalize;"></div></div>
                           <div class="add-student-input-group"><label>Height (cm)</label><div class="add-student-input-wrapper"><input type="text" name="height"></div></div>
                           <div class="add-student-input-group"><label>Weight (kg)</label><div class="add-student-input-wrapper"><input type="text" name="weight"></div></div>
-                          <div class="add-student-input-group"><label>Citizenship</label><div class="add-student-input-wrapper"><input type="text" name="citizenship"></div></div>
-                          <div class="add-student-input-group"><label>Father's Name</label><div class="add-student-input-wrapper"><input type="text" name="fathersname"></div></div>
-                          <div class="add-student-input-group"><label>Mother's Maiden Name</label><div class="add-student-input-wrapper"><input type="text" name="mothersmaidenname"></div></div>
+                          <div class="add-student-input-group"><label>Citizenship</label><div class="add-student-input-wrapper"><input type="text" name="citizenship" style="text-transform: capitalize;"></div></div>
+                          <div class="add-student-input-group"><label>Father's Name</label><div class="add-student-input-wrapper"><input type="text" name="fathersname" style="text-transform: capitalize;"></div></div>
+                          <div class="add-student-input-group"><label>Mother's Maiden Name</label><div class="add-student-input-wrapper"><input type="text" name="mothersmaidenname" style="text-transform: capitalize;"></div></div>
                         </div>
                       </div>
 
@@ -228,10 +228,10 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                       <div class="form-step" data-step="4">
                         <div class="add-student-section-title">Emergency Contact</div>
                         <div class="add-student-form-grid">
-                          <div class="add-student-input-group"><label>Full Name</label><div class="add-student-input-wrapper"><input type="text" name="emergencycontactperson"></div></div>
-                          <div class="add-student-input-group"><label>Relationship</label><div class="add-student-input-wrapper"><input type="text" name="emergencyrelationship"></div></div>
+                          <div class="add-student-input-group"><label>Full Name</label><div class="add-student-input-wrapper"><input type="text" name="emergencycontactperson" style="text-transform: capitalize;"></div></div>
+                          <div class="add-student-input-group"><label>Relationship</label><div class="add-student-input-wrapper"><input type="text" name="emergencyrelationship" style="text-transform: capitalize;"></div></div>
                           <div class="add-student-input-group"><label>Phone Number</label><div class="add-student-input-wrapper"><input type="text" name="emergencycontactnumber"></div></div>
-                          <div class="add-student-input-group"><label>Address</label><div class="add-student-input-wrapper"><textarea name="emergencyaddress"></textarea></div></div>
+                          <div class="add-student-input-group"><label>Address</label><div class="add-student-input-wrapper"><textarea name="emergencyaddress" style="text-transform: capitalize;"></textarea></div></div>
                         </div>
                       </div>
 

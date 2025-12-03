@@ -77,7 +77,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       <div class="form-group">
                         <label class="form-label">Page Title:</label>
                         <input type="text" name="pagetitle" value="<?php echo htmlspecialchars($row->PageTitle); ?>"
-                          class="form-input" required>
+                          class="form-input" required style="text-transform: capitalize;">
                       </div>
                       <div class="form-group">
                         <label class="form-label">Page Description:</label>

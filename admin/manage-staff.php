@@ -178,7 +178,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                           <div class="new-form-group">
                               <label for="staffname" class="new-form-label">Staff Name</label>
                               <input type="text" name="staffname" class="new-form-input" required='true'
-                                  style="text-transform: capitalize;" placeholder="Enter staff name">
+                                  style="text-transform: capitalize;" placeholder="Enter staff name" style="text-transform: capitalize;">
                           </div>
                           <div class="new-form-group">
                               <label for="username" class="new-form-label">User Name</label>

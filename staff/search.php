@@ -499,11 +499,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
         <form method="post">
           <div class="new-form-group">
             <label for="nottitle" class="new-form-label">Notice Title</label>
-            <input type="text" class="new-form-input" id="nottitle" name="nottitle" required placeholder="Enter notice title">
+            <input type="text" class="new-form-input" id="nottitle" name="nottitle" required placeholder="Enter notice title" style="text-transform: capitalize;">
           </div>
           <div class="new-form-group">
             <label for="notmsg" class="new-form-label">Notice Message</label>
-            <textarea class="new-form-textarea" id="notmsg" name="notmsg" rows="5" required placeholder="Enter notice details..."></textarea>
+            <textarea class="new-form-textarea" id="notmsg" name="notmsg" rows="5" required placeholder="Enter notice details..." style="text-transform: capitalize;"></textarea>
             <small class="text-muted">Use @FirstName LastName to mention students.</small>
           </div>
           <div class="new-modal-footer">
@@ -528,11 +528,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
             <input type="hidden" name="student_stuid" id="studentStuID">
             <div class="new-form-group">
               <label for="subject" class="new-form-label">Subject</label>
-              <input type="text" class="new-form-input" id="subject" name="subject" required placeholder="Enter subject">
+              <input type="text" class="new-form-input" id="subject" name="subject" required placeholder="Enter subject" style="text-transform: capitalize;">
             </div>
             <div class="new-form-group">
               <label for="message" class="new-form-label">Message</label>
-              <textarea class="new-form-textarea" id="message" name="message" rows="5" required placeholder="Enter your message..."></textarea>
+              <textarea class="new-form-textarea" id="message" name="message" rows="5" required placeholder="Enter your message..." style="text-transform: capitalize;"></textarea>
             </div>
           </div>
           <div class="new-modal-footer">

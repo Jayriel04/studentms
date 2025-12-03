@@ -180,12 +180,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         <div class="new-form-group">
                           <label for="nottitle_modal" class="new-form-label">Notice Title</label>
                           <input type="text" name="nottitle" id="nottitle_modal" class="new-form-input" required
-                            placeholder="Enter notice title">
+                            placeholder="Enter notice title" style="text-transform: capitalize;">
                         </div>
                         <div class="new-form-group">
                           <label for="notmsg_modal" class="new-form-label">Notice Message</label>
                           <textarea name="notmsg" id="notmsg_modal" class="new-form-textarea" required
-                            placeholder="Enter notice details..."></textarea>
+                            placeholder="Enter notice details..." style="text-transform: capitalize;"></textarea>
                           <small class="text-muted">Use @FirstName LastName to mention students.</small>
                         </div>
 
@@ -209,12 +209,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         <div class="new-form-group">
                           <label for="edit_nottitle_modal" class="new-form-label">Notice Title</label>
                           <input type="text" name="edit_nottitle" id="edit_nottitle_modal" class="new-form-input" required
-                            placeholder="Enter notice title">
+                            placeholder="Enter notice title" style="text-transform: capitalize;">
                         </div>
                         <div class="new-form-group">
                           <label for="edit_notmsg_modal" class="new-form-label">Notice Message</label>
                           <textarea name="edit_notmsg" id="edit_notmsg_modal" class="new-form-textarea" required
-                            placeholder="Enter notice details..."></textarea>
+                            placeholder="Enter notice details..." style="text-transform: capitalize;"></textarea>
                           <small class="text-muted">Use @FirstName LastName to mention students.</small>
                         </div>
 
