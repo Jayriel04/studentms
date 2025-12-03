@@ -45,75 +45,12 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/profile.css" />
+    <link rel="stylesheet" href="css/toaster.css" />
     <link rel="stylesheet" href="./css/style(v2).css">
-    <style>
-      .toast-box {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1050;
-        width: 300px;
-        background: #fff;
-        border: 1px solid #ddd;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 4px;
-        display: none;
-      }
-
-      .toast-box .toast-header {
-        padding: 10px 15px;
-        border-bottom: 1px solid #eee;
-        font-weight: 600;
-      }
-
-      .toast-box .toast-body {
-        padding: 15px;
-      }
-
-      .toast-box.toast-success .toast-header {
-        background-color: #d4edda;
-        color: #155724;
-      }
-
-      .toast-box.toast-warning .toast-header {
-        background-color: #fff3cd;
-        color: #856404;
-      }
-
-      .toast-box.toast-danger .toast-header {
-        background-color: #f8d7da;
-        color: #721c24;
-      }
-
-      .toast-show {
-        display: block;
-        animation: toast-in 0.3s;
-      }
-
-      @keyframes toast-in {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-    </style>
     <script type="text/javascript">
-      function showToast(message, type) {
-        var toast = document.getElementById('pageToast');
-        if (!toast) return;
-        toast.className = 'toast-box toast-show toast-' + type;
-        toast.querySelector('.toast-body').textContent = message;
-        setTimeout(function () { toast.className = toast.className.replace('toast-show', ''); }, 4000);
-      }
-
       function checkpass() {
         if (document.changepassword.newpassword.value != document.changepassword.confirmpassword.value) {
-          showToast('New Password and Confirm Password field does not match', 'warning');
+          toastr.warning('New Password and Confirm Password field does not match');
           document.changepassword.confirmpassword.focus();
           return false;
         }
@@ -125,10 +62,6 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
 
   <body>
     <div class="container-scroller">
-      <div id="pageToast" class="toast-box">
-        <div class="toast-header">Notification</div>
-        <div class="toast-body"></div>
-      </div>
       <?php include_once('includes/header.php'); ?>
       <div class="container-fluid page-body-wrapper">
         <?php include_once('includes/sidebar.php'); ?>
@@ -220,7 +153,11 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <?php
     if (isset($_SESSION['toast_message'])) {
       $toast = $_SESSION['toast_message'];
-      echo "<script>document.addEventListener('DOMContentLoaded', function() { showToast('" . addslashes($toast['message']) . "', '" . addslashes($toast['type']) . "'); });</script>";
+      if ($toast['type'] === 'success') {
+        echo "<script>toastr.success('" . addslashes($toast['message']) . "');</script>";
+      } else {
+        echo "<script>toastr.warning('" . addslashes($toast['message']) . "');</script>";
+      }
       unset($_SESSION['toast_message']);
     }
     ?>

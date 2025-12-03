@@ -17,7 +17,9 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
         $query->bindParam(':sid', $sid, PDO::PARAM_INT);
         $query->execute();
         $statusMessage = $newStatus == 1 ? 'Student activated successfully.' : 'Student deactivated successfully.';
-        echo "<script>var statusMessage = '$statusMessage';</script>";
+        $_SESSION['update_message'] = $statusMessage; // Use the same session variable for consistency
+        echo "<script>window.location.href = 'manage-students.php'</script>";
+        exit();
     }
 
     // Search and filter functionality (support GET or POST so pagination links work)
@@ -269,12 +271,17 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
         <script src="js/off-canvas.js"></script>
         <script src="js/misc.js"></script>
         <script src="js/toast.js"></script>
-        <script>
-            // Display toast notification for status updates
-            if (typeof statusMessage !== 'undefined' && statusMessage) {
-                toastr.success(statusMessage);
-            }
-        </script>
+        <?php
+        // Display toast notification for updates from other pages
+        if (isset($_SESSION['update_message'])) {
+            echo "<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    toastr.success('" . addslashes($_SESSION['update_message']) . "');
+                });
+            </script>";
+            unset($_SESSION['update_message']);
+        }
+        ?>
     </body>
 
     </html>

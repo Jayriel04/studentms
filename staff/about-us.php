@@ -5,6 +5,7 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
   header('location:logout.php');
 } else {
+  $success_message = '';
   if (isset($_POST['submit'])) {
     $pagetitle = $_POST['pagetitle'];
     $pagedes = $_POST['pagedes'];
@@ -13,7 +14,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     $query->bindParam(':pagetitle', $pagetitle, PDO::PARAM_STR);
     $query->bindParam(':pagedes', $pagedes, PDO::PARAM_STR);
     $query->execute();
-    echo "<script>if(window.showToast) showToast('About Us has been updated','success'); else alert('About Us has been updated');</script>";
+    $success_message = 'About Us page has been updated successfully.';
   }
   ?>
   <!DOCTYPE html>
@@ -30,6 +31,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="./css/modal.css" />
+    <link rel="stylesheet" href="./css/toaster.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="css/responsive.css">
     <script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
@@ -86,6 +88,9 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
     <script src="js/toast.js"></script>
+    <?php if (!empty($success_message)): ?>
+      <script>toastr.success('<?php echo addslashes($success_message); ?>');</script>
+    <?php endif; ?>
   </body>
 
   </html>

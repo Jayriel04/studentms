@@ -25,61 +25,6 @@
       initializeMention(editMsg, 'search.php?mention_suggest=1');
     }
 
-    // Show bootstrap toasts if messages exist and handle modal visibility
-    var addSuccessToast = document.getElementById('addSuccessToast');
-    if (addSuccessToast) {
-      if (window.$) {
-        $(addSuccessToast).toast('show');
-      } else if (typeof bootstrap !== 'undefined') {
-        new bootstrap.Toast(addSuccessToast).show();
-      }
-      if (window.$) {
-        $('#addNoticeModal').modal('hide');
-      } else if (typeof bootstrap !== 'undefined') {
-        try {
-          new bootstrap.Modal(document.getElementById('addNoticeModal')).hide();
-        } catch (e) { /* ignore */ }
-      }
-    }
-
-    var addErrorToast = document.getElementById('addErrorToast');
-    if (addErrorToast) {
-      if (window.$) {
-        $(addErrorToast).toast('show');
-      } else if (typeof bootstrap !== 'undefined') {
-        new bootstrap.Toast(addErrorToast).show();
-      }
-      // Open the new custom modal on error
-      openModal('addNoticeModalOverlay');
-    }
-
-    var editSuccessToast = document.getElementById('editSuccessToast');
-    if (editSuccessToast) {
-      if (window.$) {
-        $(editSuccessToast).toast('show');
-      } else if (typeof bootstrap !== 'undefined') {
-        new bootstrap.Toast(editSuccessToast).show();
-      }
-      if (window.$) {
-        $('#editNoticeModal').modal('hide');
-      } else if (typeof bootstrap !== 'undefined') {
-        try {
-          new bootstrap.Modal(document.getElementById('editNoticeModal')).hide();
-        } catch (e) { /* ignore */ }
-      }
-    }
-
-    var editErrorToast = document.getElementById('editErrorToast');
-    if (editErrorToast) {
-      if (window.$) {
-        $(editErrorToast).toast('show');
-      } else if (typeof bootstrap !== 'undefined') {
-        new bootstrap.Toast(editErrorToast).show();
-      }
-      // Open the new custom modal on error
-      openModal('editNoticeModalOverlay');
-    }
-
     // Wire edit buttons to populate modal
     var editButtons = document.querySelectorAll('.btn-edit-notice');
     editButtons.forEach(function (btn) {

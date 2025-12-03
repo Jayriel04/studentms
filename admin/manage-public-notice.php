@@ -87,10 +87,10 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="./css/modal.css">
     <link rel="stylesheet" href="./css/responsive.css">
+    <link rel="stylesheet" href="./css/toaster.css">
   </head>
 
   <body>
@@ -262,6 +262,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         }
       };
     </script>
+
+    <script src="js/manage-public-notice.js"></script>
 
   </body>
 

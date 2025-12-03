@@ -48,7 +48,8 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <link rel="stylesheet" href="vendors/select2/select2.min.css">
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="../admin/css/modal.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/toaster.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="css/responsive.css">
     <script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
@@ -68,14 +69,6 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
             <div class="row">
               <div class="col-12">
                 <div class="form-card">
-                  <?php if (!empty($success_message)): ?>
-                    <div class="alert alert-success">
-                      <?php echo htmlentities($success_message); ?>
-                    </div>
-                  <?php endif; ?>
-                  <?php if (!empty($error_message)): ?>
-                    <div class="alert alert-danger"><?php echo htmlentities($error_message); ?></div>
-                  <?php endif; ?>
                   <h1 class="form-title">Update Contact Us</h1>
                   <form method="post">
                     <?php
@@ -127,6 +120,12 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="js/toast.js"></script>
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
+    <?php if (!empty($success_message)): ?>
+      <script>toastr.success('<?php echo addslashes($success_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($error_message)): ?>
+      <script>toastr.error('<?php echo addslashes($error_message); ?>');</script>
+    <?php endif; ?>
   </body>
 
   </html><?php } ?>

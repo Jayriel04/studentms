@@ -6,7 +6,8 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
 } else {
   $sid = $_SESSION['sturecmsstuid'];
 
-  $success = false;
+  $success_message = '';
+  $error_message = '';
 
   // Handle form submission
   if (isset($_POST['update'])) {
@@ -118,7 +119,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
         $sql_parts[] = "Image=:image";
         $params[':image'] = $profilepic;
       } else {
-        echo "<script>if(window.showToast) showToast('Profile picture upload failed. Please try again','danger');</script>";
+        $error_message = 'Profile picture upload failed. Please try again.';
       }
     }
 
@@ -130,14 +131,16 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
       $params[':password'] = $_POST['password'];
     }
 
-    $sql = "UPDATE tblstudent SET " . implode(', ', $sql_parts) . " WHERE StuID=:sid";
-    $params[':sid'] = $sid;
+    if (empty($error_message)) {
+      $sql = "UPDATE tblstudent SET " . implode(', ', $sql_parts) . " WHERE StuID=:sid";
+      $params[':sid'] = $sid;
 
-    $query = $dbh->prepare($sql);
-    if ($query->execute($params)) {
-      $success = true;
-    } else {
-      echo "<script>if(window.showToast) showToast('Something went wrong. Please try again','danger');</script>";
+      $query = $dbh->prepare($sql);
+      if ($query->execute($params)) {
+        $success_message = "Profile updated successfully!";
+      } else {
+        $error_message = 'Something went wrong. Please try again.';
+      }
     }
   }
 
@@ -169,7 +172,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
       $proof_name = time() . '_' . basename($_FILES['proof']['name']);
       $proof_path = $dest_dir . $proof_name;
       if (!move_uploaded_file($proof_tmp, $proof_path)) {
-        echo "<script>if(window.showToast) showToast('Proof image upload failed. Please try again','danger');</script>";
+        $error_message = 'Proof image upload failed. Please try again.';
         $proof_name = '';
       }
     }
@@ -215,9 +218,9 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
         }
       }
 
-      $ach_success = true;
+      $success_message = "Achievement submitted for validation successfully.";
     } catch (Exception $e) {
-      echo "<script>if(window.showToast) showToast('Error saving achievement: " . addslashes($e->getMessage()) . "','danger');</script>";
+      $error_message = 'Error saving achievement: ' . $e->getMessage();
     }
   }
 
@@ -242,6 +245,7 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
+    <link rel="stylesheet" href="./css/toaster.css">
     <link rel="stylesheet" href="./css/profile.css">
   </head>
 
@@ -257,11 +261,6 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
                 <div class="card">
                   <div class="form-card">
                     <h4 class="card-title" style="text-align: center; font-size: 28px; font-weight: 700; color: #1e293b; margin-bottom: 32px;">Update My Profile</h4>
-                    <?php if ($success) { ?>
-                      <div class="alert alert-success" role="alert">
-                        Profile updated successfully!
-                      </div>
-                    <?php } ?>
                     <form method="post" enctype="multipart/form-data">
                       <div class="form-tabs-container">
                         <div class="form-tabs" role="tablist">
@@ -570,6 +569,12 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
     <script src="js/misc.js"></script>
     <script src="js/script.js"></script>
     <script src="js/toast.js"></script>
+    <?php if (!empty($success_message)): ?>
+      <script>toastr.success('<?php echo addslashes($success_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($error_message)): ?>
+      <script>toastr.error('<?php echo addslashes($error_message); ?>');</script>
+    <?php endif; ?>
     <script src="js/profile.js"></script>
   </body>
 

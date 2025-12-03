@@ -119,6 +119,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/modal.css" />
+    <link rel="stylesheet" href="./css/toaster.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="./css/responsive.css">
   </head>
@@ -265,6 +266,12 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <script src="js/misc.js"></script>
     <script src="js/toast.js"></script>
     <script src="js/manage-student.js"></script>
+    <?php if (!empty($success_message)): ?>
+      <script>toastr.success('<?php echo addslashes($success_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($error_message)): ?>
+      <script>toastr.error('<?php echo addslashes($error_message); ?>');</script>
+    <?php endif; ?>
   </body>
 
   </html>

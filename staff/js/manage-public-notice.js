@@ -13,28 +13,6 @@
       document.body.style.overflow = 'auto';
     }
 
-    // Show toastr notifications if messages exist
-    if (typeof toastr !== 'undefined') {
-      toastr.options = { positionClass: 'toast-top-right', closeButton: true };
-      
-      var addSuccessMsg = document.querySelector('.modal-body .alert-success');
-      if (addSuccessMsg) {
-        var msg = addSuccessMsg.innerText;
-        if (msg) toastr.success(msg);
-      }
-
-      var addErrorMsg = document.querySelector('.modal-body .alert-danger');
-      if (addErrorMsg) {
-        var msg = addErrorMsg.innerText;
-        if (msg) toastr.error(msg);
-        // If there was an error adding, reopen the new modal
-        var addModal = document.getElementById('addPublicModal');
-        if (addModal) {
-          openModal('addPublicModalOverlay');
-        }
-      }
-    }
-
     // Wire edit buttons to populate and show modal
     var editButtons = document.querySelectorAll('.btn-edit-public');
     editButtons.forEach(function (btn) {

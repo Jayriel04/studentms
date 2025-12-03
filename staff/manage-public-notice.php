@@ -90,6 +90,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/toaster.css">
     <link rel="stylesheet" href="css/modal.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="./css/responsive.css">
@@ -242,6 +243,21 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/toast.js"></script>
+    <?php if (!empty($delete_message)): ?>
+      <script>toastr.success('<?php echo addslashes($delete_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($add_success_message)): ?>
+      <script>toastr.success('<?php echo addslashes($add_success_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($add_error_message)): ?>
+      <script>toastr.error('<?php echo addslashes($add_error_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($edit_success_message)): ?>
+      <script>toastr.success('<?php echo addslashes($edit_success_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($edit_error_message)): ?>
+      <script>toastr.error('<?php echo addslashes($edit_error_message); ?>');</script>
+    <?php endif; ?>
     <script src="js/manage-public-notice.js"></script>
   </body>
 

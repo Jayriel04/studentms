@@ -6,8 +6,8 @@ if (!isset($_SESSION['sturecmsstuid']) || strlen($_SESSION['sturecmsstuid']) == 
   exit;
 }
 $sid = $_SESSION['sturecmsstuid'];
-$ach_success = false;
-$ach_error = '';
+$success_message = '';
+$error_message = '';
 
 // Fetch recent skill suggestions to present as clickable tags
 $skillSuggestions = array();
@@ -104,12 +104,12 @@ if (isset($_POST['add_achievement'])) {
     $proof_name = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES['proof']['name']));
     $proof_path = $dest_dir . $proof_name;
     if (!move_uploaded_file($proof_tmp, $proof_path)) {
-      $ach_error = 'Proof image upload failed. Please try again.';
+      $error_message = 'Proof image upload failed. Please try again.';
       $proof_name = '';
     }
   }
 
-  if (empty($ach_error)) {
+  if (empty($error_message)) {
     try {
       // Start transaction to ensure FK integrity
       $dbh->beginTransaction();
@@ -184,11 +184,11 @@ if (isset($_POST['add_achievement'])) {
       }
 
       $dbh->commit();
-      $ach_success = true;
+      $success_message = "Achievement submitted and pending validation.";
     } catch (Exception $e) {
       if ($dbh->inTransaction())
         $dbh->rollBack();
-      $ach_error = 'Error saving achievement: ' . $e->getMessage();
+      $error_message = 'Error saving achievement: ' . $e->getMessage();
     }
   }
 }
@@ -206,6 +206,7 @@ if (isset($_POST['add_achievement'])) {
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/style(v2).css">
   <link rel="stylesheet" href="css/profile.css">
+  <link rel="stylesheet" href="css/toaster.css">
   <style>
     /* Make suggestion buttons and selected tag text black */
     .skill-sugg {
@@ -237,14 +238,6 @@ if (isset($_POST['add_achievement'])) {
             <div class="col-12">
                 <div class="form-card">
                     <h1 class="form-title">Add Achievement / Skill</h1>
-
-                    <?php if ($ach_success): ?>
-                        <div class="alert alert-success">Achievement submitted and pending validation.</div>
-                    <?php endif; ?>
-                    <?php if (!empty($ach_error)): ?>
-                        <div class="alert alert-danger"><?php echo htmlentities($ach_error); ?></div>
-                    <?php endif; ?>
-
                     <form id="addAchievementForm" method="post" enctype="multipart/form-data">
                         <div class="form-group">
                             <label class="form-label">Skill / Tag</label>
@@ -364,6 +357,12 @@ if (isset($_POST['add_achievement'])) {
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
   <script src="js/toast.js"></script>
+    <?php if (!empty($success_message)): ?>
+      <script>toastr.success('<?php echo addslashes($success_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($error_message)): ?>
+      <script>toastr.error('<?php echo addslashes($error_message); ?>');</script>
+    <?php endif; ?>
   <script src="js/add-achievement.js"></script>
 </body>
 

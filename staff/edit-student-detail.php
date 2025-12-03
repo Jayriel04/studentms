@@ -129,7 +129,9 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
         $query->bindParam(':eid', $eid, PDO::PARAM_STR);
         $query->execute();
 
-        echo '<script>if(window.showToast) showToast("Student details updated successfully.","success");</script>';
+        $_SESSION['update_message'] = "Student details updated successfully.";
+        echo "<script>window.location.href ='manage-students.php'</script>";
+        exit();
       }
     }
   }

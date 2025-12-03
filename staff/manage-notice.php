@@ -139,6 +139,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="./css/toaster.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="./css/modal.css">
     <link rel="stylesheet" href="./css/responsive.css">
@@ -283,57 +284,6 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
       </div>
     </div>
 
-    <!-- Toast markup for add/edit success/error -->
-    <?php if (!empty($add_success_message) || !empty($add_error_message) || !empty($edit_success_message) || !empty($edit_error_message)): ?>
-      <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 2000;">
-        <?php if (!empty($add_success_message)): ?>
-          <div class="toast" id="addSuccessToast" data-delay="3000">
-            <div class="toast-header bg-success text-white">
-              <strong class="mr-auto">Success</strong>
-              <small>Now</small>
-              <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close"><span
-                  aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="toast-body"><?php echo htmlentities($add_success_message); ?></div>
-          </div>
-        <?php endif; ?>
-        <?php if (!empty($add_error_message)): ?>
-          <div class="toast" id="addErrorToast" data-delay="4000">
-            <div class="toast-header bg-danger text-white">
-              <strong class="mr-auto">Error</strong>
-              <small>Now</small>
-              <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close"><span
-                  aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="toast-body"><?php echo htmlentities($add_error_message); ?></div>
-          </div>
-        <?php endif; ?>
-
-        <?php if (!empty($edit_success_message)): ?>
-          <div class="toast" id="editSuccessToast" data-delay="3000">
-            <div class="toast-header bg-success text-white">
-              <strong class="mr-auto">Success</strong>
-              <small>Now</small>
-              <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close"><span
-                  aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="toast-body"><?php echo htmlentities($edit_success_message); ?></div>
-          </div>
-        <?php endif; ?>
-        <?php if (!empty($edit_error_message)): ?>
-          <div class="toast" id="editErrorToast" data-delay="4000">
-            <div class="toast-header bg-danger text-white">
-              <strong class="mr-auto">Error</strong>
-              <small>Now</small>
-              <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close"><span
-                  aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="toast-body"><?php echo htmlentities($edit_error_message); ?></div>
-          </div>
-        <?php endif; ?>
-      </div>
-    <?php endif; ?>
-
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
@@ -341,6 +291,18 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <script src="vendors/typeahead.js/typeahead.bundle.min.js"></script>
     <script src="js/mention.js"></script>
     <script src="js/toast.js"></script>
+    <?php if (!empty($add_success_message)): ?>
+      <script>toastr.success('<?php echo addslashes($add_success_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($add_error_message)): ?>
+      <script>toastr.error('<?php echo addslashes($add_error_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($edit_success_message)): ?>
+      <script>toastr.success('<?php echo addslashes($edit_success_message); ?>');</script>
+    <?php endif; ?>
+    <?php if (!empty($edit_error_message)): ?>
+      <script>toastr.error('<?php echo addslashes($edit_error_message); ?>');</script>
+    <?php endif; ?>
     <script src="js/manage-notice.js"></script>
   </body>
 
