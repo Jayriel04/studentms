@@ -11,8 +11,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $stuid = $_POST['stuid'];
 
     // Server-side validation for student ID format
-    if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
-      $error_message = 'Invalid Student ID format. Please use the format: 222 - 08410.';
+    if (!preg_match('/^\d{3}\s*-\s*\d{5}$/', $stuid)) {
+      $error_message = 'Invalid Student ID format. Please use the format: ###-#####.';
     } else {
       $familyname = $_POST['familyname'];
       $firstname = $_POST['firstname'];
@@ -211,11 +211,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                             <!-- Personal Information Tab -->
                             <div id="personal" class="form-tab-content active" role="tabpanel">
                               <div class="form-grid">
-                              <div class="form-group">
-                                <label class="form-label">Family Name</label>
-                                <input type="text" name="familyname" value="<?php echo htmlentities($row->FamilyName); ?>"
-                                  class="form-control" required style="text-transform: capitalize;">
-                              </div>
                               <div class="form-group">
                                 <label class="form-label">First Name</label>
                                 <input type="text" name="firstname" value="<?php echo htmlentities($row->FirstName); ?>"
@@ -455,7 +450,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                               <div class="form-grid">
                                 <div class="form-group">
                                   <label class="form-label">Student ID</label>
-                                  <input type="text" name="stuid" value="<?php echo htmlentities($row->StuID); ?>" class="form-control" required placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410">
+                                  <input type="text" name="stuid" value="<?php echo htmlentities($row->StuID); ?>" class="form-control" required placeholder="e.g., 123-45678" pattern="\d{3}\s*-\s*\d{5}" title="The format must be: ###-#####">
                                 </div>
                                 <div class="form-group">
                                   <label class="form-label">Password</label>

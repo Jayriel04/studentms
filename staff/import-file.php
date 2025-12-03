@@ -29,7 +29,8 @@ if (isset($_POST['import'])) {
         $skipped_duplicates = 0;
         $skipped_invalid_format = 0;
         $defaultPassword = "student123";
-        $hashedPassword = md5($defaultPassword);
+        // Use password_hash for consistency and better security
+        $hashedPassword = password_hash($defaultPassword, PASSWORD_DEFAULT);
 
         // Remove header row
         $header = array_shift($sheetData);
@@ -73,8 +74,8 @@ if (isset($_POST['import'])) {
                 continue; // Skip rows without a student ID
             }
 
-            // Validate Student ID format
-            if (!preg_match('/^\d{3} - \d{5}$/', $stuID)) {
+            // Validate Student ID format with optional spaces
+            if (!preg_match('/^\d{3}\s*-\s*\d{5}$/', $stuID)) {
                 $skipped_invalid_format++;
                 continue; // Skip rows with invalid student ID format
             }

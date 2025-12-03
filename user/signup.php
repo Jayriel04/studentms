@@ -10,8 +10,8 @@ if (isset($_POST['signup'])) {
     $stuid = $_POST['stuid'] ?? '';
 
     // Server-side validation for student ID format
-    if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
-        $message = 'Invalid Student ID format. Please use the format: 222 - 08410.';
+    if (!preg_match('/^\d{3}\s*-\s*\d{5}$/', $stuid)) {
+        $message = 'Invalid Student ID format. Please use the format: ###-#####.';
         $message_type = 'danger';
     } else {
         $familyname = $_POST['familyname'] ?? '';
@@ -128,8 +128,8 @@ if (isset($_POST['signup'])) {
                 <div class="input-group">
                     <div class="input-wrapper">
                         <span class="icon">🆔</span>
-                        <input type="text" name="stuid" placeholder="e.g., 222 - 08410" required="true"
-                            pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410">
+                        <input type="text" name="stuid" placeholder="e.g., 123-45678" required="true"
+                            pattern="\d{3}\s*-\s*\d{5}" title="The format must be: ###-#####">
                     </div>
                 </div>
                 <div class="input-group">

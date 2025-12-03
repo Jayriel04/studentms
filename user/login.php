@@ -7,9 +7,9 @@ if (isset($_POST['login'])) {
   $stuid = $_POST['stuid'];
   $password = $_POST['password'];
 
-  // Server-side validation for student ID format
-  if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
-    $error = 'Invalid Student ID format. Please use the format: 222 - 08410.';
+  // Server-side validation for student ID format with optional spaces
+  if (!preg_match('/^\d{3}\s*-\s*\d{5}$/', $stuid)) {
+    $error = 'Invalid Student ID format. Please use the format: ###-#####.';
   } else {
 
 
@@ -108,8 +108,8 @@ if (isset($_POST['login'])) {
         <div class="input-group">
           <div class="input-wrapper">
             <span class="icon">🆔</span>
-            <input type="text" name="stuid" placeholder="e.g., 222 - 08410" required="true" pattern="\d{3} - \d{5}"
-              title="The format must be: 222 - 08410"
+            <input type="text" name="stuid" placeholder="e.g., 123-45678" required="true" pattern="\d{3}\s*-\s*\d{5}"
+              title="The format must be: ###-#####"
               value="<?php if (isset($_COOKIE["user_login"])) {
                 echo $_COOKIE["user_login"];
               } ?>">

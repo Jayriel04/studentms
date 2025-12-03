@@ -9,8 +9,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     $stuid = $_POST['stuid'];
 
     // Server-side validation for student ID format
-    if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
-      echo '<script>if(window.showToast) showToast("Invalid Student ID format. Please use the format: 222 - 08410.","warning");</script>';
+    if (!preg_match('/^\d{3}\s*-\s*\d{5}$/', $stuid)) {
+      echo '<script>if(window.showToast) showToast("Invalid Student ID format. Please use the format: ###-#####.","warning");</script>';
     } else {
 
       $familyname = $_POST['familyname'];
@@ -198,8 +198,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                               <div class="form-group">
                                 <label class="form-label">Student ID</label>
                                 <input type="text" name="stuid" value="<?php echo htmlentities($row->StuID); ?>"
-                                  class="form-control" required placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}"
-                                  title="The format must be: 222 - 08410" style="text-transform: capitalize;">
+                                  class="form-control" required placeholder="e.g., 123-45678" pattern="\d{3}\s*-\s*\d{5}"
+                                  title="The format must be: ###-#####" style="text-transform: capitalize;">
                               </div>
                               <div class="form-group">
                                 <label class="form-label">Family Name</label>

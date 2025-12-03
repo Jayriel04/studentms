@@ -20,9 +20,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   }
 
   // Add Staff handling (moved from add-staff.php)
-  $add_success_message = '';
-  $add_error_message = '';
-  $openAddModal = false;
+  $toastMessage = null;
   if (isset($_POST['add_staff'])) {
     $staffname = trim($_POST['staffname']);
     $username = trim($_POST['username']);
@@ -46,21 +44,17 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
       $query->execute();
       $LastInsertId = $dbh->lastInsertId();
       if ($LastInsertId > 0) {
-        $add_success_message = "Staff has been added.";
+        $toastMessage = ['type' => 'success', 'message' => 'Staff has been added.'];
       } else {
-        $add_error_message = "Something went wrong. Please try again.";
-        $openAddModal = true;
+        $toastMessage = ['type' => 'error', 'message' => 'Something went wrong. Please try again.'];
       }
     } else {
-      $add_error_message = "Username already exists. Please try again.";
-      $openAddModal = true;
+      $toastMessage = ['type' => 'error', 'message' => 'Username already exists. Please try again.'];
     }
   }
 
   // Edit Staff handling (now handled here for modal)
-  $edit_success_message = '';
-  $edit_error_message = '';
-  $openEditModal = false;
+  // We can reuse the toast mechanism for edit as well.
   if (isset($_POST['edit_staff'])) {
     $edit_id = intval($_POST['edit_id']);
     $edit_name = trim($_POST['edit_name']);
@@ -76,8 +70,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     $checkQuery->execute();
 
     if ($checkQuery->rowCount() > 0) {
-      $edit_error_message = "Username already exists. Please choose a different one.";
-      $openEditModal = true;
+      $toastMessage = ['type' => 'error', 'message' => 'Username already exists. Please choose a different one.'];
     } else {
       if (!empty($edit_password)) {
         // use password_hash for updates (keeps behaviour of edit-staff-detail.php)
@@ -95,7 +88,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         $query->bindParam(':password', $hashed_password, PDO::PARAM_STR);
       }
       $query->execute();
-      $edit_success_message = "Staff record has been updated successfully.";
+      $toastMessage = ['type' => 'success', 'message' => 'Staff record has been updated successfully.'];
     }
   }
 
@@ -135,7 +128,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="./css/toaster.css">
     <link rel="stylesheet" href="./css/modal.css">
     <link rel="stylesheet" href="./css/responsive.css">
   </head>
@@ -350,26 +343,14 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="js/script.js"></script>
     <script src="js/manage-staff.js"></script>
     <script src="js/toast.js"></script>
-
-    <!-- Inline initialization data for external script -->
-    <script>
-      window.msData = {
-        statusMessage: <?php echo isset($statusMessage) ? json_encode($statusMessage) : 'null'; ?>,
-        add_success_message: <?php echo json_encode($add_success_message); ?>,
-        add_error_message: <?php echo json_encode($add_error_message); ?>,
-        edit_success_message: <?php echo json_encode($edit_success_message); ?>,
-        edit_error_message: <?php echo json_encode($edit_error_message); ?>,
-        openAddModal: <?php echo $openAddModal ? 'true' : 'false'; ?>,
-        openEditModal: <?php echo $openEditModal ? 'true' : 'false'; ?>,
-        editPost: {
-          id: <?php echo json_encode($_POST['edit_id'] ?? ''); ?>,
-          name: <?php echo json_encode($_POST['edit_name'] ?? ''); ?>,
-          username: <?php echo json_encode($_POST['edit_username'] ?? ''); ?>,
-          email: <?php echo json_encode($_POST['edit_email'] ?? ''); ?>,
-          regdate: <?php echo json_encode($_POST['edit_regdate'] ?? ''); ?>
-        }
-      };
-    </script>
+    
+    <?php if (isset($statusMessage)): ?>
+      <script>toastr.success('<?php echo addslashes($statusMessage); ?>');</script>
+    <?php endif; ?>
+    
+    <?php if (isset($toastMessage)): ?>
+      <script>toastr.<?php echo $toastMessage['type']; ?>('<?php echo addslashes($toastMessage['message']); ?>');</script>
+    <?php endif; ?>
 
   </body>
 

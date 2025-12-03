@@ -99,8 +99,8 @@ if (isset($_POST['import'])) {
                 continue; // Skip rows without a student ID
             }
 
-            // Validate Student ID format
-            if (!preg_match('/^\d{3} - \d{5}$/', $stuID)) {
+            // Validate Student ID format with optional spaces
+            if (!preg_match('/^\d{3}\s*-\s*\d{5}$/', $stuID)) {
                 $skipped_invalid_format++;
                 continue; // Skip rows with invalid student ID format
             }

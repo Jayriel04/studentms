@@ -10,8 +10,8 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     $stuid = $_POST['stuid'];
 
     // Server-side validation for student ID format
-    if (!preg_match('/^\d{3} - \d{5}$/', $stuid)) {
-      $error_message = 'Invalid Student ID format. Please use the format: 222 - 08410.';
+    if (!preg_match('/^\d{3}\s*-\s*\d{5}$/', $stuid)) {
+      $error_message = 'Invalid Student ID format. Please use the format: ###-#####.';
     } else {
 
       $familyname = $_POST['familyname'];
@@ -157,7 +157,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                       <div class="form-step active" data-step="1">
                         <div class="add-student-section-title">Personal Information</div>
                         <div class="add-student-form-grid">
-                          <div class="add-student-input-group"><label>Student ID</label><div class="add-student-input-wrapper"><input type="text" name="stuid" required placeholder="e.g., 222 - 08410" pattern="\d{3} - \d{5}" title="The format must be: 222 - 08410"></div></div>
+                          <div class="add-student-input-group"><label>Student ID</label><div class="add-student-input-wrapper"><input type="text" name="stuid" required placeholder="e.g., 123-45678" pattern="\d{3}\s*-\s*\d{5}" title="The format must be: ###-#####"></div></div>
                           <div class="add-student-input-group"><label>Family Name</label><div class="add-student-input-wrapper"><input type="text" name="familyname" required></div></div>
                           <div class="add-student-input-group"><label>First Name</label><div class="add-student-input-wrapper"><input type="text" name="firstname" required></div></div>
                           <div class="add-student-input-group"><label>Middle Name</label><div class="add-student-input-wrapper"><input type="text" name="middlename"></div></div>
