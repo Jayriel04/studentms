@@ -36,8 +36,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="./css/toaster.css">
     <link rel="stylesheet" href="css/modal.css">
     <link rel="stylesheet" href="css/responsive.css">
-    <script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
-    <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
   </head>
 
   <body>
@@ -67,12 +65,13 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       foreach ($results as $row) { ?>
                         <div class="form-group">
                           <label class="form-label">Page Title:</label>
-                          <input type="text" name="pagetitle" value="<?php echo htmlentities($row->PageTitle); ?>" class="form-input"
-                            required='true'>
+                          <input type="text" name="pagetitle" value="<?php echo htmlentities($row->PageTitle); ?>"
+                            class="form-input" required='true'>
                         </div>
                         <div class="form-group">
                           <label class="form-label">Page Description:</label>
-                          <textarea name="pagedes" class="form-textarea" required='true' style="width: 100%;"><?php echo htmlentities($row->PageDescription); ?></textarea>
+                          <textarea name="pagedes" class="form-textarea" required='true'
+                            style="width: 100%;"><?php echo htmlentities($row->PageDescription); ?></textarea>
                         </div>
                       <?php }
                     } ?>
@@ -94,6 +93,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="js/misc.js"></script>
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
+    <script src="../admin/js/nicEdit"></script>
+    <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
     <?php if (!empty($success_message)): ?>
       <script>toastr.success('<?php echo addslashes($success_message); ?>');</script>
     <?php endif; ?>

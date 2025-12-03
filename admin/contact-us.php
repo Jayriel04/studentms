@@ -50,8 +50,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="./css/toaster.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="css/responsive.css">
-    <script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
-    <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
   </head>
 
   <body>
@@ -101,14 +99,14 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                       <div class="alert alert-warning">No Contact Us page found!</div>
                     <?php } ?>
                     <button type="submit" class="submit-btn" name="submit">Update</button>
-                    </form>
-                  </div>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
     </div>
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="vendors/select2/select2.min.js"></script>
@@ -118,6 +116,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="js/toast.js"></script>
     <script src="js/typeahead.js"></script>
     <script src="js/select2.js"></script>
+    <script src="../admin/js/nicEdit"></script>
+    <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
     <?php if (!empty($success_message)): ?>
       <script>toastr.success('<?php echo addslashes($success_message); ?>');</script>
     <?php endif; ?>
