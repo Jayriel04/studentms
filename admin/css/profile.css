@@ -203,6 +203,13 @@
     text-align: center;
 }
 
+.btn, .btn-submit {
+    flex: 1;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
 .btn-back {
     background: #f1f5f9;
     color: #64748b;
