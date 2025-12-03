@@ -4,6 +4,20 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['sturecmsstuid']) == 0) {
   header('location:logout.php');
 } else {
+  // Helper function to get initials from a name
+  function getInitials($name)
+  {
+    $words = explode(' ', trim($name));
+    $initials = '';
+    if (count($words) >= 2) {
+      $initials .= strtoupper(substr($words[0], 0, 1));
+      $initials .= strtoupper(substr(end($words), 0, 1));
+    } else if (count($words) == 1) {
+      $initials .= strtoupper(substr($words[0], 0, 2));
+    }
+    return $initials;
+  }
+
   ?>
   <!DOCTYPE html>
   <html lang="en">
@@ -45,8 +59,22 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
                   if ($query->rowCount() > 0) {
                     foreach ($results as $row) { ?>
                       <div class="profile-header" style="text-align: center;">
-                        <img src="../admin/images/<?php echo htmlentities($row->Image ?: 'default.png'); ?>"
-                          alt="Profile Picture" class="profile-avatar">
+                        <?php
+                        if (!empty($row->Image)) {
+                          echo '<img src="../admin/images/' . htmlentities($row->Image) . '" alt="Profile Picture" class="profile-avatar">';
+                        } else {
+                          if ($row->Gender == 'Male') {
+                            echo '<img src="../admin/images/faces/man.jpg" alt="Profile Picture" class="profile-avatar">';
+                          } elseif ($row->Gender == 'Female') {
+                            echo '<img src="../admin/images/faces/women.png" alt="Profile Picture" class="profile-avatar">';
+                          } else {
+                            // Fallback to initials for 'Other' or null gender
+                            echo '<div class="profile-avatar" style="display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); font-size: 48px; color: white;">';
+                            echo getInitials($row->FirstName . ' ' . $row->FamilyName);
+                            echo '</div>';
+                          }
+                        }
+                        ?>
                         <h1 class="profile-name"><?php echo htmlentities($row->FirstName . " " . $row->FamilyName); ?></h1>
                         <div class="profile-id">Student ID: <?php echo htmlentities($row->StuID); ?></div>
                       </div>

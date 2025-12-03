@@ -586,3 +586,93 @@
 
   .page-header .add-btn { padding: 6px 10px; font-size: 12px; }
 }
+
+/* --- PAGE HEADER RESPONSIVE ALIGNMENT --- */
+@media (max-width: 992px) {
+  .page-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .page-header .page-title {
+    flex: 0 1 auto;
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .page-header .d-flex {
+    display: flex !important;
+    gap: 8px;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+  }
+
+  .page-header .add-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    min-width: 100px;
+    margin: 0 !important;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .page-header .page-title {
+    font-size: 18px;
+    flex: 0 1 auto;
+  }
+
+  .page-header .d-flex {
+    gap: 6px;
+    flex: 0 1 auto;
+  }
+
+  .page-header .add-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+    min-width: 90px;
+  }
+
+  /* Table and content wraps below header */
+  .table-card {
+    width: 100%;
+    margin-top: 12px;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    gap: 6px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .page-header .page-title {
+    font-size: 16px;
+    flex: 0 1 auto;
+  }
+
+  .page-header .d-flex {
+    gap: 4px;
+    flex: 0 1 auto;
+  }
+
+  .page-header .add-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+    min-width: 70px;
+  }
+}

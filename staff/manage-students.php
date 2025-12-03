@@ -86,7 +86,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                             <h3 class="page-title">Manage Students</h3>                            
                             <div class="d-flex">
                                 <a href="validate-achievements.php" class="add-btn" style="text-decoration: none; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); margin-right: 10px;">✓ Validate</a>
-                                <a href="add-students.php" class="add-btn" style="text-decoration: none; margin-right: 20px;">+ Add Student</a>
+                                <a href="add-students.php" class="add-btn" style="text-decoration: none;">+ Add Student</a>
                             </div>
                         </div>
                         <div class="row">
