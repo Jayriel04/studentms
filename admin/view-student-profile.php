@@ -247,7 +247,16 @@ function getInitials($name)
         <div class="content-wrapper">
           <div class="page-header">
             <h3 class="page-title">Student Profile</h3>
-            <a href="search.php" class="add-btn" style="text-decoration: none; margin-right: 20px;">↩ Back</a>
+            <?php
+            $back_link = 'manage-students.php'; // Default link
+            if (isset($_SERVER['HTTP_REFERER'])) {
+              $referer_url = parse_url($_SERVER['HTTP_REFERER']);
+              if (isset($referer_url['path']) && (strpos($referer_url['path'], 'search.php') !== false || strpos($referer_url['path'], 'manage-students.php') !== false)) {
+                $back_link = $_SERVER['HTTP_REFERER'];
+              }
+            }
+            ?>
+            <a href="<?php echo htmlspecialchars($back_link); ?>" class="add-btn" style="text-decoration: none; margin-right: 20px;">↩ Back</a>
           </div>
 
           <div class="row justify-content-center">
