@@ -193,7 +193,7 @@ if (true) {
     <link rel="stylesheet" href="./vendors/chartist/chartist.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/modal.css">
   </head>
 
@@ -298,7 +298,7 @@ if (true) {
                           if (count($results) > 0) {
                             foreach ($results as $row) { ?>
                               <tr>
-                                <td>
+                                <td data-label="Student">
                                   <div class="user-info">
                                   <?php if (!empty($row->Image)): ?>
                                     <img src="images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar"
@@ -316,26 +316,26 @@ if (true) {
                                     </div>
                                   </div>
                                 </td>
-                                <td><?php echo htmlentities($row->StuID); ?></td>
-                                <td>
+                                <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                                <td data-label="Program">
                                   <?php
                                   $program_full = htmlentities($row->Program);
                                   if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
                                     echo $matches[1];
                                   } else {
-                                    echo $program_full; // Fallback to full name if no acronym
+                                    echo $program_full;
                                   } ?>
                                 </td>
-                                <td><?php echo htmlentities($row->Gender); ?></td>
-                                <td>
+                                <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
+                                <td data-label="Status">
                                   <span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>">
                                     <?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?>
                                   </span>
                                 </td>
                                 <?php if ($isSkillSearch): ?>
-                                  <td><?php echo htmlentities($row->totalPoints); ?></td>
+                                  <td data-label="Skill Points"><?php echo htmlentities($row->totalPoints); ?></td>
                                 <?php endif; ?>
-                                <td>
+                                <td data-label="Action">
                                   <div class="action-buttons">
                                     <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
                                       class="action-btn edit" title="View Profile"
@@ -456,7 +456,7 @@ if (true) {
                           if ($query->rowCount() > 0) {
                             foreach ($results as $row) { ?>
                               <tr>
-                                <td>
+                                <td data-label="Student">
                                   <div class="user-info">
                                     <?php if (!empty($row->Image)): ?>
                                       <img src="images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar"
@@ -474,13 +474,13 @@ if (true) {
                                     </div>
                                   </div>
                                 </td>
-                                <td><?php echo htmlentities($row->StuID); ?></td>
-                                <td><?php echo htmlentities($row->Program); ?></td>
-                                <td><?php echo htmlentities($row->Gender); ?></td>
-                                <td><span
+                                <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                                <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
+                                <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
+                                <td data-label="Status"><span
                                     class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></span>
                                 </td>
-                                <td>
+                                <td data-label="Action">
                                   <div class="action-buttons">
                                     <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
                                       class="action-btn edit" title="View Profile"

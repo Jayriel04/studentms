@@ -196,6 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/style(v2).css">
+  <link rel="stylesheet" href="css/responsive.css">
   <style>
     .modal {
       display: none;
@@ -349,7 +350,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
                       <tbody>
                         <?php foreach ($rows as $r): ?>
                           <tr>
-                            <td>
+                            <td data-label="Student">
                               <div class="user-info">
                                 <div class="user-avatar"
                                   style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
@@ -361,20 +362,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
                                 </div>
                               </div>
                             </td>
-                            <td><?php echo htmlentities($r->skills); ?></td>
-                            <td><?php echo htmlentities($r->category); ?></td>
-                            <td><?php echo htmlentities($r->level); ?></td>
-                            <td><?php echo htmlentities($r->points); ?></td>
-                            <td>
+                            <td data-label="Skills"><?php echo htmlentities($r->skills); ?></td>
+                            <td data-label="Category"><?php echo htmlentities($r->category); ?></td>
+                            <td data-label="Level"><?php echo htmlentities($r->level); ?></td>
+                            <td data-label="Points"><?php echo htmlentities($r->points); ?></td>
+                            <td data-label="Proof">
                               <?php if (!empty($r->proof_image)): ?>
                                 <button class="action-btn edit" style="background: #e0e7ff; color: #4f46e5;"
-                                  onclick="showProofModal('../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>')">View</a>
-                                <?php else: ?>
-                                  <span>No proof</span>
-                                <?php endif; ?>
+                                  onclick="showProofModal('../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>')">View</button>
+                              <?php else: ?>
+                                <span>No proof</span>
+                              <?php endif; ?>
                             </td>
-                            <td><?php echo date('M d, Y', strtotime($r->created_at)); ?></td>
-                            <td>
+                            <td data-label="Submitted"><?php echo date('M d, Y', strtotime($r->created_at)); ?></td>
+                            <td data-label="Actions">
                               <div class="action-buttons">
                                 <form method="post" style="display:inline-block;">
                                   <input type="hidden" name="id" value="<?php echo $r->id; ?>">

@@ -85,6 +85,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="./css/toaster.css">
+    <link rel="stylesheet" href="./css/responsive.css">
   </head>
 
   <body>
@@ -185,7 +186,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                           if ($query->rowCount() > 0) {
                             foreach ($results as $row) { ?>
                               <tr>
-                                <td>
+                                <td data-label="Student">
                                   <div class="user-info">
                                     <?php if (!empty($row->Image)): ?>
                                       <img src="images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar"
@@ -202,8 +203,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                     </div>
                                   </div>
                                 </td>
-                                <td><?php echo htmlentities($row->StuID); ?></td>
-                                <td>
+                                <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                                <td data-label="Program">
                                   <?php
                                   $program_full = htmlentities($row->Program);
                                   if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
@@ -212,15 +213,15 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                     echo $program_full;
                                   } ?>
                                 </td>
-                                <td>
+                                <td data-label="Status">
                                   <span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>">
                                     <?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?>
                                   </span>
                                 </td>
                                 <?php if ($isSkillSearch): ?>
-                                  <td><?php echo htmlentities($row->totalPoints); ?></td>
+                                  <td data-label="Skill Points"><?php echo htmlentities($row->totalPoints); ?></td>
                                 <?php endif; ?>
-                                <td>
+                                <td data-label="Action">
                                   <div class="action-buttons">
                                     <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>" class="action-btn edit" title="View Profile" style="background: #e0e7ff; color: #4f46e5;">👁️</a>
                                     <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="Edit">✏️</a>

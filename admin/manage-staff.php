@@ -137,6 +137,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="./css/modal.css">
+    <link rel="stylesheet" href="./css/responsive.css">
   </head>
 
   <body>
@@ -286,7 +287,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         if ($query->rowCount() > 0) {
                           foreach ($results as $row) { ?>
                             <tr>
-                              <td>
+                              <td data-label="Staff Member">
                                 <div class="user-info">
                                   <?php if (!empty($row->Image)): ?>
                                     <img src="images/<?php echo htmlentities($row->Image); ?>" alt="Staff Avatar"
@@ -303,14 +304,14 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                   </div>
                                 </div>
                               </td>
-                              <td><?php echo htmlentities($row->UserName); ?></td>
-                              <td><?php echo date('M d, Y', strtotime($row->StaffRegdate)); ?></td>
-                              <td>
+                              <td data-label="Username"><?php echo htmlentities($row->UserName); ?></td>
+                              <td data-label="Registration Date"><?php echo date('M d, Y', strtotime($row->StaffRegdate)); ?></td>
+                              <td data-label="Status">
                                 <span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>">
                                   <?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?>
                                 </span>
                               </td>
-                              <td>
+                              <td data-label="Action">
                                 <div class="action-buttons">
                                   <button class="action-btn edit btn-edit" title="Edit"
                                     data-id="<?php echo htmlentities($row->ID); ?>"

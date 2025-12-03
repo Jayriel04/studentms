@@ -837,39 +837,6 @@ body {
   text-decoration: underline;
 }
 
-@media (max-width: 1200px) {
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  body {
-    padding: 16px;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-value {
-    font-size: 28px;
-  }
-
-  .analytics-card,
-  .cards-section {
-    padding: 24px;
-  }
-
-  .card-title {
-    font-size: 20px;
-  }
-
-  .chart-container {
-    height: 280px;
-  }
-}
-
 /* Override for notice list to fit new design */
 .cards-section .list-group-item {
   border: none;

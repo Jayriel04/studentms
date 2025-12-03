@@ -21,6 +21,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="vendors/chartist/chartist.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
+    <link rel="stylesheet" href="./css/responsive.css">
   </head>
 
   <body>
@@ -178,17 +179,6 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
         </div>
       </div>
     </div>
-
-    <!-- Modal for notice detail -->
-    <div id="noticeModal">
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <div class="modal-title" id="modalTitle"></div>
-        <div class="modal-date" id="modalDate"></div>
-        <div class="modal-msg" id="modalMsg"></div>
-      </div>
-    </div>
-
     <script src="vendors/js/vendor.bundle.base.js"></script>
     <script src="vendors/chart.js/Chart.min.js"></script>
     <script src="js/toast.js"></script>

@@ -1,0 +1,859 @@
+/* --- MODERN DASHBOARD RESPONSIVE STYLES --- */
+@media (max-width: 1200px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+    /* Stack chart and notices on smaller screens */
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 16px;
+    /* Add some padding on mobile */
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    /* 2-column grid on mobile */
+  }
+
+  .stat-value {
+    font-size: 28px;
+    /* Slightly smaller font for values */
+  }
+
+  .analytics-card,
+  .cards-section {
+    padding: 7.5px;
+    /* Further reduce padding for a more compact look */
+  }
+
+  .card-title {
+    font-size: 20px;
+    /* Adjust title size */
+  }
+
+  .chart-container {
+    height: 170px;
+    /* Further reduce chart height on mobile */
+  }
+
+  /* --- MANAGE STAFF TABLE RESPONSIVE STYLES --- */
+  .table-card {
+    width: 100%;
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  .table-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .table-actions {
+    flex-direction: column;
+  }
+
+  .search-box,
+  .filter-btn,
+  .add-btn {
+    width: 100%;
+  }
+
+
+
+  .table-wrapper {
+    overflow-x: visible;
+  }
+
+  .table-wrapper table {
+    display: block;
+    width: 100%;
+  }
+
+  .table-wrapper thead {
+    display: none;
+  }
+
+  .table-wrapper tbody {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .table-wrapper tbody tr {
+    display: block;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+
+  /* Each cell becomes a horizontal pair: label (fixed) + value (fluid) */
+  .table-wrapper td {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+    flex-wrap: nowrap;
+    white-space: normal;
+    word-break: break-word;
+    overflow: hidden;
+  }
+
+  /* Label on the left with fixed basis */
+  .table-wrapper td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #64748b;
+    font-size: 12px;
+    flex: 0 0 120px;
+    /* fixed label column width */
+    min-width: 90px;
+    max-width: 36%;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* Make the actual cell content flexible and able to wrap */
+  .table-wrapper td>* {
+    min-width: 0;
+    /* allows text to wrap instead of forcing wide td */
+  }
+
+  /* Specific tweaks for user-info so avatar + details fit */
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+
+  .user-avatar,
+  .user-avatar-img {
+    width: 36px !important;
+    height: 36px !important;
+    flex: 0 0 36px;
+  }
+
+  .user-details {
+    text-align: left;
+    overflow: hidden;
+  }
+
+  .user-name,
+  .user-email {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Action buttons shouldn't force width to expand */
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+  }
+
+  .table-wrapper td:first-child {
+    padding: 1px;
+  }
+
+  .table-wrapper td:last-child {
+    border-bottom: none;
+    padding-top: 12px;
+    margin-top: 8px;
+  }
+
+  /* Student table -> card view on mobile; labels left, values next to labels */
+  .table-card {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .table-wrapper {
+    overflow-x: visible;
+  }
+
+  .table-wrapper table {
+    display: block;
+    width: 100%;
+  }
+
+  .table-wrapper thead {
+    display: none;
+  }
+
+  .table-wrapper tbody {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .table-wrapper tbody tr {
+    display: block;
+    background: #fff;
+    border: 1px solid #e6edf3;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+    overflow: hidden;
+  }
+
+  /* pair: label (fixed) + value (flex) on the same row, left aligned */
+  .table-wrapper td {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+    white-space: normal;
+    overflow: hidden;
+  }
+
+  .table-wrapper td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #475569;
+    font-size: 12px;
+    flex: 0 0 110px;
+    /* label column fixed width */
+    min-width: 90px;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* value area next to label — can wrap */
+  .table-wrapper td>* {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .table-wrapper td:last-child {
+    border-bottom: none;
+    padding-top: 10px;
+    margin-top: 6px;
+  }
+
+  /* avatar and user details */
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-avatar,
+  .user-avatar-img {
+    width: 40px !important;
+    height: 40px !important;
+    flex: 0 0 40px;
+  }
+
+  .user-details {
+    overflow: hidden;
+    text-align: left;
+  }
+
+  .user-name,
+  .user-email {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 12px;
+    display: inline-block;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+/* --- SEARCH PAGE TABLE RESPONSIVE STYLES --- */
+@media (max-width: 768px) {
+  .card-view .table-wrapper table {
+    display: block;
+    width: 100%;
+  }
+
+  .card-view .table-wrapper thead {
+    display: none;
+  }
+
+  .card-view .table-wrapper tbody {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .card-view .table-wrapper tbody tr {
+    display: block;
+    background: #fff;
+    border: 1px solid #e6edf3;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+    overflow: hidden;
+  }
+
+  .card-view .table-wrapper td {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+    white-space: normal;
+    overflow: hidden;
+  }
+
+  .card-view .table-wrapper td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #475569;
+    font-size: 12px;
+    flex: 0 0 110px;
+    min-width: 90px;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .card-view .table-wrapper td>* {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .card-view .table-wrapper td:last-child {
+    border-bottom: none;
+    padding-top: 10px;
+    margin-top: 6px;
+  }
+
+  /* User info styles */
+  .card-view .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-view .user-avatar,
+  .card-view .user-avatar-img {
+    width: 40px !important;
+    height: 40px !important;
+    flex: 0 0 40px;
+  }
+
+  .card-view .user-details {
+    overflow: hidden;
+    text-align: left;
+  }
+
+  .card-view .user-name,
+  .card-view .user-email {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .card-view .status-badge {
+    padding: 4px 8px;
+    font-size: 12px;
+    display: inline-block;
+  }
+
+  .card-view .action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  /* Search form responsive */
+  .table-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .table-actions .d-flex {
+    flex-direction: column;
+  }
+
+  .search-box,
+  .filter-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-view .table-wrapper td::before {
+    flex: 0 0 90px;
+    min-width: 70px;
+    font-size: 11px;
+  }
+
+  .card-view .table-wrapper td {
+    padding: 6px 0;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .card-view .user-avatar,
+  .card-view .user-avatar-img {
+    width: 34px !important;
+    height: 34px !important;
+    flex: 0 0 34px;
+  }
+
+  .card-view .action-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+
+  .table-actions .d-flex {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .search-box,
+  .filter-btn {
+    width: 100%;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+}
+
+/* --- SIDEBAR RESPONSIVE STYLES --- */
+@media (max-width: 480px) {
+  .sidebar .menu-item {
+    padding: 10px 15px !important;
+    /* Shrink padding for smaller height */
+    margin-bottom: 8px !important;
+  }
+
+  .sidebar .menu-item-icon {
+    font-size: 20px !important;
+    /* Smaller icon */
+  }
+
+  .sidebar .menu-item-text {
+    font-size: 14px !important;
+    /* Smaller text */
+  }
+}
+
+/* --- OVERRIDE: enforce consistent card-view on search/manage pages --- */
+@media (max-width: 768px) {
+
+  /* Ensure tables convert to consistent card rows and labels on left */
+  .table-responsive.card-view table,
+  .table-card .table-wrapper table,
+  .card-view .table-wrapper table {
+    display: block !important;
+    width: 100% !important;
+    border: 0 !important;
+  }
+
+  .table-responsive.card-view table thead,
+  .table-card .table-wrapper thead,
+  .card-view .table-wrapper thead {
+    display: none !important;
+  }
+
+  .table-responsive.card-view table tbody,
+  .table-card .table-wrapper tbody,
+  .card-view .table-wrapper tbody {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .table-responsive.card-view table tr,
+  .table-card .table-wrapper tbody tr,
+  .card-view .table-wrapper tbody tr {
+    display: block !important;
+    background: #fff;
+    border: 1px solid #e6edf3;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+    overflow: hidden;
+  }
+
+  /* label (left) + value (right) pair */
+  .table-responsive.card-view table td,
+  .table-card .table-wrapper td,
+  .card-view .table-wrapper td {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+    white-space: normal;
+    overflow: hidden;
+  }
+
+  .table-responsive.card-view table td::before,
+  .table-card .table-wrapper td::before,
+  .card-view .table-wrapper td::before {
+    content: attr(data-label) !important;
+    font-weight: 600;
+    color: #475569;
+    font-size: 12px;
+    flex: 0 0 110px;
+    min-width: 90px;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .table-responsive.card-view table td>*,
+  .table-card .table-wrapper td>*,
+  .card-view .table-wrapper td>* {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    text-align: left !important;
+    overflow: hidden;
+  }
+
+  .table-responsive.card-view table td:last-child,
+  .table-card .table-wrapper td:last-child,
+  .card-view .table-wrapper td:last-child {
+    border-bottom: none !important;
+    padding-top: 10px !important;
+    margin-top: 6px !important;
+  }
+
+  /* avatar / user details */
+  .card-view .user-avatar,
+  .card-view .user-avatar-img,
+  .table-card .user-avatar,
+  .table-card .user-avatar-img {
+    width: 40px !important;
+    height: 40px !important;
+    flex: 0 0 40px !important;
+  }
+
+  .card-view .user-details,
+  .table-card .user-details {
+    overflow: hidden !important;
+    text-align: left !important;
+  }
+
+  .card-view .action-buttons,
+  .table-card .action-buttons {
+    display: flex !important;
+    gap: 8px !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+}
+
+/* extra-small screens */
+@media (max-width: 480px) {
+
+  .table-responsive.card-view table td::before,
+  .table-card .table-wrapper td::before,
+  .card-view .table-wrapper td::before {
+    flex: 0 0 90px !important;
+    min-width: 70px !important;
+    font-size: 11px !important;
+  }
+
+  .table-responsive.card-view table td,
+  .table-card .table-wrapper td,
+  .card-view .table-wrapper td {
+    padding: 6px 0 !important;
+    gap: 8px !important;
+    font-size: 12px !important;
+  }
+
+  .table-responsive.card-view .action-btn,
+  .table-card .action-btn,
+  .card-view .action-btn {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* --- ADDED: responsive shrink for add-btn on mobile --- */
+@media (max-width: 768px) {
+  .add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 13px;
+    line-height: 1;
+    min-width: 72px;
+    max-width: 40%;
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+  }
+
+  /* ensure header actions wrap nicely */
+  .table-header,
+  .table-actions,
+  .page-header .d-flex {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-width: 60px;
+    max-width: 55%;
+  }
+
+  .table-header,
+  .table-actions,
+  .page-header .d-flex {
+    gap: 6px;
+  }
+}
+
+
+/* center main form and limit width on all screens */
+.add-student-form-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* desktop grid remains (if defined by style.v2); on small screens stack fields */
+@media (max-width: 992px) {
+  .add-student-form-container {
+    padding: 18px;
+  }
+
+  .add-student-progress-bar {
+    gap: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 768px) {
+  .add-student-form-container {
+    max-width: 92%;
+    padding: 16px;
+  }
+
+  .add-student-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .add-student-input-group {
+    width: 100%;
+  }
+
+  .add-student-input-wrapper input,
+  .add-student-input-wrapper textarea,
+  .add-student-input-wrapper select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* progress bar compress & allow horizontal scroll */
+  .add-student-progress-bar {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  /* navigation buttons wrap and full width for primary action */
+  .form-navigation-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .form-navigation-buttons .add-student-btn-submit {
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-student-form-container {
+    padding: 12px;
+    max-width: 96%;
+  }
+
+  .add-student-progress-bar .step-label {
+    display: none;
+  }
+
+  /* save space on tiny screens */
+  .page-header .add-btn {
+    margin-right: 8px;
+  }
+
+  .form-navigation-buttons {
+    justify-content: stretch;
+  }
+
+  .form-navigation-buttons .btn-prev,
+  .form-navigation-buttons .btn-next,
+  .form-navigation-buttons .add-student-btn-submit {
+    flex: 1 1 auto;
+  }
+}
+
+/* --- EDIT STUDENT DETAIL: mobile responsive rules --- */
+@media (max-width: 992px) {
+  /* Make tabs horizontally scrollable on medium screens */
+  .form-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+  }
+  .form-tab {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Keep page header compact and ensure add-btn shrinks */
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 8px 0;
+  }
+  .page-header .add-btn {
+    align-self: flex-start;
+    padding: 8px 10px;
+    font-size: 13px;
+    min-width: 64px;
+    max-width: 48%;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Form card and tab content spacing */
+  .form-card, .form-card .form-card {
+    padding: 12px;
+  }
+  .form-tabs-container {
+    gap: 12px;
+  }
+
+  /* Collapse grid into single column for better mobile flow */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .form-group {
+    width: 100% !important;
+  }
+  .form-group .form-label { font-size: 14px; }
+  .form-group .form-control,
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100% !important;
+    box-sizing: border-box;
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  /* Tabs content padding and stacking */
+  .form-tab-content { padding: 6px 0; }
+
+  /* Navigation buttons stack and full width on mobile */
+  .form-navigation {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .form-navigation .btn,
+  .form-navigation button,
+  .form-navigation .btn-submit {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* Reduce complexity of select2/typeahead where present */
+  .select2-container--default .select2-selection--single {
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens: tighten spacing */
+  .page-header { gap: 8px; padding: 6px 0; }
+  .page-header h3.page-title { font-size: 18px; }
+  .page-header .add-btn {
+    padding: 6px 8px;
+    font-size: 12px;
+    min-width: 56px;
+    max-width: 70%;
+  }
+
+  .form-tabs { gap: 6px; }
+  .form-tab { padding: 6px 10px; font-size: 13px; }
+
+  .form-card { padding: 10px; }
+  .form-group .form-control,
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    font-size: 13px;
+    padding: 7px 8px;
+  }
+
+  .form-navigation { gap: 6px; }
+}
+/* --- end edit-student-detail responsive rules --- */

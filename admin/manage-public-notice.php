@@ -90,6 +90,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="./css/modal.css">
+    <link rel="stylesheet" href="./css/responsive.css">
   </head>
 
   <body>
@@ -204,9 +205,9 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                         if ($query->rowCount() > 0) {
                           foreach ($results as $row) { ?>
                             <tr>
-                              <td><?php echo htmlentities($row->NoticeTitle); ?></td>
-                              <td><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
-                              <td>
+                              <td data-label="Notice Title"><?php echo htmlentities($row->NoticeTitle); ?></td>
+                              <td data-label="Notice Date"><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
+                              <td data-label="Action">
                                 <div class="action-buttons">
                                   <button type="button" class="action-btn edit btn-edit-public" title="Edit"
                                     data-id="<?php echo htmlentities($row->ID); ?>"
