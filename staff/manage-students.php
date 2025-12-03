@@ -72,6 +72,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
         <link rel="stylesheet" href="./css/style.css">
         <link rel="stylesheet" href="./css/style(v2).css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+        <link rel="stylesheet" href="css/responsive.css">
     </head>
 
     <body>
@@ -176,52 +177,52 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
                                                     if ($query->rowCount() > 0) {
                                                         foreach ($results as $row) { ?>
                                                             <tr>
-                                                                <td>
-                                                                    <div class="user-info">
-                                                                        <?php if (!empty($row->Image)): ?>
-                                                                          <img src="../admin/images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar"
-                                                                            class="user-avatar-img">
-                                                                        <?php else: ?>
-                                                                          <div class="user-avatar"
-                                                                            style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                                                                            <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
-                                                                          </div>
-                                                                        <?php endif; ?>
-                                                                        <div class="user-details">
-                                                                            <span class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
-                                                                            <span class="user-email"><?php echo htmlentities($row->EmailAddress); ?></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                                <td><?php echo htmlentities($row->StuID); ?></td>
-                                                                <td>
-                                                                    <?php
-                                                                    $program_full = htmlentities($row->Program);
-                                                                    if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
-                                                                        echo $matches[1];
-                                                                    } else {
-                                                                        echo $program_full;
-                                                                    } ?>
-                                                                </td>
-                                                                <td>
-                                                                    <span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>">
-                                                                        <?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?>
-                                                                    </span>
-                                                                </td>
-                                                                <?php if ($isSkillSearch): ?>
+                                                                <td data-label="Student">
+                                                                     <div class="user-info">
+                                                                         <?php if (!empty($row->Image)): ?>
+                                                                           <img src="../admin/images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar"
+                                                                             class="user-avatar-img">
+                                                                         <?php else: ?>
+                                                                           <div class="user-avatar"
+                                                                             style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                                                             <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
+                                                                           </div>
+                                                                         <?php endif; ?>
+                                                                         <div class="user-details">
+                                                                             <span class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
+                                                                             <span class="user-email"><?php echo htmlentities($row->EmailAddress); ?></span>
+                                                                         </div>
+                                                                     </div>
+                                                                 </td>
+                                                                <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                                                                <td data-label="Program">
+                                                                     <?php
+                                                                     $program_full = htmlentities($row->Program);
+                                                                     if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
+                                                                         echo $matches[1];
+                                                                     } else {
+                                                                         echo $program_full;
+                                                                     } ?>
+                                                                 </td>
+                                                                <td data-label="Status">
+                                                                     <span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>">
+                                                                         <?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?>
+                                                                     </span>
+                                                                 </td>
+                                                                 <?php if ($isSkillSearch): ?>
                                                                     <td data-label="Skill Points"><?php echo htmlentities($row->totalPoints); ?></td>
-                                                                <?php endif; ?>
-                                                                <td>
-                                                                    <div class="action-buttons">
-                                                                        <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="View Profile" style="background: #e0e7ff; color: #4f46e5;">👁️</a>
-                                                                        <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="Edit">✏️</a>
-                                                                        <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="action-btn toggle <?php echo $row->Status == 1 ? 'deactivate' : ''; ?>" title="<?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?>">
-                                                                            <?php echo $row->Status == 1 ? '🔒' : '🔑'; ?>
-                                                                        </a>
-                                                                    </div>
-                                                                </td>
+                                                                 <?php endif; ?>
+                                                                <td data-label="Action">
+                                                                     <div class="action-buttons">
+                                                                         <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="View Profile" style="background: #e0e7ff; color: #4f46e5;">👁️</a>
+                                                                         <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="Edit">✏️</a>
+                                                                         <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="action-btn toggle <?php echo $row->Status == 1 ? 'deactivate' : ''; ?>" title="<?php echo $row->Status == 1 ? 'Deactivate' : 'Activate'; ?>">
+                                                                             <?php echo $row->Status == 1 ? '🔒' : '🔑'; ?>
+                                                                         </a>
+                                                                     </div>
+                                                                 </td>
                                                             </tr>
-                                                            <?php }
+                                                    <?php }
                                                     } else { ?>
                                                         <tr><td colspan="<?php echo $isSkillSearch ? '6' : '5'; ?>" style="text-align: center; color: red;">No Record Found</td></tr>
                                                     <?php } ?>

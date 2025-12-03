@@ -31,6 +31,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="./css/modal.css" />
     <link rel="stylesheet" href="./css/style(v2).css">
+    <link rel="stylesheet" href="css/responsive.css">
     <script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
     <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
   </head>

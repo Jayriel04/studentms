@@ -158,37 +158,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
 <html lang="en">
 
 <head>
-  <title>Staff Profiling System || Search Students</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
-  <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-  <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
-  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-  <link rel="stylesheet" href="./vendors/daterangepicker/daterangepicker.css">
-  <link rel="stylesheet" href="./vendors/chartist/chartist.min.css">
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-  <link rel="stylesheet" href="css/modal.css">
-  <link rel="stylesheet" href="./css/style(v2).css">
-  <style>
-    #addNoticeModal .modal-dialog {
-      /* Position the modal on the right side of the screen */
-      position: fixed;
-      top: 20px;
-      /* Adjust top position freely */
-      right: 20px;
-      /* Adjust right position freely */
-      margin: 0;
-      width: 500px;
-      /* Or any width you prefer */
-      max-width: calc(100% - 40px);
-    }
+    <title>Staff Profiling System || Search Students</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="./vendors/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="./vendors/chartist/chartist.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="./css/style(v2).css">
+    <link rel="stylesheet" href="./css/responsive.css">
+    <style>
+      #addNoticeModal .modal-dialog {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        margin: 0;
+        width: 500px;
+        max-width: calc(100% - 40px);
+      }
 
-    #addNoticeModal .modal-content {
-      height: calc(70vh - 40px);
-    }
-  </style>
-</head>
+      #addNoticeModal .modal-content {
+        height: calc(70vh - 40px);
+      }
+    </style>
+  </head>
 
 <body>
   <div class="container-scroller">
@@ -287,7 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                         if (count($results) > 0) {
                           foreach ($results as $row) { ?>
                             <tr>
-                              <td>
+                              <td data-label="Student">
                                 <div class="user-info">
                                   <?php if (!empty($row->Image)): ?>
                                     <img src="../admin/images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar" class="user-avatar-img">
@@ -297,40 +294,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                                     </div>
                                   <?php endif; ?>
                                   <div class="user-details">
-                                    <span
-                                      class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
+                                    <span class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
                                     <span class="user-email"><?php echo htmlentities($row->EmailAddress); ?></span>
                                   </div>
                                 </div>
                               </td>
-                              <td><?php echo htmlentities($row->StuID); ?></td>
-                              <td><?php echo htmlentities($row->Program); ?></td>
-                              <td><span
-                                  class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></span>
-                              </td>
-                              <?php if ($isSkillSearch): ?>
-                                <td><?php echo htmlentities($row->totalPoints); ?></td>
-                              <?php endif; ?>
-                              <td>
-                                <div class="action-buttons">
-                                  <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"
-                                    class="action-btn edit" title="View Profile"
-                                    style="background: #e0e7ff; color: #4f46e5;">👁️</a>
-                                  <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
-                                    class="action-btn edit" title="Edit">✏️</a>
-                                  <?php if (isset($row->Status) && $row->Status == 1): ?>
-                                    <button type="button" class="action-btn toggle deactivate message-btn" title="Message"
-                                      data-toggle="modal" data-target="#messageModal"
-                                      data-email="<?php echo htmlentities($row->EmailAddress); ?>"
-                                      data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>"
-                                      data-stuid="<?php echo htmlentities($row->StuID); ?>">✉️</button>
-                                  <?php else: ?>
-                                    <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
-                                      class="action-btn toggle" title="Activate">
-                                      🔑
-                                    </a>
-                                  <?php endif; ?>
-                                </div>
+                              <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                              <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
+                              <td data-label="Status"><span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></span></td>
+                               <?php if ($isSkillSearch): ?>
+                                <td data-label="Points"><?php echo htmlentities($row->totalPoints); ?></td>
+                               <?php endif; ?>
+                              <td data-label="Action">
+                                 <div class="action-buttons">
+                                   <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="View Profile" style="background: #e0e7ff; color: #4f46e5;">👁️</a>
+                                   <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>" class="action-btn edit" title="Edit">✏️</a>
+                                   <?php if (isset($row->Status) && $row->Status == 1): ?>
+                                     <button type="button" class="action-btn toggle deactivate message-btn" title="Message" data-toggle="modal" data-target="#messageModal" data-email="<?php echo htmlentities($row->EmailAddress); ?>" data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>" data-stuid="<?php echo htmlentities($row->StuID); ?>">✉️</button>
+                                   <?php else: ?>
+                                     <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>" class="action-btn toggle" title="Activate">🔑</a>
+                                   <?php endif; ?>
+                                 </div>
                               </td>
                             </tr>
                             <?php $cnt++;
@@ -419,7 +403,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                         if ($query->rowCount() > 0) {
                           foreach ($results as $row) { ?>
                             <tr>
-                              <td>
+                              <td data-label="Student">
                                 <div class="user-info">
                                   <?php if (!empty($row->Image)): ?>
                                     <img src="../admin/images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar" class="user-avatar-img">
@@ -429,17 +413,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                                     </div>
                                   <?php endif; ?>
                                   <div class="user-details">
-                                    <span
-                                      class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
+                                    <span class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
                                     <span class="user-email"><?php echo htmlentities($row->EmailAddress); ?></span>
                                   </div>
                                 </div>
                               </td>
-                              <td><?php echo htmlentities($row->StuID); ?></td>
-                              <td><?php echo htmlentities($row->Program); ?></td>
-                              <td><span
-                                  class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></span>
-                              </td>
+                              <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
+                              <td data-label="Program"><?php echo htmlentities($row->Program); ?></td>
+                              <td data-label="Status"><span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>"><?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?></span></td>
                               <td>
                                 <div class="action-buttons">
                                   <a href="view-student.php?viewid=<?php echo htmlentities($row->sid); ?>"

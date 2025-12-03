@@ -120,6 +120,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/modal.css" />
     <link rel="stylesheet" href="./css/style(v2).css">
+    <link rel="stylesheet" href="./css/responsive.css">
   </head>
 
   <body>
@@ -131,7 +132,7 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title"> Add Students </h3>
-              <a href="manage-students.php" class="add-btn" style="text-decoration: none; margin-right: 20px;">↩ Back</a>
+              <a href="manage-students.php" class="add-btn" style="text-decoration: none;">↩ Back</a>
             </div>
             <div class="row">
               <div class="col-12 grid-margin stretch-card">
@@ -263,7 +264,6 @@ if (strlen($_SESSION['sturecmsstaffid']) == 0) {
     <script src="js/off-canvas.js"></script>
     <script src="js/misc.js"></script>
     <script src="js/toast.js"></script>
-    <script src="js/manage-student.js"></script>
     <script src="js/manage-student.js"></script>
   </body>
 

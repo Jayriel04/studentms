@@ -92,6 +92,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/modal.css">
     <link rel="stylesheet" href="./css/style(v2).css">
+    <link rel="stylesheet" href="./css/responsive.css">
   </head>
 
   <body>
@@ -206,24 +207,24 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
                         if ($query->rowCount() > 0) {
                           foreach ($results as $row) { ?>
                             <tr>
-                              <td><?php echo htmlentities($row->NoticeTitle); ?></td>
-                              <td><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
-                              <td>
-                                <div class="action-buttons">
-                                  <button type="button" class="action-btn edit btn-edit-public" title="Edit"
-                                    data-id="<?php echo htmlentities($row->ID); ?>"
-                                    data-title="<?php echo htmlentities($row->NoticeTitle); ?>"
-                                    data-msg="<?php echo htmlspecialchars($row->NoticeMessage, ENT_QUOTES); ?>">✏️</button>
-                                  <a href="manage-public-notice.php?delid=<?php echo htmlentities($row->ID); ?>"
-                                    onclick="return confirm('Do you really want to Delete ?');" class="action-btn"
-                                    style="background: #fee2e2; color: #ef4444;" title="Delete">🗑️</a>
-                                </div>
-                              </td>
+                              <td data-label="Notice Title"><?php echo htmlentities($row->NoticeTitle); ?></td>
+                              <td data-label="Notice Date"><?php echo date('M d, Y', strtotime($row->CreationDate)); ?></td>
+                              <td data-label="Action">
+                                 <div class="action-buttons">
+                                   <button type="button" class="action-btn edit btn-edit-public" title="Edit"
+                                     data-id="<?php echo htmlentities($row->ID); ?>"
+                                     data-title="<?php echo htmlentities($row->NoticeTitle); ?>"
+                                     data-msg="<?php echo htmlspecialchars($row->NoticeMessage, ENT_QUOTES); ?>">✏️</button>
+                                   <a href="manage-public-notice.php?delid=<?php echo htmlentities($row->ID); ?>"
+                                     onclick="return confirm('Do you really want to Delete ?');" class="action-btn"
+                                     style="background: #fee2e2; color: #ef4444;" title="Delete">🗑️</a>
+                                 </div>
+                               </td>
                             </tr>
                           <?php }
                         } else { ?>
                           <tr>
-                            <td colspan="4" style="text-align:center;color:red;">No Record Found</td>
+                            <td colspan="3" style="text-align:center;color:red;">No Record Found</td>
                           </tr>
                         <?php } ?>
                       </tbody>

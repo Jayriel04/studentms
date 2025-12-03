@@ -223,259 +223,267 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>Student Profiling System || Validate Achievements</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
-  <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
-  <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
-  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/style(v2).css">
-  <link rel="stylesheet" href="./css/style(v2).css">
-  <style>
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1050;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
+    <meta charset="utf-8">
+    <title>Student Profiling System || Validate Achievements</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style(v2).css">
+    <link rel="stylesheet" href="./css/responsive.css">
+    <style>
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
 
-    .modal-content {
-      background-color: #fefefe;
-      margin: 10% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      max-width: 700px;
-      position: relative;
-      border-radius: 8px;
-    }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 700px;
+        position: relative;
+        border-radius: 8px;
+      }
 
-    .modal-content img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
+      .modal-content img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+      }
 
-    .close-btn {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      position: absolute;
-      top: 10px;
-      right: 20px;
-    }
+      .close-btn {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+      }
 
-    .close-btn:hover,
-    .close-btn:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-  </style>
-</head>
+      .close-btn:hover,
+      .close-btn:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
 
-<body>
-  <div class="container-scroller">
-    <?php include_once('includes/header.php'); ?>
-    <div class="container-fluid page-body-wrapper">
-      <?php include_once('includes/sidebar.php'); ?>
-      <div class="main-panel">
-        <div class="content-wrapper">
-          <div class="page-header">
-            <h3 class="page-title"> Pending Achievements </h3>
-            <a href="manage-students.php" class="add-btn" style="text-decoration: none; margin-right: 20px;">↩ Back</a>
-          </div>
+  <body>
+    <div class="container-scroller">
+      <?php include_once('includes/header.php'); ?>
+      <div class="container-fluid page-body-wrapper">
+        <?php include_once('includes/sidebar.php'); ?>
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="page-header">
+              <h3 class="page-title">Pending Achievements</h3>
+              <a href="manage-students.php" class="add-btn" style="text-decoration: none;">↩ Back</a>
+            </div>
 
-          <div class="row">
-            <div class="col-md-12">
-              <div class="table-card" style="width: 150vh;">
-                <div class="table-header">
-                  <h2 class="table-title">Validate Achievements</h2>
-                  <div class="table-actions">
-                    <form method="get" class="d-flex" style="gap: 12px;">
-                      <input type="text" name="searchdata" class="form-control" placeholder="Search by Student or Skill"
-                        value="<?php echo htmlentities($searchdata); ?>">
-                      <select name="category_filter" class="form-control">
-                        <option value="all" <?php if ($category_filter == 'all')
-                          echo 'selected'; ?>>All Categories
-                        </option>
-                        <option value="Academic" <?php if ($category_filter == 'Academic')
-                          echo 'selected'; ?>>
-                          Academic</option>
-                        <option value="Non-Academic" <?php if ($category_filter == 'Non-Academic')
-                          echo 'selected'; ?>>
-                          Non-Academic</option>
-                      </select>
-                      <button type="submit" class="filter-btn" style="width: 40vh;">🔍 Search</button>
-                    </form>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="table-card">
+                  <div class="table-header">
+                    <h2 class="table-title">Validate Achievements</h2>
+                    <div class="table-actions">
+                      <form method="get" style="display: flex; gap: 12px; flex-wrap: wrap; width: 100%;">
+                        <input type="text" name="searchdata" class="form-control" placeholder="Search by Student or Skill"
+                          value="<?php echo htmlentities($searchdata); ?>">
+                        <select name="category_filter" class="form-control">
+                          <option value="all" <?php if ($category_filter == 'all')
+                            echo 'selected'; ?>>All Categories
+                          </option>
+                          <option value="Academic" <?php if ($category_filter == 'Academic')
+                            echo 'selected'; ?>>
+                            Academic</option>
+                          <option value="Non-Academic" <?php if ($category_filter == 'Non-Academic')
+                            echo 'selected'; ?>>
+                            Non-Academic</option>
+                        </select>
+                        <button type="submit" class="filter-btn">🔍 Search</button>
+                      </form>
+                    </div>
                   </div>
-                </div>
-                <?php if (isset($_SESSION['ach_msg'])): ?>
-                  <div class="alert alert-info">
-                    <?php echo htmlentities($_SESSION['ach_msg']);
-                    unset($_SESSION['ach_msg']); ?>
-                  </div>
-                <?php endif; ?>
+                  <?php if (isset($_SESSION['ach_msg'])): ?>
+                    <div class="alert alert-info">
+                      <?php echo htmlentities($_SESSION['ach_msg']);
+                      unset($_SESSION['ach_msg']); ?>
+                    </div>
+                  <?php endif; ?>
 
-                <?php
-                // Fetch pending achievements with skills and student name
-                $sql = "SELECT a.id, a.StuID, CONCAT(s.FamilyName, ' ', s.FirstName) AS StudentName, a.category, a.level, a.points, a.proof_image, a.created_at, a.approved_by, a.approved_at, st.StaffName AS ApproverName, GROUP_CONCAT(sk.name SEPARATOR ', ') AS skills
-                  FROM student_achievements a
-                  LEFT JOIN student_achievement_skills sas ON a.id = sas.achievement_id
-                  LEFT JOIN skills sk ON sas.skill_id = sk.id
-                  JOIN tblstudent s ON a.StuID = s.StuID
-                  LEFT JOIN tblstaff st ON a.approved_by = st.ID
-                  WHERE a.status = 'pending'";
+                  <?php
+                  // Fetch pending achievements with skills and student name
+                  $sql = "SELECT a.id, a.StuID, CONCAT(s.FamilyName, ' ', s.FirstName) AS StudentName, a.category, a.level, a.points, a.proof_image, a.created_at, a.approved_by, a.approved_at, st.StaffName AS ApproverName, GROUP_CONCAT(sk.name SEPARATOR ', ') AS skills
+                    FROM student_achievements a
+                    LEFT JOIN student_achievement_skills sas ON a.id = sas.achievement_id
+                    LEFT JOIN skills sk ON sas.skill_id = sk.id
+                    JOIN tblstudent s ON a.StuID = s.StuID
+                    LEFT JOIN tblstaff st ON a.approved_by = st.ID
+                    WHERE a.status = 'pending'";
 
-                $params = [];
-                if (!empty($searchdata)) {
-                  $sql .= " AND (s.FirstName LIKE :searchdata OR s.FamilyName LIKE :searchdata OR sk.name LIKE :searchdata)";
-                  $params[':searchdata'] = '%' . $searchdata . '%';
-                }
-                if ($category_filter !== 'all') {
-                  $sql .= " AND a.category = :category";
-                  $params[':category'] = $category_filter;
-                }
+                  $params = [];
+                  if (!empty($searchdata)) {
+                    $sql .= " AND (s.FirstName LIKE :searchdata OR s.FamilyName LIKE :searchdata OR sk.name LIKE :searchdata)";
+                    $params[':searchdata'] = '%' . $searchdata . '%';
+                  }
+                  if ($category_filter !== 'all') {
+                    $sql .= " AND a.category = :category";
+                    $params[':category'] = $category_filter;
+                  }
 
-                $sql .= " GROUP BY a.id ORDER BY a.created_at DESC";
-                $stmt = $dbh->prepare($sql);
-                $stmt->execute($params);
-                $rows = $stmt->fetchAll(PDO::FETCH_OBJ); ?>
-                <?php if (empty($rows)): ?>
-                  <div class="alert alert-info">No pending achievements found.</div>
-                <?php else: ?>
-                  <div class="table-responsive border rounded p-1 card-view">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th class="font-weight-bold">Student</th>
-                          <th class="font-weight-bold">Skills</th>
-                          <th class="font-weight-bold">Category</th>
-                          <th class="font-weight-bold">Level</th>
-                          <th class="font-weight-bold">Points</th>
-                          <th class="font-weight-bold">Proof</th>
-                          <th class="font-weight-bold">Submitted</th>
-                          <th class="font-weight-bold">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <?php foreach ($rows as $r): ?>
+                  $sql .= " GROUP BY a.id ORDER BY a.created_at DESC";
+                  $stmt = $dbh->prepare($sql);
+                  $stmt->execute($params);
+                  $rows = $stmt->fetchAll(PDO::FETCH_OBJ); ?>
+                  <?php if (empty($rows)): ?>
+                    <div class="alert alert-info">No pending achievements found.</div>
+                  <?php else: ?>
+                    <div class="table-responsive border rounded p-1 card-view">
+                      <table class="table">
+                        <thead>
                           <tr>
-                            <td data-label="Student"><?php echo htmlentities($r->StudentName); ?>
-                              <br><small><?php echo htmlentities($r->StuID); ?></small>
-                            </td>
-                            <td data-label="Skills"><?php echo htmlentities($r->skills); ?></td>
-                            <td data-label="Category"><?php echo htmlentities($r->category); ?></td>
-                            <td data-label="Level"><?php echo htmlentities($r->level); ?></td>
-                            <td data-label="Points"><?php echo htmlentities($r->points); ?></td>
-                            <td data-label="Proof">
-                              <?php if (!empty($r->proof_image)): ?>
-                                <a href="#"
-                                  onclick="showProofModal('../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>')">View</a>
-                              <?php else: ?>
-                                <span>No proof</span>
-                              <?php endif; ?>
-                            </td>
-                            <td data-label="Submitted"><?php echo htmlentities($r->created_at); ?></td>
-                            <td data-label="Actions">
-                              <form method="post" style="display:inline-block;">
+                            <th class="font-weight-bold">Student</th>
+                            <th class="font-weight-bold">Skills</th>
+                            <th class="font-weight-bold">Category</th>
+                            <th class="font-weight-bold">Level</th>
+                            <th class="font-weight-bold">Points</th>
+                            <th class="font-weight-bold">Proof</th>
+                            <th class="font-weight-bold">Submitted</th>
+                            <th class="font-weight-bold">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php foreach ($rows as $r): ?>
+                            <tr>
+                              <td data-label="Student">
+                                <div class="user-info">
+                                  <div class="user-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    <?php echo getInitials($r->StudentName); ?>
+                                  </div>
+                                  <div class="user-details">
+                                    <span class="user-name"><?php echo htmlentities($r->StudentName); ?></span>
+                                    <span class="user-email"><?php echo htmlentities($r->StuID); ?></span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td data-label="Skills"><?php echo htmlentities($r->skills); ?></td>
+                              <td data-label="Category"><?php echo htmlentities($r->category); ?></td>
+                              <td data-label="Level"><?php echo htmlentities($r->level); ?></td>
+                              <td data-label="Points"><?php echo htmlentities($r->points); ?></td>
+                              <td data-label="Proof">
+                                <?php if (!empty($r->proof_image)): ?>
+                                  <button class="action-btn edit" style="background: #e0e7ff; color: #4f46e5;" title="View Proof"
+                                    onclick="showProofModal('../admin/images/achievements/<?php echo urlencode($r->proof_image); ?>')">View</button>
+                                <?php else: ?>
+                                  <span>No proof</span>
+                                <?php endif; ?>
+                              </td>
+                              <td data-label="Submitted"><?php echo date('M d, Y', strtotime($r->created_at)); ?></td>
+                              <td data-label="Actions">
                                 <div class="action-buttons">
-                                  <input type="hidden" name="id" value="<?php echo $r->id; ?>">
-                                  <input type="hidden" name="action" value="approve">
-                                  <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                                  <button type="submit" class="action-btn toggle" title="Approve">✔️</button>
+                                  <form method="post" style="display:inline-block;">
+                                    <input type="hidden" name="id" value="<?php echo $r->id; ?>">
+                                    <input type="hidden" name="action" value="approve">
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                    <button type="submit" class="action-btn toggle" title="Approve">✔️</button>
+                                  </form>
                                   <button type="button" class="action-btn toggle deactivate" title="Reject"
                                     onclick="openRejectModal(<?php echo $r->id; ?>)">❌</button>
                                 </div>
-                              </form>
-                            </td>
-                          </tr>
-                        <?php endforeach; ?>
-                      </tbody>
-                    </table>
-                  </div>
-                <?php endif; ?>
+                              </td>
+                            </tr>
+                          <?php endforeach; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  <?php endif; ?>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- Proof Modal -->
-      <div id="proofModal" class="modal">
-        <div class="modal-content">
-          <span class="close-btn" onclick="closeProofModal()">&times;</span>
-          <img id="proofImage" src="" alt="Proof Image" style="width:100%">
-        </div>
-      </div>
-      <!-- Reject Modal -->
-      <div id="rejectModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-          <div class="modal-header">
-            <h5 class="modal-title">Reason for Rejection</h5>
-            <button type="button" class="close" onclick="closeRejectModal()">&times;</button>
+        <!-- Proof Modal -->
+        <div id="proofModal" class="modal">
+          <div class="modal-content">
+            <span class="close-btn" onclick="closeProofModal()">&times;</span>
+            <img id="proofImage" src="" alt="Proof Image" style="width:100%">
           </div>
-          <form id="rejectForm" method="post">
-            <div class="modal-body">
-              <input type="hidden" name="id" id="rejectId">
-              <input type="hidden" name="action" value="reject">
-              <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-              <div class="form-group">
-                <label for="rejection_reason">Please provide a reason for rejecting this achievement:</label>
-                <textarea name="rejection_reason" id="rejection_reason" class="form-control" rows="4"
-                  required></textarea>
+        </div>
+        <!-- Reject Modal -->
+        <div id="rejectModal" class="modal">
+          <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+              <h5 class="modal-title">Reason for Rejection</h5>
+              <button type="button" class="close" onclick="closeRejectModal()">&times;</button>
+            </div>
+            <form id="rejectForm" method="post">
+              <div class="modal-body">
+                <input type="hidden" name="id" id="rejectId">
+                <input type="hidden" name="action" value="reject">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                <div class="form-group">
+                  <label for="rejection_reason">Please provide a reason for rejecting this achievement:</label>
+                  <textarea name="rejection_reason" id="rejection_reason" class="form-control" rows="4"
+                    required></textarea>
+                </div>
               </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Cancel</button>
-              <button type="submit" class="btn btn-danger">Submit Rejection</button>
-            </div>
-          </form>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Cancel</button>
+                <button type="submit" class="btn btn-danger">Submit Rejection</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  </div>
-  <script src="vendors/js/vendor.bundle.base.js"></script>
-  <script src="js/off-canvas.js"></script>
-  <script src="js/misc.js"></script>
-  <script src="js/toast.js"></script>
-  <script>
-    function showProofModal(imageUrl) {
-      document.getElementById('proofImage').src = imageUrl;
-      document.getElementById('proofModal').style.display = 'block';
-    }
-    function closeProofModal() {
-      document.getElementById('proofModal').style.display = 'none';
-    }
-    // Close modal if user clicks outside of the image
-    window.onclick = function (event) {
-      if (event.target == document.getElementById('proofModal')) {
-        closeProofModal();
+    </div>
+    <script src="vendors/js/vendor.bundle.base.js"></script>
+    <script src="js/off-canvas.js"></script>
+    <script src="js/misc.js"></script>
+    <script src="js/toast.js"></script>
+    <script>
+      function showProofModal(imageUrl) {
+        document.getElementById('proofImage').src = imageUrl;
+        document.getElementById('proofModal').style.display = 'block';
       }
-      if (event.target == document.getElementById('rejectModal')) {
-        closeRejectModal();
+      function closeProofModal() {
+        document.getElementById('proofModal').style.display = 'none';
       }
-    }
+      // Close modal if user clicks outside of the image
+      window.onclick = function (event) {
+        if (event.target == document.getElementById('proofModal')) {
+          closeProofModal();
+        }
+        if (event.target == document.getElementById('rejectModal')) {
+          closeRejectModal();
+        }
+      }
 
-    function openRejectModal(id) {
-      document.getElementById('rejectId').value = id;
-      document.getElementById('rejectModal').style.display = 'block';
-    }
+      function openRejectModal(id) {
+        document.getElementById('rejectId').value = id;
+        document.getElementById('rejectModal').style.display = 'block';
+      }
 
-    function closeRejectModal() {
-      document.getElementById('rejectModal').style.display = 'none';
-      document.getElementById('rejection_reason').value = '';
-    }
-  </script>
-</body>
+      function closeRejectModal() {
+        document.getElementById('rejectModal').style.display = 'none';
+        document.getElementById('rejection_reason').value = '';
+      }
+    </script>
+  </body>
 
 </html>

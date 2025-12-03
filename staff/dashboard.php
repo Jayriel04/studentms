@@ -17,6 +17,7 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/style(v2).css">
+    <link rel="stylesheet" href="./css/responsive.css">
   </head>
 
   <body>
