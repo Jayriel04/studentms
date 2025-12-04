@@ -290,6 +290,7 @@ if (true) {
                     
                     <!-- Leaderboard View for Skill Search -->
                     <div class="container">
+                      <!-- mention button removed: prefill uses existing Add Notice modal button -->
                       <div class="top-performers">
                         <?php
                         // Fetch all ranked students for this skill (for top 3)
@@ -308,6 +309,8 @@ if (true) {
                         }
                         $rankStmt->execute();
                         $ranked = $rankStmt->fetchAll(PDO::FETCH_OBJ);
+                        // Prepare top 10 list for client-side mention prefill
+                        $topTenForJs = array_slice($ranked, 0, 10);
                         $allTopThree = array_slice($ranked, 0, 3);
                         $displayOrder = [];
                         if (count($allTopThree) === 3) {
@@ -382,7 +385,36 @@ if (true) {
                           <div class="text-center" style="color: red; padding:20px;">No record found against this search</div>
                         <?php } ?>
                       </div>
-                    </div>
+                      </div>
+
+                    <script>
+                      // Expose top 10 data for prefilling Add Notice modal when the existing Add button is clicked
+                      (function(){
+                        try {
+                          var topTen = <?php echo json_encode($topTenForJs); ?> || [];
+                          window.adminTopTenForMention = topTen;
+                        } catch(e) { window.adminTopTenForMention = []; }
+
+                        document.addEventListener('DOMContentLoaded', function(){
+                          var addBtn = document.querySelector('.add-btn[data-target="#addNoticeModal"]');
+                          if (!addBtn) return;
+                          addBtn.addEventListener('click', function(){
+                            var list = window.adminTopTenForMention || [];
+                            if (!list.length) return; // nothing to prefill
+                            var mentions = list.map(function(u){
+                              var fn = u.FirstName || '';
+                              var ln = u.FamilyName || '';
+                              return '@' + fn + ' ' + ln + ' ';
+                            }).join('');
+
+                            var titleField = document.getElementById('nottitle');
+                            var msgField = document.getElementById('notmsg');
+                            if (titleField) titleField.value = 'Notice: ' + <?php echo json_encode($skill->name ?? ''); ?>;
+                            if (msgField) msgField.value = mentions;
+                          });
+                        });
+                      })();
+                    </script>
 
                     <?php } else { ?>
                     
@@ -571,6 +603,10 @@ if (true) {
                           $baseParams = [];
                           if (!empty($sdata))
                             $baseParams['searchdata'] = $sdata;
+                          // Preserve year filters in pagination links
+                          if (!empty($selectedYears)) {
+                            $baseParams['year'] = $selectedYears;
+                          }
                           $buildUrl = fn($p) => 'search.php?' . http_build_query(array_merge($baseParams, ['pageno' => $p]));
 
                           $prevDisabled = $pageno <= 1 ? 'disabled' : '';

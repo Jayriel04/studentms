@@ -294,6 +294,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                       }
                       $rankStmt->execute();
                       $ranked = $rankStmt->fetchAll(PDO::FETCH_OBJ);
+                      // Prepare top 10 list for client-side mention prefill (staff)
+                      $topTenForJs = array_slice($ranked, 0, 10);
                       $allTopThree = array_slice($ranked, 0, 3);
                       $displayOrder = [];
                       if (count($allTopThree) === 3) {
@@ -367,6 +369,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                       if (count($ranked) === 0) { ?>
                         <div class="text-center" style="color: red; padding:20px;">No record found against this search</div>
                       <?php } ?>
+                      
+                    <script>
+                      // Prefill Add Notice modal with top 10 mentions when the existing Add button is used
+                      (function(){
+                        try {
+                          var topTen = <?php echo json_encode($topTenForJs); ?> || [];
+                          window.staffTopTenForMention = topTen;
+                        } catch(e) { window.staffTopTenForMention = []; }
+
+                        document.addEventListener('DOMContentLoaded', function(){
+                          var addBtn = document.querySelector('.add-btn[data-target="#addNoticeModal"], .add-btn');
+                          if (!addBtn) return;
+                          addBtn.addEventListener('click', function(){
+                            var list = window.staffTopTenForMention || [];
+                            if (!list.length) return; // nothing to prefill
+                            var mentions = list.map(function(u){
+                              var fn = u.FirstName || '';
+                              var ln = u.FamilyName || '';
+                              return '@' + fn + ' ' + ln + ' ';
+                            }).join('');
+
+                            var titleField = document.getElementById('nottitle');
+                            var msgField = document.getElementById('notmsg');
+                            if (titleField) titleField.value = 'Notice: ' + <?php echo json_encode($skill->name ?? ''); ?>;
+                            if (msgField) msgField.value = mentions;
+                          });
+                        });
+                      })();
+                    </script>
                     </div>
                   </div>
 
