@@ -385,98 +385,102 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                     </thead>
                     <tbody>
                       <?php
-                      // Enhanced search: allow searching across many tblstudent fields:
-                        if ($term !== '') {
-                          $termLike = '%' . $term . '%';
-                          $params[':term_like'] = $termLike;
+                      // Enhanced search: allow searching across many tblstudent fields.
+                      // Use $sdata (from GET) as the search term. Initialize arrays used below.
+                      $term = isset($sdata) ? $sdata : '';
+                      $whereParts = [];
+                      $params = [];
 
-                          $whereParts[] = "StuID LIKE :term_like";
-                          $whereParts[] = "FamilyName LIKE :term_like";
-                          $whereParts[] = "FirstName LIKE :term_like";
-                          $whereParts[] = "Program LIKE :term_like";
-                          $whereParts[] = "Major LIKE :term_like";
-                          $whereParts[] = "Barangay LIKE :term_like";
-                          $whereParts[] = "CityMunicipality LIKE :term_like";
-                          $whereParts[] = "Province LIKE :term_like";
-                          $whereParts[] = "Category LIKE :term_like";
-                          $whereParts[] = "EmailAddress LIKE :term_like";
+                      if ($term !== '') {
+                        $termLike = '%' . $term . '%';
+                        $params[':term_like'] = $termLike;
 
-                          if (preg_match('/^\s*(?:year\s*)?([0-9]+)\s*$/i', $term, $ym)) {
-                            $whereParts[] = "YearLevel = :year_level";
-                            $params[':year_level'] = $ym[1];
-                          }
+                        $whereParts[] = "StuID LIKE :term_like";
+                        $whereParts[] = "FamilyName LIKE :term_like";
+                        $whereParts[] = "FirstName LIKE :term_like";
+                        $whereParts[] = "Program LIKE :term_like";
+                        $whereParts[] = "Major LIKE :term_like";
+                        $whereParts[] = "Barangay LIKE :term_like";
+                        $whereParts[] = "CityMunicipality LIKE :term_like";
+                        $whereParts[] = "Province LIKE :term_like";
+                        $whereParts[] = "Category LIKE :term_like";
+                        $whereParts[] = "EmailAddress LIKE :term_like";
 
-                          if (preg_match('/^(male|female|m|f)$/i', $term, $gm)) {
-                            $g = strtolower($gm[1]);
-                            if ($g === 'm') {
-                              $gval = 'Male';
-                            } elseif ($g === 'f') {
-                              $gval = 'Female';
-                            } else {
-                              $gval = ucfirst($g);
-                            }
-                            $whereParts[] = "Gender = :gender_val";
-                            $params[':gender_val'] = $gval;
+                        if (preg_match('/^\s*(?:year\s*)?([0-9]+)\s*$/i', $term, $ym)) {
+                          $whereParts[] = "YearLevel = :year_level";
+                          $params[':year_level'] = (int)$ym[1];
+                        }
+
+                        if (preg_match('/^(male|female|m|f)$/i', $term, $gm)) {
+                          $g = strtolower($gm[1]);
+                          if ($g === 'm') {
+                            $gval = 'Male';
+                          } elseif ($g === 'f') {
+                            $gval = 'Female';
                           } else {
-                            $whereParts[] = "Gender LIKE :term_like";
+                            $gval = ucfirst($g);
                           }
-
-                          $lower = strtolower($term);
-                          if ($lower === 'active') {
-                            $whereParts[] = "Status = :status_active";
-                            $params[':status_active'] = 1;
-                          } elseif ($lower === 'inactive' || $lower === 'graduated' || $lower === 'transferred') {
-                            $whereParts[] = "Status = :status_inactive";
-                            $params[':status_inactive'] = 0;
-                          }
+                          $whereParts[] = "Gender = :gender_val";
+                          $params[':gender_val'] = $gval;
                         } else {
-                          // empty search -> match all
-                          $whereParts[] = "1";
+                          $whereParts[] = "Gender LIKE :term_like";
                         }
 
-                        $whereSQL = ' WHERE ' . implode(' OR ', $whereParts);
+                        $lower = strtolower($term);
+                        if ($lower === 'active') {
+                          $whereParts[] = "Status = :status_active";
+                          $params[':status_active'] = 1;
+                        } elseif ($lower === 'inactive' || $lower === 'graduated' || $lower === 'transferred') {
+                          $whereParts[] = "Status = :status_inactive";
+                          $params[':status_inactive'] = 0;
+                        }
+                      } else {
+                        // empty search -> match all
+                        $whereParts[] = "1";
+                      }
 
-                        $countSql = "SELECT COUNT(ID) FROM tblstudent " . $whereSQL;
-                        // Append year filter (no alias) when applicable
-                        if (!empty($yearFilterSqlNoAlias)) {
-                          $countSql .= $yearFilterSqlNoAlias;
+                      $whereSQL = ' WHERE ' . implode(' OR ', $whereParts);
+
+                      $countSql = "SELECT COUNT(ID) FROM tblstudent " . $whereSQL;
+                      // Append year filter (no alias) when applicable
+                      if (!empty($yearFilterSqlNoAlias)) {
+                        $countSql .= $yearFilterSqlNoAlias;
+                      }
+                      $countStmt = $dbh->prepare($countSql);
+                      foreach ($params as $k => $v) {
+                        $countStmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
+                      }
+                      // Bind year params for the count query
+                      if (!empty($yearParams)) {
+                        foreach ($yearParams as $k => $v) {
+                          $countStmt->bindValue($k, $v, PDO::PARAM_INT);
                         }
-                        $countStmt = $dbh->prepare($countSql);
-                        foreach ($params as $k => $v) {
-                          $countStmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
+                      }
+                      $countStmt->execute();
+                      $total_rows = (int) $countStmt->fetchColumn();
+                      $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
+                      $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status, Image FROM tblstudent " . $whereSQL . " ORDER BY ID DESC LIMIT :offset, :limit";
+                      // Append year filter (no alias) to the data query when applicable
+                      if (!empty($yearFilterSqlNoAlias)) {
+                        $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status, Image FROM tblstudent " . $whereSQL . $yearFilterSqlNoAlias . " ORDER BY ID DESC LIMIT :offset, :limit";
+                      }
+                      $query = $dbh->prepare($sql);
+                      foreach ($params as $k => $v) {
+                        $query->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
+                      }
+                      // Bind year params for the data query
+                      if (!empty($yearParams)) {
+                        foreach ($yearParams as $k => $v) {
+                          $query->bindValue($k, $v, PDO::PARAM_INT);
                         }
-                        // Bind year params for the count query
-                        if (!empty($yearParams)) {
-                          foreach ($yearParams as $k => $v) {
-                            $countStmt->bindValue($k, $v, PDO::PARAM_INT);
-                          }
-                        }
-                        $countStmt->execute();
-                        $total_rows = (int) $countStmt->fetchColumn();
-                        $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
-                        $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status, Image FROM tblstudent " . $whereSQL . " ORDER BY ID DESC LIMIT :offset, :limit";
-                        // Append year filter (no alias) to the data query when applicable
-                        if (!empty($yearFilterSqlNoAlias)) {
-                          // insert before ORDER BY by replacing the pattern
-                          $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status, Image FROM tblstudent " . $whereSQL . $yearFilterSqlNoAlias . " ORDER BY ID DESC LIMIT :offset, :limit";
-                        }
-                        $query = $dbh->prepare($sql);
-                        foreach ($params as $k => $v) {
-                          $query->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
-                        }
-                        // Bind year params for the data query
-                        if (!empty($yearParams)) {
-                          foreach ($yearParams as $k => $v) {
-                            $query->bindValue($k, $v, PDO::PARAM_INT);
-                          }
-                        }
-                        $query->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
-                        $query->bindValue(':limit', (int) $no_of_records_per_page, PDO::PARAM_INT);
-                        $query->execute();
-                        $results = $query->fetchAll(PDO::FETCH_OBJ);
-                        $cnt = 1 + $offset;
-                        if ($query->rowCount() > 0) {
-                          foreach ($results as $row) { ?>
+                      }
+                      $query->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+                      $query->bindValue(':limit', (int) $no_of_records_per_page, PDO::PARAM_INT);
+                      $query->execute();
+                      $results = $query->fetchAll(PDO::FETCH_OBJ);
+                      $cnt = 1 + $offset;
+                      if ($query->rowCount() > 0) {
+                        foreach ($results as $row) { ?>
                             <tr>
                               <td data-label="Student">
                                 <div class="user-info">

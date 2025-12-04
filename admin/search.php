@@ -461,10 +461,11 @@ if (true) {
                             // empty search => match all
                             $whereParts[] = "1";
                           }
-
-                          $whereSQL = ' WHERE (' . implode(' OR ', $whereParts) . ')' . $yearFilterSql;
-
-                          // count
+                        
+                          // Build the final WHERE clause, ensuring year filter is ANDed
+                          $whereSQL = ' WHERE (' . implode(' OR ', $whereParts) . ')';
+                          if (!empty($yearFilterSql)) { $whereSQL .= $yearFilterSql; }
+                          
                           $countSql = "SELECT COUNT(ID) FROM tblstudent " . $whereSQL;
                           $countStmt = $dbh->prepare($countSql);
                           foreach ($params as $k => $v) {
