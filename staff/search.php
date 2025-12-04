@@ -697,4 +697,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
   </script>
 </body>
 
-</html>
+</html>ml>
