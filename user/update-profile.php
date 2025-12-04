@@ -256,11 +256,34 @@ if (strlen($_SESSION['sturecmsstuid'] == 0)) {
         <?php include_once('includes/sidebar.php'); ?>
         <div class="main-panel">
           <div class="content-wrapper">
+            <div class="page-header">
+              <h3 class="page-title">Update My Profile</h3>
+              <?php
+              $back_link = 'dashboard.php'; // Default link
+              if (isset($_SERVER['HTTP_REFERER'])) {
+                $referer_url = parse_url($_SERVER['HTTP_REFERER']);
+                if (isset($referer_url['path']) && (strpos($referer_url['path'], 'student-profile.php') !== false || strpos($referer_url['path'], 'dashboard.php') !== false)) {
+                  $back_link = $_SERVER['HTTP_REFERER'];
+                }
+              }
+              ?>
+              <a href="<?php echo htmlspecialchars($back_link); ?>" 
+                class="add-btn" 
+                style="text-decoration: none; 
+                        margin-right: 20px; 
+                        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+                        border: 1px solid #dee2e6; 
+                        color: white; 
+                        padding: 8px 16px; 
+                        border-radius: 8px; 
+                        font-weight: 500;">
+                  ↩ Back
+              </a>
+            </div>
             <div class="row">
               <div class="col-12 stretch-card grid-margin">
                 <div class="card">
                   <div class="form-card">
-                    <h4 class="card-title" style="text-align: center; font-size: 28px; font-weight: 700; color: #1e293b; margin-bottom: 32px;">Update My Profile</h4>
                     <form method="post" enctype="multipart/form-data">
                       <div class="form-tabs-container">
                         <div class="form-tabs" role="tablist">

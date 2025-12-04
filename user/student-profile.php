@@ -193,7 +193,8 @@ if (strlen($_SESSION['sturecmsstuid']) == 0) {
                         </div>
                       </div>
                       <div class="profile-footer">
-                        <a href="update-profile.php" class="btn btn-outline-primary">Update Profile</a>
+                        <a href="add-achievement.php" class="btn btn-primary" style="margin-right: 10px; text-decoration: none; color: white; border-radius: 8px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">Add Achievement</a>
+                        <a href="update-profile.php" class="btn btn-primary" style="text-decoration: none; background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);">Update Profile</a>
                       </div>
                     <?php }
                   } ?>

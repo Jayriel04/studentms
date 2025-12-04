@@ -307,7 +307,16 @@ if (isset($_POST['add_achievement'])) {
                         </div>
 
                         <div class="form-actions">
-                            <a href="update-profile.php" class="btn btn-back">Back</a>
+                            <?php
+                            $back_link = 'dashboard.php'; // Default link
+                            if (isset($_SERVER['HTTP_REFERER'])) {
+                              $referer_url = parse_url($_SERVER['HTTP_REFERER']);
+                              if (isset($referer_url['path']) && (strpos($referer_url['path'], 'student-profile.php') !== false || strpos($referer_url['path'], 'dashboard.php') !== false)) {
+                                $back_link = $_SERVER['HTTP_REFERER'];
+                              }
+                            }
+                            ?>
+                            <a href="<?php echo htmlspecialchars($back_link); ?>" class="btn btn-back">Back</a>
                             <button type="submit" name="add_achievement" class="btn btn-submit">Submit Achievement</button>
                         </div>
                     </form>
