@@ -219,10 +219,26 @@ if (true) {
                   <div class="table-header">
                     <h2 class="table-title">Student Search</h2>
                     <div class="table-actions">
-                      <form method="get" id="searchForm" class="d-flex" style="gap: 12px; flex-grow: 1;">
+                      <form method="get" id="searchForm" class="d-flex" style="gap: 12px; flex-grow: 1; align-items:center;">
                         <input id="searchdata" type="text" name="searchdata" class="search-box"
                           placeholder="Search by Student ID, Name, or Skill"
                           value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
+
+                        <?php $selYears = isset($_GET['year']) ? (array)$_GET['year'] : [1,2,3,4]; ?>
+                        <div class="year-filter-dropdown" style="margin-left:8px;">
+                          <button type="button" class="year-filter-toggle">Years ▾</button>
+                          <div class="year-filter-menu" id="yearFilterMenu" aria-hidden="true">
+                            <label><input type="checkbox" name="year[]" value="1" <?php echo in_array(1,$selYears) ? 'checked' : ''; ?>> 1st Year</label>
+                            <label><input type="checkbox" name="year[]" value="2" <?php echo in_array(2,$selYears) ? 'checked' : ''; ?>> 2nd Year</label>
+                            <label><input type="checkbox" name="year[]" value="3" <?php echo in_array(3,$selYears) ? 'checked' : ''; ?>> 3rd Year</label>
+                            <label><input type="checkbox" name="year[]" value="4" <?php echo in_array(4,$selYears) ? 'checked' : ''; ?>> 4th Year</label>
+                            <div class="year-filter-footer">
+                              <button type="button" id="yearSelectAll">All</button>
+                              <button type="button" id="yearClearAll">Clear</button>
+                            </div>
+                          </div>
+                        </div>
+
                         <button type="submit" class="filter-btn" id="submit">🔍 Search</button>
                       </form>
                     </div>
@@ -252,6 +268,19 @@ if (true) {
                   <div class="table-responsive border rounded p-1 card-view">
                     <?php
                     $sdata = isset($_GET['searchdata']) ? trim($_GET['searchdata']) : '';
+                    // Year filter handling (defaults to all years checked)
+                    $selectedYears = isset($_GET['year']) ? array_map('intval', (array)$_GET['year']) : [1,2,3,4];
+                    $yearFilterSql = '';
+                    $yearParams = [];
+                    if (count($selectedYears) > 0 && count($selectedYears) !== 4) {
+                      $placeholders = [];
+                      foreach ($selectedYears as $i => $yv) {
+                        $ph = ':y' . $i;
+                        $placeholders[] = $ph;
+                        $yearParams[$ph] = $yv;
+                      }
+                      $yearFilterSql = ' AND t.YearLevel IN (' . implode(',', $placeholders) . ')';
+                    }
                     $pageno = isset($_GET['pageno']) ? max(1, intval($_GET['pageno'])) : 1;
                     $no_of_records_per_page = 5;
                     $offset = ($pageno - 1) * $no_of_records_per_page;
@@ -268,12 +297,15 @@ if (true) {
                           FROM tblstudent t
                           JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved'
                           JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id
-                          WHERE ssk.skill_id = :skill_id
+                          WHERE ssk.skill_id = :skill_id" . $yearFilterSql . "
                           GROUP BY t.ID
                           ORDER BY totalPoints DESC, t.ID DESC
                           LIMIT 100";
                         $rankStmt = $dbh->prepare($rankSql);
                         $rankStmt->bindValue(':skill_id', $skill_id, PDO::PARAM_INT);
+                        foreach ($yearParams as $k => $v) {
+                          $rankStmt->bindValue($k, $v, PDO::PARAM_INT);
+                        }
                         $rankStmt->execute();
                         $ranked = $rankStmt->fetchAll(PDO::FETCH_OBJ);
                         $topThree = array_slice($ranked, 0, 3);
@@ -425,7 +457,7 @@ if (true) {
                             $whereParts[] = "1";
                           }
 
-                          $whereSQL = ' WHERE ' . implode(' OR ', $whereParts);
+                          $whereSQL = ' WHERE (' . implode(' OR ', $whereParts) . ')' . $yearFilterSql;
 
                           // count
                           $countSql = "SELECT COUNT(ID) FROM tblstudent " . $whereSQL;
@@ -433,6 +465,10 @@ if (true) {
                           foreach ($params as $k => $v) {
                             // guess param type
                             $countStmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
+                          }
+                          // bind year params if any
+                          foreach ($yearParams as $k => $v) {
+                            $countStmt->bindValue($k, $v, PDO::PARAM_INT);
                           }
                           $countStmt->execute();
                           $total_rows = (int) $countStmt->fetchColumn();
@@ -443,6 +479,10 @@ if (true) {
                           $query = $dbh->prepare($sql);
                           foreach ($params as $k => $v) {
                             $query->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
+                          }
+                          // bind year params if any
+                          foreach ($yearParams as $k => $v) {
+                            $query->bindValue($k, $v, PDO::PARAM_INT);
                           }
                           $query->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
                           $query->bindValue(':limit', (int) $no_of_records_per_page, PDO::PARAM_INT);
@@ -604,6 +644,45 @@ if (true) {
     <script src="js/script.js"></script>
     <script src="js/mention.js"></script>
     <script src="js/search.js"></script>
+
+    <script>
+      (function(){
+        var toggle = document.querySelector('.year-filter-toggle');
+        var menu = document.getElementById('yearFilterMenu');
+        var selectAllBtn = document.getElementById('yearSelectAll');
+        var clearAllBtn = document.getElementById('yearClearAll');
+
+        if (!toggle || !menu) return;
+
+        function openMenu() {
+          menu.classList.add('open');
+          menu.setAttribute('aria-hidden','false');
+        }
+        function closeMenu() {
+          menu.classList.remove('open');
+          menu.setAttribute('aria-hidden','true');
+        }
+
+        toggle.addEventListener('click', function(e){
+          if (menu.classList.contains('open')) closeMenu(); else openMenu();
+        });
+
+        // Close on outside click
+        document.addEventListener('click', function(e){
+          if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+            closeMenu();
+          }
+        });
+
+        // Select/clear helpers
+        if (selectAllBtn) selectAllBtn.addEventListener('click', function(){
+          menu.querySelectorAll('input[type="checkbox"]').forEach(function(cb){ cb.checked = true; });
+        });
+        if (clearAllBtn) clearAllBtn.addEventListener('click', function(){
+          menu.querySelectorAll('input[type="checkbox"]').forEach(function(cb){ cb.checked = false; });
+        });
+      })();
+    </script>
 
     <script>
       window.srData = {

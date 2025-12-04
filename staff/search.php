@@ -207,10 +207,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                 <div class="table-header">
                   <h2 class="table-title">Student Search</h2>
                   <div class="table-actions">
-                    <form method="get" class="d-flex" style="gap: 12px;">
+                    <form method="get" class="d-flex" style="gap: 12px; align-items:center;">
                       <input id="searchdata" type="text" name="searchdata" class="search-box"
                         placeholder="Search by Student ID, Name, or Skill"
                         value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
+                      <?php $selYears = isset($_GET['year']) ? (array)$_GET['year'] : [1,2,3,4]; ?>
+                      <div class="year-filter-dropdown" style="margin-left:8px;">
+                        <button type="button" class="year-filter-toggle">Years ▾</button>
+                        <div class="year-filter-menu" id="yearFilterMenu" aria-hidden="true">
+                          <label><input type="checkbox" name="year[]" value="1" <?php echo in_array(1,$selYears) ? 'checked' : ''; ?>> 1st Year</label>
+                          <label><input type="checkbox" name="year[]" value="2" <?php echo in_array(2,$selYears) ? 'checked' : ''; ?>> 2nd Year</label>
+                          <label><input type="checkbox" name="year[]" value="3" <?php echo in_array(3,$selYears) ? 'checked' : ''; ?>> 3rd Year</label>
+                          <label><input type="checkbox" name="year[]" value="4" <?php echo in_array(4,$selYears) ? 'checked' : ''; ?>> 4th Year</label>
+                          <div class="year-filter-footer">
+                            <button type="button" id="yearSelectAll">All</button>
+                            <button type="button" id="yearClearAll">Clear</button>
+                          </div>
+                        </div>
+                      </div>
                       <button type="submit" class="filter-btn" id="submit">🔍 Search</button>
                     </form>
                   </div>
@@ -237,7 +251,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                 </div>
                 <div class="table-responsive border rounded p-1 card-view">
                   <?php
-                  $sdata = isset($_GET['searchdata']) ? trim($_GET['searchdata']) : '';
+                      $sdata = isset($_GET['searchdata']) ? trim($_GET['searchdata']) : '';
+                      // Year filter handling (defaults to all years checked)
+                      $selectedYears = isset($_GET['year']) ? array_map('intval', (array)$_GET['year']) : [1,2,3,4];
+                      $yearFilterSql = '';
+                      $yearParams = [];
+                      if (count($selectedYears) > 0 && count($selectedYears) !== 4) {
+                        $placeholders = [];
+                        foreach ($selectedYears as $i => $yv) {
+                          $ph = ':y' . $i;
+                          $placeholders[] = $ph;
+                          $yearParams[$ph] = $yv;
+                        }
+                        $yearFilterSql = ' AND t.YearLevel IN (' . implode(',', $placeholders) . ')';
+                        // Also prepare a version without the table alias for use in queries
+                        $yearFilterSqlNoAlias = ' AND YearLevel IN (' . implode(',', $placeholders) . ')';
+                      }
                   $pageno = isset($_GET['pageno']) ? max(1, intval($_GET['pageno'])) : 1;
                   $no_of_records_per_page = 5;
                   $offset = ($pageno - 1) * $no_of_records_per_page;
@@ -254,12 +283,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                         FROM tblstudent t
                         JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved'
                         JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id
-                        WHERE ssk.skill_id = :skill_id
+                        WHERE ssk.skill_id = :skill_id" . $yearFilterSql . "
                         GROUP BY t.ID
                         ORDER BY totalPoints DESC, t.ID DESC
                         LIMIT 100";
                       $rankStmt = $dbh->prepare($rankSql);
                       $rankStmt->bindValue(':skill_id', $skill_id, PDO::PARAM_INT);
+                      foreach ($yearParams as $k => $v) {
+                        $rankStmt->bindValue($k, $v, PDO::PARAM_INT);
+                      }
                       $rankStmt->execute();
                       $ranked = $rankStmt->fetchAll(PDO::FETCH_OBJ);
                       $topThree = array_slice($ranked, 0, 3);
@@ -400,17 +432,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                         $whereSQL = ' WHERE ' . implode(' OR ', $whereParts);
 
                         $countSql = "SELECT COUNT(ID) FROM tblstudent " . $whereSQL;
+                        // Append year filter (no alias) when applicable
+                        if (!empty($yearFilterSqlNoAlias)) {
+                          $countSql .= $yearFilterSqlNoAlias;
+                        }
                         $countStmt = $dbh->prepare($countSql);
                         foreach ($params as $k => $v) {
                           $countStmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
+                        }
+                        // Bind year params for the count query
+                        if (!empty($yearParams)) {
+                          foreach ($yearParams as $k => $v) {
+                            $countStmt->bindValue($k, $v, PDO::PARAM_INT);
+                          }
                         }
                         $countStmt->execute();
                         $total_rows = (int) $countStmt->fetchColumn();
                         $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
                         $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status, Image FROM tblstudent " . $whereSQL . " ORDER BY ID DESC LIMIT :offset, :limit";
+                        // Append year filter (no alias) to the data query when applicable
+                        if (!empty($yearFilterSqlNoAlias)) {
+                          // insert before ORDER BY by replacing the pattern
+                          $sql = "SELECT ID as sid, StuID, FamilyName, FirstName, Program, Gender, EmailAddress, Status, Image FROM tblstudent " . $whereSQL . $yearFilterSqlNoAlias . " ORDER BY ID DESC LIMIT :offset, :limit";
+                        }
                         $query = $dbh->prepare($sql);
                         foreach ($params as $k => $v) {
                           $query->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
+                        }
+                        // Bind year params for the data query
+                        if (!empty($yearParams)) {
+                          foreach ($yearParams as $k => $v) {
+                            $query->bindValue($k, $v, PDO::PARAM_INT);
+                          }
                         }
                         $query->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
                         $query->bindValue(':limit', (int) $no_of_records_per_page, PDO::PARAM_INT);
@@ -482,10 +535,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                     </div>
                     <div class="pagination-buttons">
                       <?php
-                      if (isset($total_pages) && $total_pages > 1) {
+                        if (isset($total_pages) && $total_pages > 1) {
                         $baseParams = [];
                         if (!empty($sdata))
                           $baseParams['searchdata'] = $sdata;
+                        // preserve year filters in pagination links
+                        if (!empty($selectedYears)) {
+                          $baseParams['year'] = $selectedYears;
+                        }
                         $buildUrl = fn($p) => 'search.php?' . http_build_query(array_merge($baseParams, ['pageno' => $p]));
 
                         $prevDisabled = $pageno <= 1 ? 'disabled' : '';
@@ -579,6 +636,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
   <?php endif; ?>
 
   <script src="js/search.js"></script>
+  <script>
+    (function(){
+      var toggle = document.querySelector('.year-filter-toggle');
+      var menu = document.getElementById('yearFilterMenu');
+      var selectAllBtn = document.getElementById('yearSelectAll');
+      var clearAllBtn = document.getElementById('yearClearAll');
+
+      if (!toggle || !menu) return;
+
+      function openMenu() {
+        menu.classList.add('open');
+        menu.setAttribute('aria-hidden','false');
+      }
+      function closeMenu() {
+        menu.classList.remove('open');
+        menu.setAttribute('aria-hidden','true');
+      }
+
+      // Toggle menu; stop propagation to avoid accidental document clicks
+      toggle.addEventListener('click', function(e){
+        e.stopPropagation();
+        if (menu.classList.contains('open')) closeMenu(); else openMenu();
+      });
+
+      // Prevent clicks inside menu from bubbling (so they don't trigger document click)
+      menu.addEventListener('click', function(e){ e.stopPropagation(); });
+
+      // Close on outside click
+      document.addEventListener('click', function(e){
+        if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeMenu(); });
+
+      // Close menu when the search form is submitted
+      var searchForm = document.querySelector('form[method="get"]');
+      if (searchForm) searchForm.addEventListener('submit', function(){ closeMenu(); });
+
+      // Select/clear helpers
+      if (selectAllBtn) selectAllBtn.addEventListener('click', function(){
+        menu.querySelectorAll('input[type="checkbox"]').forEach(function(cb){ cb.checked = true; });
+      });
+      if (clearAllBtn) clearAllBtn.addEventListener('click', function(){
+        menu.querySelectorAll('input[type="checkbox"]').forEach(function(cb){ cb.checked = false; });
+      });
+    })();
+  </script>
 </body>
 
 </html>
