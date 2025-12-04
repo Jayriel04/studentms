@@ -17,7 +17,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     // Wire message modal buttons to populate fields
     var messageButtons = document.querySelectorAll('.message-btn');
-    messageButtons.forEach(function(button) {
+    messageButtons.forEach(function(button) {      
       button.addEventListener('click', function() {
         document.getElementById('studentEmail').value = this.getAttribute('data-email') || '';
         document.getElementById('studentName').innerText = this.getAttribute('data-name') || '';
@@ -25,6 +25,14 @@
         openModal('messageModalOverlay');
       });
     });
+
+    // Stop propagation on leaderboard message buttons to prevent row click
+    var leaderboardMessageButtons = document.querySelectorAll('.leaderboard-row .message-btn');
+    leaderboardMessageButtons.forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    })
 
     // Initialize mention functionality on the notice message textarea
     var notemsgTextarea = document.getElementById('notmsg');

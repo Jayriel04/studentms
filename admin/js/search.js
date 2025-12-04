@@ -17,7 +17,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     // Wire message modal buttons
     var messageButtons = document.querySelectorAll('.message-btn');
-    messageButtons.forEach(function (button) {
+    messageButtons.forEach(function (button) {      
       button.addEventListener('click', function () {
         var email = this.getAttribute('data-email') || '';
         var stuid = this.getAttribute('data-stuid') || '';

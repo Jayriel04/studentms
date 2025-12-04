@@ -18,9 +18,10 @@ body {
 
 .top-performers {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr 1.2fr 1fr; /* Make center column wider */
+  gap: 24px;
   margin-bottom: 32px;
+  margin-top: 20px;
 }
 
 .performer-card {
@@ -40,7 +41,7 @@ body {
 
 .performer-card.first {
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  transform: scale(1.05);
+  transform: scale(1.08); /* Slightly larger to emphasize */
 }
 
 .performer-card.second {
@@ -113,14 +114,13 @@ body {
 
 .leaderboard-header {
   display: grid;
-  grid-template-columns: 80px 1fr 120px 120px;
+  grid-template-columns: 80px 1fr 120px 120px 100px; /* Added action column */
   gap: 20px;
   padding: 16px 20px;
   background: #f8fafc;
   border-radius: 12px;
   margin-bottom: 16px;
 }
-
 .header-label {
   font-size: 14px;
   font-weight: 700;
@@ -131,7 +131,7 @@ body {
 
 .leaderboard-row {
   display: grid;
-  grid-template-columns: 80px 1fr 120px 120px;
+  grid-template-columns: 80px 1fr 120px 120px 100px; /* Added action column */
   gap: 20px;
   padding: 20px;
   border-radius: 12px;
@@ -140,7 +140,6 @@ body {
   border: 2px solid #f1f5f9;
   align-items: center;
   transition: all 0.3s ease;
-  cursor: pointer;
 }
 
 .leaderboard-row:hover {
@@ -194,6 +193,12 @@ body {
   color: #334155;
 }
 
+.action-cell {
+  text-align: center;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
 .my-rank {
   background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
   border-color: #3b82f6;

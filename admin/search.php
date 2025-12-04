@@ -308,11 +308,21 @@ if (true) {
                         }
                         $rankStmt->execute();
                         $ranked = $rankStmt->fetchAll(PDO::FETCH_OBJ);
-                        $topThree = array_slice($ranked, 0, 3);
+                        $allTopThree = array_slice($ranked, 0, 3);
+                        $displayOrder = [];
+                        if (count($allTopThree) === 3) {
+                            // 2nd, 1st, 3rd
+                            $displayOrder = [$allTopThree[1], $allTopThree[0], $allTopThree[2]];
+                        } else {
+                            $displayOrder = $allTopThree;
+                        }
                         
                         // Use medals for top 3
                         $medals = ['first' => '🥇', 'second' => '🥈', 'third' => '🥉'];
-                        foreach ($topThree as $idx => $p) {
+                        $originalIndices = [1 => 0, 0 => 1, 2 => 2]; // Map display order back to original index for class
+
+                        foreach ($displayOrder as $displayIdx => $p) {
+                          $idx = $originalIndices[$displayIdx] ?? $displayIdx;
                           $class = $idx === 0 ? 'first' : ($idx === 1 ? 'second' : 'third');
                           $badge = $medals[$class] ?? '';
                           $initials = getInitials($p->FirstName . ' ' . $p->FamilyName);
@@ -336,8 +346,9 @@ if (true) {
                         <div class="leaderboard-header">
                           <div class="header-label">Rank</div>
                           <div class="header-label">Student Name</div>
-                          <div class="header-label">Badge</div>
+                        <div class="header-label" style="text-align: center;">Badge</div>
                           <div class="header-label">Total Points</div>
+                        <div class="header-label" style="text-align: center;">Action</div>
                         </div>
 
                         <?php
@@ -345,7 +356,7 @@ if (true) {
                         foreach ($ranked as $r) {
                           ?>
                           <?php $imageExists = !empty($r->Image) && file_exists(__DIR__ . '/images/' . basename($r->Image)); ?>
-                          <div class="leaderboard-row" data-sid="<?php echo htmlentities($r->StuID); ?>" style="cursor: pointer;">
+                          <div class="leaderboard-row">
                             <div class="rank-number"><?php echo $rank; ?></div>
                             <div class="user-info">
                               <?php if ($imageExists): ?>
@@ -357,6 +368,13 @@ if (true) {
                             </div>
                             <div class="badge-cell"><?php echo $rank <= 3 ? '🏆' : '🎯'; ?></div>
                             <div class="points-cell"><?php echo number_format($r->totalPoints); ?></div>
+                          <div class="action-cell">
+                            <a href="view-student-profile.php?sid=<?php echo urlencode($r->StuID); ?>" class="action-btn" title="View Profile" style="background: #e0e7ff; color: #4f46e5;">👁️</a>
+                            <button type="button" class="action-btn message-btn" title="Message"
+                              data-email="<?php echo htmlentities($r->EmailAddress); ?>"
+                              data-name="<?php echo htmlentities($r->FirstName . ' ' . $r->FamilyName); ?>"
+                              data-stuid="<?php echo htmlentities($r->StuID); ?>">✉️</button>
+                          </div>
                           </div>
                           <?php $rank++;
                         }
@@ -365,19 +383,6 @@ if (true) {
                         <?php } ?>
                       </div>
                     </div>
-
-                    <script>
-                      document.addEventListener('DOMContentLoaded', function() {
-                        document.querySelectorAll('.leaderboard-row').forEach(function(row) {
-                          row.addEventListener('click', function() {
-                            var sid = this.getAttribute('data-sid');
-                            if (sid) {
-                              window.location = 'view-student-profile.php?sid=' + encodeURIComponent(sid);
-                            }
-                          });
-                        });
-                      });
-                    </script>
 
                     <?php } else { ?>
                     
