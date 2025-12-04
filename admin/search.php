@@ -195,6 +195,8 @@ if (true) {
     <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/search.css">
+
   </head>
 
   <body>
@@ -248,6 +250,106 @@ if (true) {
                     <?php } ?>
                   </div>
                   <div class="table-responsive border rounded p-1 card-view">
+                    <?php
+                    $sdata = isset($_GET['searchdata']) ? trim($_GET['searchdata']) : '';
+                    $pageno = isset($_GET['pageno']) ? max(1, intval($_GET['pageno'])) : 1;
+                    $no_of_records_per_page = 5;
+                    $offset = ($pageno - 1) * $no_of_records_per_page;
+
+                    // If this is a skill search, show leaderboard instead of table
+                    if ($isSkillSearch && $skill_id) { ?>
+                    
+                    <!-- Leaderboard View for Skill Search -->
+                    <div class="container">
+                      <div class="top-performers">
+                        <?php
+                        // Fetch all ranked students for this skill (for top 3)
+                        $rankSql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, t.Image, IFNULL(SUM(sa.points),0) as totalPoints
+                          FROM tblstudent t
+                          JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved'
+                          JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id
+                          WHERE ssk.skill_id = :skill_id
+                          GROUP BY t.ID
+                          ORDER BY totalPoints DESC, t.ID DESC
+                          LIMIT 100";
+                        $rankStmt = $dbh->prepare($rankSql);
+                        $rankStmt->bindValue(':skill_id', $skill_id, PDO::PARAM_INT);
+                        $rankStmt->execute();
+                        $ranked = $rankStmt->fetchAll(PDO::FETCH_OBJ);
+                        $topThree = array_slice($ranked, 0, 3);
+                        
+                        // Use medals for top 3
+                        $medals = ['first' => '🥇', 'second' => '🥈', 'third' => '🥉'];
+                        foreach ($topThree as $idx => $p) {
+                          $class = $idx === 0 ? 'first' : ($idx === 1 ? 'second' : 'third');
+                          $badge = $medals[$class] ?? '';
+                          $initials = getInitials($p->FirstName . ' ' . $p->FamilyName);
+                          $imageExists = !empty($p->Image) && file_exists(__DIR__ . '/images/' . basename($p->Image));
+                          ?>
+                          <div class="performer-card <?php echo $class; ?>">
+                            <div class="rank-badge"><?php echo $badge; ?></div>
+                            <?php if ($imageExists): ?>
+                              <img src="images/<?php echo htmlentities($p->Image); ?>" alt="<?php echo htmlentities($p->FirstName); ?>" class="performer-avatar" style="object-fit: cover;">
+                            <?php else: ?>
+                              <div class="performer-avatar"><?php echo htmlentities($initials); ?></div>
+                            <?php endif; ?>
+                            <div class="performer-name"><?php echo htmlentities($p->FirstName . ' ' . $p->FamilyName); ?></div>
+                            <div class="performer-points"><?php echo 'Points: ' . number_format($p->totalPoints); ?></div>
+                            <div class="achievement-badge"><?php echo htmlentities($p->Program); ?></div>
+                          </div>
+                        <?php } ?>
+                      </div>
+
+                      <div class="leaderboard-card">
+                        <div class="leaderboard-header">
+                          <div class="header-label">Rank</div>
+                          <div class="header-label">Student Name</div>
+                          <div class="header-label">Badge</div>
+                          <div class="header-label">Total Points</div>
+                        </div>
+
+                        <?php
+                        $rank = 1;
+                        foreach ($ranked as $r) {
+                          ?>
+                          <?php $imageExists = !empty($r->Image) && file_exists(__DIR__ . '/images/' . basename($r->Image)); ?>
+                          <div class="leaderboard-row" data-sid="<?php echo htmlentities($r->StuID); ?>" style="cursor: pointer;">
+                            <div class="rank-number"><?php echo $rank; ?></div>
+                            <div class="user-info">
+                              <?php if ($imageExists): ?>
+                                <img src="images/<?php echo htmlentities($r->Image); ?>" alt="<?php echo htmlentities($r->FirstName); ?>" class="user-avatar" style="object-fit: cover; width: 40px; height: 40px;">
+                              <?php else: ?>
+                                <div class="user-avatar"><?php echo htmlentities(getInitials($r->FirstName . ' ' . $r->FamilyName)); ?></div>
+                              <?php endif; ?>
+                              <div class="user-name"><?php echo htmlentities($r->FirstName . ' ' . $r->FamilyName); ?></div>
+                            </div>
+                            <div class="badge-cell"><?php echo $rank <= 3 ? '🏆' : '🎯'; ?></div>
+                            <div class="points-cell"><?php echo number_format($r->totalPoints); ?></div>
+                          </div>
+                          <?php $rank++;
+                        }
+                        if (count($ranked) === 0) { ?>
+                          <div class="text-center" style="color: red; padding:20px;">No record found against this search</div>
+                        <?php } ?>
+                      </div>
+                    </div>
+
+                    <script>
+                      document.addEventListener('DOMContentLoaded', function() {
+                        document.querySelectorAll('.leaderboard-row').forEach(function(row) {
+                          row.addEventListener('click', function() {
+                            var sid = this.getAttribute('data-sid');
+                            if (sid) {
+                              window.location = 'view-student-profile.php?sid=' + encodeURIComponent(sid);
+                            }
+                          });
+                        });
+                      });
+                    </script>
+
+                    <?php } else { ?>
+                    
+                    <!-- Default Table View -->
                     <table class="table">
                       <thead class="table-wrapper thead">
                         <tr>
@@ -256,118 +358,12 @@ if (true) {
                           <th class="font-weight-bold">Program</th>
                           <th class="font-weight-bold">Gender</th>
                           <th class="font-weight-bold">Status</th>
-                          <?php if (isset($isSkillSearch) && $isSkillSearch) { ?>
-                            <th class="font-weight-bold">Skill</th>
-                          <?php } ?>
                           <th class="font-weight-bold">Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         <?php
-                        $sdata = isset($_GET['searchdata']) ? trim($_GET['searchdata']) : '';
-                        $pageno = isset($_GET['pageno']) ? max(1, intval($_GET['pageno'])) : 1;
-                        $no_of_records_per_page = 5;
-                        $offset = ($pageno - 1) * $no_of_records_per_page;
-
-                        if ($isSkillSearch && $skill_id) {
-                          $countSql = "SELECT COUNT(DISTINCT t.ID) FROM tblstudent t
-                     JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved'
-                     JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id
-                     WHERE ssk.skill_id = :skill_id";
-                          $countStmt = $dbh->prepare($countSql);
-                          $countStmt->bindValue(':skill_id', $skill_id, PDO::PARAM_INT);
-                          $countStmt->execute();
-                          $total_rows = $countStmt->fetchColumn();
-                          $total_pages = ($total_rows > 0) ? ceil($total_rows / $no_of_records_per_page) : 1;
-                          $dataSql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, t.Image,
-                    IFNULL(SUM(sa.points),0) as totalPoints
-                    FROM tblstudent t
-                    JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved'
-                    JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id
-                    WHERE ssk.skill_id = :skill_id
-                    GROUP BY t.ID
-                    ORDER BY totalPoints DESC, t.ID DESC
-                    LIMIT :offset, :limit";
-                          $query = $dbh->prepare($dataSql);
-                          $query->bindValue(':skill_id', $skill_id, PDO::PARAM_INT);
-                          $query->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
-                          $query->bindValue(':limit', (int) $no_of_records_per_page, PDO::PARAM_INT);
-                          $query->execute();
-                          $results = $query->fetchAll(PDO::FETCH_OBJ);
-                          $cnt = 1 + $offset;
-                          if (count($results) > 0) {
-                            foreach ($results as $row) { ?>
-                              <tr>
-                                <td data-label="Student">
-                                  <div class="user-info">
-                                  <?php if (!empty($row->Image)): ?>
-                                    <img src="images/<?php echo htmlentities($row->Image); ?>" alt="Student Avatar"
-                                      class="user-avatar-img">
-                                  <?php else: ?>
-                                    <div class="user-avatar"
-                                      style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                                      <?php echo getInitials($row->FirstName . ' ' . $row->FamilyName); ?>
-                                    </div>
-                                  <?php endif; ?>
-                                    <div class="user-details">
-                                      <span
-                                        class="user-name"><?php echo htmlentities($row->FamilyName . ', ' . $row->FirstName); ?></span>
-                                      <span class="user-email"><?php echo htmlentities($row->EmailAddress); ?></span>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td data-label="Student ID"><?php echo htmlentities($row->StuID); ?></td>
-                                <td data-label="Program">
-                                  <?php
-                                  $program_full = htmlentities($row->Program);
-                                  if (preg_match('/\((\w+)\)/', $program_full, $matches)) {
-                                    echo $matches[1];
-                                  } else {
-                                    echo $program_full;
-                                  } ?>
-                                </td>
-                                <td data-label="Gender"><?php echo htmlentities($row->Gender); ?></td>
-                                <td data-label="Status">
-                                  <span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>">
-                                    <?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?>
-                                  </span>
-                                </td>
-                                <?php if ($isSkillSearch): ?>
-                                  <td data-label="Skill Points"><?php echo htmlentities($row->totalPoints); ?></td>
-                                <?php endif; ?>
-                                <td data-label="Action">
-                                  <div class="action-buttons">
-                                    <a href="view-student-profile.php?sid=<?php echo urlencode($row->StuID); ?>"
-                                      class="action-btn edit" title="View Profile"
-                                      style="background: #e0e7ff; color: #4f46e5;">👁️</a>
-                                    <a href="edit-student-detail.php?editid=<?php echo htmlentities($row->sid); ?>"
-                                      class="action-btn edit" title="Edit">✏️</a>
-                                    <?php if (isset($row->Status) && $row->Status == 1): ?>
-                                      <button type="button" class="action-btn toggle deactivate message-btn" title="Message"
-                                        data-toggle="modal" data-target="#messageModal"
-                                        data-email="<?php echo htmlentities($row->EmailAddress); ?>"
-                                        data-name="<?php echo htmlentities($row->FirstName . ' ' . $row->FamilyName); ?>"
-                                        data-stuid="<?php echo htmlentities($row->StuID); ?>">✉️</button>
-                                    <?php else: ?>
-                                      <a href="manage-students.php?statusid=<?php echo htmlentities($row->sid); ?>&status=<?php echo htmlentities($row->Status); ?>"
-                                        class="action-btn toggle" title="Activate">
-                                        🔑
-                                      </a>
-                                    <?php endif; ?>
-                                  </div>
-                                </td>
-                              </tr>
-                              <?php $cnt++;
-                            }
-                          } else { ?>
-                            <tr class="text-center">
-                              <td colspan="<?php echo $isSkillSearch ? '7' : '6'; ?>" style="color: red;">No record found
-                                against this search
-                              </td>
-                            </tr>
-                          <?php }
-                        } else {
-                          // Enhanced search: allow searching across many tblstudent fields:
+                        // Enhanced search: allow searching across many tblstudent fields:
                           // StuID, FamilyName, FirstName, Program, Major, YearLevel, Gender,
                           // Barangay, CityMunicipality, Province, Category, EmailAddress and map
                           // keywords "active"/"inactive" to Status.
