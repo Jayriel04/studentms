@@ -202,7 +202,7 @@ if (true) {
   <body>
     <div class="container-scroller">
       <?php include_once('includes/header.php'); ?>
-      <div class="container-fluid page-body-wrapper">
+      <div class="container-fluid page-body-wrapper" style="padding-top: 45px">
         <?php include_once('includes/sidebar.php'); ?>
         <div class="main-panel">
           <div class="content-wrapper">
