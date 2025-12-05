@@ -17,6 +17,11 @@
   const showLessBtn = document.getElementById('showLessTags');
 
   // --- Tag Selection & Filtering ---
+  // --- New Modal Logic ---
+  const addTagModalOverlay = document.getElementById('addTagModalOverlay');
+  const openModalBtn = document.querySelector('.add-tag-btn');
+  const closeModalBtn = addTagModalOverlay.querySelector('.new-close-btn');
+  const cancelModalBtn = addTagModalOverlay.querySelector('.new-btn-cancel');
   $(tagsContainer).on('click', '.tag-chip', function() {
     $('.tag-chip').removeClass('selected');
     $(this).addClass('selected');
@@ -115,6 +120,29 @@
     }
   });
 
+  // --- New Modal Event Listeners ---
+  function openModal() {
+    if (addTagModalOverlay) addTagModalOverlay.classList.add('active');
+  }
+  function closeModal() {
+    if (addTagModalOverlay) addTagModalOverlay.classList.remove('active');
+  }
+
+  if (openModalBtn) openModalBtn.addEventListener('click', openModal);
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+  if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
+
+  if (addTagModalOverlay) {
+    addTagModalOverlay.addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && addTagModalOverlay.classList.contains('active')) {
+      closeModal();
+    }
+  });
+
   // --- Original AJAX Logic for Adding Tags ---
   $('#saveTagBtn').on('click', function (e) {
     e.preventDefault();
@@ -148,8 +176,11 @@
         newChip.trigger('click');
 
         // Close modal
-        $('#addTagModal').modal('hide');
-        $('#tagName').val('');
+        closeModal();
+        $('#tagName').val(''); // Clear the input field
+        if (window.toastr) {
+          toastr.success('Tag added successfully!');
+        }
         $('#tagCategory').val('Non-Academic');
       } else {
         alert((res && res.msg) ? res.msg : 'Error adding tag.');

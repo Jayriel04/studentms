@@ -329,35 +329,30 @@ if (isset($_POST['add_achievement'])) {
     </div>
 
     <!-- Add Tag Modal -->
-    <div class="modal fade" id="addTagModal" tabindex="-1" role="dialog" aria-labelledby="addTagModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <form id="addTagForm">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addTagModalLabel">Add Tag</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="tagName">Tag Name</label>
-                            <input type="text" id="tagName" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="tagCategory">Category</label>
-                            <select id="tagCategory" class="form-control">
-                                <option>Non-Academic</option>
-                                <option>Academic</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="saveTagBtn" class="btn btn-primary">Add Tag</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    </div>
-                </form>
+    <div class="new-modal-overlay" id="addTagModalOverlay">
+        <div class="new-modal">
+            <div class="new-modal-header">
+                <h2 class="new-modal-title">Add New Tag</h2>
+                <button class="new-close-btn">&times;</button>
             </div>
+            <form id="addTagForm">
+                <div class="new-form-group">
+                    <label for="tagName" class="new-form-label">Tag Name</label>
+                    <input type="text" id="tagName" class="new-form-input" required placeholder="Enter new tag name">
+                </div>
+                <div class="new-form-group">
+                    <label for="tagCategory" class="new-form-label">Category</label>
+                    <select id="tagCategory" class="new-form-select">
+                        <option>Non-Academic</option>
+                        <option>Academic</option>
+                    </select>
+                </div>
+
+                <div class="new-modal-footer">
+                    <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+                    <button type="button" id="saveTagBtn" class="new-btn new-btn-submit">Add Tag</button>
+                </div>
+            </form>
         </div>
     </div>
   </div>
