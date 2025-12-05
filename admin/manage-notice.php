@@ -1,7 +1,15 @@
 <?php
 session_start();
 error_reporting(0);
+
+// For sending emails
+require_once __DIR__ . '/../vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 include('includes/dbconnection.php');
+include_once __DIR__ . '/../includes/mail_config.php';
+
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
 } else {
@@ -41,12 +49,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
       if ($LastInsertId > 0) {
         $add_success_message = "Notice has been added successfully.";
         // Mentions
-        preg_match_all('/@([A-Za-z]+)\s+([A-Za-z]+)/', $notmsg, $matches, PREG_SET_ORDER);
+        preg_match_all('/@([A-Za-z]+)\s+([A-Za-z]+)\s?/', $notmsg, $matches, PREG_SET_ORDER);
         if (!empty($matches)) {
           foreach ($matches as $match) {
             $firstName = trim($match[1]);
             $familyName = trim($match[2]);
-            $studentStmt = $dbh->prepare("SELECT StuID FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
+            $studentStmt = $dbh->prepare("SELECT StuID, EmailAddress FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
             $studentStmt->bindValue(':fname', $firstName, PDO::PARAM_STR);
             $studentStmt->bindValue(':lname', $familyName, PDO::PARAM_STR);
             $studentStmt->execute();
@@ -61,6 +69,35 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                 ':subject' => "You were mentioned in a notice: " . $nottitle,
                 ':msg' => "You were mentioned in the notice titled '{$nottitle}'.\n\nContent:\n" . $notmsg
               ]);
+
+              // Send email notification
+              if (!empty($student->EmailAddress)) {
+                $mail = new PHPMailer(true);
+                try {
+                  //Server settings
+                  $mail->isSMTP();
+                  $mail->Host = $MAIL_HOST;
+                  $mail->SMTPAuth = true;
+                  $mail->Username = $MAIL_USERNAME;
+                  $mail->Password = $MAIL_PASSWORD;
+                  $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
+                  $mail->Port = $MAIL_PORT;
+
+                  //Recipients
+                  $fromEmail = !empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME;
+                  $fromName = !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System';
+                  $mail->setFrom($fromEmail, $fromName);
+                  $mail->addAddress($student->EmailAddress);
+
+                  // Content
+                  $mail->isHTML(true);
+                  $mail->Subject = "You were mentioned in a notice: " . $nottitle;
+                  $mail->Body = "You were mentioned in the notice titled '<b>" . htmlspecialchars($nottitle) . "</b>'.<br><br><b>Content:</b><br>" . nl2br(htmlspecialchars($notmsg));
+                  $mail->AltBody = "You were mentioned in the notice titled '{$nottitle}'.\n\nContent:\n" . $notmsg;
+                  $mail->send();
+                } catch (Exception $e) { // Do not block for email errors
+                }
+              }
             }
           }
         }
@@ -90,12 +127,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
       if ($query->execute()) {
         $edit_success_message = "Notice has been updated successfully.";
         // Mentions on update
-        preg_match_all('/@([A-Za-z]+)\s+([A-Za-z]+)/', $edit_msg, $matches, PREG_SET_ORDER);
+        preg_match_all('/@([A-Za-z]+)\s+([A-Za-z]+)\s?/', $edit_msg, $matches, PREG_SET_ORDER);
         if (!empty($matches)) {
           foreach ($matches as $match) {
             $firstName = trim($match[1]);
             $familyName = trim($match[2]);
-            $studentStmt = $dbh->prepare("SELECT StuID FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
+            $studentStmt = $dbh->prepare("SELECT StuID, EmailAddress FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
             $studentStmt->bindValue(':fname', $firstName, PDO::PARAM_STR);
             $studentStmt->bindValue(':lname', $familyName, PDO::PARAM_STR);
             $studentStmt->execute();
@@ -110,6 +147,35 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                 ':subject' => "You were mentioned in an updated notice: " . $edit_title,
                 ':msg' => "You were mentioned in the updated notice titled '{$edit_title}'.\n\nContent:\n" . $edit_msg
               ]);
+
+              // Send email notification for update
+              if (!empty($student->EmailAddress)) {
+                $mail = new PHPMailer(true);
+                try {
+                  //Server settings
+                  $mail->isSMTP();
+                  $mail->Host = $MAIL_HOST;
+                  $mail->SMTPAuth = true;
+                  $mail->Username = $MAIL_USERNAME;
+                  $mail->Password = $MAIL_PASSWORD;
+                  $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
+                  $mail->Port = $MAIL_PORT;
+
+                  //Recipients
+                  $fromEmail = !empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME;
+                  $fromName = !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System';
+                  $mail->setFrom($fromEmail, $fromName);
+                  $mail->addAddress($student->EmailAddress);
+
+                  // Content
+                  $mail->isHTML(true);
+                  $mail->Subject = "You were mentioned in an updated notice: " . $edit_title;
+                  $mail->Body    = "You were mentioned in the updated notice titled '<b>" . htmlspecialchars($edit_title) . "</b>'.<br><br><b>Content:</b><br>" . nl2br(htmlspecialchars($edit_msg));
+                  $mail->AltBody = "You were mentioned in the updated notice titled '{$edit_title}'.\n\nContent:\n" . $edit_msg;
+                  $mail->send();
+                } catch (Exception $e) { // Do not block for email errors
+                }
+              }
             }
           }
         }

@@ -58,30 +58,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_notice'])) {
   $LastInsertId = $dbh->lastInsertId();
   if ($LastInsertId > 0) {
     // Handle mentions - extract mentions in format "@FirstName FamilyName "
-    preg_match_all('/@([A-Za-z]+)\s+([A-Za-z]+)\s/', $notmsg, $matches, PREG_SET_ORDER);
+    preg_match_all('/@([A-Za-z]+)\s+([A-Za-z]+)\s?/', $notmsg, $matches, PREG_SET_ORDER);
 
     if (!empty($matches)) {
       foreach ($matches as $match) {
         $firstName = trim($match[1]);
         $familyName = trim($match[2]);
 
-        // Get the student ID from database using first and last name
-        $studentStmt = $dbh->prepare("SELECT StuID FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
+        // Get the student ID and email from database using first and last name
+        $studentStmt = $dbh->prepare("SELECT StuID, EmailAddress FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
         $studentStmt->bindValue(':fname', $firstName, PDO::PARAM_STR);
         $studentStmt->bindValue(':lname', $familyName, PDO::PARAM_STR);
         $studentStmt->execute();
         $student = $studentStmt->fetch(PDO::FETCH_OBJ);
 
         if ($student) {
-          $mentionedStuID = $student->StuID;
           $messageSQL = "INSERT INTO tblmessages (SenderID, SenderType, RecipientStuID, Subject, Message, IsRead, Timestamp) VALUES (:sid, :stype, :stuid, :subject, :msg, 0, NOW())";
           $messageStmt = $dbh->prepare($messageSQL);
-          $messageStmt->bindValue(':sid', $_SESSION['sturecmsaid'], PDO::PARAM_INT);
-          $messageStmt->bindValue(':stype', 'admin', PDO::PARAM_STR);
-          $messageStmt->bindValue(':stuid', $mentionedStuID, PDO::PARAM_STR);
-          $messageStmt->bindValue(':subject', "You were mentioned in a notice: " . $nottitle, PDO::PARAM_STR);
-          $messageStmt->bindValue(':msg', "You were mentioned in the notice titled '{$nottitle}'.\n\nContent:\n" . $notmsg, PDO::PARAM_STR);
-          $messageStmt->execute();
+          $messageStmt->execute([
+            ':sid' => $_SESSION['sturecmsaid'],
+            ':stype' => 'admin',
+            ':stuid' => $student->StuID,
+            ':subject' => "You were mentioned in a notice: " . $nottitle,
+            ':msg' => "You were mentioned in the notice titled '{$nottitle}'.\n\nContent:\n" . $notmsg
+          ]);
+
+          // Send email notification
+          if (!empty($student->EmailAddress)) {
+            $mail = new PHPMailer(true);
+            try {
+              //Server settings
+              $mail->isSMTP();
+              $mail->Host = $MAIL_HOST;
+              $mail->SMTPAuth = true;
+              $mail->Username = $MAIL_USERNAME;
+              $mail->Password = $MAIL_PASSWORD;
+              $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
+              $mail->Port = $MAIL_PORT;
+
+              //Recipients
+              $fromEmail = !empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME;
+              $fromName = !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System';
+              $mail->setFrom($fromEmail, $fromName);
+              $mail->addAddress($student->EmailAddress);
+
+              // Content
+              $mail->isHTML(true);
+              $mail->Subject = "You were mentioned in a notice: " . $nottitle;
+              $mail->Body = "You were mentioned in the notice titled '<b>" . htmlspecialchars($nottitle) . "</b>'.<br><br><b>Content:</b><br>" . nl2br(htmlspecialchars($notmsg));
+              $mail->AltBody = "You were mentioned in the notice titled '{$nottitle}'.\n\nContent:\n" . $notmsg;
+              $mail->send();
+            } catch (Exception $e) { // Do not block for email errors
+            }
+          }
         }
       }
     }
@@ -409,7 +438,7 @@ if (true) {
 
                             var titleField = document.getElementById('nottitle');
                             var msgField = document.getElementById('notmsg');
-                            if (titleField) titleField.value = 'Notice: ' + <?php echo json_encode($skill->name ?? ''); ?>;
+                            if (titleField) titleField.value = <?php echo json_encode($skill->name ?? ''); ?>;
                             if (msgField) msgField.value = mentions;
                           });
                         });
