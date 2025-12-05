@@ -69,11 +69,11 @@ include('includes/dbconnection.php');
     <div class="modern-section-container">
       <!-- Notices Card -->
       <div class="modern-card modern-notice-card">
-        <h3 class="modern-section-title">Public Notices</h3>
+        <h3 class="modern-section-title">Notices</h3>
         <div class="modern-notices-list-wrapper">
           <div class="modern-notices-list">
             <?php
-            $sql = "SELECT * from tblpublicnotice";
+            $sql = "SELECT * from tblnotice ORDER BY CreationDate DESC";
             $query = $dbh->prepare($sql);
             $query->execute();
             $results = $query->fetchAll(PDO::FETCH_OBJ);
@@ -86,7 +86,7 @@ include('includes/dbconnection.php');
                 </a>
                 <!-- Hidden container for modal content -->
                 <div id="notice-data-<?php echo (int) $row->ID; ?>" style="display:none;">
-                  <?php echo $row->NoticeMessage; ?>
+                  <?php echo $row->NoticeMsg; ?>
                 </div>
               <?php }
             } else {

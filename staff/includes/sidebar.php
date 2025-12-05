@@ -20,11 +20,6 @@
       <span class="menu-item-text">Notice</span>
     </a>
 
-    <a href="manage-public-notice.php" class="menu-item <?php echo ($current_page == 'manage-public-notice.php') ? 'active' : ''; ?>">
-      <span class="menu-item-icon">📣</span>
-      <span class="menu-item-text">Public Notice</span>
-    </a>
-
     <a href="#pages-menu" class="menu-item <?php echo in_array($current_page, ['about-us.php', 'contact-us.php']) ? 'active' : ''; ?>" data-toggle="collapse" aria-expanded="<?php echo in_array($current_page, ['about-us.php', 'contact-us.php']) ? 'true' : 'false'; ?>">
       <span class="menu-item-icon">📄</span>
       <span class="menu-item-text">Pages</span>
