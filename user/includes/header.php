@@ -150,6 +150,23 @@
           .then(html => {
             notifPanel.innerHTML = html;
             notificationsLoaded = true;
+
+            // Attach tab-switching logic AFTER content is loaded
+            notifPanel.querySelectorAll('.tab-link').forEach(button => {
+              button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const tabId = this.getAttribute('data-tab');
+
+                // Deactivate all tabs and content
+                notifPanel.querySelectorAll('.tab-link').forEach(tab => tab.classList.remove('active'));
+                notifPanel.querySelectorAll('.notif-tab-content').forEach(content => content.classList.remove('active'));
+
+                // Activate the clicked tab and its content
+                this.classList.add('active');
+                const activeContent = notifPanel.querySelector('#notif-tab-' + tabId);
+                if (activeContent) activeContent.classList.add('active');
+              });
+            });
           }).catch(() => {
             notifPanel.innerHTML = '<div class="notif-empty">Could not load notifications.</div>';
           });
@@ -227,51 +244,140 @@
 if (isset($_GET['get_notifications'])) {
   ob_clean(); // Clear any previous output
   $stuid = $_SESSION['sturecmsstuid'];
+  
+  // Unified query to fetch all notifications
+  $notifications_sql = "
+      (SELECT 'message' as type, m.ID as id, m.Subject as title, m.Message as body, m.Timestamp as timestamp, m.IsRead as is_read, s.StaffName as sender_name, NULL as level, NULL as category 
+       FROM tblmessages m JOIN tblstaff s ON m.SenderID = s.ID AND m.SenderType = 'staff' 
+       WHERE m.RecipientStuID = :stuid)
+      UNION ALL
+      (SELECT 'message' as type, m.ID as id, m.Subject as title, m.Message as body, m.Timestamp as timestamp, m.IsRead as is_read, a.AdminName as sender_name, NULL as level, NULL as category 
+       FROM tblmessages m JOIN tbladmin a ON m.SenderID = a.ID AND m.SenderType = 'admin' 
+       WHERE m.RecipientStuID = :stuid)
+      UNION ALL
+      (SELECT 'achievement' as type, sa.id as id, 'Achievement Rejected' as title, sa.rejection_reason as body, sa.created_at as timestamp, sa.is_read as is_read, NULL as sender_name, sa.level, sa.category 
+       FROM student_achievements sa 
+       WHERE sa.StuID = :stuid AND sa.status = 'rejected' AND sa.rejection_reason IS NOT NULL)
+      ORDER BY timestamp DESC LIMIT 50";
 
-  // Fetch unread messages
-  $messages_sql = "SELECT m.ID, m.Subject, m.Message, m.Timestamp, m.IsRead, s.StaffName as SenderName FROM tblmessages m JOIN tblstaff s ON m.SenderID = s.ID WHERE m.RecipientStuID = :stuid ORDER BY m.Timestamp DESC LIMIT 5";
-  $messages_query = $dbh->prepare($messages_sql);
-  $messages_query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-  $messages_query->execute();
-  $messages = $messages_query->fetchAll(PDO::FETCH_OBJ);
+  $notifications_query = $dbh->prepare($notifications_sql);
+  $notifications_query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
+  $notifications_query->execute();
+  $notifications = $notifications_query->fetchAll(PDO::FETCH_OBJ);
 
-  // Fetch unread rejected achievements
-  $rejected_sql = "SELECT id, level, category, rejection_reason, created_at, is_read FROM student_achievements WHERE StuID = :stuid AND status = 'rejected' AND rejection_reason IS NOT NULL ORDER BY created_at DESC LIMIT 5";
-  $rejected_query = $dbh->prepare($rejected_sql);
-  $rejected_query->bindParam(':stuid', $stuid, PDO::PARAM_STR);
-  $rejected_query->execute();
-  $rejected_achievements = $rejected_query->fetchAll(PDO::FETCH_OBJ);
+  // Helper function to group notifications
+  function get_time_ago_group($time) {
+      $time_difference = time() - strtotime($time);
+      if ($time_difference < 86400) { // 24 hours
+          return 'Today';
+      } elseif ($time_difference < 604800) { // 7 days
+          return 'This Week';
+      } else {
+          return 'Older';
+      }
+  }
+
+  $grouped_notifications = [
+      'Today' => [],
+      'This Week' => [],
+      'Older' => []
+  ];
+
+  $unread_notifications = [];
+  foreach ($notifications as $notification) {
+      $group = get_time_ago_group($notification->timestamp);
+      $grouped_notifications[$group][] = $notification;
+      if ($notification->is_read == 0) {
+        $unread_notifications[] = $notification;
+      }
+  }
+
+  $grouped_unread_notifications = [
+      'Today' => [],
+      'This Week' => [],
+      'Older' => []
+  ];
+  foreach ($unread_notifications as $notification) {
+      $group = get_time_ago_group($notification->timestamp);
+      $grouped_unread_notifications[$group][] = $notification;
+  }
 
   echo '<div class="panel-header"><span>Notifications</span></div>';
   echo '<div class="panel-body">';
 
-  if (empty($messages) && empty($rejected_achievements)) {
+  if (empty($notifications)) {
     echo '<div class="notif-empty">No new notifications.</div>';
   } else {
-    foreach ($rejected_achievements as $achievement) {
-      $details_id = 'ach-details-' . $achievement->id;
-      $is_unread = $achievement->is_read == 0;
-      echo '<div class="notif-item ' . ($is_unread ? 'unread-notification' : '') . '">';
-      echo '<div class="icon-wrapper ach-icon"><i class="icon-close"></i></div>';
-      echo '<div class="msg-content">';
-      echo '<div class="msg-header">Achievement Rejected <a href="#" class="see-more-link" data-details-id="' . $details_id . '" data-id="' . $achievement->id . '" data-type="achievement" data-read="' . ($is_unread ? 'false' : 'true') . '">See more</a></div>';
-      echo '<div class="msg-summary">Your ' . htmlentities($achievement->level) . ' achievement in ' . htmlentities($achievement->category) . ' was not approved.</div>';
-      echo '<div class="notification-details" id="' . $details_id . '" style="display:none;"><p class="reason"><strong>Reason:</strong> ' . htmlentities($achievement->rejection_reason) . '</p></div>';
-      echo '<div class="msg-time">' . date('F j, Y, g:i a', strtotime($achievement->created_at)) . '</div>';
-      echo '</div></div>';
-    }
-    foreach ($messages as $message) {
-      $details_id = 'msg-details-' . $message->ID;
-      $is_unread = $message->IsRead == 0;
-      echo '<div class="notif-item ' . ($is_unread ? 'unread-notification' : '') . '">';
-      echo '<div class="icon-wrapper msg-icon"><i class="icon-envelope"></i></div>';
-      echo '<div class="msg-content">';
-      echo '<div class="msg-header">New Message from ' . htmlentities($message->SenderName) . ' <a href="#" class="see-more-link" data-details-id="' . $details_id . '" data-id="' . $message->ID . '" data-type="message" data-read="' . ($is_unread ? 'false' : 'true') . '">See more</a></div>';
-      echo '<div class="msg-summary">Subject: ' . htmlentities($message->Subject) . '</div>';
-      echo '<div class="notification-details" id="' . $details_id . '" style="display:none;"><p>' . nl2br(htmlentities($message->Message)) . '</p></div>';
-      echo '<div class="msg-time">' . date('F j, Y, g:i a', strtotime($message->Timestamp)) . '</div>';
-      echo '</div></div>';
-    }
+    echo '<div class="notification-tabs">
+            <button class="tab-link active" data-tab="all">All</button>
+            <button class="tab-link" data-tab="unread">Unread</button>
+          </div>';
+    
+    echo '<div class="notif-tab-content active" id="notif-tab-all">';
+      foreach ($grouped_notifications as $group_name => $group_items) {
+          if (empty($group_items)) continue;
+          echo '<div class="notif-group-header">' . $group_name . '</div>';
+          foreach ($group_items as $item) {
+              $is_unread = $item->is_read == 0;
+              echo '<div class="notif-item ' . ($is_unread ? 'unread-notification' : '') . '">';
+              if ($item->type === 'achievement') {
+                  $details_id = 'ach-details-' . $item->id;
+                  echo '<div class="icon-wrapper ach-icon"><i class="icon-close"></i></div>';
+                  echo '<div class="msg-content">';
+                  echo '<div class="msg-header">Achievement Rejected <a href="#" class="see-more-link" data-details-id="' . $details_id . '" data-id="' . $item->id . '" data-type="achievement" data-read="' . ($is_unread ? 'false' : 'true') . '">See more</a></div>';
+                  echo '<div class="msg-summary">Your ' . htmlentities($item->level) . ' achievement in ' . htmlentities($item->category) . ' was not approved.</div>';
+                  echo '<div class="notification-details" id="' . $details_id . '" style="display:none;"><p class="reason"><strong>Reason:</strong> ' . htmlentities($item->body) . '</p></div>';
+                  echo '<div class="msg-time">' . date('F j, Y, g:i a', strtotime($item->timestamp)) . '</div>';
+                  echo '</div>';
+              } else { // message
+                  $details_id = 'msg-details-' . $item->id;
+                  echo '<div class="icon-wrapper msg-icon"><i class="icon-envelope"></i></div>';
+                  echo '<div class="msg-content">';
+                  echo '<div class="msg-header">New Message from ' . htmlentities($item->sender_name) . ' <a href="#" class="see-more-link" data-details-id="' . $details_id . '" data-id="' . $item->id . '" data-type="message" data-read="' . ($is_unread ? 'false' : 'true') . '">See more</a></div>';
+                  echo '<div class="msg-summary">Subject: ' . htmlentities($item->title) . '</div>';
+                  echo '<div class="notification-details" id="' . $details_id . '" style="display:none;"><p>' . nl2br(htmlentities($item->body)) . '</p></div>';
+                  echo '<div class="msg-time">' . date('F j, Y, g:i a', strtotime($item->timestamp)) . '</div>';
+                  echo '</div>';
+              }
+              echo '</div>';
+          }
+      }
+    echo '</div>';
+
+    echo '<div class="notif-tab-content" id="notif-tab-unread">';
+      if(empty($unread_notifications)) {
+        echo '<div class="notif-empty">No unread notifications.</div>';
+      } else {
+        foreach ($grouped_unread_notifications as $group_name => $group_items) {
+            if (empty($group_items)) continue;
+            echo '<div class="notif-group-header">' . $group_name . '</div>';
+            foreach ($group_items as $item) {
+                $is_unread = $item->is_read == 0;
+                echo '<div class="notif-item ' . ($is_unread ? 'unread-notification' : '') . '">';
+                if ($item->type === 'achievement') {
+                    $details_id = 'ach-details-unread-' . $item->id;
+                    echo '<div class="icon-wrapper ach-icon"><i class="icon-close"></i></div>';
+                    echo '<div class="msg-content">';
+                    echo '<div class="msg-header">Achievement Rejected <a href="#" class="see-more-link" data-details-id="' . $details_id . '" data-id="' . $item->id . '" data-type="achievement" data-read="' . ($is_unread ? 'false' : 'true') . '">See more</a></div>';
+                    echo '<div class="msg-summary">Your ' . htmlentities($item->level) . ' achievement in ' . htmlentities($item->category) . ' was not approved.</div>';
+                    echo '<div class="notification-details" id="' . $details_id . '" style="display:none;"><p class="reason"><strong>Reason:</strong> ' . htmlentities($item->body) . '</p></div>';
+                    echo '<div class="msg-time">' . date('F j, Y, g:i a', strtotime($item->timestamp)) . '</div>';
+                    echo '</div>';
+                } else { // message
+                    $details_id = 'msg-details-unread-' . $item->id;
+                    echo '<div class="icon-wrapper msg-icon"><i class="icon-envelope"></i></div>';
+                    echo '<div class="msg-content">';
+                    echo '<div class="msg-header">New Message from ' . htmlentities($item->sender_name) . ' <a href="#" class="see-more-link" data-details-id="' . $details_id . '" data-id="' . $item->id . '" data-type="message" data-read="' . ($is_unread ? 'false' : 'true') . '">See more</a></div>';
+                    echo '<div class="msg-summary">Subject: ' . htmlentities($item->title) . '</div>';
+                    echo '<div class="notification-details" id="' . $details_id . '" style="display:none;"><p>' . nl2br(htmlentities($item->body)) . '</p></div>';
+                    echo '<div class="msg-time">' . date('F j, Y, g:i a', strtotime($item->timestamp)) . '</div>';
+                    echo '</div>';
+                }
+                echo '</div>';
+            }
+        }
+      }
+    echo '</div>';
   }
   echo '</div>';
   exit; // Stop execution after sending the panel content
