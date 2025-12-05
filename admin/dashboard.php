@@ -51,16 +51,16 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   </div>
                 </a>
 
-                <!-- Total Public Notices -->
-                <a href="manage-public-notice.php" class="stat-card">
+                <!-- Total Notices -->
+                <a href="manage-notice.php" class="stat-card">
                   <div class="stat-header">
                     <div class="stat-icon">📢</div>
                     <div class="menu-dots"></div>
                   </div>
-                  <div class="stat-label">Public Notices</div>
+                  <div class="stat-label">Notices</div>
                   <div class="stat-value-row">
                     <?php
-                    $sql_notices = "SELECT COUNT(ID) FROM tblpublicnotice";
+                    $sql_notices = "SELECT COUNT(ID) FROM tblnotice";
                     $q_notices = $dbh->query($sql_notices);
                     $totpublicnotice = $q_notices->fetchColumn();
                     ?>
