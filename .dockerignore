@@ -1,6 +1,0 @@
-.dockerignore
-.git
-.gitignore
-.env
-vendor/
-node_modules/
