@@ -2257,6 +2257,54 @@ ul.p_n-list li a:hover {
 	line-height: 1.85em;
 }
 
+.modern-split-wrapper {
+	display: flex;
+	gap: 2em;
+	align-items: stretch;
+	width: 100%;
+	max-width: 1200px;
+	justify-content: center;
+}
+
+.modern-contact-wrapper {
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.modern-contact-info {
+	flex: 1;
+	padding: 3em;
+	background: #fff;
+}
+
+.modern-contact-map {
+	flex: 1;
+	min-height: 450px;
+}
+
+.contact-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 1em;
+	margin-bottom: 1.5em;
+}
+
+.contact-icon {
+	font-size: 1.2em;
+	color: #2793fd;
+	margin-top: 0.2em;
+}
+
+.contact-label {
+	font-weight: 600;
+	color: #1e293b;
+	margin-bottom: 0.2em;
+}
+
+.contact-value {
+	color: #3d4857;
+}
 .modern-notices-section {
 	padding: 2em 0 4em 0;
 	background: #edf4f7;
@@ -2338,6 +2386,11 @@ ul.p_n-list li a:hover {
 	.modern-notice-card {
 		padding: 1.1em 0.5em;
 	}
+	
+	.modern-contact-info {
+		padding: 1.5em;
+	}
+
 
 	/* ===== responsive fixes ===== */
 	*,
