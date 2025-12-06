@@ -13,7 +13,12 @@ include('includes/dbconnection.php');
     type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
   <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all">
   <link href="css/style.css" rel="stylesheet" type="text/css" />
-  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+  <link rel="manifest" href="images/site.webmanifest">
   <script src="js/jquery-1.11.0.min.js"></script>
   <script src="js/bootstrap.js"></script>
   <link rel="stylesheet" type="text/css"
@@ -151,21 +156,21 @@ include('includes/dbconnection.php');
 
   <!-- Notice Modal -->
   <div class="new-modal-overlay" id="noticeModalOverlay">
-      <div class="new-modal">
-        <div class="new-modal-header">
-            <h2 class="new-modal-title">
-                <span class="notice-icon" aria-hidden="true"><i class="fas fa-bullhorn"></i></span>
-                <span class="notice-title-text">Loading...</span>
-            </h2>
-            <button type="button" class="new-close-btn">&times;</button>
-        </div>
-        <div class="new-modal-body">
-            <div class="text-center">Please wait...</div>
-        </div>
-        <div class="new-modal-footer">
-            <small class="notice-meta"></small>
-            <button type="button" class="new-btn new-btn-cancel">Close</button>
-        </div>
+    <div class="new-modal">
+      <div class="new-modal-header">
+        <h2 class="new-modal-title">
+          <span class="notice-icon" aria-hidden="true"><i class="fas fa-bullhorn"></i></span>
+          <span class="notice-title-text">Loading...</span>
+        </h2>
+        <button type="button" class="new-close-btn">&times;</button>
+      </div>
+      <div class="new-modal-body">
+        <div class="text-center">Please wait...</div>
+      </div>
+      <div class="new-modal-footer">
+        <small class="notice-meta"></small>
+        <button type="button" class="new-btn new-btn-cancel">Close</button>
+      </div>
     </div>
   </div>
 
@@ -189,6 +194,6 @@ include('includes/dbconnection.php');
       });
     });
   </script>
-</body>
+  </body>
 
 </html>
