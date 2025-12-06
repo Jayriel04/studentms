@@ -32,7 +32,12 @@ function getInitials($name)
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Student Profiling System || View Student Profile</title>
-  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+  <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+  <link rel="manifest" href="../images/site.webmanifest">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -244,16 +249,17 @@ function getInitials($name)
         <div class="content-wrapper">
           <div class="page-header">
             <h3 class="page-title">Student Profile</h3>
-              <?php
-              $back_link = 'manage-students.php'; // Default link
-              if (isset($_SERVER['HTTP_REFERER'])) {
-                $referer_url = parse_url($_SERVER['HTTP_REFERER']);
-                if (isset($referer_url['path']) && (strpos($referer_url['path'], 'search.php') !== false || strpos($referer_url['path'], 'manage-students.php') !== false)) {
-                  $back_link = $_SERVER['HTTP_REFERER'];
-                }
+            <?php
+            $back_link = 'manage-students.php'; // Default link
+            if (isset($_SERVER['HTTP_REFERER'])) {
+              $referer_url = parse_url($_SERVER['HTTP_REFERER']);
+              if (isset($referer_url['path']) && (strpos($referer_url['path'], 'search.php') !== false || strpos($referer_url['path'], 'manage-students.php') !== false)) {
+                $back_link = $_SERVER['HTTP_REFERER'];
               }
-              ?>
-              <a href="<?php echo htmlspecialchars($back_link); ?>" class="add-btn" style="text-decoration: none; margin-right: 20px;">↩ Back</a>
+            }
+            ?>
+            <a href="<?php echo htmlspecialchars($back_link); ?>" class="add-btn"
+              style="text-decoration: none; margin-right: 20px;">↩ Back</a>
           </div>
 
           <div class="row justify-content-center">
@@ -276,18 +282,18 @@ function getInitials($name)
                   <div class="profile-header">
                     <?php
                     if (!empty($row->Image)) {
-                        echo '<img src="../admin/images/' . htmlentities($row->Image) . '" alt="Profile Picture" class="profile-avatar">';
+                      echo '<img src="../admin/images/' . htmlentities($row->Image) . '" alt="Profile Picture" class="profile-avatar">';
                     } else {
-                        if ($row->Gender == 'Male') {
-                            echo '<img src="../admin/images/faces/man.jpg" alt="Profile Picture" class="profile-avatar">';
-                        } elseif ($row->Gender == 'Female') {
-                            echo '<img src="../admin/images/faces/women.png" alt="Profile Picture" class="profile-avatar">';
-                        } else {
-                            // Fallback to initials for 'Other' or null gender
-                            echo '<div class="profile-avatar" style="display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); font-size: 48px; color: white;">';
-                            echo getInitials($row->FirstName . ' ' . $row->FamilyName);
-                            echo '</div>';
-                        }
+                      if ($row->Gender == 'Male') {
+                        echo '<img src="../admin/images/faces/man.jpg" alt="Profile Picture" class="profile-avatar">';
+                      } elseif ($row->Gender == 'Female') {
+                        echo '<img src="../admin/images/faces/women.png" alt="Profile Picture" class="profile-avatar">';
+                      } else {
+                        // Fallback to initials for 'Other' or null gender
+                        echo '<div class="profile-avatar" style="display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); font-size: 48px; color: white;">';
+                        echo getInitials($row->FirstName . ' ' . $row->FamilyName);
+                        echo '</div>';
+                      }
                     }
                     ?>
                     <h1 class="profile-name"><?php echo htmlentities($row->FirstName . " " . $row->FamilyName); ?></h1>

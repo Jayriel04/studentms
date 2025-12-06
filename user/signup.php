@@ -98,7 +98,12 @@ if (isset($_POST['signup'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Sign Up | Student Profiling System</title>
-    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+    <link rel="manifest" href="../images/site.webmanifest">
     <link rel="stylesheet" href="css/login-new.css">
 </head>
 
@@ -121,7 +126,8 @@ if (isset($_POST['signup'])) {
             <?php if (!empty($message)): ?>
                 <div class="alert alert-danger"
                     style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
-                    <?= htmlspecialchars($message) ?></div>
+                    <?= htmlspecialchars($message) ?>
+                </div>
             <?php endif; ?>
 
             <form id="signup" method="post" name="signup" enctype="multipart/form-data">
@@ -185,6 +191,6 @@ if (isset($_POST['signup'])) {
     </div>
     <script src="js/login-new.js"></script>
     <script src="js/toast.js"></script>
-  </body>
+</body>
 
 </html>

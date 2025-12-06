@@ -5,14 +5,14 @@ include('includes/dbconnection.php');
 error_reporting(0);
 if (strlen($_SESSION['sturecmsaid'] == 0)) {
   header('location:logout.php');
-} else {  
+} else {
   // Simple password change: verify current password and update directly
   if (isset($_POST['change_password'])) {
     $adminid = $_SESSION['sturecmsaid'];
     $current = isset($_POST['currentpassword']) ? trim($_POST['currentpassword']) : '';
     $new = isset($_POST['newpassword']) ? trim($_POST['newpassword']) : '';
     $confirm = isset($_POST['confirmpassword']) ? trim($_POST['confirmpassword']) : '';
-    
+
     if ($new === '' || $confirm === '') {
       $toast_msg = 'New password cannot be empty';
       $toast_type = 'error';
@@ -56,7 +56,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
 
     <title>Student Profiling System || Change Password</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+    <link rel="manifest" href="../images/site.webmanifest">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -64,7 +69,7 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <link rel="stylesheet" href="vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/profile.css">
-    <link rel="stylesheet" href="./css/style(v2).css"> 
+    <link rel="stylesheet" href="./css/style(v2).css">
     <link rel="stylesheet" href="css/responsive.css">
   </head>
 
@@ -86,7 +91,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   <label class="form-label">Current Password</label>
                   <div class="password-input-wrapper">
                     <input type="password" class="form-input" id="currentpassword" name="currentpassword" required>
-                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('currentpassword', this)">
+                    <button type="button" class="toggle-password"
+                      onclick="togglePasswordVisibility('currentpassword', this)">
                       <i class="icon-eye"></i>
                     </button>
                   </div>
@@ -95,7 +101,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                 <div class="form-group">
                   <label class="form-label">New Password</label>
                   <div class="password-input-wrapper">
-                    <input type="password" class="form-input" id="newpassword" name="newpassword" oninput="checkPasswordStrength()" onfocus="showRequirements()" required>
+                    <input type="password" class="form-input" id="newpassword" name="newpassword"
+                      oninput="checkPasswordStrength()" onfocus="showRequirements()" required>
                     <button type="button" class="toggle-password" onclick="togglePasswordVisibility('newpassword', this)">
                       <i class="icon-eye"></i>
                     </button>
@@ -127,8 +134,10 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                 <div class="form-group">
                   <label class="form-label">Confirm Password</label>
                   <div class="password-input-wrapper">
-                    <input type="password" class="form-input" id="confirmpassword" name="confirmpassword" oninput="checkPasswordMatch()" required>
-                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirmpassword', this)">
+                    <input type="password" class="form-input" id="confirmpassword" name="confirmpassword"
+                      oninput="checkPasswordMatch()" required>
+                    <button type="button" class="toggle-password"
+                      onclick="togglePasswordVisibility('confirmpassword', this)">
                       <i class="icon-eye"></i>
                     </button>
                   </div>

@@ -189,7 +189,12 @@ if (isset($_POST['import'])) {
 <head>
     <title>Student Profiling System || Import Students</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+    <link rel="manifest" href="../images/site.webmanifest">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -231,7 +236,8 @@ if (isset($_POST['import'])) {
                                 <form method="POST" enctype="multipart/form-data">
                                     <div class="file-section">
                                         <div class="section-label">Select File</div>
-                                        <div class="section-description">Upload a CSV or Excel file to import student data.</div>
+                                        <div class="section-description">Upload a CSV or Excel file to import student
+                                            data.</div>
 
                                         <div class="file-upload-area" id="uploadArea">
                                             <div class="upload-icon">📁</div>
@@ -239,13 +245,9 @@ if (isset($_POST['import'])) {
                                             <div class="upload-subtext">CSV, XLS, XLSX files accepted</div>
                                         </div>
 
-                                        <input type="file" 
-                                               id="fileInput" 
-                                               name="import_file"
-                                               class="file-input" 
-                                               required
-                                               accept=".csv,.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                               onchange="handleFileSelect(event)">
+                                        <input type="file" id="fileInput" name="import_file" class="file-input" required
+                                            accept=".csv,.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                            onchange="handleFileSelect(event)">
 
                                         <div class="file-info" id="fileInfo">
                                             <div class="file-icon">📄</div>
@@ -268,7 +270,8 @@ if (isset($_POST['import'])) {
 
                                     <div class="button-group">
                                         <a href="manage-students.php" class="btn btn-back">Back</a>
-                                        <button type="submit" class="btn btn-import" name="import" id="importBtn" disabled>Import Students</button>
+                                        <button type="submit" class="btn btn-import" name="import" id="importBtn"
+                                            disabled>Import Students</button>
                                     </div>
                                 </form>
                             </div>
@@ -304,7 +307,7 @@ if (isset($_POST['import'])) {
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('dragover');
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 fileInput.files = files;
@@ -322,7 +325,7 @@ if (isset($_POST['import'])) {
         function handleFile(file) {
             const validTypes = ['.csv', '.xls', '.xlsx', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
             const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-            
+
             if (!validTypes.includes(fileExtension) && !validTypes.includes(file.type)) {
                 alert('Please select a valid file format (CSV, XLS, or XLSX)');
                 removeFile();
@@ -330,11 +333,11 @@ if (isset($_POST['import'])) {
             }
 
             selectedFile = file;
-            
+
             document.getElementById('fileName').textContent = file.name;
             document.getElementById('fileSize').textContent = formatFileSize(file.size);
             fileInfo.classList.add('show');
-            
+
             importBtn.disabled = false;
         }
 

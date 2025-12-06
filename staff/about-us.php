@@ -23,7 +23,12 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
   <head>
     <title>Staff Profiling System || Update About Us</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+    <link rel="manifest" href="../images/site.webmanifest">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -50,27 +55,28 @@ if (strlen($_SESSION['sturecmsstaffid'] == 0)) {
               <div class="col-12">
                 <div class="form-card">
                   <h1 class="form-title">Update About Us</h1>
-                    <form method="post">
-                      <?php
-                      $sql = "SELECT * FROM tblpage WHERE PageType='aboutus'";
-                      $query = $dbh->prepare($sql);
-                      $query->execute();
-                      $results = $query->fetchAll(PDO::FETCH_OBJ);
-                      if ($query->rowCount() > 0) {
-                        foreach ($results as $row) { ?>
-                          <div class="form-group">
-                            <label class="form-label">Page Title:</label>
-                            <input type="text" name="pagetitle" value="<?php echo htmlentities($row->PageTitle); ?>" class="form-input"
-                              required='true' style="text-transform: capitalize;">
-                          </div>
-                          <div class="form-group">
-                            <label class="form-label">Page Description:</label>
-                            <textarea name="pagedes" class="form-textarea" required='true' style="width: 100%;"><?php echo htmlentities($row->PageDescription); ?></textarea>
-                          </div>
-                        <?php }
-                      } ?>
-                      <button type="submit" class="submit-btn" name="submit">Update</button>
-                    </form>
+                  <form method="post">
+                    <?php
+                    $sql = "SELECT * FROM tblpage WHERE PageType='aboutus'";
+                    $query = $dbh->prepare($sql);
+                    $query->execute();
+                    $results = $query->fetchAll(PDO::FETCH_OBJ);
+                    if ($query->rowCount() > 0) {
+                      foreach ($results as $row) { ?>
+                        <div class="form-group">
+                          <label class="form-label">Page Title:</label>
+                          <input type="text" name="pagetitle" value="<?php echo htmlentities($row->PageTitle); ?>"
+                            class="form-input" required='true' style="text-transform: capitalize;">
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">Page Description:</label>
+                          <textarea name="pagedes" class="form-textarea" required='true'
+                            style="width: 100%;"><?php echo htmlentities($row->PageDescription); ?></textarea>
+                        </div>
+                      <?php }
+                    } ?>
+                    <button type="submit" class="submit-btn" name="submit">Update</button>
+                  </form>
                 </div>
               </div>
             </div>

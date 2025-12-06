@@ -87,7 +87,7 @@ EOT;
     $mail->Username = $MAIL_USERNAME;
     $mail->Password = $MAIL_PASSWORD;
     $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = (int)$MAIL_PORT;
+    $mail->Port = (int) $MAIL_PORT;
     $mail->setFrom(!empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME, !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System');
     $mail->addAddress($recipientEmail);
     $mail->isHTML(true);
@@ -315,7 +315,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
   <meta charset="utf-8">
   <title>Student Profiling System || Validate Achievements</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+  <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+  <link rel="manifest" href="../images/site.webmanifest">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -539,20 +544,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
   <script src="js/toast.js"></script>
-    <?php if (isset($_SESSION['ach_msg'])): ?>
-      <script>
-        (function() {
-          var msg = '<?php echo addslashes($_SESSION['ach_msg']); ?>';
-          var msgLower = msg.toLowerCase();
-          if (msgLower.includes('error') || msgLower.includes('invalid') || msgLower.includes('no rows')) {
-            toastr.error(msg);
-          } else {
-            toastr.success(msg);
-          }
-        })();
-      </script>
-      <?php unset($_SESSION['ach_msg']); ?>
-    <?php endif; ?>
+  <?php if (isset($_SESSION['ach_msg'])): ?>
+    <script>
+      (function () {
+        var msg = '<?php echo addslashes($_SESSION['ach_msg']); ?>';
+        var msgLower = msg.toLowerCase();
+        if (msgLower.includes('error') || msgLower.includes('invalid') || msgLower.includes('no rows')) {
+          toastr.error(msg);
+        } else {
+          toastr.success(msg);
+        }
+      })();
+    </script>
+    <?php unset($_SESSION['ach_msg']); ?>
+  <?php endif; ?>
   <script>
     function showProofModal(imageUrl) {
       document.getElementById('proofImage').src = imageUrl;

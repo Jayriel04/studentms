@@ -122,7 +122,12 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
   <head>
     <title>Student Profiling System || Manage Staff</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+    <link rel="manifest" href="../images/site.webmanifest">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -169,81 +174,86 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                   </div>
 
                   <!-- Add Staff Modal -->
-                  <div class="new-modal-overlay" id="addStaffModalOverlay"> <div class="new-modal">
+                  <div class="new-modal-overlay" id="addStaffModalOverlay">
+                    <div class="new-modal">
                       <div class="new-modal-header">
-                          <h2 class="new-modal-title">Add New Staff</h2>
-                          <button type="button" class="new-close-btn">&times;</button>
+                        <h2 class="new-modal-title">Add New Staff</h2>
+                        <button type="button" class="new-close-btn">&times;</button>
                       </div>
                       <form method="post" id="addStaffForm">
-                          <div class="new-form-group">
-                              <label for="staffname" class="new-form-label">Staff Name</label>
-                              <input type="text" name="staffname" class="new-form-input" required='true'
-                                  style="text-transform: capitalize;" placeholder="Enter staff name" style="text-transform: capitalize;">
+                        <div class="new-form-group">
+                          <label for="staffname" class="new-form-label">Staff Name</label>
+                          <input type="text" name="staffname" class="new-form-input" required='true'
+                            style="text-transform: capitalize;" placeholder="Enter staff name"
+                            style="text-transform: capitalize;">
+                        </div>
+                        <div class="new-form-group">
+                          <label for="username" class="new-form-label">User Name</label>
+                          <input type="text" name="username" class="new-form-input" required='true'
+                            placeholder="Enter username">
+                        </div>
+                        <div class="new-form-group">
+                          <label for="email" class="new-form-label">Email</label>
+                          <input type="email" name="email" class="new-form-input" required='true'
+                            placeholder="example@email.com">
+                        </div>
+                        <div class="new-form-group">
+                          <label for="password" class="new-form-label">Password</label>
+                          <div class="new-form-input-wrapper">
+                            <input type="password" id="add_password" name="password" class="new-form-input"
+                              required='true' placeholder="Enter password">
+                            <i class="icon-eye" id="toggleAddPassword"></i>
                           </div>
-                          <div class="new-form-group">
-                              <label for="username" class="new-form-label">User Name</label>
-                              <input type="text" name="username" class="new-form-input" required='true' placeholder="Enter username">
-                          </div>
-                          <div class="new-form-group">
-                              <label for="email" class="new-form-label">Email</label>
-                              <input type="email" name="email" class="new-form-input" required='true' placeholder="example@email.com">
-                          </div>
-                          <div class="new-form-group">
-                              <label for="password" class="new-form-label">Password</label>
-                              <div class="new-form-input-wrapper">
-                                  <input type="password" id="add_password" name="password" class="new-form-input"
-                                      required='true' placeholder="Enter password">
-                                  <i class="icon-eye" id="toggleAddPassword"></i>
-                              </div>
-                          </div>
+                        </div>
 
-                          <div class="new-modal-footer">
-                              <button type="button" class="new-btn new-btn-cancel">Cancel</button>
-                              <button type="submit" class="new-btn new-btn-submit" name="add_staff">Add Staff</button>
-                          </div>
+                        <div class="new-modal-footer">
+                          <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+                          <button type="submit" class="new-btn new-btn-submit" name="add_staff">Add Staff</button>
+                        </div>
                       </form>
-                  </div> </div>
+                    </div>
+                  </div>
                   <!-- Edit Staff Modal -->
                   <div class="new-modal-overlay" id="editStaffModalOverlay">
                     <div class="new-modal">
-                        <div class="new-modal-header">
-                            <h2 class="new-modal-title">Edit Staff</h2>
-                            <button type="button" class="new-close-btn">&times;</button>
-                        </div>
-                        <form method="post" id="editStaffForm">
-                          <div class="new-modal-body">
-                            <input type="hidden" name="edit_id" id="edit_id">
-                            <div class="new-form-group">
-                              <label for="edit_name" class="new-form-label">Staff Name</label>
-                              <input type="text" name="edit_name" id="edit_name" class="new-form-input" required
-                                style="text-transform: capitalize;">
-                            </div>
-                            <div class="new-form-group">
-                              <label for="edit_username" class="new-form-label">User Name</label>
-                              <input type="text" name="edit_username" id="edit_username" class="new-form-input" required>
-                            </div>
-                            <div class="new-form-group">
-                              <label for="edit_email" class="new-form-label">Email</label>
-                              <input type="email" name="edit_email" id="edit_email" class="new-form-input" required>
-                            </div>
-                            <div class="new-form-group">
-                              <label for="edit_password" class="new-form-label">Change Password</label>
-                              <div class="new-form-input-wrapper">
+                      <div class="new-modal-header">
+                        <h2 class="new-modal-title">Edit Staff</h2>
+                        <button type="button" class="new-close-btn">&times;</button>
+                      </div>
+                      <form method="post" id="editStaffForm">
+                        <div class="new-modal-body">
+                          <input type="hidden" name="edit_id" id="edit_id">
+                          <div class="new-form-group">
+                            <label for="edit_name" class="new-form-label">Staff Name</label>
+                            <input type="text" name="edit_name" id="edit_name" class="new-form-input" required
+                              style="text-transform: capitalize;">
+                          </div>
+                          <div class="new-form-group">
+                            <label for="edit_username" class="new-form-label">User Name</label>
+                            <input type="text" name="edit_username" id="edit_username" class="new-form-input" required>
+                          </div>
+                          <div class="new-form-group">
+                            <label for="edit_email" class="new-form-label">Email</label>
+                            <input type="email" name="edit_email" id="edit_email" class="new-form-input" required>
+                          </div>
+                          <div class="new-form-group">
+                            <label for="edit_password" class="new-form-label">Change Password</label>
+                            <div class="new-form-input-wrapper">
                               <input type="password" id="edit_password" name="edit_password" class="new-form-input"
                                 placeholder="Leave blank to keep unchanged">
-                                <i class="icon-eye" id="toggleEditPassword"></i>
-                              </div>
-                            </div>
-                            <div class="new-form-group">
-                              <label for="edit_regdate" class="new-form-label">Staff Regdate</label>
-                              <input type="text" id="edit_regdate" class="new-form-input" readonly>
+                              <i class="icon-eye" id="toggleEditPassword"></i>
                             </div>
                           </div>
-                          <div class="new-modal-footer">
-                            <button type="button" class="new-btn new-btn-cancel">Cancel</button>
-                            <button type="submit" class="new-btn new-btn-submit" name="edit_staff">Save Changes</button>
+                          <div class="new-form-group">
+                            <label for="edit_regdate" class="new-form-label">Staff Regdate</label>
+                            <input type="text" id="edit_regdate" class="new-form-input" readonly>
                           </div>
-                        </form>
+                        </div>
+                        <div class="new-modal-footer">
+                          <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+                          <button type="submit" class="new-btn new-btn-submit" name="edit_staff">Save Changes</button>
+                        </div>
+                      </form>
                     </div>
                   </div>
 
@@ -298,7 +308,8 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
                                 </div>
                               </td>
                               <td data-label="Username"><?php echo htmlentities($row->UserName); ?></td>
-                              <td data-label="Registration Date"><?php echo date('M d, Y', strtotime($row->StaffRegdate)); ?></td>
+                              <td data-label="Registration Date"><?php echo date('M d, Y', strtotime($row->StaffRegdate)); ?>
+                              </td>
                               <td data-label="Status">
                                 <span class="status-badge <?php echo $row->Status == 1 ? 'active' : 'inactive'; ?>">
                                   <?php echo $row->Status == 1 ? 'Active' : 'Inactive'; ?>
@@ -343,11 +354,11 @@ if (strlen($_SESSION['sturecmsaid'] == 0)) {
     <script src="js/script.js"></script>
     <script src="js/manage-staff.js"></script>
     <script src="js/toast.js"></script>
-    
+
     <?php if (isset($statusMessage)): ?>
       <script>toastr.success('<?php echo addslashes($statusMessage); ?>');</script>
     <?php endif; ?>
-    
+
     <?php if (isset($toastMessage)): ?>
       <script>toastr.<?php echo $toastMessage['type']; ?>('<?php echo addslashes($toastMessage['message']); ?>');</script>
     <?php endif; ?>

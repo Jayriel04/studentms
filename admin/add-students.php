@@ -106,7 +106,12 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
   <head>
     <title>Student Profiling System || Add Students</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+    <link rel="manifest" href="../images/site.webmanifest">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -140,31 +145,102 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
 
                       <!-- Progress Bar -->
                       <div class="add-student-progress-bar">
-                        <div class="step active" data-step="1"><div class="step-icon">1</div><div class="step-label">Personal</div></div>
-                        <div class="step" data-step="2"><div class="step-icon">2</div><div class="step-label">Academic</div></div>
-                        <div class="step" data-step="3"><div class="step-icon">3</div><div class="step-label">Contact</div></div>
-                        <div class="step" data-step="4"><div class="step-icon">4</div><div class="step-label">Emergency</div></div>
-                        <div class="step" data-step="5"><div class="step-icon">5</div><div class="step-label">Account</div></div>
+                        <div class="step active" data-step="1">
+                          <div class="step-icon">1</div>
+                          <div class="step-label">Personal</div>
+                        </div>
+                        <div class="step" data-step="2">
+                          <div class="step-icon">2</div>
+                          <div class="step-label">Academic</div>
+                        </div>
+                        <div class="step" data-step="3">
+                          <div class="step-icon">3</div>
+                          <div class="step-label">Contact</div>
+                        </div>
+                        <div class="step" data-step="4">
+                          <div class="step-icon">4</div>
+                          <div class="step-label">Emergency</div>
+                        </div>
+                        <div class="step" data-step="5">
+                          <div class="step-icon">5</div>
+                          <div class="step-label">Account</div>
+                        </div>
                       </div>
 
                       <!-- Step 1: Personal Information -->
                       <div class="form-step active" data-step="1">
                         <div class="add-student-section-title">Personal Information</div>
-                        <div class="add-student-form-grid">                          <div class="add-student-input-group"><label>Student ID</label><div class="add-student-input-wrapper"><input type="text" name="stuid" required placeholder="e.g., 123-45678" pattern="\d{3}\s*-\s*\d{5}" title="The format must be: ###-#####"></div></div>
-                          <div class="add-student-input-group"><label>Family Name</label><div class="add-student-input-wrapper"><input type="text" name="familyname" required style="text-transform: capitalize;"></div></div>
-                          <div class="add-student-input-group"><label>First Name</label><div class="add-student-input-wrapper"><input type="text" name="firstname" required style="text-transform: capitalize;"></div></div>
-                          <div class="add-student-input-group"><label>Middle Name</label><div class="add-student-input-wrapper"><input type="text" name="middlename" style="text-transform: capitalize;"></div></div>
-                          <div class="add-student-input-group"><label>Date of Birth</label><div class="add-student-input-wrapper"><input type="date" name="dob" required></div></div>
-                          <div class="add-student-input-group"><label>Place of Birth</label><div class="add-student-input-wrapper"><input type="text" name="placeofbirth" style="text-transform: capitalize;"></div></div>
-                          <div class="add-student-input-group"><label>Gender</label><div class="add-student-input-wrapper"><select name="gender" id="gender" required onchange="toggleOtherGenderInput()"><option value="">Select Gender</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div></div>
-                          <div class="add-student-input-group" id="otherGenderInput" style="display: none;"><label>Please Specify Gender</label><div class="add-student-input-wrapper"><input type="text" name="otherGender" id="otherGender" style="text-transform: capitalize;"></div></div>
-                          <div class="add-student-input-group"><label>Civil Status</label><div class="add-student-input-wrapper"><select name="civilstatus"><option value="">Select Status</option><option value="Single">Single</option><option value="Married">Married</option><option value="Divorced">Divorced</option><option value="Widowed">Widowed</option><option value="Separated">Separated</option></select></div></div>
-                          <div class="add-student-input-group"><label>Religion</label><div class="add-student-input-wrapper"><input type="text" name="religion" style="text-transform: capitalize;"></div></div>
-                          <div class="add-student-input-group"><label>Height (cm)</label><div class="add-student-input-wrapper"><input type="text" name="height"></div></div>
-                          <div class="add-student-input-group"><label>Weight (kg)</label><div class="add-student-input-wrapper"><input type="text" name="weight"></div></div>
-                          <div class="add-student-input-group"><label>Citizenship</label><div class="add-student-input-wrapper"><input type="text" name="citizenship" style="text-transform: capitalize;"></div></div>
-                          <div class="add-student-input-group"><label>Father's Name</label><div class="add-student-input-wrapper"><input type="text" name="fathersname" style="text-transform: capitalize;"></div></div>
-                          <div class="add-student-input-group"><label>Mother's Maiden Name</label><div class="add-student-input-wrapper"><input type="text" name="mothersmaidenname" style="text-transform: capitalize;"></div></div>
+                        <div class="add-student-form-grid">
+                          <div class="add-student-input-group"><label>Student ID</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="stuid" required
+                                placeholder="e.g., 123-45678" pattern="\d{3}\s*-\s*\d{5}"
+                                title="The format must be: ###-#####"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Family Name</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="familyname" required
+                                style="text-transform: capitalize;"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>First Name</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="firstname" required
+                                style="text-transform: capitalize;"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Middle Name</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="middlename"
+                                style="text-transform: capitalize;"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Date of Birth</label>
+                            <div class="add-student-input-wrapper"><input type="date" name="dob" required></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Place of Birth</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="placeofbirth"
+                                style="text-transform: capitalize;"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Gender</label>
+                            <div class="add-student-input-wrapper"><select name="gender" id="gender" required
+                                onchange="toggleOtherGenderInput()">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                              </select></div>
+                          </div>
+                          <div class="add-student-input-group" id="otherGenderInput" style="display: none;"><label>Please
+                              Specify Gender</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="otherGender" id="otherGender"
+                                style="text-transform: capitalize;"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Civil Status</label>
+                            <div class="add-student-input-wrapper"><select name="civilstatus">
+                                <option value="">Select Status</option>
+                                <option value="Single">Single</option>
+                                <option value="Married">Married</option>
+                                <option value="Divorced">Divorced</option>
+                                <option value="Widowed">Widowed</option>
+                                <option value="Separated">Separated</option>
+                              </select></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Religion</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="religion"
+                                style="text-transform: capitalize;"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Height (cm)</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="height"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Weight (kg)</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="weight"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Citizenship</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="citizenship"
+                                style="text-transform: capitalize;"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Father's Name</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="fathersname"
+                                style="text-transform: capitalize;"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Mother's Maiden Name</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="mothersmaidenname"
+                                style="text-transform: capitalize;"></div>
+                          </div>
                         </div>
                       </div>
 
@@ -172,11 +248,50 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                       <div class="form-step" data-step="2">
                         <div class="add-student-section-title">Academic Details</div>
                         <div class="add-student-form-grid">
-                          <div class="add-student-input-group"><label>Program</label><div class="add-student-input-wrapper"><select name="program" id="program" required onchange="updateMajors()"><option value="">Select Program</option><option value="Bachelor of Elementary Education (BEEd)">Bachelor of Elementary Education (BEEd)</option><option value="Bachelor of Secondary Education (BSEd)">Bachelor of Secondary Education (BSEd)</option><option value="Bachelor of Science in Business Administration (BSBA)">Bachelor of Science in Business Administration (BSBA)</option><option value="Bachelor of Industrial Technology (BindTech)">Bachelor of Industrial Technology (BindTech)</option><option value="Bachelor of Science in Information Technology (BSIT)">Bachelor of Science in Information Technology (BSIT)</option></select></div></div>
-                          <div class="add-student-input-group"><label>Major</label><div class="add-student-input-wrapper"><select name="major" id="major"><option value="">Select Major</option></select></div></div>
-                          <div class="add-student-input-group"><label>Year Level</label><div class="add-student-input-wrapper"><select name="yearlevel" required><option value="">Select Year Level</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div></div>
-                          <div class="add-student-input-group"><label>Learner's Reference No. (LRN)</label><div class="add-student-input-wrapper"><input type="text" name="lrn"></div></div>
-                          <div class="add-student-input-group"><label>Category</label><div class="add-student-input-wrapper"><select name="category" required><option value="">Select Category</option><option value="New Freshman">New Freshman</option><option value="Continuing/Returnee">Continuing/Returnee</option><option value="Shiftee">Shiftee</option><option value="Second Degree">Second Degree</option><option value="Regular">Regular</option><option value="Irregular">Irregular</option></select></div></div>
+                          <div class="add-student-input-group"><label>Program</label>
+                            <div class="add-student-input-wrapper"><select name="program" id="program" required
+                                onchange="updateMajors()">
+                                <option value="">Select Program</option>
+                                <option value="Bachelor of Elementary Education (BEEd)">Bachelor of Elementary Education
+                                  (BEEd)</option>
+                                <option value="Bachelor of Secondary Education (BSEd)">Bachelor of Secondary Education
+                                  (BSEd)</option>
+                                <option value="Bachelor of Science in Business Administration (BSBA)">Bachelor of Science
+                                  in Business Administration (BSBA)</option>
+                                <option value="Bachelor of Industrial Technology (BindTech)">Bachelor of Industrial
+                                  Technology (BindTech)</option>
+                                <option value="Bachelor of Science in Information Technology (BSIT)">Bachelor of Science
+                                  in Information Technology (BSIT)</option>
+                              </select></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Major</label>
+                            <div class="add-student-input-wrapper"><select name="major" id="major">
+                                <option value="">Select Major</option>
+                              </select></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Year Level</label>
+                            <div class="add-student-input-wrapper"><select name="yearlevel" required>
+                                <option value="">Select Year Level</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                              </select></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Learner's Reference No. (LRN)</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="lrn"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Category</label>
+                            <div class="add-student-input-wrapper"><select name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="New Freshman">New Freshman</option>
+                                <option value="Continuing/Returnee">Continuing/Returnee</option>
+                                <option value="Shiftee">Shiftee</option>
+                                <option value="Second Degree">Second Degree</option>
+                                <option value="Regular">Regular</option>
+                                <option value="Irregular">Irregular</option>
+                              </select></div>
+                          </div>
                         </div>
                       </div>
 
@@ -184,35 +299,47 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                       <div class="form-step" data-step="3">
                         <div class="add-student-section-title">Contact & Address</div>
                         <div class="add-student-form-grid">
-                          <div class="add-student-input-group"><label>Email Address</label><div class="add-student-input-wrapper"><input type="email" name="emailaddress" required></div></div>
-                          <div class="add-student-input-group"><label>Contact Number</label><div class="add-student-input-wrapper"><input type="text" name="contactnumber" required></div></div>
-                          <div class="add-student-input-group"><label>Building/House Number</label><div class="add-student-input-wrapper"><input type="text" name="buildinghouse"></div></div>
-                          <div class="add-student-input-group"><label>Street Name</label><div class="add-student-input-wrapper"><input type="text" name="streetname"></div></div>
-                          <div class="add-student-input-group"><label>Barangay</label><div class="add-student-input-wrapper"><input type="text" name="barangay"></div></div>
+                          <div class="add-student-input-group"><label>Email Address</label>
+                            <div class="add-student-input-wrapper"><input type="email" name="emailaddress" required></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Contact Number</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="contactnumber" required></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Building/House Number</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="buildinghouse"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Street Name</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="streetname"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Barangay</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="barangay"></div>
+                          </div>
                           <div class="add-student-input-group">
                             <label>Province</label>
                             <div class="add-student-input-wrapper">
                               <select name="province" class="province-select">
-                                  <option value="">Select Province</option>
-                                  <?php
-                                  $provincesJson = file_get_contents('../data/provinces.json');
-                                  $provinces = json_decode($provincesJson, true);
-                                  if (is_array($provinces)) {
-                                      foreach ($provinces as $province) {
-                                          echo "<option value=\"" . htmlspecialchars($province) . "\">" . htmlspecialchars($province) . "</option>";
-                                      }
+                                <option value="">Select Province</option>
+                                <?php
+                                $provincesJson = file_get_contents('../data/provinces.json');
+                                $provinces = json_decode($provincesJson, true);
+                                if (is_array($provinces)) {
+                                  foreach ($provinces as $province) {
+                                    echo "<option value=\"" . htmlspecialchars($province) . "\">" . htmlspecialchars($province) . "</option>";
                                   }
-                                  ?>
+                                }
+                                ?>
                               </select>
                             </div>
                           </div>
                           <div class="add-student-input-group">
-                              <label>City/Municipality</label>
-                              <div class="add-student-input-wrapper" id="city-municipality-container">
-                                  <input type="text" name="citymunicipality" id="citymunicipality-text">
-                              </div>
+                            <label>City/Municipality</label>
+                            <div class="add-student-input-wrapper" id="city-municipality-container">
+                              <input type="text" name="citymunicipality" id="citymunicipality-text">
+                            </div>
                           </div>
-                          <div class="add-student-input-group"><label>Postal Code</label><div class="add-student-input-wrapper"><input type="text" name="postalcode"></div></div>
+                          <div class="add-student-input-group"><label>Postal Code</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="postalcode"></div>
+                          </div>
                         </div>
                       </div>
 
@@ -220,10 +347,21 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                       <div class="form-step" data-step="4">
                         <div class="add-student-section-title">Emergency Contact</div>
                         <div class="add-student-form-grid">
-                          <div class="add-student-input-group"><label>Full Name</label><div class="add-student-input-wrapper"><input type="text" name="emergencycontactperson" style="text-transform: capitalize;"></div></div>
-                          <div class="add-student-input-group"><label>Relationship</label><div class="add-student-input-wrapper"><input type="text" name="emergencyrelationship" style="text-transform: capitalize;"></div></div>
-                          <div class="add-student-input-group"><label>Phone Number</label><div class="add-student-input-wrapper"><input type="text" name="emergencycontactnumber"></div></div>
-                          <div class="add-student-input-group"><label>Address</label><div class="add-student-input-wrapper"><textarea name="emergencyaddress" style="text-transform: capitalize;"></textarea></div></div>
+                          <div class="add-student-input-group"><label>Full Name</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="emergencycontactperson"
+                                style="text-transform: capitalize;"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Relationship</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="emergencyrelationship"
+                                style="text-transform: capitalize;"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Phone Number</label>
+                            <div class="add-student-input-wrapper"><input type="text" name="emergencycontactnumber"></div>
+                          </div>
+                          <div class="add-student-input-group"><label>Address</label>
+                            <div class="add-student-input-wrapper"><textarea name="emergencyaddress"
+                                style="text-transform: capitalize;"></textarea></div>
+                          </div>
                         </div>
                       </div>
 
@@ -231,7 +369,9 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                       <div class="form-step" data-step="5">
                         <div class="add-student-section-title">Account</div>
                         <div class="add-student-form-grid">
-                          <div class="add-student-input-group"><label>Password</label><div class="add-student-input-wrapper"><input type="password" name="password" required></div></div>
+                          <div class="add-student-input-group"><label>Password</label>
+                            <div class="add-student-input-wrapper"><input type="password" name="password" required></div>
+                          </div>
                         </div>
                       </div>
 
@@ -239,7 +379,8 @@ if (strlen($_SESSION['sturecmsaid']) == 0) {
                       <div class="form-navigation-buttons">
                         <button type="button" class="btn btn-light btn-prev" style="display: none;">Previous</button>
                         <button type="button" class="btn btn-primary btn-next">Next</button>
-                        <button type="submit" class="add-student-btn-submit" name="submit" style="display: none;">Add Student</button>
+                        <button type="submit" class="add-student-btn-submit" name="submit" style="display: none;">Add
+                          Student</button>
                       </div>
 
                     </div>

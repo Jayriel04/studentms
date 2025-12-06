@@ -94,7 +94,7 @@ EOT;
     $mail->Username = $MAIL_USERNAME;
     $mail->Password = $MAIL_PASSWORD;
     $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = (int)$MAIL_PORT;
+    $mail->Port = (int) $MAIL_PORT;
     $mail->setFrom(!empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME, !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System');
     $mail->addAddress($recipientEmail);
     $mail->isHTML(true);
@@ -155,7 +155,7 @@ EOT;
     $mail->Username = $MAIL_USERNAME;
     $mail->Password = $MAIL_PASSWORD;
     $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = (int)$MAIL_PORT;
+    $mail->Port = (int) $MAIL_PORT;
     $mail->setFrom(!empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME, !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System');
     $mail->addAddress($recipientEmail);
     $mail->isHTML(true);
@@ -293,7 +293,12 @@ if (true) {
   <head>
     <title>Student Profiling System | Search Students</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+    <link rel="manifest" href="../images/site.webmanifest">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -327,19 +332,20 @@ if (true) {
                   <div class="table-header">
                     <h2 class="table-title">Student Search</h2>
                     <div class="table-actions">
-                      <form method="get" id="searchForm" class="d-flex" style="gap: 12px; flex-grow: 1; align-items:center;">
+                      <form method="get" id="searchForm" class="d-flex"
+                        style="gap: 12px; flex-grow: 1; align-items:center;">
                         <input id="searchdata" type="text" name="searchdata" class="search-box"
                           placeholder="Search by Student ID, Name, or Skill"
                           value="<?php echo isset($_GET['searchdata']) ? htmlentities($_GET['searchdata']) : ''; ?>">
 
-                        <?php $selYears = isset($_GET['year']) ? (array)$_GET['year'] : [1,2,3,4]; ?>
+                        <?php $selYears = isset($_GET['year']) ? (array) $_GET['year'] : [1, 2, 3, 4]; ?>
                         <div class="year-filter-dropdown" style="margin-left:8px;">
                           <button type="button" class="year-filter-toggle">Years ▾</button>
                           <div class="year-filter-menu" id="yearFilterMenu" aria-hidden="true">
-                            <label><input type="checkbox" name="year[]" value="1" <?php echo in_array(1,$selYears) ? 'checked' : ''; ?>> 1st Year</label>
-                            <label><input type="checkbox" name="year[]" value="2" <?php echo in_array(2,$selYears) ? 'checked' : ''; ?>> 2nd Year</label>
-                            <label><input type="checkbox" name="year[]" value="3" <?php echo in_array(3,$selYears) ? 'checked' : ''; ?>> 3rd Year</label>
-                            <label><input type="checkbox" name="year[]" value="4" <?php echo in_array(4,$selYears) ? 'checked' : ''; ?>> 4th Year</label>
+                            <label><input type="checkbox" name="year[]" value="1" <?php echo in_array(1, $selYears) ? 'checked' : ''; ?>> 1st Year</label>
+                            <label><input type="checkbox" name="year[]" value="2" <?php echo in_array(2, $selYears) ? 'checked' : ''; ?>> 2nd Year</label>
+                            <label><input type="checkbox" name="year[]" value="3" <?php echo in_array(3, $selYears) ? 'checked' : ''; ?>> 3rd Year</label>
+                            <label><input type="checkbox" name="year[]" value="4" <?php echo in_array(4, $selYears) ? 'checked' : ''; ?>> 4th Year</label>
                             <div class="year-filter-footer">
                               <button type="button" id="yearSelectAll">All</button>
                               <button type="button" id="yearClearAll">Clear</button>
@@ -377,7 +383,7 @@ if (true) {
                     <?php
                     $sdata = isset($_GET['searchdata']) ? trim($_GET['searchdata']) : '';
                     // Year filter handling (defaults to all years checked)
-                    $selectedYears = isset($_GET['year']) ? array_map('intval', (array)$_GET['year']) : [1,2,3,4];
+                    $selectedYears = isset($_GET['year']) ? array_map('intval', (array) $_GET['year']) : [1, 2, 3, 4];
                     $yearFilterSql = '';
                     $yearParams = [];
                     if (count($selectedYears) > 0 && count($selectedYears) !== 4) {
@@ -395,14 +401,14 @@ if (true) {
 
                     // If this is a skill search, show leaderboard instead of table
                     if ($isSkillSearch && $skill_id) { ?>
-                    
-                    <!-- Leaderboard View for Skill Search -->
-                    <div class="container">
-                      <!-- mention button removed: prefill uses existing Add Notice modal button -->
-                      <div class="top-performers">
-                        <?php
-                        // Fetch all ranked students for this skill (for top 3)
-                        $rankSql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, t.Image, IFNULL(SUM(sa.points),0) as totalPoints
+
+                      <!-- Leaderboard View for Skill Search -->
+                      <div class="container">
+                        <!-- mention button removed: prefill uses existing Add Notice modal button -->
+                        <div class="top-performers">
+                          <?php
+                          // Fetch all ranked students for this skill (for top 3)
+                          $rankSql = "SELECT t.ID as sid, t.StuID, t.FamilyName, t.FirstName, t.Program, t.Gender, t.EmailAddress, t.Status, t.Image, IFNULL(SUM(sa.points),0) as totalPoints
                           FROM tblstudent t
                           JOIN student_achievements sa ON sa.StuID = t.StuID AND sa.status='approved'
                           JOIN student_achievement_skills ssk ON ssk.achievement_id = sa.id
@@ -410,137 +416,145 @@ if (true) {
                           GROUP BY t.ID
                           ORDER BY totalPoints DESC, t.ID DESC
                           LIMIT 100";
-                        $rankStmt = $dbh->prepare($rankSql);
-                        $rankStmt->bindValue(':skill_id', $skill_id, PDO::PARAM_INT);
-                        foreach ($yearParams as $k => $v) {
-                          $rankStmt->bindValue($k, $v, PDO::PARAM_INT);
-                        }
-                        $rankStmt->execute();
-                        $ranked = $rankStmt->fetchAll(PDO::FETCH_OBJ);
-                        // Prepare top 10 list for client-side mention prefill
-                        $topTenForJs = array_slice($ranked, 0, 10);
-                        $allTopThree = array_slice($ranked, 0, 3);
-                        $displayOrder = [];
-                        if (count($allTopThree) === 3) {
+                          $rankStmt = $dbh->prepare($rankSql);
+                          $rankStmt->bindValue(':skill_id', $skill_id, PDO::PARAM_INT);
+                          foreach ($yearParams as $k => $v) {
+                            $rankStmt->bindValue($k, $v, PDO::PARAM_INT);
+                          }
+                          $rankStmt->execute();
+                          $ranked = $rankStmt->fetchAll(PDO::FETCH_OBJ);
+                          // Prepare top 10 list for client-side mention prefill
+                          $topTenForJs = array_slice($ranked, 0, 10);
+                          $allTopThree = array_slice($ranked, 0, 3);
+                          $displayOrder = [];
+                          if (count($allTopThree) === 3) {
                             // 2nd, 1st, 3rd
                             $displayOrder = [$allTopThree[1], $allTopThree[0], $allTopThree[2]];
-                        } else {
+                          } else {
                             $displayOrder = $allTopThree;
-                        }
-                        
-                        // Use medals for top 3
-                        $medals = ['first' => '🥇', 'second' => '🥈', 'third' => '🥉'];
-                        $originalIndices = [1 => 0, 0 => 1, 2 => 2]; // Map display order back to original index for class
+                          }
 
-                        foreach ($displayOrder as $displayIdx => $p) {
-                          $idx = $originalIndices[$displayIdx] ?? $displayIdx;
-                          $class = $idx === 0 ? 'first' : ($idx === 1 ? 'second' : 'third');
-                          $badge = $medals[$class] ?? '';
-                          $initials = getInitials($p->FirstName . ' ' . $p->FamilyName);
-                          $imageExists = !empty($p->Image) && file_exists(__DIR__ . '/images/' . basename($p->Image));
-                          ?>
-                          <div class="performer-card <?php echo $class; ?>">
-                            <div class="rank-badge"><?php echo $badge; ?></div>
-                            <?php if ($imageExists): ?>
-                              <img src="images/<?php echo htmlentities($p->Image); ?>" alt="<?php echo htmlentities($p->FirstName); ?>" class="performer-avatar" style="object-fit: cover;">
-                            <?php else: ?>
-                              <div class="performer-avatar"><?php echo htmlentities($initials); ?></div>
-                            <?php endif; ?>
-                            <div class="performer-name"><?php echo htmlentities($p->FirstName . ' ' . $p->FamilyName); ?></div>
-                            <div class="performer-points"><?php echo 'Points: ' . number_format($p->totalPoints); ?></div>
-                            <div class="achievement-badge"><?php echo htmlentities($p->Program); ?></div>
-                          </div>
-                        <?php } ?>
-                      </div>
-
-                      <div class="leaderboard-card">
-                        <div class="leaderboard-header">
-                          <div class="header-label">Rank</div>
-                          <div class="header-label">Student Name</div>
-                        <div class="header-label" style="text-align: center;">Badge</div>
-                          <div class="header-label">Total Points</div>
-                        <div class="header-label" style="text-align: center;">Action</div>
+                          // Use medals for top 3
+                          $medals = ['first' => '🥇', 'second' => '🥈', 'third' => '🥉'];
+                          $originalIndices = [1 => 0, 0 => 1, 2 => 2]; // Map display order back to original index for class
+                      
+                          foreach ($displayOrder as $displayIdx => $p) {
+                            $idx = $originalIndices[$displayIdx] ?? $displayIdx;
+                            $class = $idx === 0 ? 'first' : ($idx === 1 ? 'second' : 'third');
+                            $badge = $medals[$class] ?? '';
+                            $initials = getInitials($p->FirstName . ' ' . $p->FamilyName);
+                            $imageExists = !empty($p->Image) && file_exists(__DIR__ . '/images/' . basename($p->Image));
+                            ?>
+                            <div class="performer-card <?php echo $class; ?>">
+                              <div class="rank-badge"><?php echo $badge; ?></div>
+                              <?php if ($imageExists): ?>
+                                <img src="images/<?php echo htmlentities($p->Image); ?>"
+                                  alt="<?php echo htmlentities($p->FirstName); ?>" class="performer-avatar"
+                                  style="object-fit: cover;">
+                              <?php else: ?>
+                                <div class="performer-avatar"><?php echo htmlentities($initials); ?></div>
+                              <?php endif; ?>
+                              <div class="performer-name"><?php echo htmlentities($p->FirstName . ' ' . $p->FamilyName); ?>
+                              </div>
+                              <div class="performer-points"><?php echo 'Points: ' . number_format($p->totalPoints); ?></div>
+                              <div class="achievement-badge"><?php echo htmlentities($p->Program); ?></div>
+                            </div>
+                          <?php } ?>
                         </div>
 
-                        <?php
-                        $rank = 1;
-                        foreach ($ranked as $r) {
-                          ?>
-                          <?php $imageExists = !empty($r->Image) && file_exists(__DIR__ . '/images/' . basename($r->Image)); ?>
-                          <div class="leaderboard-row">
-                            <div class="rank-number"><?php echo $rank; ?></div>
-                            <div class="user-info">
-                              <?php if ($imageExists): ?>
-                                <img src="images/<?php echo htmlentities($r->Image); ?>" alt="<?php echo htmlentities($r->FirstName); ?>" class="user-avatar" style="object-fit: cover; width: 40px; height: 40px;">
-                              <?php else: ?>
-                                <div class="user-avatar"><?php echo htmlentities(getInitials($r->FirstName . ' ' . $r->FamilyName)); ?></div>
-                              <?php endif; ?>
-                              <div class="user-name"><?php echo htmlentities($r->FirstName . ' ' . $r->FamilyName); ?></div>
+                        <div class="leaderboard-card">
+                          <div class="leaderboard-header">
+                            <div class="header-label">Rank</div>
+                            <div class="header-label">Student Name</div>
+                            <div class="header-label" style="text-align: center;">Badge</div>
+                            <div class="header-label">Total Points</div>
+                            <div class="header-label" style="text-align: center;">Action</div>
+                          </div>
+
+                          <?php
+                          $rank = 1;
+                          foreach ($ranked as $r) {
+                            ?>
+                            <?php $imageExists = !empty($r->Image) && file_exists(__DIR__ . '/images/' . basename($r->Image)); ?>
+                            <div class="leaderboard-row">
+                              <div class="rank-number"><?php echo $rank; ?></div>
+                              <div class="user-info">
+                                <?php if ($imageExists): ?>
+                                  <img src="images/<?php echo htmlentities($r->Image); ?>"
+                                    alt="<?php echo htmlentities($r->FirstName); ?>" class="user-avatar"
+                                    style="object-fit: cover; width: 40px; height: 40px;">
+                                <?php else: ?>
+                                  <div class="user-avatar">
+                                    <?php echo htmlentities(getInitials($r->FirstName . ' ' . $r->FamilyName)); ?></div>
+                                <?php endif; ?>
+                                <div class="user-name"><?php echo htmlentities($r->FirstName . ' ' . $r->FamilyName); ?></div>
+                              </div>
+                              <div class="badge-cell"><?php echo $rank <= 3 ? '🏆' : '🎯'; ?></div>
+                              <div class="points-cell"><?php echo number_format($r->totalPoints); ?></div>
+                              <div class="action-cell">
+                                <a href="view-student-profile.php?sid=<?php echo urlencode($r->StuID); ?>" class="action-btn"
+                                  title="View Profile" style="background: #e0e7ff; color: #4f46e5;">👁️</a>
+                                <button type="button" class="action-btn message-btn" title="Message"
+                                  data-email="<?php echo htmlentities($r->EmailAddress); ?>"
+                                  data-name="<?php echo htmlentities($r->FirstName . ' ' . $r->FamilyName); ?>"
+                                  data-stuid="<?php echo htmlentities($r->StuID); ?>">✉️</button>
+                              </div>
                             </div>
-                            <div class="badge-cell"><?php echo $rank <= 3 ? '🏆' : '🎯'; ?></div>
-                            <div class="points-cell"><?php echo number_format($r->totalPoints); ?></div>
-                          <div class="action-cell">
-                            <a href="view-student-profile.php?sid=<?php echo urlencode($r->StuID); ?>" class="action-btn" title="View Profile" style="background: #e0e7ff; color: #4f46e5;">👁️</a>
-                            <button type="button" class="action-btn message-btn" title="Message"
-                              data-email="<?php echo htmlentities($r->EmailAddress); ?>"
-                              data-name="<?php echo htmlentities($r->FirstName . ' ' . $r->FamilyName); ?>"
-                              data-stuid="<?php echo htmlentities($r->StuID); ?>">✉️</button>
-                          </div>
-                          </div>
-                          <?php $rank++;
-                        }
-                        if (count($ranked) === 0) { ?>
-                          <div class="text-center" style="color: red; padding:20px;">No record found against this search</div>
-                        <?php } ?>
-                      </div>
+                            <?php $rank++;
+                          }
+                          if (count($ranked) === 0) { ?>
+                            <div class="text-center" style="color: red; padding:20px;">No record found against this search
+                            </div>
+                          <?php } ?>
+                        </div>
                       </div>
 
-                    <script>
-                      // Expose top 10 data for prefilling Add Notice modal when the existing Add button is clicked
-                      (function(){
-                        try {
-                          var topTen = <?php echo json_encode($topTenForJs); ?> || [];
-                          window.adminTopTenForMention = topTen;
-                        } catch(e) { window.adminTopTenForMention = []; }
+                      <script>
+                        // Expose top 10 data for prefilling Add Notice modal when the existing Add button is clicked
+                        (function () {
+                          try {
+                            var topTen = <?php echo json_encode($topTenForJs); ?> || [];
+                            window.adminTopTenForMention = topTen;
+                          } catch (e) { window.adminTopTenForMention = []; }
 
-                        document.addEventListener('DOMContentLoaded', function(){
-                          var addBtn = document.querySelector('.add-btn[data-target="#addNoticeModal"]');
-                          if (!addBtn) return;
-                          addBtn.addEventListener('click', function(){
-                            var list = window.adminTopTenForMention || [];
-                            if (!list.length) return; // nothing to prefill
-                            var mentions = list.map(function(u){
-                              var fn = u.FirstName || '';
-                              var ln = u.FamilyName || '';
-                              return '@' + fn + ' ' + ln + ' ';
-                            }).join('');
+                          document.addEventListener('DOMContentLoaded', function () {
+                            var addBtn = document.querySelector('.add-btn[data-target="#addNoticeModal"]');
+                            if (!addBtn) return;
+                            addBtn.addEventListener('click', function () {
+                              var list = window.adminTopTenForMention || [];
+                              if (!list.length) return; // nothing to prefill
+                              var mentions = list.map(function (u) {
+                                var fn = u.FirstName || '';
+                                var ln = u.FamilyName || '';
+                                return '@' + fn + ' ' + ln + ' ';
+                              }).join('');
 
-                            var titleField = document.getElementById('nottitle');
-                            var msgField = document.getElementById('notmsg');
-                            if (titleField) titleField.value = <?php echo json_encode($skill->name ?? ''); ?>;
-                            if (msgField) msgField.value = mentions;
+                              var titleField = document.getElementById('nottitle');
+                              var msgField = document.getElementById('notmsg');
+                              if (titleField) titleField.value = <?php echo json_encode($skill->name ?? ''); ?>;
+                              if (msgField) msgField.value = mentions;
+                            });
                           });
-                        });
-                      })();
-                    </script>
+                        })();
+                      </script>
 
                     <?php } else { ?>
-                    
-                    <!-- Default Table View -->
-                    <table class="table">
-                      <thead class="table-wrapper thead">
-                        <tr>
-                          <th class="font-weight-bold">Student</th>
-                          <th class="font-weight-bold">Student ID</th>
-                          <th class="font-weight-bold">Program</th>
-                          <th class="font-weight-bold">Gender</th>
-                          <th class="font-weight-bold">Status</th>
-                          <th class="font-weight-bold">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <?php
-                        // Enhanced search: allow searching across many tblstudent fields:
+
+                      <!-- Default Table View -->
+                      <table class="table">
+                        <thead class="table-wrapper thead">
+                          <tr>
+                            <th class="font-weight-bold">Student</th>
+                            <th class="font-weight-bold">Student ID</th>
+                            <th class="font-weight-bold">Program</th>
+                            <th class="font-weight-bold">Gender</th>
+                            <th class="font-weight-bold">Status</th>
+                            <th class="font-weight-bold">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php
+                          // Enhanced search: allow searching across many tblstudent fields:
                           // StuID, FamilyName, FirstName, Program, Major, YearLevel, Gender,
                           // Barangay, CityMunicipality, Province, Category, EmailAddress and map
                           // keywords "active"/"inactive" to Status.
@@ -601,11 +615,13 @@ if (true) {
                             // empty search => match all
                             $whereParts[] = "1";
                           }
-                        
+
                           // Build the final WHERE clause, ensuring year filter is ANDed
                           $whereSQL = ' WHERE (' . implode(' OR ', $whereParts) . ')';
-                          if (!empty($yearFilterSql)) { $whereSQL .= $yearFilterSql; }
-                          
+                          if (!empty($yearFilterSql)) {
+                            $whereSQL .= $yearFilterSql;
+                          }
+
                           $countSql = "SELECT COUNT(ID) FROM tblstudent " . $whereSQL;
                           $countStmt = $dbh->prepare($countSql);
                           foreach ($params as $k => $v) {
@@ -693,7 +709,7 @@ if (true) {
                               </td>
                             </tr>
                           <?php }
-                        } ?>
+                    } ?>
                       </tbody>
                     </table>
                     <!-- Pagination controls -->
@@ -746,11 +762,13 @@ if (true) {
         <form method="post">
           <div class="new-form-group">
             <label for="nottitle" class="new-form-label">Notice Title</label>
-            <input type="text" class="new-form-input" id="nottitle" name="nottitle" required placeholder="Enter notice title" style="text-transform: capitalize;">
+            <input type="text" class="new-form-input" id="nottitle" name="nottitle" required
+              placeholder="Enter notice title" style="text-transform: capitalize;">
           </div>
           <div class="new-form-group">
             <label for="notmsg" class="new-form-label">Notice Message</label>
-            <textarea class="new-form-textarea" id="notmsg" name="notmsg" rows="5" required placeholder="Enter notice details..." style="text-transform: capitalize;"></textarea>
+            <textarea class="new-form-textarea" id="notmsg" name="notmsg" rows="5" required
+              placeholder="Enter notice details..." style="text-transform: capitalize;"></textarea>
             <small class="text-muted">Use @FirstName LastName to mention students.</small>
           </div>
           <div class="new-modal-footer">
@@ -768,24 +786,26 @@ if (true) {
           <button type="button" class="new-close-btn">&times;</button>
           <input type="hidden" name="student_name" id="student_name_hidden">
         </div>
-          <form method="post">
-            <div class="new-modal-body">
-              <input type="hidden" name="student_email" id="studentEmail">
-              <input type="hidden" name="student_stuid" id="studentStuID">
-              <div class="new-form-group">
-                <label for="subject" class="new-form-label">Subject</label>
-                <input type="text" class="new-form-input" id="subject" name="subject" required placeholder="Enter subject" style="text-transform: capitalize;">
-              </div>
-              <div class="new-form-group">
-                <label for="message" class="new-form-label">Message</label>
-                <textarea class="new-form-textarea" id="message" name="message" rows="5" required placeholder="Enter your message..." style="text-transform: capitalize;"></textarea>
-              </div>
+        <form method="post">
+          <div class="new-modal-body">
+            <input type="hidden" name="student_email" id="studentEmail">
+            <input type="hidden" name="student_stuid" id="studentStuID">
+            <div class="new-form-group">
+              <label for="subject" class="new-form-label">Subject</label>
+              <input type="text" class="new-form-input" id="subject" name="subject" required placeholder="Enter subject"
+                style="text-transform: capitalize;">
             </div>
-            <div class="new-modal-footer">
-              <button type="button" class="new-btn new-btn-cancel">Cancel</button>
-              <button type="submit" name="send_message" class="new-btn new-btn-submit">Send Message</button>
+            <div class="new-form-group">
+              <label for="message" class="new-form-label">Message</label>
+              <textarea class="new-form-textarea" id="message" name="message" rows="5" required
+                placeholder="Enter your message..." style="text-transform: capitalize;"></textarea>
             </div>
-          </form>
+          </div>
+          <div class="new-modal-footer">
+            <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+            <button type="submit" name="send_message" class="new-btn new-btn-submit">Send Message</button>
+          </div>
+        </form>
       </div>
     </div>
     <script src="vendors/js/vendor.bundle.base.js"></script>
@@ -797,7 +817,7 @@ if (true) {
     <script src="js/search.js"></script>
 
     <script>
-      (function(){
+      (function () {
         var toggle = document.querySelector('.year-filter-toggle');
         var menu = document.getElementById('yearFilterMenu');
         var selectAllBtn = document.getElementById('yearSelectAll');
@@ -807,30 +827,30 @@ if (true) {
 
         function openMenu() {
           menu.classList.add('open');
-          menu.setAttribute('aria-hidden','false');
+          menu.setAttribute('aria-hidden', 'false');
         }
         function closeMenu() {
           menu.classList.remove('open');
-          menu.setAttribute('aria-hidden','true');
+          menu.setAttribute('aria-hidden', 'true');
         }
 
-        toggle.addEventListener('click', function(e){
+        toggle.addEventListener('click', function (e) {
           if (menu.classList.contains('open')) closeMenu(); else openMenu();
         });
 
         // Close on outside click
-        document.addEventListener('click', function(e){
+        document.addEventListener('click', function (e) {
           if (!menu.contains(e.target) && !toggle.contains(e.target)) {
             closeMenu();
           }
         });
 
         // Select/clear helpers
-        if (selectAllBtn) selectAllBtn.addEventListener('click', function(){
-          menu.querySelectorAll('input[type="checkbox"]').forEach(function(cb){ cb.checked = true; });
+        if (selectAllBtn) selectAllBtn.addEventListener('click', function () {
+          menu.querySelectorAll('input[type="checkbox"]').forEach(function (cb) { cb.checked = true; });
         });
-        if (clearAllBtn) clearAllBtn.addEventListener('click', function(){
-          menu.querySelectorAll('input[type="checkbox"]').forEach(function(cb){ cb.checked = false; });
+        if (clearAllBtn) clearAllBtn.addEventListener('click', function () {
+          menu.querySelectorAll('input[type="checkbox"]').forEach(function (cb) { cb.checked = false; });
         });
       })();
     </script>

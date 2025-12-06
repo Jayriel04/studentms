@@ -74,7 +74,7 @@ EOT;
       $mail->Username = $MAIL_USERNAME;
       $mail->Password = $MAIL_PASSWORD;
       $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
-      $mail->Port = (int)$MAIL_PORT;
+      $mail->Port = (int) $MAIL_PORT;
       $mail->setFrom(!empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME, !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System');
       $mail->addAddress($recipientEmail);
       $mail->isHTML(true);
@@ -213,7 +213,12 @@ EOT;
   <head>
     <title>Student Profiling System || Manage Notice</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png">
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+    <link rel="manifest" href="../images/site.webmanifest">
     <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -232,7 +237,8 @@ EOT;
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title">Manage Notice</h3> <button type="button" class="add-btn" data-target="#addNoticeModalOverlay" style="margin-right: 20px;">+ Add New
+              <h3 class="page-title">Manage Notice</h3> <button type="button" class="add-btn"
+                data-target="#addNoticeModalOverlay" style="margin-right: 20px;">+ Add New
                 Notice</button>
             </div>
 
@@ -393,16 +399,16 @@ EOT;
     </script>
 
     <script>
-      (function(){
+      (function () {
         const openBtn = document.querySelector('.add-btn');
         const overlay = document.getElementById('addNoticeModalOverlay');
         if (!overlay) return;
-        if (openBtn) openBtn.addEventListener('click', ()=> overlay.classList.add('active'));
+        if (openBtn) openBtn.addEventListener('click', () => overlay.classList.add('active'));
         const closeBtn = overlay.querySelector('.new-close-btn');
         const cancelBtn = overlay.querySelector('.new-btn-cancel');
-        if (closeBtn) closeBtn.addEventListener('click', ()=> overlay.classList.remove('active'));
-        if (cancelBtn) cancelBtn.addEventListener('click', ()=> overlay.classList.remove('active'));
-        overlay.addEventListener('click', (e)=> { if (e.target === overlay) overlay.classList.remove('active'); });
+        if (closeBtn) closeBtn.addEventListener('click', () => overlay.classList.remove('active'));
+        if (cancelBtn) cancelBtn.addEventListener('click', () => overlay.classList.remove('active'));
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
         // If server-side validation set openAddModal, open it on page load
         if (window.mnData && window.mnData.openAddModal) overlay.classList.add('active');
       })();

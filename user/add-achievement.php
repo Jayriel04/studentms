@@ -199,7 +199,12 @@ if (isset($_POST['add_achievement'])) {
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Student Profiling System || Add Achievement</title>
-  <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
+  <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+  <link rel="manifest" href="../images/site.webmanifest">
   <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css">
   <link rel="stylesheet" href="vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
@@ -236,91 +241,96 @@ if (isset($_POST['add_achievement'])) {
         <div class="content-wrapper">
           <div class="row">
             <div class="col-12">
-                <div class="form-card">
-                    <h1 class="form-title">Add Achievement / Skill</h1>
-                    <form id="addAchievementForm" method="post" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label class="form-label">Skill / Tag</label>
-                            <p class="form-description">Select one tag. Click a suggestion to choose it or add a custom tag.</p>
-                            
-                            <div class="search-wrapper">
-                                <input type="text" class="search-input" placeholder="Search tags (type to filter)" id="searchInput">
-                                <button type="button" class="clear-btn" id="clearSkillSearch">Clear</button>
-                            </div>
+              <div class="form-card">
+                <h1 class="form-title">Add Achievement / Skill</h1>
+                <form id="addAchievementForm" method="post" enctype="multipart/form-data">
+                  <div class="form-group">
+                    <label class="form-label">Skill / Tag</label>
+                    <p class="form-description">Select one tag. Click a suggestion to choose it or add a custom tag.</p>
 
-                            <div class="tags-container" id="tagsContainer">
-                                <?php foreach ($skillSuggestions as $sugg): ?>
-                                    <div class="tag-chip" data-id="<?php echo htmlentities($sugg['id']); ?>" data-name="<?php echo htmlentities($sugg['name']); ?>" data-category="<?php echo htmlentities($sugg['category']); ?>" style="display: none;">
-                                        <span><?php echo htmlentities($sugg['name']); ?></span>
-                                        <span class="tag-category"><?php echo htmlentities($sugg['category']); ?></span>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
+                    <div class="search-wrapper">
+                      <input type="text" class="search-input" placeholder="Search tags (type to filter)"
+                        id="searchInput">
+                      <button type="button" class="clear-btn" id="clearSkillSearch">Clear</button>
+                    </div>
 
-                            <div class="tag-actions">
-                                <button type="button" class="load-more-btn" id="loadMoreTags">Load more</button>
-                                <button type="button" class="load-more-btn" id="showLessTags" style="display: none;">Show less</button>
-                                <button type="button" class="add-tag-btn" data-toggle="modal" data-target="#addTagModal">Add Tag</button>
-                            </div>
-                            <input type="hidden" name="skills" id="skillsHidden">
-                            <input type="hidden" name="skills_id" id="skillsIdHidden">
+                    <div class="tags-container" id="tagsContainer">
+                      <?php foreach ($skillSuggestions as $sugg): ?>
+                        <div class="tag-chip" data-id="<?php echo htmlentities($sugg['id']); ?>"
+                          data-name="<?php echo htmlentities($sugg['name']); ?>"
+                          data-category="<?php echo htmlentities($sugg['category']); ?>" style="display: none;">
+                          <span><?php echo htmlentities($sugg['name']); ?></span>
+                          <span class="tag-category"><?php echo htmlentities($sugg['category']); ?></span>
                         </div>
+                      <?php endforeach; ?>
+                    </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Category</label>
-                            <select name="ach_category" id="ach_category" class="form-select" required>
-                                <option value="Non-Academic">Non-Academic</option>
-                                <option value="Academic">Academic</option>
-                            </select>
-                        </div>
+                    <div class="tag-actions">
+                      <button type="button" class="load-more-btn" id="loadMoreTags">Load more</button>
+                      <button type="button" class="load-more-btn" id="showLessTags" style="display: none;">Show
+                        less</button>
+                      <button type="button" class="add-tag-btn" data-toggle="modal" data-target="#addTagModal">Add
+                        Tag</button>
+                    </div>
+                    <input type="hidden" name="skills" id="skillsHidden">
+                    <input type="hidden" name="skills_id" id="skillsIdHidden">
+                  </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Achievement Level</label>
-                            <select name="ach_level" class="form-select" required>
-                                <option value="Hobby">Hobby</option>
-                                <option value="School">School</option>
-                                <option value="City">City</option>
-                                <option value="Provincial">Provincial</option>
-                                <option value="Regional">Regional</option>
-                                <option value="National">National</option>
-                                <option value="International">International</option>
-                            </select>
-                        </div>
+                  <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select name="ach_category" id="ach_category" class="form-select" required>
+                      <option value="Non-Academic">Non-Academic</option>
+                      <option value="Academic">Academic</option>
+                    </select>
+                  </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Proof Image (optional)</label>
-                            <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
-                                <div class="upload-icon">🖼️</div>
-                                <div class="upload-text">Click to upload proof image</div>
-                                <div class="upload-hint">Upload an image as proof (jpg/png). Staff/Admin will validate.</div>
-                            </div>
-                            <input type="file" id="fileInput" name="proof" class="file-input" accept="image/jpeg,image/png">
-                            
-                            <div class="file-preview" id="filePreview">
-                                <div class="file-preview-icon">📷</div>
-                                <div class="file-preview-details">
-                                    <div class="file-preview-name" id="fileName">image.jpg</div>
-                                    <div class="file-preview-size" id="fileSize">245 KB</div>
-                                </div>
-                                <button type="button" class="remove-file-btn" id="removeFileBtn">×</button>
-                            </div>
-                        </div>
+                  <div class="form-group">
+                    <label class="form-label">Achievement Level</label>
+                    <select name="ach_level" class="form-select" required>
+                      <option value="Hobby">Hobby</option>
+                      <option value="School">School</option>
+                      <option value="City">City</option>
+                      <option value="Provincial">Provincial</option>
+                      <option value="Regional">Regional</option>
+                      <option value="National">National</option>
+                      <option value="International">International</option>
+                    </select>
+                  </div>
 
-                        <div class="form-actions">
-                            <?php
-                            $back_link = 'dashboard.php'; // Default link
-                            if (isset($_SERVER['HTTP_REFERER'])) {
-                              $referer_url = parse_url($_SERVER['HTTP_REFERER']);
-                              if (isset($referer_url['path']) && (strpos($referer_url['path'], 'student-profile.php') !== false || strpos($referer_url['path'], 'dashboard.php') !== false)) {
-                                $back_link = $_SERVER['HTTP_REFERER'];
-                              }
-                            }
-                            ?>
-                            <a href="<?php echo htmlspecialchars($back_link); ?>" class="btn btn-back">Back</a>
-                            <button type="submit" name="add_achievement" class="btn btn-submit">Submit Achievement</button>
-                        </div>
-                    </form>
-                </div>
+                  <div class="form-group">
+                    <label class="form-label">Proof Image (optional)</label>
+                    <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                      <div class="upload-icon">🖼️</div>
+                      <div class="upload-text">Click to upload proof image</div>
+                      <div class="upload-hint">Upload an image as proof (jpg/png). Staff/Admin will validate.</div>
+                    </div>
+                    <input type="file" id="fileInput" name="proof" class="file-input" accept="image/jpeg,image/png">
+
+                    <div class="file-preview" id="filePreview">
+                      <div class="file-preview-icon">📷</div>
+                      <div class="file-preview-details">
+                        <div class="file-preview-name" id="fileName">image.jpg</div>
+                        <div class="file-preview-size" id="fileSize">245 KB</div>
+                      </div>
+                      <button type="button" class="remove-file-btn" id="removeFileBtn">×</button>
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <?php
+                    $back_link = 'dashboard.php'; // Default link
+                    if (isset($_SERVER['HTTP_REFERER'])) {
+                      $referer_url = parse_url($_SERVER['HTTP_REFERER']);
+                      if (isset($referer_url['path']) && (strpos($referer_url['path'], 'student-profile.php') !== false || strpos($referer_url['path'], 'dashboard.php') !== false)) {
+                        $back_link = $_SERVER['HTTP_REFERER'];
+                      }
+                    }
+                    ?>
+                    <a href="<?php echo htmlspecialchars($back_link); ?>" class="btn btn-back">Back</a>
+                    <button type="submit" name="add_achievement" class="btn btn-submit">Submit Achievement</button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -330,30 +340,30 @@ if (isset($_POST['add_achievement'])) {
 
     <!-- Add Tag Modal -->
     <div class="new-modal-overlay" id="addTagModalOverlay">
-        <div class="new-modal">
-            <div class="new-modal-header">
-                <h2 class="new-modal-title">Add New Tag</h2>
-                <button class="new-close-btn">&times;</button>
-            </div>
-            <form id="addTagForm">
-                <div class="new-form-group">
-                    <label for="tagName" class="new-form-label">Tag Name</label>
-                    <input type="text" id="tagName" class="new-form-input" required placeholder="Enter new tag name">
-                </div>
-                <div class="new-form-group">
-                    <label for="tagCategory" class="new-form-label">Category</label>
-                    <select id="tagCategory" class="new-form-select">
-                        <option>Non-Academic</option>
-                        <option>Academic</option>
-                    </select>
-                </div>
-
-                <div class="new-modal-footer">
-                    <button type="button" class="new-btn new-btn-cancel">Cancel</button>
-                    <button type="button" id="saveTagBtn" class="new-btn new-btn-submit">Add Tag</button>
-                </div>
-            </form>
+      <div class="new-modal">
+        <div class="new-modal-header">
+          <h2 class="new-modal-title">Add New Tag</h2>
+          <button class="new-close-btn">&times;</button>
         </div>
+        <form id="addTagForm">
+          <div class="new-form-group">
+            <label for="tagName" class="new-form-label">Tag Name</label>
+            <input type="text" id="tagName" class="new-form-input" required placeholder="Enter new tag name">
+          </div>
+          <div class="new-form-group">
+            <label for="tagCategory" class="new-form-label">Category</label>
+            <select id="tagCategory" class="new-form-select">
+              <option>Non-Academic</option>
+              <option>Academic</option>
+            </select>
+          </div>
+
+          <div class="new-modal-footer">
+            <button type="button" class="new-btn new-btn-cancel">Cancel</button>
+            <button type="button" id="saveTagBtn" class="new-btn new-btn-submit">Add Tag</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -361,12 +371,12 @@ if (isset($_POST['add_achievement'])) {
   <script src="js/off-canvas.js"></script>
   <script src="js/misc.js"></script>
   <script src="js/toast.js"></script>
-    <?php if (!empty($success_message)): ?>
-      <script>toastr.success('<?php echo addslashes($success_message); ?>');</script>
-    <?php endif; ?>
-    <?php if (!empty($error_message)): ?>
-      <script>toastr.error('<?php echo addslashes($error_message); ?>');</script>
-    <?php endif; ?>
+  <?php if (!empty($success_message)): ?>
+    <script>toastr.success('<?php echo addslashes($success_message); ?>');</script>
+  <?php endif; ?>
+  <?php if (!empty($error_message)): ?>
+    <script>toastr.error('<?php echo addslashes($error_message); ?>');</script>
+  <?php endif; ?>
   <script src="js/add-achievement.js"></script>
 </body>
 

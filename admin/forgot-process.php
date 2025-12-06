@@ -25,7 +25,7 @@ function send_otp_email($toEmail, $code, $userName = 'Admin')
 
   $currentYear = date('Y');
   $subject = 'Your Student Profiling System Admin Password Reset Code';
-  
+
   $bodyHtml = <<<EOT
 <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
     <div style="background-color: #f4f4f4; padding: 20px; text-align: center; border-bottom: 1px solid #ddd;">
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['email'])) {
       $admin = $stmt->fetch(PDO::FETCH_OBJ);
       $sent = send_otp_email($email, $code, $admin->AdminName);
       if ($sent) {
-        $_SESSION['admin_fp_reset_code'] = (string)$code;
+        $_SESSION['admin_fp_reset_code'] = (string) $code;
         $_SESSION['admin_fp_reset_email'] = $email;
         $_SESSION['admin_fp_reset_expires'] = time() + 15 * 60; // 15 minutes
         header('Location: verify-otp-process.php');
@@ -136,45 +136,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['email'])) {
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password | Student Profiling System</title>
-    <link rel="icon" href="https://img.icons8.com/color/480/student-vue.png" type="image/png" sizes="180x180">
-    <link rel="stylesheet" href="css/login-new.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forgot Password | Student Profiling System</title>
+  <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../images/android-chrome-192x192.png">
+  <link rel="manifest" href="../images/site.webmanifest">
+  <link rel="stylesheet" href="css/login-new.css">
 </head>
 
 <body>
-    <div class="container">
-        <div class="welcome-section">
-            <div class="welcome-content">
-                <h1>RESET PASSWORD</h1>
-                <p class="headline">Student Profiling System</p>
-                <p>If you've forgotten your password, enter your email address below. We'll send you a secure code to reset it.</p>
-            </div>
-            <div class="circle-decoration"></div>
-        </div>
-
-        <div class="form-section">
-            <h2>Forgot Password</h2>
-            <p class="subtitle">Enter your admin email to receive a 6-digit reset code.</p>
-            
-            <?php if (!empty($error)): ?>
-                <div class="alert alert-danger" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;"><?php echo htmlentities($error); ?></div>
-            <?php endif; ?>
-
-            <form method="post">
-                <div class="input-group">
-                    <div class="input-wrapper">
-                        <span class="icon">✉️</span>
-                        <input type="email" id="email" name="email" placeholder="Email address" required autofocus>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Send Reset Code</button>
-                <a href="login.php" class="btn btn-secondary">Back to Sign In</a>
-            </form>
-        </div>
+  <div class="container">
+    <div class="welcome-section">
+      <div class="welcome-content">
+        <h1>RESET PASSWORD</h1>
+        <p class="headline">Student Profiling System</p>
+        <p>If you've forgotten your password, enter your email address below. We'll send you a secure code to reset it.
+        </p>
+      </div>
+      <div class="circle-decoration"></div>
     </div>
+
+    <div class="form-section">
+      <h2>Forgot Password</h2>
+      <p class="subtitle">Enter your admin email to receive a 6-digit reset code.</p>
+
+      <?php if (!empty($error)): ?>
+        <div class="alert alert-danger"
+          style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
+          <?php echo htmlentities($error); ?></div>
+      <?php endif; ?>
+
+      <form method="post">
+        <div class="input-group">
+          <div class="input-wrapper">
+            <span class="icon">✉️</span>
+            <input type="email" id="email" name="email" placeholder="Email address" required autofocus>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Send Reset Code</button>
+        <a href="login.php" class="btn btn-secondary">Back to Sign In</a>
+      </form>
+    </div>
+  </div>
 </body>
 
 </html>
