@@ -48,6 +48,128 @@ if (isset($_GET['mention_suggest'])) {
   exit;
 }
 
+/**
+ * Sends a formatted email for a direct message from staff.
+ *
+ * @param string $recipientEmail The student's email address.
+ * @param string $studentName The student's name.
+ * @param string $subject The message subject.
+ * @param string $messageBody The message content.
+ * @return bool True on success, false on failure.
+ */
+function send_direct_message_email($recipientEmail, $studentName, $subject, $messageBody)
+{
+  global $MAIL_HOST, $MAIL_USERNAME, $MAIL_PASSWORD, $MAIL_PORT, $MAIL_ENCRYPTION, $MAIL_FROM, $MAIL_FROM_NAME;
+
+  $currentYear = date('Y');
+  $emailSubject = "New Message from Staff: " . $subject;
+
+  $bodyHtml = <<<EOT
+<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+    <div style="background-color: #f4f4f4; padding: 20px; text-align: center; border-bottom: 1px solid #ddd;">
+        <h2 style="color: #333; margin: 0;">New Message from Staff</h2>
+    </div>
+    <div style="padding: 30px;">
+        <p>Hi {$studentName},</p>
+        <p>You have received a new message from a staff member regarding "<strong>{$subject}</strong>".</p>
+        <div style="background-color: #f9f9f9; border: 1px solid #eee; padding: 20px; margin: 20px 0; border-radius: 4px;">
+            <h4 style="margin-top: 0; color: #555;">Message:</h4>
+            <p style="white-space: pre-wrap;">{$messageBody}</p>
+        </div>
+        <p>You can reply to this message by logging into your student portal.</p>
+        <p>Thank you,<br>The Student Profiling System Team</p>
+    </div>
+    <div style="background-color: #f4f4f4; padding: 20px; text-align: center; font-size: 12px; color: #777; border-top: 1px solid #ddd;">
+        <p>&copy; {$currentYear} Student Profiling System. All rights reserved.</p>
+    </div>
+</div>
+EOT;
+
+  $bodyText = "Hi {$studentName},\n\nYou have received a new message from a staff member regarding \"{$subject}\".\n\nMessage:\n{$messageBody}\n\nYou can reply to this message by logging into your student portal.\n\nThank you,\nThe Student Profiling System Team";
+
+  $mail = new PHPMailer(true);
+  try {
+    $mail->isSMTP();
+    $mail->Host = $MAIL_HOST;
+    $mail->SMTPAuth = true;
+    $mail->Username = $MAIL_USERNAME;
+    $mail->Password = $MAIL_PASSWORD;
+    $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = (int)$MAIL_PORT;
+    $mail->setFrom(!empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME, !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System');
+    $mail->addAddress($recipientEmail);
+    $mail->isHTML(true);
+    $mail->Subject = $emailSubject;
+    $mail->Body = $bodyHtml;
+    $mail->AltBody = $bodyText;
+    return $mail->send();
+  } catch (Exception $e) {
+    error_log("Staff direct message email failed to send: " . $mail->ErrorInfo);
+    return false;
+  }
+}
+
+/**
+ * Sends a formatted email notification for a mention in a notice from staff.
+ *
+ * @param string $recipientEmail The student's email address.
+ * @param string $studentName The student's name.
+ * @param string $noticeTitle The title of the notice.
+ * @param string $noticeContent The full content of the notice.
+ * @return bool True on success, false on failure.
+ */
+function send_mention_email($recipientEmail, $studentName, $noticeTitle, $noticeContent)
+{
+  global $MAIL_HOST, $MAIL_USERNAME, $MAIL_PASSWORD, $MAIL_PORT, $MAIL_ENCRYPTION, $MAIL_FROM, $MAIL_FROM_NAME;
+
+  $currentYear = date('Y');
+  $subject = "You were mentioned in a notice: " . $noticeTitle;
+
+  $bodyHtml = <<<EOT
+<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+    <div style="background-color: #f4f4f4; padding: 20px; text-align: center; border-bottom: 1px solid #ddd;">
+        <h2 style="color: #333; margin: 0;">Notice Mention</h2>
+    </div>
+    <div style="padding: 30px;">
+        <p>Hi {$studentName},</p>
+        <p>You have been mentioned in a new notice from a staff member titled "<strong>{$noticeTitle}</strong>".</p>
+        <div style="background-color: #f9f9f9; border: 1px solid #eee; padding: 20px; margin: 20px 0; border-radius: 4px;">
+            <h4 style="margin-top: 0; color: #555;">Notice Content:</h4>
+            <p style="white-space: pre-wrap;">{$noticeContent}</p>
+        </div>
+        <p>You can view this and other notices by logging into your student portal.</p>
+        <p>Thank you,<br>The Student Profiling System Team</p>
+    </div>
+    <div style="background-color: #f4f4f4; padding: 20px; text-align: center; font-size: 12px; color: #777; border-top: 1px solid #ddd;">
+        <p>&copy; {$currentYear} Student Profiling System. All rights reserved.</p>
+    </div>
+</div>
+EOT;
+
+  $bodyText = "Hi {$studentName},\n\nYou have been mentioned in a new notice from a staff member titled \"{$noticeTitle}\".\n\nNotice Content:\n{$noticeContent}\n\nYou can view this and other notices by logging into your student portal.\n\nThank you,\nThe Student Profiling System Team";
+
+  $mail = new PHPMailer(true);
+  try {
+    $mail->isSMTP();
+    $mail->Host = $MAIL_HOST;
+    $mail->SMTPAuth = true;
+    $mail->Username = $MAIL_USERNAME;
+    $mail->Password = $MAIL_PASSWORD;
+    $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = (int)$MAIL_PORT;
+    $mail->setFrom(!empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME, !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System');
+    $mail->addAddress($recipientEmail);
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+    $mail->Body = $bodyHtml;
+    $mail->AltBody = $bodyText;
+    return $mail->send();
+  } catch (Exception $e) {
+    error_log("Staff mention email failed to send: " . $mail->ErrorInfo);
+    return false;
+  }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_notice'])) {
   $nottitle = $_POST['nottitle'];
   $notmsg = $_POST['notmsg'];
@@ -67,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_notice'])) {
         $familyName = trim($match[2]);
 
         // Get the student ID and email from database using first and last name
-        $studentStmt = $dbh->prepare("SELECT StuID, EmailAddress FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
+        $studentStmt = $dbh->prepare("SELECT StuID, EmailAddress, FirstName FROM tblstudent WHERE FirstName = :fname AND FamilyName = :lname LIMIT 1");
         $studentStmt->bindValue(':fname', $firstName, PDO::PARAM_STR);
         $studentStmt->bindValue(':lname', $familyName, PDO::PARAM_STR);
         $studentStmt->execute();
@@ -86,31 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_notice'])) {
 
           // Send email notification
           if (!empty($student->EmailAddress)) {
-            $mail = new PHPMailer(true);
-            try {
-              //Server settings
-              $mail->isSMTP();
-              $mail->Host = $MAIL_HOST;
-              $mail->SMTPAuth = true;
-              $mail->Username = $MAIL_USERNAME;
-              $mail->Password = $MAIL_PASSWORD;
-              $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
-              $mail->Port = $MAIL_PORT;
-
-              //Recipients
-              $fromEmail = !empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME;
-              $fromName = !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System';
-              $mail->setFrom($fromEmail, $fromName);
-              $mail->addAddress($student->EmailAddress);
-
-              // Content
-              $mail->isHTML(true);
-              $mail->Subject = "You were mentioned in a notice: " . $nottitle;
-              $mail->Body = "You were mentioned in the notice titled '<b>" . htmlspecialchars($nottitle) . "</b>'.<br><br><b>Content:</b><br>" . nl2br(htmlspecialchars($notmsg));
-              $mail->AltBody = "You were mentioned in the notice titled '{$nottitle}'.\n\nContent:\n" . $notmsg;
-              $mail->send();
-            } catch (Exception $e) { // Do not block for email errors
-            }
+            send_mention_email($student->EmailAddress, $student->FirstName, $nottitle, $notmsg);
           }
         }
       }
@@ -664,6 +762,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
     <div class="new-modal">
       <div class="new-modal-header">
         <h2 class="new-modal-title">Send Message to <span id="studentName"></span></h2>
+        <input type="hidden" name="student_name" id="student_name_hidden">
         <button type="button" class="new-close-btn">&times;</button>
       </div>
         <form method="post">

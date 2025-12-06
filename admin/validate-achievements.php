@@ -1,6 +1,15 @@
 <?php
 session_start();
 include_once('includes/dbconnection.php');
+// Ensure PHPMailer and mail config are loaded so send_rejection_email works
+// Vendor autoload is in the project root's `vendor` directory
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+  require_once __DIR__ . '/../vendor/autoload.php';
+}
+include_once __DIR__ . '/../includes/mail_config.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 if (strlen($_SESSION['sturecmsaid']) == 0) {
   header('location:login.php');
   exit;
@@ -30,6 +39,68 @@ function getInitials($name)
   return $initials;
 }
 
+/**
+ * Sends a formatted email notification for a rejected achievement.
+ *
+ * @param string $recipientEmail The student's email address.
+ * @param string $studentName The student's name.
+ * @param string $skills A comma-separated string of skills for the achievement.
+ * @param string $level The level of the achievement (e.g., School, City).
+ * @param string $rejectionReason The reason for the rejection.
+ * @return bool True on success, false on failure.
+ */
+function send_rejection_email($recipientEmail, $studentName, $skills, $level, $rejectionReason)
+{
+  global $MAIL_HOST, $MAIL_USERNAME, $MAIL_PASSWORD, $MAIL_PORT, $MAIL_ENCRYPTION, $MAIL_FROM, $MAIL_FROM_NAME;
+
+  $currentYear = date('Y');
+  $subject = "Update on your achievement submission";
+
+  $bodyHtml = <<<EOT
+<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+    <div style="background-color: #f4f4f4; padding: 20px; text-align: center; border-bottom: 1px solid #ddd;">
+        <h2 style="color: #333; margin: 0;">Achievement Submission Update</h2>
+    </div>
+    <div style="padding: 30px;">
+        <p>Hi {$studentName},</p>
+        <p>Thank you for your recent achievement submission. After review, your submission for "<strong>{$skills}</strong>" at the <strong>{$level}</strong> level has been declined.</p>
+        <div style="background-color: #fffbe6; border-left: 5px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <h4 style="margin-top: 0; color: #b45309;">Reason for Rejection:</h4>
+            <p style="white-space: pre-wrap;">{$rejectionReason}</p>
+        </div>
+        <p>If you believe this was a mistake or have additional information to provide, please resubmit your achievement with the necessary corrections.</p>
+        <p>Thank you,<br>The Student Profiling System Team</p>
+    </div>
+    <div style="background-color: #f4f4f4; padding: 20px; text-align: center; font-size: 12px; color: #777; border-top: 1px solid #ddd;">
+        <p>&copy; {$currentYear} Student Profiling System. All rights reserved.</p>
+    </div>
+</div>
+EOT;
+
+  $bodyText = "Hi {$studentName},\n\nYour achievement submission for \"{$skills}\" ({$level} level) has been declined.\n\nReason: {$rejectionReason}\n\nPlease resubmit with the necessary corrections if applicable.\n\nThank you,\nThe Student Profiling System Team";
+
+  $mail = new PHPMailer(true);
+  try {
+    $mail->isSMTP();
+    $mail->Host = $MAIL_HOST;
+    $mail->SMTPAuth = true;
+    $mail->Username = $MAIL_USERNAME;
+    $mail->Password = $MAIL_PASSWORD;
+    $mail->SMTPSecure = !empty($MAIL_ENCRYPTION) ? $MAIL_ENCRYPTION : PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = (int)$MAIL_PORT;
+    $mail->setFrom(!empty($MAIL_FROM) ? $MAIL_FROM : $MAIL_USERNAME, !empty($MAIL_FROM_NAME) ? $MAIL_FROM_NAME : 'Student Profiling System');
+    $mail->addAddress($recipientEmail);
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+    $mail->Body = $bodyHtml;
+    $mail->AltBody = $bodyText;
+    return $mail->send();
+  } catch (\Exception $e) {
+    $err = isset($mail) ? $mail->ErrorInfo : '';
+    error_log("Rejection email failed: " . $e->getMessage() . ' | PHPMailer: ' . $err);
+    return false;
+  }
+}
 
 // Handle actions (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_POST['id'])) {
@@ -123,6 +194,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
             $ins->execute();
           }
         } catch (Exception $e) {
+        }
+
+        // Fetch details to send rejection email
+        $stmt = $dbh->prepare("
+            SELECT s.FirstName, s.EmailAddress, a.level, GROUP_CONCAT(sk.name SEPARATOR ', ') AS skills
+            FROM student_achievements a
+            JOIN tblstudent s ON a.StuID = s.StuID
+            LEFT JOIN student_achievement_skills sas ON a.id = sas.achievement_id
+            LEFT JOIN skills sk ON sas.skill_id = sk.id
+            WHERE a.id = :id
+            GROUP BY a.id
+        ");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $details = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if ($details && !empty($details->EmailAddress)) {
+            send_rejection_email($details->EmailAddress, $details->FirstName, $details->skills, $details->level, $notes);
         }
         $_SESSION['ach_msg_admin'] = 'Achievement rejected.';
       } else {
